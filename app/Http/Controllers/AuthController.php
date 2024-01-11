@@ -16,6 +16,7 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -35,6 +36,23 @@ class AuthController extends Controller
         'active' => $active,
         'profile' => $profile,
         'department'=> $department,
+        'statut'=> $statut
+      ]
+    );
+  }
+
+  public function conducteur()
+  {
+    $title = 'Conducteur';
+    $active = 'Parc';
+    $profile= profile::all();
+    $statut= Status::all();
+    return view(
+      'conducteur.index',
+      [
+        'title' => $title,
+        'active' => $active,
+        'profile' => $profile,
         'statut'=> $statut
       ]
     );
@@ -60,6 +78,48 @@ class AuthController extends Controller
   <td class="city align-middle white-space-nowrap text-900">'. $rs->phone. '  </td>
   <td class="city align-middle white-space-nowrap text-900">'. $rs->role. '  </td>
   
+  <td class="city align-middle white-space-nowrap text-900">'. $rs->departement. '  </td>
+  <td class="city align-middle white-space-nowrap text-900">'. $rs->fonction. '  </td>
+  <td class="city align-middle white-space-nowrap text-900">'. $rs->statut. '  </td>
+  <td class="customer align-middle white-space-nowrap">'.  date('d.m.Y', strtotime($rs->created_at)) .' </td>
+  <td >
+      <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_profileModal"><i class="bi-pencil-square h4"></i> Edit</a>
+      <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i> Delete </a>
+  </td>
+</tr>';
+      
+      }
+      echo $output;
+    } else {
+      echo '
+      <tr class="hover-actions-trigger btn-reveal-trigger position-static">
+        <td  rowspan="5" class="customer align-middle white-space-nowrap" align="center">
+          <h4 class="text-center text-secondery my-3" >No record in the database ! </h4>
+        </td>
+      </tr>';
+    }
+  }
+
+
+  public function fetchAllcond()
+  {
+    $User = DB::table('users')->orWhere('fonction', 'Chauffeur')->get();
+    $output = '';
+    if ($User->count() > 0) {
+     
+      foreach ($User as $rs) {
+  $output .='<tr class="hover-actions-trigger btn-reveal-trigger position-static">
+  <td class="customer align-middle white-space-nowrap">
+      <a class="d-flex align-items-center text-900 text-hover-1000" href="">
+          <div class="avatar avatar-m">
+              <div class="avatar-name rounded-circle"><span> '.ucfirst(substr($rs->lastname,0,1)).' </span></div>
+          </div>
+         <h6 class="mb-0 ms-3 fw-semi-bold">'. ucfirst($rs->name).' '. ucfirst($rs->lastname).'</h6>
+      </a>
+  </td>
+  <td class="city align-middle white-space-nowrap text-900"> '.$rs->email.'   </td>
+  <td class="city align-middle white-space-nowrap text-900">'. $rs->phone. '  </td>
+  <td class="city align-middle white-space-nowrap text-900">'. $rs->role. '  </td>
   <td class="city align-middle white-space-nowrap text-900">'. $rs->departement. '  </td>
   <td class="city align-middle white-space-nowrap text-900">'. $rs->fonction. '  </td>
   <td class="city align-middle white-space-nowrap text-900">'. $rs->statut. '  </td>

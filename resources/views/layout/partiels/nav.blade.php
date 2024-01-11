@@ -34,6 +34,42 @@
               <li class="nav-item">
                 <hr class="navbar-vertical-line" />
 
+               
+
+
+                <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-project-management" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-project-management">
+                    <div class="d-flex align-items-center">
+                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="clipboard"></span></span><span class="nav-link-text">Gestion projet</span>
+                    </div>
+                  </a>
+                  <div class="parent-wrapper label-1">
+                    <ul class="nav collapse parent @if ($active=='Project') show @endif 
+                    " data-bs-parent="#navbarVerticalCollapse" id="nv-project-management">
+                      <li class="collapsed-nav-item-title d-none">Project management</li>
+                      <li class="nav-item">
+                        <a class="nav-link @if ($title=='New project') active @endif" href="{{ route('new_project') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text"><i class="fa fa-plus-circle"></i> Nouveau projet</span></div>
+                        </a>
+                      </li>
+
+                      <li class="nav-item">
+                        <a class="nav-link @if ($title=='Affectation project') active @endif" href="{{ route('newAffectation') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-plus-circle"></i> Affectation project</span></div>
+                        </a>
+                      </li>
+                      
+                      <li class="nav-item"><a class="nav-link @if ($title=='List project') active @endif" href="{{ route('list_project') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> Project list view</span></div>
+                        </a>
+                      </li>
+
+                    
+
+                    </ul>
+                  </div>
+                  
+                </div>
+
                 <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-document" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-document">
                     <div class="d-flex align-items-center">
                       <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="clipboard"></span></span><span class="nav-link-text">Document</span>
@@ -79,40 +115,6 @@
                   
                 </div>
 
-
-                <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-project-management" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-project-management">
-                    <div class="d-flex align-items-center">
-                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="clipboard"></span></span><span class="nav-link-text">Project management</span>
-                    </div>
-                  </a>
-                  <div class="parent-wrapper label-1">
-                    <ul class="nav collapse parent @if ($active=='Project') show @endif 
-                    " data-bs-parent="#navbarVerticalCollapse" id="nv-project-management">
-                      <li class="collapsed-nav-item-title d-none">Project management</li>
-                      <li class="nav-item">
-                        <a class="nav-link @if ($title=='New project') active @endif" href="{{ route('new_project') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text"><i class="fa fa-plus-circle"></i> Create new</span></div>
-                        </a>
-                      </li>
-
-                      <li class="nav-item">
-                        <a class="nav-link @if ($title=='Affectation project') active @endif" href="{{ route('newAffectation') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-plus-circle"></i> Affectation project</span></div>
-                        </a>
-                      </li>
-                      
-                      <li class="nav-item"><a class="nav-link @if ($title=='List project') active @endif" href="{{ route('list_project') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> Project list view</span></div>
-                        </a>
-                      </li>
-
-                    
-
-                    </ul>
-                  </div>
-                  
-                </div>
-
                 <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-activite" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-activite">
                     <div class="d-flex align-items-center">
                       <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="bookmark"></span></span><span class="nav-link-text">Activite</span>
@@ -120,11 +122,7 @@
                   </a>
                   <div class="parent-wrapper label-1">
                     <ul class="nav collapse parent @if ($active=='Activite') show @endif " data-bs-parent="#navbarVerticalCollapse" id="nv-activite">
-                     
                     
-                
-                    
-
                       <li class="nav-item"><a class="nav-link @if ($title=='Activite') active @endif" href="{{ route('activity') }}" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text">Activite</span></div>
                         </a>
@@ -144,7 +142,7 @@
                     </div>
                   </a>
                   <div class="parent-wrapper label-1">
-                    <ul class="nav collapse parent @if ($active=='Recherche vehicule') show @endif " data-bs-parent="#navbarVerticalCollapse" id="nv-parc">
+                    <ul class="nav collapse parent @if ($active=='Parc') show @endif " data-bs-parent="#navbarVerticalCollapse" id="nv-parc">
                       <li class="nav-item"><a class="nav-link @if ($title=='Recherche vehicule') active @endif" href="" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text">Recherche</span></div>
                         </a>
@@ -173,12 +171,7 @@
                           </ul>
                         </div>
                       </li>
-
-
-
-                     
-
-                      <li class="nav-item"><a class="nav-link @if ($title=='COnducteur') active @endif" href="#" data-bs-toggle="" aria-expanded="false">
+                      <li class="nav-item"><a class="nav-link @if ($title=='Conducteur') active @endif" href="{{ route('conducteur') }}" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text">Conducteurs</span></div>
                         </a>
                       </li>

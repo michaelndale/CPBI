@@ -1,6 +1,5 @@
 @extends('layout/app')
 @section('page-content')
-
 <style type="text/css">
 .has-error {
     border: 1px solid red;
@@ -32,7 +31,7 @@
     <nav class="mb-2" aria-label="breadcrumb">
       <ol class="breadcrumb mb-0">
         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-        <li class="breadcrumb-item active"> Utilisateurs</li>
+        <li class="breadcrumb-item active"> Conducteurs</li>
       </ol>
     </nav>
 
@@ -42,17 +41,15 @@
           <thead>
             <tr>
               <th class="sort align-middle" scope="col" data-sort="customer"> Nom & prenom </th>
-              <th class="sort align-middle" scope="col" data-sort="email">Email</th>
               <th class="sort align-middle" scope="col" data-sort="email">Telephone</th>
               <th class="sort align-middle" scope="col" data-sort="city" >Fonction</th>
-              <th class="sort align-middle" scope="col" data-sort="city">Department</th>
-              <th class="sort align-middle" scope="col" data-sort="city">Profile</th>
+              <th class="sort align-middle" scope="col" data-sort="email">Permis de conduire</th>
               <th class="sort align-middle" scope="col" data-sort="city">Statut</th>
               <th class="sort align-middle" scope="col" data-sort="city">Date</th>
               <th class="sort align-middle" scope="col" data-sort="city">Action</th>
             </tr>
           </thead>
-          <tbody class="list" id="show_all_users">
+          <tbody class="list" id="show_all">
           </tbody>
         </table>
       </div>
@@ -88,18 +85,7 @@
 
             
               <div class="row" >
-                <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-5">
-                  <select class="form-select" id="department" name="department">
-                      <option value="" selected="selected">Departement</option>
-                        <option value="Tout"> Tout</option>
-                        @foreach ($department as $departments)
-                          <option value="{{ $departments->d_title }}">  {{ $departments->d_title  }}</option>
-                        @endforeach
-                    </select>
-                    <label for="eventLabel">Departement</label>
-                </div>
-                </div>
+               
 
                 <div class="col-sm-6 col-md-6">
                 <div class="form-floating mb-5">
@@ -298,10 +284,10 @@
 
       function fetchAllUsers() {
         $.ajax({
-          url: "{{ route('fetchAllUs') }}",
+          url: "{{ route('fetchAllcond') }}",
           method: 'get',
           success: function(reponse) {
-            $("#show_all_users").html(reponse);
+            $("#show_all").html(reponse);
           }
         });
       }

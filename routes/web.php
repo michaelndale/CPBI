@@ -96,8 +96,8 @@ Route::middleware('auth')->group(function (){
     });
 
     Route::prefix('conducteur')->group(function () {
-        Route::get('/', [AuthController::class, 'index'])->name('conducteur');
-        Route::get('/fetchAllcond', [AuthController::class, 'fetchAll'])->name('fetchAllcond');
+        Route::get('/', [AuthController::class, 'conducteur'])->name('conducteur');
+        Route::get('/fetchAllcond', [AuthController::class, 'fetchAllcond'])->name('fetchAllcond');
        // Route::post('/storeus', [AuthController::class, 'store'])->name('storeus');
        // Route::delete('/deleteUs', [AuthController::class, 'deleteall'])->name('deleteUs');
        // Route::get('/editUs', [AuthController::class, 'edit'])->name('editUs');
@@ -206,7 +206,7 @@ Route::middleware('auth')->group(function (){
 
         Route::get('/new', [ActivityController::class, 'new'])->name('newactivity');
         Route::get('/', [ActivityController::class, 'index'])->name('activity');
-        Route::post('/storeProject', [ActivityController::class, 'store'])->name('storeProject');
+        Route::post('/storeact', [ActivityController::class, 'store'])->name('storeact');
         Route::get('/newAffectation', [ActivityController::class, 'affectation'])->name('newAffectation');
         Route::post('/storeAffectation', [ActivityController::class, 'storeAffectation'])->name('storeAffectation');
         Route::get('/{key}/view/', [ActivityController::class, 'show'])->name('key.viewProject');
