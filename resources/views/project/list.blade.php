@@ -14,7 +14,7 @@
           <div id="projectSummary" data-list='{"valueNames":["projectName","assigness","start","deadline","task","projectprogress","status","action"],"page":6,"pagination":true}'>
             <div class="row mb-4 gx-6 gy-3 align-items-center">
               <div class="col-auto">
-                <h2 class="mb-0">Projects<span class="fw-normal text-700 ms-3">( {{ $total }} )</span></h2>
+                <h2 class="mb-0">Projects<span class="fw-normal text-700 ms-3">( {{ $data->count() }} )</span></h2>
               </div>
               <div class="col-auto"><a class="btn btn-primary px-5" href="{{ route('new_project') }}"><i class="fa-solid fa-plus me-2"></i>Add new project</a></div>
             </div>

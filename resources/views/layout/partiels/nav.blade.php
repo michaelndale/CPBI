@@ -12,8 +12,12 @@
                   </a>
                   <div class="parent-wrapper label-1">
                     <ul class="nav collapse parent @if ($active=='Dashboard') show @endif" data-bs-parent="#navbarVerticalCollapse" id="nv-home">
-                      <li class="collapsed-nav-item-title d-none">Dashboard</li>
+                      <li class="collapsed-nav-item-title d-none"><a hre="{{ route('dashboard') }}" > Tableau de bord</a></li>
                      
+                      <li class="nav-item"><a class="nav-link @if ($title=='Dashboard') active @endif " href="{{ route('dashboard') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text">Accueil </span></div>
+                        </a>
+                      </li>
                       <li class="nav-item"><a class="nav-link @if ($title=='Login') active @endif " href="project-management.html" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text">Statistic Project </span></div>
                         </a>
@@ -507,7 +511,7 @@
           <ul class="navbar-nav navbar-nav-icons flex-row">
             <li class="nav-item">
 
-            <a href="" class="btn btn-outline-primary rounded-pill me-1 mb-1" type="button"><i class="fa fa-plus-circle"></i> New project</a>
+            <a href="{{ route('new_project') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1" type="button"><i class="fa fa-plus-circle"></i> Nouveau projet</a>
               <div class="theme-control-toggle fa-icon-wait px-2"><input class="form-check-input ms-0 theme-control-toggle-input" type="checkbox" data-theme-control="phoenixTheme" value="dark" id="themeControlToggle" /><label class="mb-0 theme-control-toggle-label theme-control-toggle-light" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span class="icon" data-feather="moon"></span></label><label class="mb-0 theme-control-toggle-label theme-control-toggle-dark" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span class="icon" data-feather="sun"></span></label></div>
             </li>
             <li class="nav-item dropdown">
