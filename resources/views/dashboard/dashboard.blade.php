@@ -5,8 +5,7 @@
         <div class="row gy-3 mb-6 justify-content-between">
           <div class="col-md-8 col-auto">
             <h2 class="mb-2 text-1100">Tableau de bord des projets</h2>
-            <h5 class="text-70 fw-semi-bold">COMMUNAUTÉ DES EGLISES DE PENTECÔTE AU BURUNDI “CEPBU”
- </h5>
+            <h5 class="text-70 fw-semi-bold">COMMUNAUTÉ DES EGLISES DE PENTECÔTE AU BURUNDI “CEPBU” </h5>
           </div>
           <div class="col-md-4 col-auto">
           
@@ -80,28 +79,59 @@
                       <div class="row align-items-center g-0 justify-content-between">
                          <div class="col-2 col-sm-2 col-md-8 ">
                           <div class="search-box w-100 mb-2 mb-sm-0" style="max-width:30rem;">
-                            <form class="position-relative" data-bs-toggle="search" data-bs-display="static">
-                              <input class="form-control search-input search" type="search" placeholder="Search tasks" aria-label="Search" />
-                              <span class="fas fa-search search-box-icon"></span>
-                            </form>
+                         
+                            <select class="form-select classcategory" id="compte_id" aria-label="Default select example">
+                              <option disabled="true" selected="true"> --classement de dossier--</option>
+                              @foreach ($folder as $folders)
+                              <option value="{{ $folders->id }}">{{ $folders->title }} </option>
+                              @endforeach
+                            </select>
+                             
+                           
                           </div>
                         </div>
                         <div class="col-2 col-sm-2 col-md-3">
-                        <input class="form-control search-input search" type="search" placeholder="Search tasks" aria-label="Search" />
+                        <select class="annee" id="annee">
+                              <option value="0" disabled="true" selected="true"> Annee</option>
+                            
+                            </select>
+
+                         
+
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+
+
                 <div class="card-body py-0 scrollbar to-do-list-body">
-                 
                
+                  <div class="d-flex hover-actions-trigger py-3 border-top border-bottom">
 
-
-               
-                  <div class="d-flex hover-actions-trigger py-3 border-top border-bottom"><input class="form-check-input form-check-input-todolist flex-shrink-0 my-1 me-2 form-check-input-undefined" type="checkbox" id="checkbox-todo-10" data-event-propagation-prevent="data-event-propagation-prevent" />
+                  <table class="table table-sm fs--1 mb-0">
+                  <thead>
+                    <tr>
+                      <th class="sort align-middle" scope="col" data-sort="customer"> Nom & prenom </th>
+                      <th class="sort align-middle" scope="col" data-sort="email">Telephone</th>
+                      <th class="sort align-middle" scope="col" data-sort="city" >Fonction</th>
+                      <th class="sort align-middle" scope="col" data-sort="email">Permis de conduire</th>
+                      <th class="sort align-middle" scope="col" data-sort="city">Statut</th>
+                      <th class="sort align-middle" scope="col" data-sort="city">Date</th>
+                      <th class="sort align-middle" scope="col" data-sort="city">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody class="list" id="show_all">
+                  </tbody>
+                </table>
+                    
+                  
+                  
+                  
+                  
+                  <input class="form-check-input form-check-input-todolist flex-shrink-0 my-1 me-2 form-check-input-undefined" type="checkbox" id="checkbox-todo-10" data-event-propagation-prevent="data-event-propagation-prevent" />
                     <div class="row justify-content-between align-items-md-center btn-reveal-trigger border-200 gx-0 flex-1 cursor-pointer" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                      <div class="col-12 col-md-auto col-xl-12 col-xxl-auto">
+                      <div class="col-12 col-md-auto col-xl-12 col-xxl-auto" >
                         <div class="mb-1 mb-md-0 d-flex align-items-center lh-1"><label class="form-check-label mb-1 mb-md-0 mb-xl-1 mb-xxl-0 fs-0 me-2 line-clamp-1 text-900 cursor-pointer">Delete overlapping tasks and articles</label><span class="badge badge-phoenix ms-auto fs--2 badge-phoenix-secondary">CLOSE</span></div>
                       </div>
                       <div class="col-12 col-md-auto col-xl-12 col-xxl-auto">
@@ -234,55 +264,66 @@
             
           </div>
         </div>
-
-
-          <div class="col-12 col-xl-6 col-xxl-5">
-            <div class="mx-xxl-0">
-              <h3>Project: zero Roadmap</h3>
-              <p class="text-700">Phase 2 is now ongoing</p>
-              <div class="gantt-zero-roadmap">
-                <div class="row g-2 flex-between-center mb-3">
-                  <div class="col-12 col-sm-auto">
-                    <div class="d-flex">
-                      <div class="d-flex align-items-end me-3"><label class="form-check-label mb-0 me-2 lh-1 text-900" for="progress">Progress</label>
-                        <div class="form-check form-switch min-h-auto mb-0"><input class="form-check-input" id="progress" type="checkbox" checked="" data-gantt-progress="data-gantt-progress" /></div>
-                      </div>
-                      <div class="d-flex align-items-end flex-1"><label class="form-check-label mb-0 me-2 lh-1 text-900" for="links">Links</label>
-                        <div class="form-check form-switch min-h-auto flex-1 mb-0"><input class="form-check-input" id="links" type="checkbox" checked="" data-gantt-links="data-gantt-links" /></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-12 col-sm-auto">
-                    <div class="btn-group" role="group" data-gantt-scale="data-gantt-scale"><input class="btn-check" id="weekView" type="radio" name="scaleView" value="week" checked="" /><label class="btn btn-phoenix-secondary hover-bg-100 fs--2 py-1 mb-0" for="weekView">Week</label><input class="btn-check" id="monthView" type="radio" name="scaleView" value="month" /><label class="btn btn-phoenix-secondary hover-bg-100 fs--2 py-1 mb-0" for="monthView">Month</label><input class="btn-check" id="yearView" type="radio" name="scaleView" value="year" /><label class="btn btn-phoenix-secondary hover-bg-100 fs--2 py-1 mb-0" for="yearView">Year</label></div>
-                  </div>
-                </div>
-                <div class="gantt-zero-roadmap-chart"></div>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-xl-6 col-xxl-5">
-            <div class="card border border-300 h-100 w-100 overflow-hidden">
-              <div class="bg-holder d-block bg-card" style="background-image:url(../assets/img/spot-illustrations/32.png);background-position: top right;"></div>
-              <!--/.bg-holder-->
-              <div class="d-dark-none">
-                <div class="bg-holder d-none d-sm-block d-xl-none d-xxl-block bg-card" style="background-image:url(../assets/img/spot-illustrations/21.png);background-position: bottom right; background-size: auto;"></div>
-                <!--/.bg-holder-->
-              </div>
-              <div class="d-light-none">
-                <div class="bg-holder d-none d-sm-block d-xl-none d-xxl-block bg-card" style="background-image:url(../assets/img/spot-illustrations/dark_21.png);background-position: bottom right; background-size: auto;"></div>
-                <!--/.bg-holder-->
-              </div>
-              <div class="card-body px-5 position-relative">
-                <div class="badge badge-phoenix fs--2 badge-phoenix-warning mb-4"><span class="fw-bold">Coming soon</span><span class="fa-solid fa-award ms-1"></span></div>
-                <h3 class="mb-5">Early bird gets the warm leads!</h3>
-                <p class="text-700 fw-semi-bold">Phoenix CRM Dashboard is coming to <br class="d-none d-sm-block" />market soon for fulfilling your every <br class="d-none d-sm-block" />CRM related needs. </p>
-              </div>
-              <div class="card-footer border-0 py-0 px-5 z-index-1">
-                <p class="text-700 fw-semi-bold">Follow <a href="https://themewagon.com/">ThemeWagon </a>at <br class="d-none d-xxl-block" />Bootstrap Marketplace for updates.</p>
-              </div>
-            </div>
-          </div>
         </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		$(document).on('change','.classcategory',function(){
+			var cat_id=$(this).val();
+			var div=$(this).parent();
+			var op=" ";
+			$.ajax({
+				type:'get',
+				url:"{{ route ('findClaseur') }}",
+				data:{'id':cat_id},
+				success:function(data){
+         
+
+					op+='<option value="0" selected disabled>Choisire annee</option>';
+					for(var i=0;i<data.length;i++){
+					op+='<option value="'+data[i].annee+'">'+data[i].annee+'</option>';
+          document.getElementById("annee").innerHTML = op
+         
+        
+				   }
+
+				 
+				},
+				error:function(){
+          alert("Hello! I am an alert box!!");
+				}
+			});
+		});
+
+		$(document).on('change','.annee',function () {
+			var ann_id=$(this).val();
+
+			var a=$(this).parent();
+		
+			var op="";
+			$.ajax({
+				type:'get',
+				
+        url:"{{ route ('findAnnee') }}",
+				data:{'id':ann_id},
+				dataType:'json',
+				success: function(reponse) {
+            $("#show_all").html(reponse);
+          },
+				error:function(){
+
+				}
+			});
+
+
+		});
+
+	});
+</script>
+
 
 
   

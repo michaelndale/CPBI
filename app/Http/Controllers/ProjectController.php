@@ -147,13 +147,11 @@ class ProjectController extends Controller
     {
         $title="List project";
         $data= Project::all();
-        $total = Project::all()->count();
         $active = 'Project';
         return view('project.list', 
         [
           'title' =>$title,
           'data' => $data,
-          'total' => $total,
           'active' => $active
         ]);
     }

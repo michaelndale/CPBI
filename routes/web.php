@@ -32,7 +32,13 @@ Route::post('/login', [AuthController::class, 'handlelogin'])->name('handlelogin
 
 Route::middleware('auth')->group(function (){ 
 
-    Route::get('dashboard', [AppCOntroller::class, 'index'] )->name('dashboard');
+    Route::prefix('dashboard')->group(function () {
+
+    Route::get('/', [AppCOntroller::class, 'index'] )->name('dashboard');
+    Route::get('/findClaseur',[AppCOntroller::class, 'findClaseur'] )->name('findClaseur');
+    Route::get('/findAnnee',[AppCOntroller::class, 'findAnnee'] )->name('findAnnee');
+    });
+
 
     Route::prefix('indentification')->group(function () {
         Route::get('/', [IdentificationController::class, 'index'])->name('info');
