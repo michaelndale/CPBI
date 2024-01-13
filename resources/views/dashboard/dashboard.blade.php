@@ -4,17 +4,15 @@
 <div class="content">
         <div class="row gy-3 mb-6 justify-content-between">
           <div class="col-md-8 col-auto">
-            <h2 class="mb-2 text-1100">Tableau de bord des projets</h2>
+            <h2 class="mb-2 text-1100">Tableau de bord des projets    </h2>
             <h5 class="text-70 fw-semi-bold">COMMUNAUTÉ DES EGLISES DE PENTECÔTE AU BURUNDI “CEPBU” </h5>
           </div>
           <div class="col-md-4 col-auto">
           
-          
-           
             <div class="flatpickr-input-container">
 
-            
               <e class="form-control ps-6 " >  @include('dashboard.time')</e>
+
               <span class="uil uil-calendar-alt flatpickr-icon text-700"></span></div>
           </div>
         </div>
@@ -81,7 +79,7 @@
                           <div class="search-box w-100 mb-2 mb-sm-0" style="max-width:30rem;">
                          
                             <select class="form-select classcategory" id="compte_id" aria-label="Default select example">
-                              <option disabled="true" selected="true"> --Classement de dossier--</option>
+                              <option disabled="true" selected="true">--Classement de dossier--</option>
                               @foreach ($folder as $folders)
                               <option value="{{ $folders->id }}">{{ $folders->title }} </option>
                               @endforeach
@@ -92,7 +90,7 @@
                         </div>
                         <div class="col-2 col-sm-2 col-md-3">
                         <select  class="form-select annee" id="annee">
-                              <option value="0" disabled="true" selected="true">-- Année --</option>
+                              <option value="0" disabled="true" selected="true">--Année--</option>
                             
                             </select>
 
@@ -105,26 +103,36 @@
 
                 <div class="card-body py-0 scrollbar to-do-list-body">
 
-                <table class="table table-striped table-sm fs--1 mb-0">
-                  <tr>
-                    <th>Numéro du projet:</th>
-                    <th>Titre projet</th>
-                    <th>Date debut </th>
-                    <th>Date fin </th>
-                    <th>Année </th>
-                  </tr>
-                 <tbody class="list tableviewsclass">
-                          <td colspan="5">
-                          <h4 style="margin-top:10% ;color:#c0c0c0"> <center><font size="100px"><i class="fa fa-search"  ></i> </font><br><br>
-                                        Sélectionner le classeur et l'année</center> </h4>
-
-                          </td>
-               
-                 </tbody>
-
-                </table>
-
              
+            <div class="border-top border-bottom-0 border-300" id="dealForecastTable" data-list='{"valueNames":["contact","appointment","qualified","closed-won","contact-sent"],"page":5}'>
+              <div class="table-responsive scrollbar">
+                <table class="table fs--1 mb-0">
+                  <thead>
+                    <tr>
+                      <th class="sort border-end white-space-nowrap align-middle ps-0 text-uppercase text-70" scope="col" data-sort="contact" style="width:2%;">Numéro</th>
+                      <th class="sort border-end align-middle" scope="col" data-sort="appointment" style="width:20%; ">
+                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-primary me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Titre projet</span></div>
+                      </th>
+                      <th class="sort border-end align-middle  px-3 text-uppercase text-700" scope="col" data-sort="qualified" style="width:1%;">
+                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-primary-300 me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Date debut</span></div>
+                      </th>
+                      <th class="sort border-end align-middle  px-3 text-uppercase text-700" scope="col" data-sort="closed-won" style="width:1%;">
+                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-success me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Date fin</span></div>
+                      </th>
+                      <th class="sort align-middle text-end ps-3 text-uppercase text-700" scope="col" data-sort="contact-sent" style="width:1%; ">
+                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-info me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Année</span></div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="list tableviewsclass" id="table-deal-forecast-body " >
+                        <td colspan="5">
+                            <h4 style="margin-top:5% ;color:#c0c0c0"> <center><font size="100px"><i class="fa fa-search"  ></i> </font><br><br>
+                            Sélectionner le classeur et l'année</center> </h4>
+                          </td>
+                  </tbody>
+                </table>
+              </div>
+            </div>
                  
                 </div>
                 <div class="card-footer border-0"><a class="fw-bold fs--1 mt-4" href="{{ route('new_project') }}"><span class="fas fa-plus me-1"></span>Ajouter nouveau projet </a></div>
@@ -135,7 +143,9 @@
         </div>
         </div>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+ 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -151,14 +161,14 @@
 				success:function(data){
           console.log(data);
           if(data.length == 0){
-            op+='<option value="0" selected disabled> --Année-- </option>';
+            op+='<option value="0" selected disabled>--Année--</option>';
             op+='<option value="0" selected disabled>Aucun</option>';
             document.getElementById("annee").innerHTML = op
             alert("Attention!!\n le classeur n'a pas de projet refferencer ! ");
 
             
           }else{
-            op+='<option value="0" selected disabled> --Année-- </option>';
+            op+='<option value="0" selected disabled>--Année--</option>';
 					for(var i=0;i<data.length;i++){
 					op+='<option value="'+data[i].annee+'">'+data[i].annee+'</option>';
           document.getElementById("annee").innerHTML = op
@@ -196,12 +206,12 @@
           var url = "{{route('key.viewProject', ':id')}}";
           url = url.replace(':id', idr);
 
-          tarea += '<tr>';
-          tarea += '<td><a href='+url+'>#'+data[i].numeroprojet+'</a></td>';
-          tarea += '<td class="align-middle ">'+data[i].title+'</td>';
-          tarea += '<td class="align-middle">'+data[i].start_date+'</td>';
-          tarea += '<td class="align-middle">'+data[i].deadline+'</td>';
-          tarea += '<td class="align-middle">'+data[i].annee+'</td>';
+          tarea += '<tr class="hover-actions-trigger btn-reveal-trigger position-static">';
+          tarea += '<td class="closed-won border-end"><b><a href='+url+'>#'+data[i].numeroprojet+'</a></b></td>';
+          tarea += '<td class="closed-won border-end ">'+data[i].title+'</td>';
+          tarea += '<td class="closed-won border-end "><center>'+data[i].start_date+'</center></td>';
+          tarea += '<td class="closed-won border-end"><center>'+data[i].deadline+'</center></td>';
+          tarea += '<td ><center>'+data[i].annee+'</center></td>';
           tarea += '</tr>';
         
          }

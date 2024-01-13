@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en-US" dir="ltr">
+<html lang="fr" dir="ltr">
 <meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 <head>
     <meta charset="utf-8">

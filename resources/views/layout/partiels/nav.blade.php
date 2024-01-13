@@ -7,7 +7,7 @@
                 <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-home" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="nv-home">
                     <div class="d-flex align-items-center">
                       <div class="dropdown-indicator-icon">
-                        <span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="home"></span></span><span class="nav-link-text">Dashboard</span>
+                        <span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="home"></span></span><span class="nav-link-text">Tableau de bord</span>
                     </div>
                   </a>
                   <div class="parent-wrapper label-1">
@@ -40,8 +40,9 @@
 
                
 
+          @if (session()->has('id'))
 
-                <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-project-management" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-project-management">
+          <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-project-management" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-project-management">
                     <div class="d-flex align-items-center">
                       <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="clipboard"></span></span><span class="nav-link-text">Gestion projet</span>
                     </div>
@@ -50,11 +51,7 @@
                     <ul class="nav collapse parent @if ($active=='Project') show @endif 
                     " data-bs-parent="#navbarVerticalCollapse" id="nv-project-management">
                       <li class="collapsed-nav-item-title d-none">Project management</li>
-                      <li class="nav-item">
-                        <a class="nav-link @if ($title=='New project') active @endif" href="{{ route('new_project') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text"><i class="fa fa-plus-circle"></i> Nouveau projet</span></div>
-                        </a>
-                      </li>
+                     
 
                       <li class="nav-item">
                         <a class="nav-link @if ($title=='Affectation project') active @endif" href="{{ route('newAffectation') }}" data-bs-toggle="" aria-expanded="false">
@@ -72,9 +69,9 @@
                     </ul>
                   </div>
                   
-                </div>
+          </div>
 
-                <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-document" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-document">
+         <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-document" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-document">
                     <div class="d-flex align-items-center">
                       <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="clipboard"></span></span><span class="nav-link-text">Document</span>
                     </div>
@@ -139,6 +136,11 @@
                     </ul>
                   </div>
                 </div>
+
+          @endif
+                
+
+
 
                 <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-parc" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-parc">
                     <div class="d-flex align-items-center">
@@ -247,13 +249,13 @@
                 </div>
 
                 <div class="nav-item-wrapper"><a class="nav-link label-1 @if ($active=='Users') active @endif" href="{{ route('user') }}" role="button" data-bs-toggle="" aria-expanded="false">
-                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span data-feather="users"></span></span><span class="nav-link-text-wrapper"><span class="nav-link-text"> Users </span></span></div>
+                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span data-feather="users"></span></span><span class="nav-link-text-wrapper"><span class="nav-link-text"> Personnels</span></span></div>
                   </a>
                 </div>
 
                 <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-customization" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-customization">
                     <div class="d-flex align-items-center">
-                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="settings"></span></span><span class="nav-link-text">paramètre</span>
+                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="settings"></span></span><span class="nav-link-text">Paramètre</span>
                     </div>
                   </a>
                   <div class="parent-wrapper label-1">
@@ -339,7 +341,7 @@
 
                 </div>
                 <br>
-                <div class="nav-item-wrapper"><a class="nav-link label-1" href="{{ route('logout') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                <div class="nav-item-wrapper"><a class="nav-link label-1" href="#"  data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" role="button"  aria-expanded="false">
                     <div class="d-flex align-items-center"><i class="fas fa-sign-out-alt"></i><span class="nav-link-text-wrapper"><span class="nav-link-text" title="Déconnectez-vous en cliquant sur l'icône."> &nbsp; 
                       Déconnexion </span></span>
                     </div>
@@ -364,7 +366,7 @@
           <button class="btn navbar-vertical-toggle border-0 fw-semi-bold w-100 white-space-nowrap d-flex align-items-center"> 
             <span class="uil uil-left-arrow-to-left fs-0"></span>
             <span class="uil uil-arrow-from-right fs-0"></span>
-            <span class="navbar-vertical-footer-text ms-2">Collapsed View</span></button></div>
+            <span class="navbar-vertical-footer-text ms-2">Vue réduite</span></button></div>
       </nav> 
 
 
@@ -510,8 +512,12 @@
           </div>
           <ul class="navbar-nav navbar-nav-icons flex-row">
             <li class="nav-item">
-
+            @if (session()->has('id'))
+            <a href="{{ route('closeproject') }}" class="btn btn-outline-danger rounded-pill me-1 mb-1" type="button" data-bs-toggle="modal" data-bs-target="#verticallyCentered"><i class="fas fa-sign-out-alt"></i> Quitter le projet</a>
+            @else
             <a href="{{ route('new_project') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1" type="button"><i class="fa fa-plus-circle"></i> Nouveau projet</a>
+            @endif
+
               <div class="theme-control-toggle fa-icon-wait px-2"><input class="form-check-input ms-0 theme-control-toggle-input" type="checkbox" data-theme-control="phoenixTheme" value="dark" id="themeControlToggle" /><label class="mb-0 theme-control-toggle-label theme-control-toggle-light" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span class="icon" data-feather="moon"></span></label><label class="mb-0 theme-control-toggle-label theme-control-toggle-dark" for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Switch theme"><span class="icon" data-feather="sun"></span></label></div>
             </li>
             <li class="nav-item dropdown">
@@ -634,7 +640,7 @@
                   <div class="overflow-auto scrollbar" style="height: 10rem;">
                     <ul class="nav d-flex flex-column mb-2 pb-1">
                       <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="user"></span><span>Profile</span></a></li>
-                      <li class="nav-item"><a class="nav-link px-3" href="#!"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
+                      <li class="nav-item"><a class="nav-link px-3" href="#!"><span class="me-2 text-900" data-feather="pie-chart"></span>Tableau de bord</a></li>
                       <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="lock"></span>Posts &amp; Activity</a></li>
                       <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="settings"></span>Settings &amp; Privacy </a></li>
                       <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="help-circle"></span>Help Center</a></li>
@@ -643,7 +649,7 @@
                   </div>
                   <div class="card-footer p-0 border-top">
                     <br>
-                    <div class="px-3"> <a class="btn btn-phoenix-secondary d-flex flex-center w-100" href="{{ route('logout') }}" title="Déconnectez-vous en cliquant sur l'icône."> <span class="me-2" data-feather="log-out" title="Déconnectez-vous en cliquant sur l'icône."> </span>Déconnexion</a></div>
+                    <div class="px-3"> <a class="btn btn-phoenix-secondary d-flex flex-center w-100" title="Déconnectez-vous en cliquant sur l'icône." href="#"  data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" role="button"  aria-expanded="false"> <span class="me-2" data-feather="log-out" title="Déconnectez-vous en cliquant sur l'icône."> </span>Déconnexion</a></div>
                    <br>
                   </div>
                 </div>
@@ -861,7 +867,7 @@
                   <div class="overflow-auto scrollbar" style="height: 10rem;">
                     <ul class="nav d-flex flex-column mb-2 pb-1">
                       <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="user"></span><span>Profile</span></a></li>
-                      <li class="nav-item"><a class="nav-link px-3" href="#!"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
+                      <li class="nav-item"><a class="nav-link px-3" href="{{ route('dashboard') }}"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
                       <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="lock"></span>Posts &amp; Activity</a></li>
                       <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="settings"></span>Settings &amp; Privacy </a></li>
                       <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="help-circle"></span>Help Center</a></li>
@@ -895,7 +901,7 @@
         </div>
         <div class="collapse navbar-collapse navbar-top-collapse order-1 order-lg-0 justify-content-center" id="navbarTopCollapse">
           <ul class="navbar-nav navbar-nav-top" data-dropdown-on-hover="data-dropdown-on-hover">
-            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><span class="uil fs-0 me-2 uil-chart-pie"></span>Dashboard</a>
+            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="{{ route('dashboard') }}" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><span class="uil fs-0 me-2 uil-chart-pie"></span>Dashboard</a>
               <ul class="dropdown-menu navbar-dropdown-caret">
                 <li><a class="dropdown-item" href="../index.html">
                     <div class="dropdown-item-wrapper"><span class="me-2 uil" data-feather="shopping-cart"></span>E commerce</div>
@@ -1350,7 +1356,7 @@
                 <div class="overflow-auto scrollbar" style="height: 10rem;">
                   <ul class="nav d-flex flex-column mb-2 pb-1">
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="user"></span><span>Profile</span></a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#!"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="{{ route('dashboard') }}"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="lock"></span>Posts &amp; Activity</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="settings"></span>Settings &amp; Privacy </a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="help-circle"></span>Help Center</a></li>
@@ -1377,7 +1383,7 @@
         </div>
         <div class="collapse navbar-collapse navbar-top-collapse order-1 order-lg-0 justify-content-center" id="navbarTopCollapse">
           <ul class="navbar-nav navbar-nav-top" data-dropdown-on-hover="data-dropdown-on-hover">
-            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><span class="uil fs-0 me-2 uil-chart-pie"></span>Dashboard</a>
+            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="{{ route('dashboard') }}" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><span class="uil fs-0 me-2 uil-chart-pie"></span>Dashboard</a>
               <ul class="dropdown-menu navbar-dropdown-caret">
                 <li><a class="dropdown-item" href="../index.html">
                     <div class="dropdown-item-wrapper"><span class="me-2 uil" data-feather="shopping-cart"></span>E commerce</div>
@@ -2078,7 +2084,7 @@
                 <div class="overflow-auto scrollbar" style="height: 10rem;">
                   <ul class="nav d-flex flex-column mb-2 pb-1">
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="user"></span><span>Profile</span></a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#!"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="{{ route('dashboard') }}"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="lock"></span>Posts &amp; Activity</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="settings"></span>Settings &amp; Privacy </a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="help-circle"></span>Help Center</a></li>
@@ -2111,7 +2117,7 @@
         </div>
         <div class="collapse navbar-collapse navbar-top-collapse order-1 order-lg-0 justify-content-center" id="navbarTopCollapse">
           <ul class="navbar-nav navbar-nav-top" data-dropdown-on-hover="data-dropdown-on-hover">
-            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><span class="uil fs-0 me-2 uil-chart-pie"></span>Dashboard</a>
+            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="{{ route('dashboard') }}" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><span class="uil fs-0 me-2 uil-chart-pie"></span>Dashboard</a>
               <ul class="dropdown-menu navbar-dropdown-caret">
                 <li><a class="dropdown-item" href="../index.html">
                     <div class="dropdown-item-wrapper"><span class="me-2 uil" data-feather="shopping-cart"></span>E commerce</div>
@@ -2809,7 +2815,7 @@
                 <div class="overflow-auto scrollbar" style="height: 10rem;">
                   <ul class="nav d-flex flex-column mb-2 pb-1">
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="user"></span><span>Profile</span></a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#!"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="{{ route('dashboard') }}"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="lock"></span>Posts &amp; Activity</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="settings"></span>Settings &amp; Privacy </a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="help-circle"></span>Help Center</a></li>
@@ -2836,7 +2842,7 @@
         </div>
         <div class="collapse navbar-collapse navbar-top-collapse order-1 order-lg-0 justify-content-center" id="navbarTopCollapse">
           <ul class="navbar-nav navbar-nav-top" data-dropdown-on-hover="data-dropdown-on-hover">
-            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><span class="uil fs-0 me-2 uil-chart-pie"></span>Dashboard</a>
+            <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="{{ route('dashboard') }}" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><span class="uil fs-0 me-2 uil-chart-pie"></span>Dashboard</a>
               <ul class="dropdown-menu navbar-dropdown-caret">
                 <li><a class="dropdown-item" href="../index.html">
                     <div class="dropdown-item-wrapper"><span class="me-2 uil" data-feather="shopping-cart"></span>E commerce</div>
@@ -3525,7 +3531,7 @@
                 <div class="overflow-auto scrollbar" style="height: 10rem;">
                   <ul class="nav d-flex flex-column mb-2 pb-1">
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="user"></span><span>Profile</span></a></li>
-                    <li class="nav-item"><a class="nav-link px-3" href="#!"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link px-3" href="{{ route('dashboard') }}"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="lock"></span>Posts &amp; Activity</a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="settings"></span>Settings &amp; Privacy </a></li>
                     <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="help-circle"></span>Help Center</a></li>
@@ -3870,7 +3876,7 @@
                     <div class="overflow-auto scrollbar" style="height: 10rem;">
                       <ul class="nav d-flex flex-column mb-2 pb-1">
                         <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="user"></span><span>Profile</span></a></li>
-                        <li class="nav-item"><a class="nav-link px-3" href="#!"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link px-3" href="{{ route('dashboard') }}"><span class="me-2 text-900" data-feather="pie-chart"></span>Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="lock"></span>Posts &amp; Activity</a></li>
                         <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="settings"></span>Settings &amp; Privacy </a></li>
                         <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="help-circle"></span>Help Center</a></li>
@@ -3892,7 +3898,7 @@
           </div>
           <div class="collapse navbar-collapse navbar-top-collapse justify-content-center" id="navbarTopCollapse">
             <ul class="navbar-nav navbar-nav-top" data-dropdown-on-hover="data-dropdown-on-hover">
-              <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><span class="uil fs-0 me-2 uil-chart-pie"></span>Dashboard</a>
+              <li class="nav-item dropdown"><a class="nav-link dropdown-toggle lh-1" href="{{ route('dashboard') }}" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false"><span class="uil fs-0 me-2 uil-chart-pie"></span>Dashboard</a>
                 <ul class="dropdown-menu navbar-dropdown-caret">
                   <li><a class="dropdown-item" href="../index.html">
                       <div class="dropdown-item-wrapper"><span class="me-2 uil" data-feather="shopping-cart"></span>E commerce</div>
@@ -4504,6 +4510,40 @@
           </div>
         </div>
       </div>
+
+  <div class="modal fade" id="verticallyCentered" tabindex="-1" aria-labelledby="verticallyCenteredModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+     
+      <div class="modal-body">
+        <p class="text-700 lh-lg mb-0"> 
+        <center> <br> <font size="4"> Vous voulez-vous vraiment quitter le projet ? </font>  <br> <br>
+
+        <a href="{{ route('closeproject') }}" tabindex="-1" aria-labelledby="deconnecterModalLabel" aria-hidden="true"  class="btn btn-primary" type="button">Oui quitter  </a> &nbsp; <button class="btn btn-outline-danger" type="button" data-bs-dismiss="modal"> Non , rester </button>
+      
+        </center></p>
+      </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="deconnecterModalLabel" tabindex="-1" aria-labelledby="deconnecterModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+     
+      <div class="modal-body">
+        <p class="text-700 lh-lg mb-0"> 
+        <center> <br> <font size="4"> Voulez-vous vraiment vous déconnecter ? </font>  <br> <br>
+
+        <a href="{{ route('logout') }}" class="btn btn-primary" type="button">Oui   </a> &nbsp; <button class="btn btn-outline-danger" type="button" data-bs-dismiss="modal"> Non </button>
+      
+        </center></p>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
       <script>
         var navbarTopShape = window.config.config.phoenixNavbarTopShape;
         var navbarPosition = window.config.config.phoenixNavbarPosition;

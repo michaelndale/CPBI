@@ -35,6 +35,17 @@ class ProjectController extends Controller
       ]);
     }
 
+    public function  closeproject ()
+    {
+      session()->forget('id');
+
+      return redirect()->route('dashboard');
+    }
+
+
+
+   
+
     public function affectation ()
     {
       $title='Affectation project';
@@ -103,6 +114,7 @@ class ProjectController extends Controller
             // fin initialisation notification
 
         // cahrgement du noveau project
+        $annee = date('Y');
         $project = new Project();
         $project->title = $request->title;
         $project->numeroprojet = $request->numeroProjet;
@@ -117,11 +129,15 @@ class ProjectController extends Controller
         $project->deadline= $request->deadline;
         $project->budget= $request->budget;
         $project->description= $request->description;
+        $project->annee= $annee;
         $project->userid = Auth()->user()->id;
         $project->save();
+
+        $lastInsertedId= $project->id;
         return response()->json([
-          'status' => 200,
-         ]);
+         'status' => 200,
+         'lastid' =>  $lastInsertedId
+        ]);
 
         // fin du chargement
           }
@@ -156,17 +172,18 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function show(Project $cle)
+    public function show(Project $key)
     {
       $title="Show project";
       $active = 'Project';
-      $dataProject= Project::all();
-      //where('id', $cle )->firstOrFail();
+      
+      session()->put('id', $key->id);
+
       return view('project.voir', 
         [
           'title' =>$title,
           'active' => $active,
-          'dataProject' => $dataProject,
+          'dataProject' => $key,
           
         ]);
     }

@@ -1,19 +1,19 @@
 @extends('layout/app')
 @section('page-content')
-@foreach($dataProject as $dataProjects)
+
 <div class="content px-0 pt-9">
         <div class="row g-0">
           <div class="col-12 col-xxl-8 px-0 bg-soft">
             <div class="px-4 px-lg-6 pt-6 pb-9">
               <div class="mb-5">
                 <div class="d-flex justify-content-between">
-                  <h2 class="text-black fw-bolder mb-2">{{ $dataProjects->title }}</h2>
+                  <h2 class="text-black fw-bolder mb-2">{{ $dataProject->title }} {{ Session::get('id') }} </h2>
                   <div class="font-sans-serif btn-reveal-trigger"><button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
                     <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!">Edit</a><a class="dropdown-item text-danger" href="#!">Delete</a><a class="dropdown-item" href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
                   </div>
                 </div><span class="badge badge-phoenix badge-phoenix-primary">
 
-                @if ($dataProjects->statut==0)
+                @if ($dataProject->statut==0)
                    Nouveau projet encours en verification
                 @else
                     Encours de traitement
@@ -42,7 +42,7 @@
                                   <h5 class="text-900 mb-0 text-nowrap">Budget : </h5>
                                 </div>
                               </td>
-                              <td class="fw-bold ps-1 py-1 text-1000">{{ $dataProjects->budget }} {{ $dataProjects->devise }}</td>
+                              <td class="fw-bold ps-1 py-1 text-1000">{{ $dataProject->budget }} {{ $dataProject->devise }}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -52,18 +52,18 @@
                           <tbody>
                             <tr>
                               <td class="align-top py-1 text-900 text-nowrap fw-bold">Num Projet: </td>
-                              <td class="text-600 fw-semi-bold ps-3">#{{ $dataProjects->numeroprojet }}</td>
+                              <td class="text-600 fw-semi-bold ps-3">#{{ $dataProject->numeroprojet }}</td>
                             </tr>
 
                             <tr>
                               <td class="align-top py-1 text-900 text-nowrap fw-bold">Started : </td>
-                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProjects->start_date }}</td>
+                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->start_date }}</td>
                             </tr>
 
 
                             <tr>
                               <td class="align-top py-1 text-900 text-nowrap fw-bold">Deadline :</td>
-                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProjects->deadline }}</td>
+                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->deadline }}</td>
                             </tr>
                             <tr>
                               <td class="align-top py-1 text-900 text-nowrap fw-bold">Progress :</td>
@@ -76,11 +76,11 @@
                           <tbody>
                             <tr>
                               <td class="align-top py-1 text-900 text-nowrap fw-bold">Region  : </td>
-                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProjects->region }}</td>
+                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->region }}</td>
                             </tr>
                             <tr>
                               <td class="align-top py-1 text-900 text-nowrap fw-bold">Lieu:</td>
-                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProjects->lieuprojet }}</td>
+                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->lieuprojet }}</td>
                             </tr>
                             <tr>
                               <td class="align-top py-1 text-900 text-nowrap fw-bold">Progress :</td>
@@ -349,7 +349,7 @@
 -->
               </div>
               <h3 class="text-1100 mb-4">Project overview</h3>
-              <p class="text-800 mb-4">{{ $dataProjects->description }}  </p>
+              <p class="text-800 mb-4">{{ $dataProject->description }}  </p>
              
             </div>
           </div>
@@ -472,6 +472,6 @@
           </div> -->
         </div>
         
-@endforeach
+
 
 @endsection

@@ -25,7 +25,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\VehiculeController;
 
 Route::get('/', function () { return view('go'); });
-Route::get('/logout', [AppCOntroller::class, 'logout'] )->name('logout');
+Route::get('/logout', [AuthController::class, 'logout'] )->name('logout');
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'handlelogin'])->name('handlelogin');
 
@@ -139,6 +139,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/new', [ProjectController::class, 'new'])->name('new_project');
         Route::get('/', [ProjectController::class, 'list'])->name('list_project');
         Route::post('/storeProject', [ProjectController::class, 'store'])->name('storeProject');
+        Route::get('/closeproject', [ProjectController::class, 'closeproject'])->name('closeproject');
         Route::get('/newAffectation', [ProjectController::class, 'affectation'])->name('newAffectation');
         Route::post('/storeAffectation', [ProjectController::class, 'storeAffectation'])->name('storeAffectation');
         Route::get('/{key}/view/', [ProjectController::class, 'show'])->name('key.viewProject');
@@ -214,7 +215,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/storeact', [ActivityController::class, 'store'])->name('storeact');
         Route::get('/newAffectation', [ActivityController::class, 'affectation'])->name('newAffectation');
         Route::post('/storeAffectation', [ActivityController::class, 'storeAffectation'])->name('storeAffectation');
-        Route::get('/{key}/view/', [ActivityController::class, 'show'])->name('key.viewProject');
+        Route::get('/{key}/view/', [ActivityController::class, 'show'])->name('key.viewActivity');
     
     });
 

@@ -133,11 +133,19 @@
           success: function(response) {
           
 
-            if (response.status == 200) {
+            if (response.status == 200) 
+              {
               $.notify("Creation projet avec succès !", "success");
              
               $("#addProjectForm")[0].reset();
               $("#addProjectbtn").text('Enregistrer');
+
+              var key = response.lastid;
+
+              var url = key+'/view';
+             
+
+              window.location.href =  url;
            
             }
             if (response.status == 201) {
