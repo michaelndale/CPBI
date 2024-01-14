@@ -5,7 +5,7 @@
         <div class="row gy-3 mb-6 justify-content-between">
           <div class="col-md-8 col-auto">
             <h2 class="mb-2 text-1100">Tableau de bord des projets    </h2>
-            <h5 class="text-70 fw-semi-bold">COMMUNAUTÉ DES EGLISES DE PENTECÔTE AU BURUNDI “CEPBU” </h5>
+            <h5 class="text-70 fw-semi-bold"><a href="javascript::;" > COMMUNAUTÉ DES EGLISES DE PENTECÔTE AU BURUNDI “CEPBU” </a> </h5>
           </div>
           <div class="col-md-4 col-auto">
           
@@ -126,7 +126,7 @@
                   </thead>
                   <tbody class="list tableviewsclass" id="table-deal-forecast-body " >
                         <td colspan="5">
-                            <h4 style="margin-top:5% ;color:#c0c0c0"> <center><font size="100px"><i class="fa fa-search"  ></i> </font><br><br>
+                            <h4 style="margin-top:2% ;color:#c0c0c0"> <center><font size="100px"><i class="fa fa-search"  ></i> </font><br><br>
                             Sélectionner le classeur et l'année</center> </h4>
                           </td>
                   </tbody>

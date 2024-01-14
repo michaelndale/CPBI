@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AffectationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppCOntroller;
 use App\Http\Controllers\ArchivageController;
@@ -140,21 +141,22 @@ Route::middleware('auth')->group(function (){
         Route::get('/', [ProjectController::class, 'list'])->name('list_project');
         Route::post('/storeProject', [ProjectController::class, 'store'])->name('storeProject');
         Route::get('/closeproject', [ProjectController::class, 'closeproject'])->name('closeproject');
-        Route::get('/newAffectation', [ProjectController::class, 'affectation'])->name('newAffectation');
-        Route::post('/storeAffectation', [ProjectController::class, 'storeAffectation'])->name('storeAffectation');
         Route::get('/{key}/view/', [ProjectController::class, 'show'])->name('key.viewProject');
-    
+    });
+
+    Route::prefix('affectation')->group(function () {
+        Route::get('/', [AffectationController::class, 'index'])->name('affectation');
+        Route::post('/storeAffectation', [AffectationController::class, 'storeAffectation'])->name('storeAffectation');
     });
 
     Route::prefix('feb')->group(function () {
-        Route::get('/new', [FebController::class, 'new'])->name('newfeb');
         Route::get('/', [FebController::class, 'list'])->name('listfeb');
         Route::post('/storefeb', [FebController::class, 'store'])->name('storefeb');
       
     });
 
     Route::prefix('bpc')->group(function () {
-        Route::get('/new', [BpcController::class, 'new'])->name('newbpc');
+     
         Route::get('/', [BpcController::class, 'list'])->name('listbpc');
         Route::post('/storebpc', [BpcController::class, 'store'])->name('storebpc');
       
@@ -213,8 +215,6 @@ Route::middleware('auth')->group(function (){
         Route::get('/new', [ActivityController::class, 'new'])->name('newactivity');
         Route::get('/', [ActivityController::class, 'index'])->name('activity');
         Route::post('/storeact', [ActivityController::class, 'store'])->name('storeact');
-        Route::get('/newAffectation', [ActivityController::class, 'affectation'])->name('newAffectation');
-        Route::post('/storeAffectation', [ActivityController::class, 'storeAffectation'])->name('storeAffectation');
         Route::get('/{key}/view/', [ActivityController::class, 'show'])->name('key.viewActivity');
     
     });
@@ -224,9 +224,6 @@ Route::middleware('auth')->group(function (){
         Route::get('/fetchAllAc', [CatactivityController::class, 'fetchAll'])->name('fetchAllAc');
         Route::post('/storeACt', [CatactivityController::class, 'store'])->name('storeACt');
         Route::delete('/deleteCa', [CatactivityController::class, 'deleteall'])->name('deleteCa');
-        
-        //Route::get('/editSer', [CatactivityController::class, 'edit'])->name('editSer');
-        //Route::post('/updateSer', [CatactivityController::class, 'update'])->name('updateSer'); 
     });
 
     Route::prefix('history')->group(function () {

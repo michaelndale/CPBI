@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Affectation;
 use App\Models\Compte;
 use App\Models\Devise;
 use App\Models\Folder;
@@ -42,44 +41,10 @@ class ProjectController extends Controller
       return redirect()->route('dashboard');
     }
 
-
-
-   
-
-    public function affectation ()
-    {
-      $title='Affectation project';
-      $project = Project::all();
-      $member = User::all();
-      $active = 'Project';
-      return view('project.affectation', 
-        [
-          'title' =>$title,
-          'project' => $project,
-          'active' => $active,
-          'member' => $member
-      ]);
-    }
-
-     // Affectation store
-    public function storeAffectation(Request $request)
-    {
-      $affectation = new Affectation();
-      
-      $affectation->project_id= $request->project_id;
-      $affectation->member_id= $request->member;
-
-      $affectation->save();
-
-      return redirect()->route('list_project');
-    }
-
-    
-
       // insert a new employee ajax request
-      public function store(Request $request )
-      {
-        try {
+    public function store(Request $request)
+    {
+      try {
           // verification de l'existence du project
           $numero = $request->numeroProjet;
           $check = Project::where('numeroprojet',$numero)->first();
@@ -147,22 +112,14 @@ class ProjectController extends Controller
         ]);
       }
        
-        //$lastinsertedId = session($project->id);
-
-       //return redirect()->route('newAffectation',$lastinsertedId);
-        //redirect()->route('newAffectation');
-       //  return 
         
-       // $lastinsertedId = session($project->id);
-
-       // return redirect()->route('newAffectation',$lastinsertedId);
         
       }
 
     public function list()
     {
         $title="List project";
-        $data= Project::all();
+        $data= Project::orderBy('id', 'DESC')->get();
         $active = 'Project';
         return view('project.list', 
         [
@@ -178,6 +135,10 @@ class ProjectController extends Controller
       $active = 'Project';
       
       session()->put('id', $key->id);
+      session()->put('title', $key->title);
+      session()->put('numeroprojet', $key->numeroprojet);
+      session()->put('ligneid', $key->ligneid);
+      
 
       return view('project.voir', 
         [

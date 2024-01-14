@@ -3,9 +3,19 @@
 <div class="content">
   <div class="row">
     <div class="col-xl-12" >
-      <h4 class="mb-4"><i class="fa fa-folder-open "></i> BON DE PETITE CAISSE
-        <a class="btn btn-sm btn-phoenix-secondary bg-white hover-bg-100 me-2" href="{{ route('newbpc')}}"> <i class="fa fa-plus-circle"></i> Nouvelle Fiche</a>
-      </h4>
+
+    <div class="row g-3 justify-content-between align-items-center">
+      <div class="col-12 col-md">
+        <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-folder-open "></i>BON DE PETITE CAISSE </h4>
+      </div>
+      <div class="col col-md-auto">
+      <nav class="nav nav-underline justify-content-end doc-tab-nav align-items-center" role="tablist">
+      
+      @include('document.bpc.modale')
+      
+      </nav>
+    </div>
+
   
     <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
       <div class="table-responsive">

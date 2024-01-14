@@ -44,7 +44,7 @@ class DjaController extends Controller
         $title="DJA";
         $data= Dja::all();
         $total = Dja::all()->count();
-        $active = 'Document';
+        $active = 'Project';
         return view('document.dja.list', 
         [
           'title' =>$title,

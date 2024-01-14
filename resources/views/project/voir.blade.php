@@ -9,7 +9,18 @@
                 <div class="d-flex justify-content-between">
                   <h2 class="text-black fw-bolder mb-2">{{ $dataProject->title }} {{ Session::get('id') }} </h2>
                   <div class="font-sans-serif btn-reveal-trigger"><button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
-                    <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!">Edit</a><a class="dropdown-item text-danger" href="#!">Delete</a><a class="dropdown-item" href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
+                    <div class="dropdown-menu dropdown-menu-end py-2">
+                      <a class="dropdown-item" href="#!"><i class="fas fa-random"></i> Affectation</a>
+                      <a class="dropdown-item" href="#!"><i class="fas fa-edit"></i>  Detail du projet</a>
+                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> FEB</a>
+                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> BPC</a>
+                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> DAP</a>
+                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> DJA</a>
+                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> SQR</a>
+                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> FDT</a>
+                      <a class="dropdown-item text-danger" href="#!">Supprimer</a>
+                      <a class="dropdown-item" href="#!">Telecharger</a>
+                    </div>
                   </div>
                 </div><span class="badge badge-phoenix badge-phoenix-primary">
 

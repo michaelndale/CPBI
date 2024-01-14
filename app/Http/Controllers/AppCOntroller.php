@@ -67,6 +67,7 @@ class AppCOntroller extends Controller
 		    $p=DB::table('projects')
           ->select('numeroprojet','title','start_date','deadline','annee','id')
           ->where('annee',$request->id)
+          ->orderBy('id', 'DESC')
           ->get();
           return response()->json($p);
 

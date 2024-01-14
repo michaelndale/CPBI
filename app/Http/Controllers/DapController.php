@@ -14,7 +14,7 @@ class DapController extends Controller
     public function new ()
     {
       $title='DAP';
-      $active = 'Document';
+      $active = 'Project';
       $members=User::all();
       $Folder= Folder::all();
       return view('document.feb.new', 
@@ -58,7 +58,7 @@ class DapController extends Controller
         $title="DAP";
         $data= dap::all();
         $total = dap::all()->count();
-        $active = 'Document';
+        $active = 'Project';
         return view('document.dap.list', 
         [
           'title' =>$title,

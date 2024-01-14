@@ -14,7 +14,7 @@ class FebController extends Controller
     public function new ()
     {
       $title='FEB';
-      $active = 'Document';
+      $active = 'Project';
       $members=User::all();
       $Folder= Folder::all();
       return view('document.feb.new', 
@@ -60,7 +60,7 @@ class FebController extends Controller
         $title="FEB";
         $data= Feb::all();
         $total = Feb::all()->count();
-        $active = 'Document';
+        $active = 'Project';
         return view('document.feb.list', 
         [
           'title' =>$title,

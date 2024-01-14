@@ -14,7 +14,7 @@ class BpcController extends Controller
     public function new ()
     {
       $title='BPC';
-      $active = 'Document';
+      $active = 'Project';
       $members=User::all();
       $Folder= Folder::all();
       return view('document.bpc.new', 
@@ -60,7 +60,7 @@ class BpcController extends Controller
         $title="BPC";
         $data= bpc::all();
         $total = bpc::all()->count();
-        $active = 'Document';
+        $active = 'Project';
         return view('document.bpc.list', 
         [
           'title' =>$title,

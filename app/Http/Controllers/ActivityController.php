@@ -29,7 +29,7 @@ class ActivityController extends Controller
 
 
   
-      // insert a new employee ajax request
+      // insert a new ajax request
       public function store(Request $request , Notification $notis, Historique $his)
       {
         
@@ -53,15 +53,7 @@ class ActivityController extends Controller
          'status' => 200,
          
         ]);
-        //$lastinsertedId = session($project->id);
-
-       //return redirect()->route('newAffectation',$lastinsertedId);
-        //redirect()->route('newAffectation');
-       //  return 
         
-       // $lastinsertedId = session($project->id);
-
-       // return redirect()->route('newAffectation',$lastinsertedId);
         
       }
 
