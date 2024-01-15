@@ -30,7 +30,7 @@
     <tr>
 
    
-    <td align="right">Numéro fiche : <input type="text" style="width:20%;" class="form-control"></td>
+    <td align="right">Numérox fiche : <input type="text" style="width:20%;" class="form-control"></td>
     </tr>
 </table>
            

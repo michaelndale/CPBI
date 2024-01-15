@@ -340,7 +340,7 @@
             @if (session()->has('id'))   
                 <div class="callout callout-info">
                   <br>
-                  <h5>Projet :</h5>
+                  <h5>Projet encours de traitement :</h5>
                   <p>{{ Session::get('title') }} </p>
                 </div>
             @else  
