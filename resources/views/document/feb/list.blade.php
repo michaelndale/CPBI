@@ -75,12 +75,12 @@
     <script>
         $(function() {
             // Add PROJECT ajax 
-            $("#addProjectForm").submit(function(e) {
+            $("#addForm").submit(function(e) {
                 e.preventDefault();
                 const fd = new FormData(this);
-                $("#addProjectbtn").text('Adding...');
+                $("#addbtn").text('Ajouter...');
                 $.ajax({
-                    url: "{{ route('storeProject') }}",
+                    url: "{{ route('storefeb') }}",
                     method: 'post',
                     data: fd,
                     cache: false,
@@ -88,11 +88,23 @@
                     processData: false,
                     dataType: 'json',
                     success: function(response) {
-                        if (response.status == 200) {
-                            $.notify("You have Successfully add a project !", "success");
-                        }
-                        $("#addProjectbtn").text('Add Project');
-                        $("#addProjectForm")[0].reset();
+                      if (response.status == 200) {
+                        $.notify("Fonction ajouté avec succès !", "success");
+                        fetchAllfunction();
+                        $("#addform")[0].reset();
+                        $("#addModal").modal('hide');
+                      }
+                      if (response.status == 201) {
+                        $.notify("Attention: Libellé fonction existe déjà !", "info");
+                        $("#addModal").modal('show');
+                      }
+
+                      if (response.status == 202) {
+                        $.notify("Erreur d'execution, verifier votre internet", "error");
+                        $("#addModal").modal('show');
+                      }
+
+                      $("#addbtn").text('Enregitrer');
                     }
                 });
             });

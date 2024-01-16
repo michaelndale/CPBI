@@ -37,6 +37,11 @@ class ProjectController extends Controller
     public function  closeproject ()
     {
       session()->forget('id');
+      session()->forget('title');
+      session()->forget('numeroprojet');
+      session()->forget('ligneid');
+      session()->forget('devise');
+      
 
       return redirect()->route('dashboard');
     }
@@ -138,6 +143,7 @@ class ProjectController extends Controller
       session()->put('title', $key->title);
       session()->put('numeroprojet', $key->numeroprojet);
       session()->put('ligneid', $key->ligneid);
+      session()->put('devise', $key->devise);
       
 
       return view('project.voir', 

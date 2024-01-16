@@ -8,6 +8,7 @@ use App\Models\Historique;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FebController extends Controller
 {
@@ -15,14 +16,21 @@ class FebController extends Controller
     {
       $title='FEB';
       $active = 'Project';
-      $members=User::all();
-      $Folder= Folder::all();
+      $ID = session()->get('id');
+
+      $personnel = DB::table('users')->Where('fonction', '!=','Chauffeur')->get();
+
+      $activite = DB::table('activities')
+            ->orderby('id','DESC')
+            ->Where('projectid', $ID)
+            ->get();
+      
       return view('document.feb.new', 
         [
           'title' =>$title,
-          'dataMember' => $members,
-          'dataFolder' => $Folder,
-          'active' => $active
+          'activite' => $activite,
+          'active' => $active,
+          'personnel' => $personnel
       ]);
     }
 
@@ -60,13 +68,21 @@ class FebController extends Controller
         $title="FEB";
         $data= Feb::all();
         $total = Feb::all()->count();
+        $personnel = DB::table('users')->Where('fonction', '!=','Chauffeur')->get();
         $active = 'Project';
+        $ID = session()->get('id');
+        $activite = DB::table('activities')
+              ->orderby('id','DESC')
+              ->Where('projectid', $ID)
+              ->get();
         return view('document.feb.list', 
         [
           'title' =>$title,
           'data' => $data,
           'total' => $total,
-          'active' => $active
+          'active' => $active,
+          'activite' => $activite,
+          'personnel' => $personnel
         ]);
     }
 }

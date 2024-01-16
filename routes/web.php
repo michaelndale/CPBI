@@ -216,7 +216,9 @@ Route::middleware('auth')->group(function (){
         Route::get('/', [ActivityController::class, 'index'])->name('activity');
         Route::post('/storeact', [ActivityController::class, 'store'])->name('storeact');
         Route::get('/{key}/view/', [ActivityController::class, 'show'])->name('key.viewActivity');
-    
+        Route::delete('/deleteact', [ActivityController::class, 'deleteall'])->name('deleteact');
+        Route::get('/fetchActivite', [ActivityController::class, 'fetchAll'])->name('fetchActivite');
+        
     });
 
     Route::prefix('catactivity')->group(function () {

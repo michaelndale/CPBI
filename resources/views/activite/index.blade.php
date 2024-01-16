@@ -1,22 +1,20 @@
 @extends('layout/app')
 @section('page-content')
 
-
 <div class="content">
   <div class="row">
     <div class="col-xl-12" >
         <div class="row g-3 justify-content-between align-items-center">
           <div class="col-12 col-md">
-           <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-truck"></i> Actvites </h4>
+           <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-list"></i> Activités</h4>
           </div>
           <div class="col col-md-auto">
             <nav class="nav nav-underline justify-content-end doc-tab-nav align-items-center" role="tablist">
-              
                 @include('activite.modale')
             </nav>
           </div>
           <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
-            <div class="table-responsive" id="show_all">
+            <div class="table-responsive" id="show_all_activite">
                 <h4 class="text-center text-secondery my-5"> Chargement des données ...</h4>
             </div>
             <div class="d-flex justify-content-center mt-3">
@@ -35,20 +33,20 @@
 <script>
     $(function() {
 
-      $('#addVehiculeModal').modal({
+      $('#addModale').modal({
         backdrop: 'static',
         keyboard: false
       });
 
 
       // Add user ajax 
-      $("#addform").submit(function(e) 
+      $("#addForm").submit(function(e) 
       {
         e.preventDefault();
         const fd = new FormData(this);
         $("#addbtn").text('Ajouter...');
         $.ajax({
-          url: "{{ route('storevl') }}",
+          url: "{{ route('storeact') }}",
           method: 'post',
           data: fd,
           cache: false,
@@ -58,13 +56,11 @@
           success: function(response) {
             if (response.status == 200) 
             {
-              fetchAllvehicule();
-              $.notify("Véhicule ajouté avec succès !", "success");
+              fetchActivite();
+              $.notify("Activité ajouté avec succès !", "success");
               $("#addbtn").text('Enregistrement');
-              $("#matricule_error").text("");
-              $('#matricule').addClass('');
-              $("#addVehiculeModal").modal('hide');
-              $("#addform")[0].reset();
+              $("#addModale").modal('hide');
+              $("#addForm")[0].reset();
               
             }
 
@@ -72,14 +68,12 @@
             {
               $.notify("Le véhicule avec cette matricule existe déjà !", "error");
               $("#addbtn").text('Enregistrement');
-              $("#addVehiculeModal").modal('show');
-              $("#matricule_error").text("Matricule existe déjà !");
-              $('#matricule').addClass('has-error');
+              $("#addModale").modal('show');
             }
 
             if (response.status == 202) {
               $.notify("Erreur d'execution, verifier votre internet", "error");
-              $("#addVehiculeModal").modal('show');
+              $("#addModale").modal('show');
               $("#addbtn").text('Enregitrer');
             }
            
@@ -121,7 +115,7 @@
           success: function(response) {
             if (response.status == 200) {
               $.notify("Function update Successfully !", "success");
-              fetchAllvehicule();
+              fetchActivite();
               
             }
             $("#edit_function_btn").text('Update function');
@@ -147,7 +141,7 @@
         }).then((result) => {
           if (result.isConfirmed) {
             $.ajax({
-              url: "{{ route('deletevl') }}",
+              url: "{{ route('deleteact') }}",
               method: 'delete',
               data: {
                 id: id,
@@ -155,21 +149,21 @@
               },
               success: function(response) {
                 console.log(response);
-                $.notify("Vehicuke supprimer avec succès !", "success");
-                fetchAllvehicule();
+                $.notify("Activite supprimer avec succès !", "success");
+                fetchActivite();
               }
             });
           }
         })
       });
 
-      fetchAllvehicule();
-      function fetchAllvehicule() {
+      fetchActivite();
+      function fetchActivite() {
         $.ajax({
-          url: "{{ route('fetchAllvl') }}",
+          url: "{{ route('fetchActivite') }}",
           method: 'get',
           success: function(reponse) {
-            $("#show_all_vehicule").html(reponse);
+            $("#show_all_activite").html(reponse);
           }
         });
       }

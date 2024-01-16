@@ -67,21 +67,24 @@
                         </a>
                       </li>
 
+                      <li class="nav-item"><a class="nav-link @if ($title=='DAP') active @endif" href="{{ route('listdap') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> DAP</span></div>
+                        </a>
+                      </li>
+                      <li class="nav-item"><a class="nav-link @if ($title=='DJA') active @endif" href="{{ route('listdja') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> DJA</span></div>
+                        </a>
+                      </li>
+
                          
                     <li class="nav-item"><a class="nav-link @if ($title=='BPC') active @endif" href="{{ route('listbpc') }}" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> BPC</span></div>
                         </a>
                       </li>
 
-                      <li class="nav-item"><a class="nav-link @if ($title=='DAP') active @endif" href="{{ route('listdap') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> DAP</span></div>
-                        </a>
-                      </li>
+                     
 
-                      <li class="nav-item"><a class="nav-link @if ($title=='DJA') active @endif" href="{{ route('listdja') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> DJA</span></div>
-                        </a>
-                      </li>
+                    
                     
 
                       <li class="nav-item"><a class="nav-link @if ($title=='List project') active @endif" href="{{ route('list_project') }}" data-bs-toggle="" aria-expanded="false">
