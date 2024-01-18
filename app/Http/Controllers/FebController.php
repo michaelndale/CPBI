@@ -4,22 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Elementfeb;
 use App\Models\Feb;
-use App\Models\Folder;
 use App\Models\Historique;
-use App\Models\Notification;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use PHPUnit\Event\Test\AfterLastTestMethodFinished;
+
 
 class FebController extends Controller
 {
   public function fetchAll()
   {
-    $data= Feb::orderBy('id', 'DESC')->get();
-    $total = Feb::all()->count();
+    $ID = session()->get('id');
+    $data = DB::table('febs')
+          ->orderby('id','DESC')
+          ->Where('projetid', $ID)
+          ->get();
+
     $output = '';
     if ($data->count() > 0) {
       $nombre = 1;
@@ -38,8 +39,6 @@ class FebController extends Controller
             <a href="#" id="' . $datas->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
             <a href="#" id="' . $datas->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
           </td>
-          
-        
         </tr>
       '
           ;

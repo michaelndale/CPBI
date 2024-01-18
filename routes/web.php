@@ -165,6 +165,7 @@ Route::middleware('auth')->group(function (){
 
     Route::prefix('dap')->group(function () {
         Route::get('/', [DapController::class, 'list'])->name('listdap');
+        Route::get('/fetchdap', [DapController::class, 'fetchAll'])->name('fetchdap');
         Route::post('/storedap', [DapController::class, 'store'])->name('storedap');
     });
 

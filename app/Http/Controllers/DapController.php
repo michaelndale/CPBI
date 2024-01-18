@@ -3,68 +3,145 @@
 namespace App\Http\Controllers;
 
 use App\Models\dap;
+use App\Models\Elementdap;
 use App\Models\Folder;
 use App\Models\Historique;
 use App\Models\Notification;
+use App\Models\Service;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DapController extends Controller
 {
-    public function new ()
-    {
-      $title='DAP';
-      $active = 'Project';
-      $members=User::all();
-      $Folder= Folder::all();
-      return view('document.feb.new', 
-        [
-          'title' =>$title,
-          'dataMember' => $members,
-          'dataFolder' => $Folder,
-          'active' => $active
-      ]);
+   
+  public function fetchAll()
+  {
+    $ID = session()->get('id');
+
+    $data = DB::table('daps')
+          ->orderby('id','DESC')
+          ->Where('projetiddap', $ID)
+          ->get();
+
+    $output = '';
+    if ($data->count() > 0) {
+      $nombre = 1;
+      foreach ($data as $datas) {
+        $output .= '
+        <tr>
+          <td class="align-middle">  '.$nombre.' </td>
+          <td class="align-middle"> #  '.$datas->numerodap.'  </td>
+          <td class="align-middle"> '.$datas->referencefeb.'  </td>
+          <td class="align-middle"> '.$datas->created_at.' </td>
+          <td class="align-middle"> '.$datas->ov.' </td>
+          <td class="align-middle"> '.$datas->cho.' </td>
+          <td class="align-middle">
+          <a href="#" id="' . $datas->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="fas fa-window-restore"></i>  </a>
+            <a href="#" id="' . $datas->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
+            <a href="#" id="' . $datas->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
+          </td>
+        </tr>
+      '
+          ;
+        $nombre++;
+      }
+      echo $output;
+    } else {
+      echo '
+      <tr>
+        <td colspan="8">
+         <h5 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h5>
+        </td>
+      </tr>';
     }
+  }
 
       // insert a new employee ajax request
       public function store(Request $request , Notification $notis, Historique $his)
       {
         
-        $operation ="New activite: ".$request->title;
-        $link ='listactivity';
-        $notis->operation = $operation;
-        $his->userid  = Auth()->user()->id;
-        $notis->link = $link;
-        $notis->save();
+        $numerodap = $request->numerodap;
+        $check = dap::where('numerodap',$numerodap)->first();
+        if($check){
+          return response()->json([
+            'status' => 201,
+          ]);
+        }else{
 
+      $activity = new dap;
+      $activity->numerodap = $request->numerodap;
+      $activity->projetiddap = $request->projetid;
+      $activity->activiteiddap = $request->activityid;
+      $activity->serviceid= $request->serviceid;
+      $activity->lieu = $request->lieu;
+      $activity->referencefeb = $request->febid;
+      $activity->etabliepar= $request->etabliepar;
+      $activity->lignebud= $request->ligneid;
+      $activity->comptebancaire= $request->comptebanque;
+      $activity->ov= $request->ov;
+      $activity->cho= $request->ch;
+      $activity->etablie_nom= $request->etablie_nom;
+      $activity->userid = Auth::id();
+      $activity->save();
 
-        $activity = new Dap();
-        $activity->title = $request->title;
-        $activity->numeroprojet = $request->numeroProjet;
-        $activity->region = $request->region;
-        $activity->budget= $request->budget;
-        $activity->description= $request->description;
-        $activity->save();
+      $dap=DB::table('daps')->select('id')->first();
+      $IDf= $dap->id;
+          // insersion module elments de details
+          foreach ($request->numerodetail as $key => $items)
+          {
 
-        return response()->json([
-         'status' => 200,
-         
-        ]);
+            $elementdap = new Elementdap();
+            $elementdap->dapid  =  $IDf;
+            $elementdap->libelle= $request->description[$key];
+            $elementdap->montant=  $request->montant[$key];
+            $elementdap->save();
+          }
+      return response()->json([
+       'status' => 200,
        
-      }
+      ]);
+    }   
+  }
 
     public function list()
     {
         $title="DAP";
-        $data= dap::all();
-        $total = dap::all()->count();
         $active = 'Project';
+        // service
+        $service = Service::all();
+
+        // utilisateur
+        $personnel = DB::table('users')
+                    ->Where('fonction', '!=','Chauffeur')
+                    ->get();
+
+        // projet encours
+        $ID = session()->get('id');
+
+        // Activite
+        $activite = DB::table('activities')
+                    ->orderby('id','DESC')
+                    ->Where('projectid', $ID)
+                    ->get();
+
+        // feb
+        $feb = DB::table('febs')
+              ->orderby('id','DESC')
+              ->Where('projetid', $ID)
+              ->get();
+
+
+
         return view('document.dap.list', 
         [
-          'title' =>$title,
-          'data' => $data,
-          'total' => $total,
-          'active' => $active
+          'title'     => $title,
+          'active'    => $active,
+          'activite'  => $activite,
+          'personnel' => $personnel,
+          'service'   => $service,
+          'feb'       => $feb
         ]);
     }
 }

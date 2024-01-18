@@ -37,6 +37,7 @@
 
                             </tbody>
         </table>
+        <BR>
     </div>
         <div class="d-flex justify-content-center mt-3">
           <button class="page-link disabled" data-list-pagination="prev" disabled="">
@@ -47,9 +48,11 @@
         </div>
     </div>
   </div>
-</div>
+
 
 @include('document.feb.modale')
+
+<BR><BR>
 
 <script>
 $(function(){
@@ -104,7 +107,7 @@ $(function(){
         let csrf = '{{ csrf_token() }}';
         Swal.fire({
           title: 'Êtes-vous sûr ?',
-          text: "FEB est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ?  !",
+          text: "FEB est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ?  ",
         
           showCancelButton: true,
           confirmButtonColor: 'green',
@@ -171,7 +174,7 @@ function add_input_field(count)
 
 $('#item_table').append(add_input_field(0));
 
-$('.selectpicker').selectpicker('refresh');
+///$('.selectpicker').selectpicker('refresh');
 
 $(document).on('click', '.add', function(){
 
@@ -190,8 +193,6 @@ $(document).on('click', '.remove', function(){
 
 });
 
-
- 
 });
 </script>
 

@@ -16,9 +16,9 @@
     <script src="{{ asset('elements/notify.js') }}"></script>
     <script src="{{ asset('elements/sweetalert2@11.js') }}" type="text/javascript"></script>
    
-    <link href="{{ asset('elements/vendors/simplebar/simplebar.min.css') }}" rel="stylesheet">
+    <!--<link href="{{ asset('elements/vendors/simplebar/simplebar.min.css') }}" rel="stylesheet"> -->
     <link rel="stylesheet" href="{{ asset('elements/unicons.iconscout.com/release/v4.0.8/css/line.css') }}">
-    <link href="{{ asset('elements/assets/css/theme-rtl.min.css') }}" type="text/css" rel="stylesheet" id="style-rtl">
+   <!-- <link href="{{ asset('elements/assets/css/theme-rtl.min.css') }}" type="text/css" rel="stylesheet" id="style-rtl"> -->
 <style>
   input , select{ height: 32px; }
   tr:nth-child(even) {background: rgba(76, 175, 80, 0.3);}
@@ -40,7 +40,7 @@
     </script>
     <link href="{{ asset('elements/vendors/leaflet/leaflet.css') }}" rel="stylesheet">
     <link href="{{ asset('elements/vendors/leaflet.markercluster/MarkerCluster.css') }}" rel="stylesheet">
-    <link href="{{ asset('elements/vendors/leaflet.markercluster/MarkerCluster.Default.css') }}" rel="stylesheet">
+    <link href="{{ asset('elements/vendors/leaflet.markercluster/MarkerCluster.Default.css') }}" rel="stylesheet"> 
   </head>
   <body>
   <main class="main" id="top">

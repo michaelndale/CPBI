@@ -396,7 +396,7 @@
                         <div class="px-2 px-sm-3 py-3 border-300 notification-card position-relative read border-bottom">
                           <div class="d-flex align-items-center justify-content-between position-relative">
                             <div class="d-flex">
-                              <div class="avatar avatar-m status-online me-3"><img class="rounded-circle" src="elements/assets/img/team/40x40/30.webp" alt="" /></div>
+                              <div class="avatar avatar-m status-online me-3"></div>
                               <div class="flex-1 me-sm-3">
                                 <h4 class="fs--1 text-black">Jessie Samson</h4>
                                 <p class="fs--1 text-1000 mb-2 mb-sm-3 fw-normal"><span class='me-1 fs--2'>💬</span>Mentioned you in a comment.<span class="ms-2 text-400 fw-bold fs--2">10m</span></p>
@@ -548,7 +548,7 @@
                   <div class="card-body p-0">
                     <div class="text-center pt-4 pb-3">
                       <div class="avatar avatar-xl ">
-                        <img class="rounded-circle " src="elements/assets/img/team/72x72/57.webp" alt="" />
+                        <img class="rounded-circle " src="elements/assets/img/avatar.webp" alt="" />
                       </div>
                       <h6 class="mt-2 text-black">{{ ucfirst(Auth::user()->lastname) }}  {{ ucfirst(Auth::user()->name) }}  </h6>
                     </div>
@@ -633,7 +633,7 @@
          
           <li class="nav-item dropdown"><a class="nav-link lh-1 pe-0" id="navbarDropdownUser" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
               <div class="avatar avatar-l ">
-                <img class="rounded-circle " src="elements/assets/img/team/40x40/57.webp" alt="" />
+                <img class="rounded-circle " src="elements/assets/img/avatar.webp" alt="" />
               </div>
             </a>
             <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border border-300" aria-labelledby="navbarDropdownUser">
@@ -641,7 +641,7 @@
                 <div class="card-body p-0">
                   <div class="text-center pt-4 pb-3">
                     <div class="avatar avatar-xl ">
-                      <img class="rounded-circle " src="elements/assets/img/team/72x72/57.webp" alt="" />
+                      <img class="rounded-circle " src="elements/assets/img/avatar.webp" alt="" />
                     </div>
                     <h6 class="mt-2 text-black">{{ ucfirst(Auth::user()->lastname) }}  {{ ucfirst(Auth::user()->name) }}  </h6>
                   </div>
