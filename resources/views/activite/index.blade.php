@@ -132,7 +132,7 @@
         let csrf = '{{ csrf_token() }}';
         Swal.fire({
           title: 'Êtes-vous sûr ?',
-          text: "Vous ne pourrez pas revenir en arrière !",
+          text: "Une activité est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ? !",
      
           showCancelButton: true,
           confirmButtonColor: 'green',

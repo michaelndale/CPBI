@@ -68,7 +68,7 @@
             
               <div class="mb-3 text-start"><label class="form-label" for="admin" class="text-info" >Identifiant</label>
               <div class="form-icon-container">
-                <input class="form-control form-icon-input" id="email" name="email" type="text" placeholder="Identifiant"  />
+                <input class="form-control form-icon-input" id="email" name="email" type="text" placeholder="Identifiant" autocomplete="off"  />
                 <span class="fas fa-user text-900 fs--1 form-icon"></span></div>
             </div>
 

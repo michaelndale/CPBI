@@ -152,7 +152,8 @@ Route::middleware('auth')->group(function (){
     Route::prefix('feb')->group(function () {
         Route::get('/', [FebController::class, 'list'])->name('listfeb');
         Route::post('/storefeb', [FebController::class, 'store'])->name('storefeb');
-      
+        Route::get('/fetchAllfeb', [FebController::class, 'fetchAll'])->name('fetchAllfeb');
+        Route::delete('/deletefeb', [FebController::class, 'delete'])->name('deletefeb');
     });
 
     Route::prefix('bpc')->group(function () {

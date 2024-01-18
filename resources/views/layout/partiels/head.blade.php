@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title> {{ @$title }} | GoProjects</title>
+    <title> {{ @$title }} |  {{ config('app.name') }} </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('elements/assets/img/favicons/logo.png') }}">
     <script src="{{ asset('elements/assets/js/config.js') }}"></script>
@@ -19,7 +19,10 @@
     <link href="{{ asset('elements/vendors/simplebar/simplebar.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('elements/unicons.iconscout.com/release/v4.0.8/css/line.css') }}">
     <link href="{{ asset('elements/assets/css/theme-rtl.min.css') }}" type="text/css" rel="stylesheet" id="style-rtl">
-    
+<style>
+  input , select{ height: 32px; }
+  tr:nth-child(even) {background: rgba(76, 175, 80, 0.3);}
+</style>
  <script>
       var phoenixIsRTL = window.config.config.phoenixIsRTL;
       if (phoenixIsRTL) {
