@@ -187,8 +187,16 @@ class AuthController extends Controller
 
     public function login()
     {
+      if (Auth::id()){
+        return redirect()->route('dashboard');
+      }else{
         return view('auth.login');
+      }
+  
     }
+
+
+
     public function handlelogin(AuthRequest $request)
     {
       try{

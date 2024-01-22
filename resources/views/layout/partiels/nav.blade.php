@@ -87,7 +87,7 @@
                     
                     
 
-                      <li class="nav-item"><a class="nav-link @if ($title=='List project') active @endif" href="{{ route('list_project') }}" data-bs-toggle="" aria-expanded="false">
+                      <li class="nav-item"><a class="nav-link @if ($title=='SQR') active @endif" href="{{ route('listsqr') }}" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> SQR</span></div>
                         </a>
                       </li>
@@ -329,7 +329,7 @@
         <div class="collapse navbar-collapse justify-content-between">
           <div class="navbar-logo">
         
-            <a class="navbar-brand me-1 me-sm-3" href="/">
+            <a class="navbar-brand me-1 me-sm-3" href="{{ route('dashboard') }}">
               <div class="d-flex align-items-center">
                 <div class="d-flex align-items-center">
                   <p class="logo-text ms-2 d-none d-sm-block"><i class="far fa-chart-bar"></i>  CEPBU </p>

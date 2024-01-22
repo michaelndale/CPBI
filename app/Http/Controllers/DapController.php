@@ -83,6 +83,29 @@ class DapController extends Controller
       $activity->ov= $request->ov;
       $activity->cho= $request->ch;
       $activity->etablie_nom= $request->etablie_nom;
+
+      $activity->demandeetablie= $request->demandeetablie;
+      $activity->chefComposante= $request->chefComposante;
+      $activity->signaturechef= $request->signaturechef;
+      $activity->datechefcomposante= $request->datechefcomposante;
+
+      $activity->verifier= $request->verifier;
+      $activity->chefcomptable= $request->chefcomptable;
+      $activity->signaturechefcomptable= $request->signaturechefcomptable;
+      $activity->datechefcomptable= $request->datechefcomptable;
+
+      $activity->approuver= $request->approuver;
+      $activity->chefservice= $request->chefservice;
+      $activity->signaturechefservice= $request->signaturechefservice;
+      $activity->datechefservice= $request->datechefservice;
+
+      $activity->resposablefinancier= $request->resposablefinancier;
+      $activity->secretairegenerale= $request->secretairegenerale;
+      $activity->datesecretairegenerale= $request->datesecretairegenerale;
+      $activity->chefprogramme= $request->chefprogramme;
+
+      $activity->observation= $request->observation;
+
       $activity->userid = Auth::id();
       $activity->save();
 

@@ -6,12 +6,11 @@
 
     <div class="row g-3 justify-content-between align-items-center">
       <div class="col-12 col-md">
-        <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-folder-open "></i> DEMANDE ET JUSTIFICATION  D'AVANCE </h4>
+        <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-folder-open "></i> Demande et Justification d'Avance "DJA" </h4>
       </div>
       <div class="col col-md-auto">
       <nav class="nav nav-underline justify-content-end doc-tab-nav align-items-center" role="tablist">
         
-     
       @include('document.dja.modale')
       
       </nav>

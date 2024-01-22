@@ -168,7 +168,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <select type="text" class="form-control" name="acce" id="acce">
+                                            <select type="text" class="form-control" name="demandeetablie" id="demandeetablie">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
                                                     <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
@@ -176,7 +176,7 @@
                                             </select>
                                         </td>
                                         <td>
-                                        <select type="text" class="form-control" name="comptable" id="comptable">
+                                        <select type="text" class="form-control" name="chefComposante" id="chefComposante">
                                             <option value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
                                                 <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
@@ -184,11 +184,13 @@
                                         </select>
                                                 </td>
                                         <td>
-                                            <center>   <input  class="form-check-input" type="checkbox" /> </center>
+                                            <center>   
+                                                <input  class="form-check-input" type="checkbox" name="signaturechef" id="signaturechefC" /> 
+                                            </center>
                                         
                                         </td>
                                         <td>
-                                            <input class="form-control" id="basic-form-dob" type="date" />
+                                            <input class="form-control" id="basic-form-dob" type="date" name="datechefcomposante" id="datechefcomposante" />
                                         </td>
                                         </tr>
 
@@ -201,7 +203,7 @@
                                         </tr>
                                         <tr>
                                         <td>
-                                            <select type="text" class="form-control" name="acce" id="acce">
+                                            <select type="text" class="form-control" name="verifier" id="verifier">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
                                                     <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
@@ -209,7 +211,7 @@
                                             </select>
                                         </td>
                                         <td>
-                                        <select type="text" class="form-control" name="comptable" id="comptable">
+                                        <select type="text" class="form-control" name="chefcomptable" id="chefcomptable">
                                             <option value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
                                                 <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
@@ -217,11 +219,11 @@
                                         </select>
                                                 </td>
                                         <td>
-                                            <center>   <input   class="form-check-input" type="checkbox" /> </center>
+                                            <center>   <input   class="form-check-input" type="checkbox" id="signaturechefcomptable" name="signaturechefcomptable" /> </center>
                                         
                                         </td>
                                         <td>
-                                            <input class="form-control" id="basic-form-dob" type="date" />
+                                            <input class="form-control" id="basic-form-dob" id="datechefcomptable" name="datechefcomptable" type="date" />
                                         </td>
                                         </tr>
 
@@ -234,7 +236,7 @@
                                         </tr>
                                          <tr>
                                         <td>
-                                            <select type="text" class="form-control" name="acce" id="acce">
+                                            <select type="text" class="form-control" name="approuver" id="approuver">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
                                                     <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
@@ -242,7 +244,7 @@
                                             </select>
                                         </td>
                                         <td>
-                                        <select type="text" class="form-control" name="comptable" id="comptable">
+                                        <select type="text" class="form-control" name="chefservice" id="chefservice">
                                             <option value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
                                                 <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
@@ -250,10 +252,10 @@
                                         </select>
                                                 </td>
                                         <td>
-                                            <center>   <input  class="form-check-input" type="checkbox" /> </center>
+                                            <center>   <input  class="form-check-input" type="checkbox" name="signaturechefservice" id="signaturechefservice" /> </center>
                                         </td>
                                         <td>
-                                            <input class="form-control" id="basic-form-dob" type="date" />
+                                            <input class="form-control" id="basic-form-dob" type="date"  id="datechefservice" name="datechefservice"/>
                                         </td>
                                         </tr>
 
@@ -266,7 +268,7 @@
                                         </tr>
                                          <tr>
                                         <td>
-                                            <select type="text" class="form-control" name="acce" id="acce">
+                                            <select type="text" class="form-control" name="resposablefinancier" id="resposablefinancier">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
                                                     <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
@@ -274,7 +276,7 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <select type="text" class="form-control" name="comptable" id="comptable">
+                                            <select type="text" class="form-control" name="secretairegenerale" id="secretairegenerale">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
                                                     <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
@@ -282,11 +284,11 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <center> <input class="form-control" id="basic-form-dob" type="date" /></center>
+                                            <center> <input class="form-control" id="basic-form-dob" type="date" id="datesecretairegenerale" name="datesecretairegenerale" /></center>
                                         </td>
 
                                         <td>
-                                            <select type="text" class="form-control" name="comptable" id="comptable">
+                                            <select type="text" class="form-control" name="chefprogramme" id="chefprogramme">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
                                                     <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
@@ -302,7 +304,7 @@
                                         </tr>
                                          <tr>
                                         <td colspan="4">
-                                            <textarea  class="form-control"></textarea>
+                                            <textarea  class="form-control" name="observation"></textarea>
                                         </td>
                                         
                                         </tr>

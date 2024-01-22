@@ -5,7 +5,7 @@
     <div class="col-xl-12" >
 
     <div class="row g-3 justify-content-between align-items-center">
-      <div class="col-12 col-md">
+      <div class="col-7 col-md">
         <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-folder-open "></i>BON DE PETITE CAISSE </h4>
       </div>
       <div class="col col-md-auto">

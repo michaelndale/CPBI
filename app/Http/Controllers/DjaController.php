@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Beneficaire;
 use App\Models\Dja;
 use App\Models\Folder;
 use App\Models\Historique;
@@ -44,13 +45,15 @@ class DjaController extends Controller
         $title="DJA";
         $data= Dja::all();
         $total = Dja::all()->count();
+        $dataBene= Beneficaire::all();
         $active = 'Project';
         return view('document.dja.list', 
         [
           'title' =>$title,
           'data' => $data,
           'total' => $total,
-          'active' => $active
+          'active' => $active,
+          'dataBene' => $dataBene
         ]);
     }
 }

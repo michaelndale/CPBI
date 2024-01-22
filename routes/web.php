@@ -23,6 +23,7 @@ use App\Http\Controllers\PortierController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SqrController;
 use App\Http\Controllers\VehiculeController;
 
 Route::get('/', function () { return view('go'); });
@@ -172,6 +173,11 @@ Route::middleware('auth')->group(function (){
     Route::prefix('dja')->group(function () {
         Route::get('/', [DjaController::class, 'list'])->name('listdja');
         Route::post('/storedja', [DjaController::class, 'store'])->name('storedja');
+    });
+
+    Route::prefix('sqr')->group(function () {
+        Route::get('/', [SqrController::class, 'list'])->name('listsqr');
+        Route::post('/storedja', [SqrController::class, 'store'])->name('storedja');
     });
 
 
