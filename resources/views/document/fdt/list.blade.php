@@ -6,7 +6,7 @@
     <div class="col-xl-12" >
     <div class="row g-3 justify-content-between align-items-center">
       <div class="col-12 col-md">
-        <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-edit "></i> Suivi quotidien des ralisation des employes "SQR"  </h4>
+        <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-edit "></i> Transmission de dossier "FDT" </h4>
       </div>
       <div class="col col-md-auto">
         <nav class="nav nav-underline justify-content-end doc-tab-nav align-items-center" role="tablist">
@@ -50,7 +50,7 @@
   </div>
 
 
-@include('document.sqr.modale')
+@include('document.fdt.modale')
 
 <BR><BR>
 

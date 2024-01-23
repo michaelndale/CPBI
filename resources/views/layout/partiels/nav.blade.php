@@ -92,7 +92,7 @@
                         </a>
                       </li>
 
-                      <li class="nav-item"><a class="nav-link @if ($title=='List project') active @endif" href="{{ route('list_project') }}" data-bs-toggle="" aria-expanded="false">
+                      <li class="nav-item"><a class="nav-link @if ($title=='FTD') active @endif" href="{{ route('listftd') }}" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> FDT</span></div>
                         </a>
                       </li>

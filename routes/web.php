@@ -13,6 +13,7 @@ use App\Http\Controllers\CompteController;
 use App\Http\Controllers\DapController;
 use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\DjaController;
+use App\Http\Controllers\FdtController;
 use App\Http\Controllers\FebController;
 use App\Http\Controllers\FolderController;
 use App\Http\Controllers\FonctionController;
@@ -178,6 +179,11 @@ Route::middleware('auth')->group(function (){
     Route::prefix('sqr')->group(function () {
         Route::get('/', [SqrController::class, 'list'])->name('listsqr');
         Route::post('/storedja', [SqrController::class, 'store'])->name('storedja');
+    });
+
+    Route::prefix('ftd')->group(function () {
+        Route::get('/', [FdtController::class, 'list'])->name('listftd');
+        Route::post('/storeftd', [FdtController::class, 'store'])->name('storeftd');
     });
 
 

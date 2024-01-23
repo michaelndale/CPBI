@@ -66,7 +66,7 @@
             <form name="frm_login" class="form" id="frm_login">    
                             @csrf
             
-              <div class="mb-3 text-start"><label class="form-label" for="admin" class="text-info" >Identifiant</label>
+              <div class="mb-3 text-start"><label class="form-label" for="admin" class="text-info" >Nom d’utilisateur </label>
               <div class="form-icon-container">
                 <input class="form-control form-icon-input" id="email" name="email" type="text" placeholder="Identifiant" autocomplete="off"  />
                 <span class="fas fa-user text-900 fs--1 form-icon"></span></div>
@@ -113,6 +113,7 @@
 
             $("#connectBtn").text('Connexion...');
             document.getElementById("connectBtn").disabled = true;
+            $("#ok").hide().html("Autentification...").fadeIn('slow');
  
             $.ajaxSetup({
                 headers: {
@@ -129,12 +130,13 @@
                     console.log(response); 
                     if(response == 1)
                     {
-                        $("#ok").hide().html("Votre connexion réussie").fadeIn('slow');
+                        $("#ok").hide().html("Connexion établie. Redirection en cours…").fadeIn('slow');
                         $("#err").hide()
                         setTimeout("location.href = '{{ route('dashboard')}}';",1000);
                     }
                     else if(response == 2)
                     {
+                        $("#ok").hide()
                         $("#err").hide().html("Votre compte est bloqué. Vérifiez s'il vous plaît").fadeIn('slow');
                         $("#connectBtn").text('Se connecter');
                         connectBtn
@@ -142,18 +144,21 @@
 
                     else if(response == 3)
                     {
+                        $("#ok").hide()
                         $("#err").hide().html("Votre compte est désactivé. Vérifiez s'il vous plaît").fadeIn('slow');
                         $("#connectBtn").text('Se connecter');
                       }
 
                     else if(response == 4)
                     {
+                      $("#ok").hide()
                       $("#err").hide().html("Identifiant ou mot de passe incorrect. Vérifiez s'il vous plaît").fadeIn('slow');
                       $("#connectBtn").text('Se connecter');
                     }
 
                     else if(response == 4)
                     {
+                      $("#ok").hide()
                       $("#err").hide().html("Attention : votre serveur distant n'est pas connecter").fadeIn('slow');
                       $("#connectBtn").text('Se connecter');
                     }
