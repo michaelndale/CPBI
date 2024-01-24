@@ -25,7 +25,7 @@
                     <div class="d-flex align-items-end">
                       <h2 class="mb-0 me-2"> {{ $project->count(); }}</h2><span class="fs-1 fw-semi-bold text-900">Projets</span>
                     </div>
-                    <p class="text-800 fs--1 mb-0">Tous les classeurs</p>
+                    <p class="text-800 fs--1 mb-0">Tous les projets</p>
                   </div>
                 </div>
               </div>
@@ -35,7 +35,7 @@
                     <div class="d-flex align-items-end">
                       <h2 class="mb-0 me-2">{{ $user->count(); }}</h2><span class="fs-1 fw-semi-bold text-900">Personneles</span>
                     </div>
-                    <p class="text-800 fs--1 mb-0">Tous confondu</p>
+                    <p class="text-800 fs--1 mb-0">Tous les personeles</p>
                   </div>
                 </div>
               </div>
@@ -43,9 +43,9 @@
                 <div class="d-flex align-items-center"><span class="fs-4 lh-1 uil uil-invoice text-warning-500"></span>
                   <div class="ms-2">
                     <div class="d-flex align-items-end">
-                      <h2 class="mb-0 me-2"> {{ $activite->count(); }}</h2><span class="fs-1 fw-semi-bold text-900">Activite</span>
+                      <h2 class="mb-0 me-2"> {{ $activite->count(); }}</h2><span class="fs-1 fw-semi-bold text-900">Activités</span>
                     </div>
-                    <p class="text-800 fs--1 mb-0">Toutes</p>
+                    <p class="text-800 fs--1 mb-0">Toutes les activités</p>
                   </div>
                 </div>
               </div>
@@ -55,7 +55,7 @@
                     <div class="d-flex align-items-end">
                       <h2 class="mb-0 me-2"> {{ $encours }}</h2><span class="fs-1 fw-semi-bold text-900">Projet</span>
                     </div>
-                    <p class="text-800 fs--1 mb-0">Encours d'execution</p>
+                    <p class="text-800 fs--1 mb-0">Encours d'exécution</p>
                   </div>
                 </div>
               </div>
@@ -76,9 +76,9 @@
                     <div class="col-12 col-sm-2 col-md-7">
                       <div class="row align-items-center g-0 justify-content-between">
                          <div class="col-2 col-sm-2 col-md-8 ">
-                          <div class="search-box w-100 mb-2 mb-sm-0" style="max-width:30rem;">
+                          <div class="search-box w-100 mb-2 mb-sm-0" >
                          
-                            <select class="form-select classcategory" id="compte_id" aria-label="Default select example">
+                            <select class="form-select classcategory"  >
                               <option disabled="true" selected="true">--Classement de dossier--</option>
                               @foreach ($folder as $folders)
                               <option value="{{ $folders->id }}">{{ $folders->title }} </option>
@@ -120,7 +120,10 @@
                         <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-success me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Date fin</span></div>
                       </th>
                       <th class="sort align-middle text-end ps-3 text-uppercase text-700" scope="col" data-sort="contact-sent" style="width:1%; ">
-                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-info me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Année</span></div>
+                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-danger me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Statut</span></div>
+                      </th>
+                      <th class="sort align-middle text-end ps-3 text-uppercase text-700" scope="col" data-sort="contact-sent" style="width:1%; ">
+                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-warring me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Année</span></div>
                       </th>
                     </tr>
                   </thead>
@@ -162,8 +165,9 @@
           console.log(data);
           if(data.length == 0){
             op+='<option value="0" selected disabled>--Année--</option>';
-            op+='<option value="0" selected disabled>Aucun</option>';
+            op+='<option value="0" selected disabled>Aucun </option>';
             document.getElementById("annee").innerHTML = op
+
             alert("Attention!!\n le classeur n'a pas de projet refferencer ! ");
 
             
@@ -206,11 +210,20 @@
           var url = "{{route('key.viewProject', ':id')}}";
           url = url.replace(':id', idr);
 
+          var dateChange= "";
+
+          if(data[i].statut==0){
+            var statut = 'Encours';
+          }else if(data[i].statut==1){
+            var statut = 'Conclue';
+          }
+
           tarea += '<tr class="hover-actions-trigger btn-reveal-trigger position-static">';
           tarea += '<td class="closed-won border-end"><b><a href='+url+'>#'+data[i].numeroprojet+'</a></b></td>';
           tarea += '<td class="closed-won border-end ">'+data[i].title+'</td>';
           tarea += '<td class="closed-won border-end "><center>'+data[i].start_date+'</center></td>';
           tarea += '<td class="closed-won border-end"><center>'+data[i].deadline+'</center></td>';
+          tarea += '<td class="closed-won border-end"><center>'+statut+'</center></td>';
           tarea += '<td ><center>'+data[i].annee+'</center></td>';
           tarea += '</tr>';
         

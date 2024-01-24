@@ -23,9 +23,11 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PortierController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\RallongebudgetController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SqrController;
 use App\Http\Controllers\VehiculeController;
+use App\Models\Rallongebudget;
 
 Route::get('/', function () { return view('go'); });
 Route::get('/logout', [AuthController::class, 'logout'] )->name('logout');
@@ -129,6 +131,21 @@ Route::middleware('auth')->group(function (){
         Route::post('/updateGc', [CompteController::class, 'update'])->name('updateGc'); 
     });
 
+    Route::prefix('rallongebudget')->group(function () {
+        Route::get('/', [RallongebudgetController::class, 'index'])->name('rallongebudget');
+      /*  Route::get('/fetchAllGc', [CompteController::class, 'fetchAll'])->name('fetchAllGc');
+        Route::get('/Selectcompte', [CompteController::class, 'selectcompte'])->name('Selectcompte');
+        Route::get('/SelectSousCompte', [CompteController::class, 'sousselectcompte'])->name('SelectSousCompte');
+        Route::post('/storeGc', [CompteController::class, 'store'])->name('storeGc');
+        Route::post('/storeSc', [CompteController::class, 'storesc'])->name('storeSc');
+        Route::post('/storeSSc', [CompteController::class, 'storesSc'])->name('storeSSc');
+        Route::delete('/deleteGc', [CompteController::class, 'deleteall'])->name('deleteGc');
+    
+        Route::get('/ShowCompte', [CompteController::class, 'addsc'])->name('ShowCompte');
+        Route::get('/editGc', [CompteController::class, 'edit'])->name('editGc');
+        Route::post('/updateGc', [CompteController::class, 'update'])->name('updateGc');  */
+    });
+
     Route::prefix('folder')->group(function () {
         Route::get('/', [FolderController::class, 'index'])->name('folder');
         Route::get('/fetchAllfl', [FolderController::class, 'fetchAll'])->name('fetchAllfl');
@@ -144,6 +161,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/storeProject', [ProjectController::class, 'store'])->name('storeProject');
         Route::get('/closeproject', [ProjectController::class, 'closeproject'])->name('closeproject');
         Route::get('/{key}/view/', [ProjectController::class, 'show'])->name('key.viewProject');
+        
     });
 
     Route::prefix('affectation')->group(function () {

@@ -97,12 +97,50 @@
                         </a>
                       </li>
 
+                      <li class="nav-item"><a class="nav-link @if ($title=='Rapport ') active @endif" href="{{ route('listftd') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> Rapport </span></div>
+                        </a>
+                      </li>
+
+                      <li class="nav-item"><a class="nav-link @if ($title=='Compte & Ligne') active @endif" href="{{ route('gestioncompte') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-link"></i> Ligne compte </span></div>
+                        </a>
+                      </li>
+
+
+
                     
                     
 
                     </ul>
                   </div>
           </div>
+
+          <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-rapport" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-activite">
+                    <div class="d-flex align-items-center">
+                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="bookmark"></span></span><span class="nav-link-text">Rapport</span>
+                    </div>
+                  </a>
+                  <div class="parent-wrapper label-1">
+                    <ul class="nav collapse parent @if ($active=='Activite') show @endif " data-bs-parent="#navbarVerticalCollapse" id="nv-rapport">
+                    
+                      <li class="nav-item"><a class="nav-link @if ($title=='Activite') active @endif" href="{{ route('rallongebudget') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text">Rallonge budgetaire</span></div>
+                        </a>
+                      </li>
+
+                      <li class="nav-item"><a class="nav-link @if ($title=='Activite') active @endif" href="{{ route('rallongebudget') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text">Rallonge budgetaire</span></div>
+                        </a>
+                      </li>
+
+                      <li class="nav-item"><a class="nav-link @if ($title=='Category') active @endif" href="{{ route('catActivity') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text">Categorie </span></div>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
 
       
 
@@ -233,10 +271,7 @@
                 </div>
                 <!-- FIn portier -->
 
-                <div class="nav-item-wrapper"><a class="nav-link label-1 @if ($active=='Compte & Ligne') active @endif" href="{{ route('gestioncompte') }}" role="button" data-bs-toggle="" aria-expanded="false">
-                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span data-feather="link-2"></span></span><span class="nav-link-text-wrapper"><span class="nav-link-text"> Ligne compte </span></span></div>
-                  </a>
-                </div>
+                
 
                 <div class="nav-item-wrapper"><a class="nav-link label-1 @if ($active=='Users') active @endif" href="{{ route('user') }}" role="button" data-bs-toggle="" aria-expanded="false">
                     <div class="d-flex align-items-center"><span class="nav-link-icon"><span data-feather="users"></span></span><span class="nav-link-text-wrapper"><span class="nav-link-text"> Personnels</span></span></div>

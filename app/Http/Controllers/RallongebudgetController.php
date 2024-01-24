@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Compte;
+use App\Models\Rallongebudget;
 use Illuminate\Http\Request;
 
-class CompteController extends Controller
+class RallongebudgetController extends Controller
 {
     public function index()
     {
     
-      $active = 'Project';
-      $title = 'Compte & Ligne';
-      $compte = Compte::where('compteid', '=', NULL)->get();
+      $active= 'Project';
+      $title = 'Rallongebudget budgetaire';
+      $compte= Rallongebudget::all();
 
       return view(
-        'compteligne.index',
+        'rallonge.index',
         [
           'title' => $title,
           'active' => $active,
-          'compte' => $compte,
+          'compte' => $compte
         
         ]
       );
@@ -27,7 +27,7 @@ class CompteController extends Controller
   
     public function selectcompte()
     {
-      $service = Compte::where('compteid', '=', NULL)->get();
+      $service = Rallongebudget::where('compteid', '=', NULL)->get();
 
       
       $output = '';
@@ -57,7 +57,7 @@ class CompteController extends Controller
 
     public function sousselectcompte()
     {
-      $service = Compte::where('compteid', '!=', 'NULL')->get();
+      $service = Rallongebudget::where('compteid', '!=', 'NULL')->get();
       $output = '';
       if ($service->count() > 0) {
 
@@ -84,7 +84,7 @@ class CompteController extends Controller
 
     public function fetchAll()
     {
-      $service = Compte::where('compteid', '=', NULL)->get();
+      $service = Rallongebudget::where('compteid', '=', NULL)->get();
       $output = '';
       if ($service->count() > 0) {
         $output .= '<table class="table table-striped table-sm fs--1 mb-0">
@@ -106,7 +106,7 @@ class CompteController extends Controller
               <td><b>' . ucfirst($rs->numero). '</b></td>
               <td><b>' . ucfirst($rs->libelle). '</b></td>
               <td>
-              <a href="#" id="' . $rs->id . '" class="text-success mx-1 savesc" data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte" title="Ajouter sous compte"><i class="fa fa-plus-circle"></i></a>
+              <a href="#" id="' . $rs->id . '" class="text-success mx-1 savesc" data-bs-toggle="modal" data-bs-target="#addDealModalSousRallongebudget" title="Ajouter sous compte"><i class="fa fa-plus-circle"></i></a>
                 <a href="#" id="' . $rs->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
                 <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
               </td>
@@ -114,7 +114,7 @@ class CompteController extends Controller
             
             ';
 
-          $sous_compte= Compte::where('compteid', $id)->where('souscompteid', '=', NULL)->get();
+          $sous_compte= Rallongebudget::where('compteid', $id)->where('souscompteid', '=', NULL)->get();
           if ($sous_compte->count() > 0) {
             $ndale = 1;
           foreach ($sous_compte as $sc) {
@@ -137,7 +137,7 @@ class CompteController extends Controller
           }
 
         
-          $sous_sous_compte= Compte::where('souscompteid', $ids)->get();
+          $sous_sous_compte= Rallongebudget::where('souscompteid', $ids)->get();
         if ($sous_sous_compte->count() > 0) {
           $nd = 1;
         foreach ($sous_sous_compte as $ssc) {
@@ -176,7 +176,7 @@ class CompteController extends Controller
     }
   
     // insert a new service ajax request
-    public function store(Compte $gc, Request $request)
+    public function store(Rallongebudget $gc, Request $request)
     {
       $gc->numero = $request->code;
       $gc->libelle = $request->libelle;
@@ -187,7 +187,7 @@ class CompteController extends Controller
       ]);
     }
 
-    public function storesc(Compte $gl, Request $request)
+    public function storesc(Rallongebudget $gl, Request $request)
     {
       $gl->compteid = $request->cid;
       $gl->numero = $request->code;
@@ -199,7 +199,7 @@ class CompteController extends Controller
       ]);
     }
 
-    public function storessc(Compte $gl, Request $request)
+    public function storessc(Rallongebudget $gl, Request $request)
     {
       $gl->compteid = $request->scid;
       $gl->souscompteid = $request->sscid;
@@ -216,7 +216,7 @@ class CompteController extends Controller
      public function edit(Request $request)
      {
        $id = $request->id;
-       $fon = Compte::find($id);
+       $fon = Rallongebudget::find($id);
        return response()->json($fon);
      }
   
@@ -224,7 +224,7 @@ class CompteController extends Controller
     public function addsc(Request $request)
     {
       $id = $request->id;
-      $fon = Compte::find($id);
+      $fon = Rallongebudget::find($id);
       return response()->json($fon);
     }
 
@@ -233,7 +233,7 @@ class CompteController extends Controller
     // update an service ajax request
     public function update(Request $request)
     {
-      $emp = Compte::find($request->gc_id);
+      $emp = Rallongebudget::find($request->gc_id);
       $emp->gc_title = $request->gc_title;
       $emp->update();
       
@@ -246,6 +246,6 @@ class CompteController extends Controller
     public function deleteall(Request $request)
     {
       $id = $request->id;
-      Compte::destroy($id);
+      Rallongebudget::destroy($id);
     }
 }

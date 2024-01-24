@@ -7,7 +7,9 @@
             <div class="px-4 px-lg-6 pt-6 pb-9">
               <div class="mb-5">
                 <div class="d-flex justify-content-between">
-                  <h2 class="text-black fw-bolder mb-2">{{ $dataProject->title }} {{ Session::get('id') }} </h2>
+                  <h2 class="text-black fw-bolder mb-2">{{ $dataProject->title }}
+                    <!--  {{ Session::get('id') }}  -->
+                  </h2>
                   <div class="font-sans-serif btn-reveal-trigger"><button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
                     <div class="dropdown-menu dropdown-menu-end py-2">
                       <a class="dropdown-item" href="#!"><i class="fas fa-random"></i> Affectation</a>
@@ -22,18 +24,20 @@
                       <a class="dropdown-item" href="#!">Telecharger</a>
                     </div>
                   </div>
-                </div><span class="badge badge-phoenix badge-phoenix-primary">
+                </div>
+                
+                <b>Statut du projet :</b> <span class="badge badge-phoenix badge-phoenix-primary">
 
                 @if ($dataProject->statut==0)
-                   Nouveau projet encours en verification
+                  Encours
                 @else
-                    Encours de traitement
+                    Terminer
                 @endif
                 
                 <span class="ms-1 uil uil-stopwatch"></span></span>
               </div>
               <div class="row gx-0 gx-sm-5 gy-8 mb-8">
-                <div class="col-12 col-xl-3 col-xxl-4 pe-xl-0">
+                <div class="col-12 col-xl-5 col-xxl-4 pe-xl-0">
                   <div class="mb-4 mb-xl-7">
                     <div class="row gx-0 gx-sm-7">
                       <div class="col-12 col-sm-auto">
@@ -45,7 +49,7 @@
                                   <h5 class="text-900 mb-0 text-nowrap">Responsable :</h5>
                                 </div>
                               </td>
-                              <td class="ps-1 py-1"><a class="fw-semi-bold d-block lh-sm" href="#!">Michael ndale </a></td>
+                              <td class="ps-1 py-1"><a class="fw-semi-bold d-block lh-sm" href="#!">{{  $responsable->name }} {{  $responsable->lastname }}</a></td>
                             </tr>
                             <tr>
                               <td class="align-top py-1">
@@ -62,23 +66,27 @@
                         <table class="lh-sm">
                           <tbody>
                             <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Num Projet: </td>
+                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Numéro projet : </td>
                               <td class="text-600 fw-semi-bold ps-3">#{{ $dataProject->numeroprojet }}</td>
                             </tr>
 
                             <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Started : </td>
-                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->start_date }}</td>
+                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Début du projet : </td>
+                              <td class="text-600 fw-semi-bold ps-3">{{  date('d.m.Y', strtotime($dataProject->start_date))  }}</td>
                             </tr>
 
 
                             <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Deadline :</td>
-                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->deadline }}</td>
+                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Fin du projet :</td>
+                              <td class="text-600 fw-semi-bold ps-3">{{  date('d.m.Y', strtotime($dataProject->deadline))  }}</td>
                             </tr>
                             <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Progress :</td>
+                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression du projet:</td>
                               <td class="text-warning fw-semi-bold ps-3">80%</td>
+                            </tr>
+                            <tr>
+                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Date de creation projet :</td>
+                              <td class="text-warning fw-semi-bold ps-3">{{  date('d.m.Y', strtotime($dataProject->created_at))  }}</td>
                             </tr>
                           </tbody>
                         </table>
@@ -94,7 +102,7 @@
                               <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->lieuprojet }}</td>
                             </tr>
                             <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Progress :</td>
+                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression :</td>
                               <td class="text-warning fw-semi-bold ps-3">80%</td>
                             </tr>
                           </tbody>
@@ -102,28 +110,20 @@
                       </div>
                     </div>
                   </div>
-                  <div>
-                    <div class="d-flex align-items-center"><span class="fa-solid fa-list-check me-2 text-700 fs--1"></span>
-                      <h5 class="text-1100 mb-0 me-2">91<span class="text-900 fw-normal ms-2">tasks</span></h5><a class="fw-bold fs--1 mt-1" href="#!">See tasks <span class="fa-solid fa-chevron-right me-2 fs--2"></span></a>
-                    </div>
-                  </div>
+                 
                 </div>
-                <div class="col-12 col-xl-9 col-xxl-8">
+                <div class="col-12 col-xl-6 col-xxl-8">
                   <div class="row flex-between-center mb-3 g-3">
                     <div class="col-auto">
-                      <h4 class="text-black">Task completed over time</h4>
-                      <p class="text-700 mb-0">Hard works done across all projects</p>
+                      <h4 class="text-black">Description</h4>
+                      <p class="text-800 mb-4">{{ $dataProject->description }}  </p>
                     </div>
-                    <div class="col-8 col-sm-4"><select class="form-select form-select-sm">
-                        <option>Mar 1 - 31, 2022</option>
-                        <option>April 1 - 30, 2022</option>
-                        <option>May 1 - 31, 2022</option>
-                      </select></div>
+                   
                   </div>
-                  <div class="echart-completed-task-chart" style="min-height:200px;width:100%"></div>
+              
                 </div>
 
-   <!--             
+               <!--             
                 <div class="col-12 col-sm-5 col-lg-4 col-xl-3 col-xxl-4">
                   <div class="mb-5">
                     <h4 class="text-black">Work loads</h4>
@@ -168,7 +168,6 @@
                     </div>
                   </div>
                 </div>
-
 
                 <div class="col-12 col-sm-7 col-lg-8 col-xl-5">
                   <h4 class="text-1100 mb-4">Team members</h4>
@@ -356,27 +355,27 @@
                   </div>
                   <h4 class="text-1100 mb-4">Tags</h4><span class="badge badge-tag me-2 mb-1">Unused_brain</span><span class="badge badge-tag me-2 mb-1">Machine</span><span class="badge badge-tag me-2 mb-1">Coding</span><span class="badge badge-tag me-2 mb-1">Meseeks</span><span class="badge badge-tag me-2 mb-1">Smithpeople</span><span class="badge badge-tag me-2 mb-1">Rick</span><span class="badge badge-tag me-2 mb-1">Biology</span><span class="badge badge-tag me-2 mb-1">Neurology</span><span class="badge badge-tag me-2 mb-1">Brainlessness</span><span class="badge badge-tag me-2 mb-1">Stupidity</span><span class="badge badge-tag me-2 mb-1">Jerry</span><span class="badge badge-tag me-2 mb-1">Not _the_mouse</span>
                 </div>
+                -->
 
--->
               </div>
-              <h3 class="text-1100 mb-4">Project overview</h3>
-              <p class="text-800 mb-4">{{ $dataProject->description }}  </p>
-             
+            
             </div>
           </div>
 
-          <!--
+       
           <div class="col-12 col-xxl-4 px-0 border-start-xxl border-300 border-top-sm">
             <div class="h-100">
               <div class="bg-light dark__bg-1100 h-100">
                 <div class="p-4 p-lg-6">
-                  <h3 class="text-1000 mb-4 fw-bold">Recent activity</h3>
+                  <h3 class="text-1000 mb-4 fw-bold">Activité récente</h3>
                   <div class="timeline-vertical timeline-with-details">
-                    <div class="timeline-item position-relative">
+
+                  @forelse ($activite as $activites)
+                  <div class="timeline-item position-relative">
                       <div class="row g-md-3">
                         <div class="col-12 col-md-auto d-flex">
                           <div class="timeline-item-date order-1 order-md-0 me-md-4">
-                            <p class="fs--2 fw-semi-bold text-600 text-end">01 DEC, 2023<br class="d-none d-md-block" /> 10:30 AM</p>
+                            <p class="fs--2 fw-semi-bold text-600 text-end"> {{ date('d.m.Y', strtotime($activites->created_at)) }}<br class="d-none d-md-block" /> 7h30 </p>
                           </div>
                           <div class="timeline-item-bar position-md-relative me-3 me-md-0 border-400">
                             <div class="icon-item icon-item-sm rounded-7 shadow-none bg-primary-100"><span class="fa-solid fa-chess text-primary-600 fs--2 dark__text-primary-300"></span></div><span class="timeline-bar border-end border-dashed border-400"></span>
@@ -384,103 +383,32 @@
                         </div>
                         <div class="col">
                           <div class="timeline-item-content ps-6 ps-md-3">
-                            <h5 class="fs--1 lh-sm">Phoenix Template: Unleashing Creative Possibilities</h5>
-                            <p class="fs--1">by <a class="fw-semi-bold" href="#!">Shantinon Mekalan</a></p>
-                            <p class="fs--1 text-800 mb-5">Discover limitless creativity with the Phoenix template! Our latest update offers an array of innovative features and design options.</p>
+                            <h5 class="fs--1 lh-sm">{{ ucfirst($activites->titre) }}</h5>
+                            <p class="fs--1">Region : {{  ucfirst($activites->pays ) }} <br>
+                             Montant : {{ $activites->montantbudget }} </p>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div class="timeline-item position-relative">
-                      <div class="row g-md-3">
-                        <div class="col-12 col-md-auto d-flex">
-                          <div class="timeline-item-date order-1 order-md-0 me-md-4">
-                            <p class="fs--2 fw-semi-bold text-600 text-end">05 DEC, 2023<br class="d-none d-md-block" /> 12:30 AM</p>
-                          </div>
-                          <div class="timeline-item-bar position-md-relative me-3 me-md-0 border-400">
-                            <div class="icon-item icon-item-sm rounded-7 shadow-none bg-primary-100"><span class="fa-solid fa-dove text-primary-600 fs--2 dark__text-primary-300"></span></div><span class="timeline-bar border-end border-dashed border-400"></span>
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="timeline-item-content ps-6 ps-md-3">
-                            <h5 class="fs--1 lh-sm">Empower Your Digital Presence: The Phoenix Template Unveiled</h5>
-                            <p class="fs--1">by <a class="fw-semi-bold" href="#!">Bookworm22</a></p>
-                            <p class="fs--1 text-800 mb-5">Unveiling the Phoenix template, a game-changer for your digital presence. With its powerful features and sleek design,</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="timeline-item position-relative">
-                      <div class="row g-md-3">
-                        <div class="col-12 col-md-auto d-flex">
-                          <div class="timeline-item-date order-1 order-md-0 me-md-4">
-                            <p class="fs--2 fw-semi-bold text-600 text-end">15 DEC, 2023<br class="d-none d-md-block" /> 2:30 AM</p>
-                          </div>
-                          <div class="timeline-item-bar position-md-relative me-3 me-md-0 border-400">
-                            <div class="icon-item icon-item-sm rounded-7 shadow-none bg-primary-100"><span class="fa-solid fa-dungeon text-primary-600 fs--2 dark__text-primary-300"></span></div>
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="timeline-item-content ps-6 ps-md-3">
-                            <h5 class="fs--1 lh-sm">Phoenix Template: Simplified Design, Maximum Impact</h5>
-                            <p class="fs--1">by <a class="fw-semi-bold" href="#!">Sharuka Nijibum</a></p>
-                            <p class="fs--1 text-800 mb-0">Introducing the Phoenix template, where simplified design meets maximum impact. Elevate your digital presence with its sleek and intuitive features.</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    
+                  @empty
+
+                  <h4> Pas d'activité disponible 
+                  <a class="fw-bold fs--1" href="{{ route('activity') }}"><span class="fas fa-plus me-1"></span>Ajouter l'activité</a>
+                  
+                  </h4>
+                    
+                  @endforelse
+
+                   
                   </div>
                 </div>
-                <div class="px-4 px-lg-6">
-                  <h4 class="mb-3">Files</h4>
-                </div>
-                <div class="border-top border-300 px-4 px-lg-6 py-4">
-                  <div class="me-n3">
-                    <div class="d-flex flex-between-center">
-                      <div class="d-flex mb-1"><span class="fa-solid fa-image me-2 text-700 fs--1"></span>
-                        <p class="text-1000 mb-0 lh-1">Silly_sight_1.png</p>
-                      </div>
-                      <div class="font-sans-serif btn-reveal-trigger"><button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
-                        <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!">Edit</a><a class="dropdown-item text-danger" href="#!">Delete</a><a class="dropdown-item" href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
-                      </div>
-                    </div>
-                    <div class="d-flex fs--1 text-700 mb-2 flex-wrap"><span>768 kb</span><span class="text-400 mx-1">| </span><a href="#!">Shantinan Mekalan </a><span class="text-400 mx-1">| </span><span class="text-nowrap">21st Dec, 12:56 PM</span></div><img class="rounded-2" src="../../assets/img/generic/40.png" alt="" style="max-width:270px" />
-                  </div>
-                </div>
-                <div class="border-top border-300 px-4 px-lg-6 py-4">
-                  <div class="me-n3">
-                    <div class="d-flex flex-between-center">
-                      <div>
-                        <div class="d-flex align-items-center mb-1"><span class="fa-solid fa-image me-2 fs--1 text-700"></span>
-                          <p class="text-1000 mb-0 lh-1">All_images.zip</p>
-                        </div>
-                        <div class="d-flex fs--1 text-700 mb-0 flex-wrap"><span>12.8 mb</span><span class="text-400 mx-1">| </span><a href="#!">Yves Tanguy </a><span class="text-400 mx-1">| </span><span class="text-nowrap">19th Dec, 08:56 PM</span></div>
-                      </div>
-                      <div class="font-sans-serif btn-reveal-trigger"><button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
-                        <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!">Edit</a><a class="dropdown-item text-danger" href="#!">Delete</a><a class="dropdown-item" href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="border-top border-bottom border-300 px-4 px-lg-6 py-4">
-                  <div class="me-n3">
-                    <div class="d-flex flex-between-center">
-                      <div>
-                        <div class="d-flex align-items-center mb-1 flex-wrap"><span class="fa-solid fa-file-lines me-2 fs--1 text-700"></span>
-                          <p class="text-1000 mb-0 lh-1">Project.txt</p>
-                        </div>
-                        <div class="d-flex fs--1 text-700 mb-0 flex-wrap"><span>123 kb</span><span class="text-400 mx-1">| </span><a href="#!">Shantinan Mekalan </a><span class="text-400 mx-1">| </span><span class="text-nowrap">12th Dec, 12:56 PM</span></div>
-                      </div>
-                      <div class="font-sans-serif btn-reveal-trigger"><button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
-                        <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item" href="#!">Edit</a><a class="dropdown-item text-danger" href="#!">Delete</a><a class="dropdown-item" href="#!">Download</a><a class="dropdown-item" href="#!">Report abuse</a></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="px-5 px-md-6 mt-3 mb-9"><a class="fw-bold fs--1" href="#!"><span class="fas fa-plus me-1"></span>Add file(s)</a></div>
+                
+               
+                <div class="px-5 px-md-6 mt-3 mb-9"><a class="fw-bold fs--1" href="{{ route('activity') }}"><span class="fas fa-plus me-1"></span>Ajouter l'activité</a></div>
               </div>
             </div>
-          </div> -->
+          </div>
         </div>
         
 

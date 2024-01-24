@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title> Login | GoProjects</title>
+    <title> Connexion | GoProjects</title>
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('elements/assets/img/favicons/logo.png') }}">
     <meta name="theme-color" content="#ffffff">
     <script src="{{ asset('elements/vendors/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
@@ -69,14 +69,18 @@
               <div class="mb-3 text-start"><label class="form-label" for="admin" class="text-info" >Nom d’utilisateur </label>
               <div class="form-icon-container">
                 <input class="form-control form-icon-input" id="email" name="email" type="text" placeholder="Identifiant" autocomplete="off"  />
-                <span class="fas fa-user text-900 fs--1 form-icon"></span></div>
+               <span class="fas fa-user text-900 fs--1 form-icon"></span>
+               <small id="erroremail" style="color:red"></small>
+              </div>
             </div>
 
 
             <div class="mb-3 text-start"><label class="form-label" for="password">Mot de passe </label>
               <div class="form-icon-container">
                 <input class="form-control form-icon-input" id="password" name="password" type="password" placeholder="Mot de passe"/>
-                <span class="fas fa-key text-900 fs--1 form-icon"></span></div>
+                <span class="fas fa-key text-900 fs--1 form-icon"></span>
+                <small id="errorpassword" style="color:red" ></small>
+              </div>
             </div>
             
             <button type="button" id="connectBtn"  onclick="login()" style="background-color:#228B22" class="btn btn-primary w-100 mb-3">Se connecter</button>
@@ -101,15 +105,23 @@
         if($('#email').val() == "")
         { 
             $('#email').addClass('has-error');
+            $("#erroremail").hide().html("Le nom utilisateur est obligatoire").fadeIn('slow');
             return false;
         }
         else if($('#password').val() == "")
         {
             $('#password').addClass('has-error');
+            $("#errorpassword").hide().html("Le mot de passe est obligatoire").fadeIn('slow');
             return false;
         }
         else {
             var data = $("#frm_login").serialize();
+            
+            $("#errorpassword").hide()
+            $("#erroremail").hide()
+            $('#email').addClass('has-success');
+            $('#password').addClass('has-success');
+
 
             $("#connectBtn").text('Connexion...');
             document.getElementById("connectBtn").disabled = true;

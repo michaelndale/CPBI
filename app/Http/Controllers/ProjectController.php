@@ -41,7 +41,6 @@ class ProjectController extends Controller
       session()->forget('numeroprojet');
       session()->forget('ligneid');
       session()->forget('devise');
-      
 
       return redirect()->route('dashboard');
     }
@@ -144,13 +143,24 @@ class ProjectController extends Controller
       session()->put('numeroprojet', $key->numeroprojet);
       session()->put('ligneid', $key->ligneid);
       session()->put('devise', $key->devise);
+
+      $ID = session()->get('id');
+      $act = DB::table('activities')
+            ->orderby('id','DESC')
+            ->Where('projectid', $key->id)
+            ->get();
       
+      $user= User::find($key->userid);
+
+     
 
       return view('project.voir', 
         [
           'title' =>$title,
           'active' => $active,
           'dataProject' => $key,
+          'activite' => $act,
+          'responsable' => $user
           
         ]);
     }

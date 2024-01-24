@@ -65,7 +65,7 @@ class AppCOntroller extends Controller
     try {
 
 		    $p=DB::table('projects')
-          ->select('numeroprojet','title','start_date','deadline','annee','id')
+          ->select('numeroprojet','title','start_date','deadline','annee','id','statut')
           ->where('annee',$request->id)
           ->orderBy('id', 'DESC')
           ->get();
