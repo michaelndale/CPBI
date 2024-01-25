@@ -133,6 +133,9 @@ Route::middleware('auth')->group(function (){
 
     Route::prefix('rallongebudget')->group(function () {
         Route::get('/', [RallongebudgetController::class, 'index'])->name('rallongebudget');
+        Route::post('/storerallonge', [RallongebudgetController::class, 'store'])->name('storerallonge');
+        Route::get('/fetchRallonge', [RallongebudgetController::class, 'fetchAll'])->name('fetchRallonge');
+        
       /*  Route::get('/fetchAllGc', [CompteController::class, 'fetchAll'])->name('fetchAllGc');
         Route::get('/Selectcompte', [CompteController::class, 'selectcompte'])->name('Selectcompte');
         Route::get('/SelectSousCompte', [CompteController::class, 'sousselectcompte'])->name('SelectSousCompte');

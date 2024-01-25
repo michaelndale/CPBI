@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="{{ asset('elements/unicons.iconscout.com/release/v4.0.8/css/line.css') }}">
    <!-- <link href="{{ asset('elements/assets/css/theme-rtl.min.css') }}" type="text/css" rel="stylesheet" id="style-rtl"> -->
 <style>
-  input , select{ height: 32px; }
+  input , select{ height: 35px; }
   tr:nth-child(even) {background: rgba(76, 175, 80, 0.3);}
 </style>
  <script>

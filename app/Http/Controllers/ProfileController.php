@@ -65,9 +65,7 @@ class ProfileController extends Controller
   // insert a new employee ajax request
   public function store(profile $profile, Request $request)
   {
-
     try {
-      
       $title = $request->title;
       $check = Profile::where('title',$title)->first();
 
@@ -88,8 +86,6 @@ class ProfileController extends Controller
         'status' => 202,
       ]);
     }
-
-    
   }
 
   // edit an employee ajax request

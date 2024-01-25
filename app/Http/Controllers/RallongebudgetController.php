@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Compte;
 use App\Models\Rallongebudget;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RallongebudgetController extends Controller
 {
@@ -12,7 +14,7 @@ class RallongebudgetController extends Controller
     
       $active= 'Project';
       $title = 'Rallongebudget budgetaire';
-      $compte= Rallongebudget::all();
+      $compte= Compte::all();
 
       return view(
         'rallonge.index',
@@ -24,164 +26,57 @@ class RallongebudgetController extends Controller
         ]
       );
     }
-  
-    public function selectcompte()
-    {
-      $service = Rallongebudget::where('compteid', '=', NULL)->get();
-
-      
-      $output = '';
-      if ($service->count() > 0) {
-
-       $output .=' <select class="form-select" id="compteid" name="compteid">
-       <option value="">Aucun</option>';
-        foreach ($service as $rs) {
-          
-          $output .= '
-         
-          <option value="' .$rs->id. '" >' . ucfirst($rs->gc_libelle). '</option>
-         
-            ';
-           
-            }
-
-           $output .=' </select>';
-
-         
-      
-        echo $output;
-      } else {
-        echo '<h4 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h4>';
-      }
-    }
-
-    public function sousselectcompte()
-    {
-      $service = Rallongebudget::where('compteid', '!=', 'NULL')->get();
-      $output = '';
-      if ($service->count() > 0) {
-
-       $output .=' <select class="form-select" id="souscompteid" name="souscompteid">
-       <option value="">Aucun</option>';
-        foreach ($service as $rs) {
-          
-          $output .= '
-         
-          <option value="'.$rs->id.'" >' . ucfirst($rs->libelle). '</option>
-         
-            ';
-           
-            }
-
-           $output .=' </select>';
-      
-        echo $output;
-      } else {
-        echo '<h3 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h3>';
-      }
-    }
 
 
     public function fetchAll()
     {
-      $service = Rallongebudget::where('compteid', '=', NULL)->get();
+      $ID = session()->get('id');
+      $data = DB::table('rallongebudgets')
+                ->join('comptes', 'rallongebudgets.projetid', '=', 'comptes.id')
+                ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero')
+                ->Where('projetid', $ID)
+                ->orderBy('rallongebudgetsid', 'DESC')
+                ->get();
+
+
       $output = '';
-      if ($service->count() > 0) {
-        $output .= '<table class="table table-striped table-sm fs--1 mb-0">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Code</th>
-              <th>Title</th>
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody class="list">
-           ';
+      if ($data->count() > 0) {
         $nombre = 1;
-        foreach ($service as $rs) {
-          $id = $rs->id;
+        foreach ($data as $datas) {
+          $id = $datas->id;
           $output .= '<tr >
-              <td class="align-middle ps-3 name"><b>' . $nombre . '</td>
-              <td><b>' . ucfirst($rs->numero). '</b></td>
-              <td><b>' . ucfirst($rs->libelle). '</b></td>
+              <td><b>' . ucfirst($datas->numero). '</b></td>
+              <td><b>' . ucfirst($datas->libelle). '</b></td>
+              <td><b>' . ucfirst($datas->libelle). '</b></td>
               <td>
-              <a href="#" id="' . $rs->id . '" class="text-success mx-1 savesc" data-bs-toggle="modal" data-bs-target="#addDealModalSousRallongebudget" title="Ajouter sous compte"><i class="fa fa-plus-circle"></i></a>
-                <a href="#" id="' . $rs->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
-                <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
+              <a href="#" id="' . $id . '" class="text-success mx-1 savesc" data-bs-toggle="modal" data-bs-target="#addDealModalSousRallongebudget" title="Ajouter sous compte"><i class="fa fa-plus-circle"></i></a>
+                <a href="#" id="' . $id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
+                <a href="#" id="' . $id . '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
               </td>
             </tr>
             
             ';
-
-          $sous_compte= Rallongebudget::where('compteid', $id)->where('souscompteid', '=', NULL)->get();
-          if ($sous_compte->count() > 0) {
-            $ndale = 1;
-          foreach ($sous_compte as $sc) {
-            $ids = $sc->id;
-            $output .='
-                  <tr>
-                    <td class="align-middle ps-3 name">' .$nombre.'.'.$ndale . '</td>
-                 
-                    <td>' . ucfirst($sc->numero). '</td>
-                    <td>' . ucfirst($sc->libelle). '</td>
-                  
-                    <td>
-                        <a href="#" id="' . $sc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
-                        <a href="#" id="' . $sc->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
-                        <a href="#" id="' . $sc->id . '" class="text-danger mx-1 deleteIcon"><i class="fa fa-trash"></i>  </a>
-                    </td>
-                  </tr>
-            ';
-            $ndale ++;
-          }
-
-        
-          $sous_sous_compte= Rallongebudget::where('souscompteid', $ids)->get();
-        if ($sous_sous_compte->count() > 0) {
-          $nd = 1;
-        foreach ($sous_sous_compte as $ssc) {
-          $output .='
-                <tr>
-                  <td class="align-middle ps-3 name">' .$nombre.'.'.$ndale.'.'.$nd. '</td>
-               
-                  <td>' . ucfirst($ssc->numero). '</td>
-                  <td>' . ucfirst($ssc->libelle). '</td>
-                
-                  <td>
-                      <a href="#" id="' . $ssc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
-                      <a href="#" id="' . $ssc->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
-                      <a href="#" id="' . $ssc->id . '" class="text-danger mx-1 deleteIcon"><i class="fa fa-trash"></i> </a>
-                  </td>
-                </tr>
-          ';
-          $nd ++;
-        }
-        
-      }
-          
-        }
-
-
-        
-            
-            
           $nombre++;
         }
-        $output .= '</tbody></table>';
         echo $output;
       } else {
         echo '<h4 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h4>';
       }
     }
   
-    // insert a new service ajax request
-    public function store(Rallongebudget $gc, Request $request)
+    // insert a new rallongement request
+    public function store(Request $request)
     {
-      $gc->numero = $request->code;
-      $gc->libelle = $request->libelle;
-      $gc->userid = Auth()->user()->id;
-      $gc->save();
+      $rallonge = new Rallongebudget;
+
+      $rallonge->projetid = $request->projetid;
+      $rallonge->compteid = $request->compteid;
+      $rallonge->depensecumule = $request->coutestime; 
+      $rallonge->budgetactuel = $request->budgetactuel; 
+      $rallonge->userid = Auth()->user()->id;
+
+      $rallonge->save();
+
       return response()->json([
         'status' => 200,
       ]);
@@ -189,9 +84,10 @@ class RallongebudgetController extends Controller
 
     public function storesc(Rallongebudget $gl, Request $request)
     {
-      $gl->compteid = $request->cid;
-      $gl->numero = $request->code;
-      $gl->libelle = $request->libelle;
+      $gl->projetid = $request->cid;
+      $gl->compteid = $request->code;
+      $gl->depensecumule = $request->libelle; 
+      $gl->budgetactuel = $request->libelle; 
       $gl->userid = Auth()->user()->id;
       $gl->save();
       return response()->json([
@@ -199,18 +95,7 @@ class RallongebudgetController extends Controller
       ]);
     }
 
-    public function storessc(Rallongebudget $gl, Request $request)
-    {
-      $gl->compteid = $request->scid;
-      $gl->souscompteid = $request->sscid;
-      $gl->numero = $request->code;
-      $gl->libelle = $request->libelle;
-      $gl->userid = Auth()->user()->id;
-      $gl->save();
-      return response()->json([
-        'status' => 200,
-      ]);
-    }
+   
 
      // edit an service ajax request
      public function edit(Request $request)

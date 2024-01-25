@@ -383,8 +383,8 @@
                 </div>
             @else  
         
-            <form class="position-relative" data-bs-toggle="search" data-bs-display="static">   
-              <input class="form-control search-input fuzzy-search rounded-pill form-control-sm" type="search" placeholder="Search..." aria-label="Search" />
+            <form class="position-relative" data-bs-toggle="search" data-bs-display="static" style="width:50%; margin:auto">   
+              <input class="form-control search-input fuzzy-search rounded-pill form-control-sm" type="search" placeholder="Recherche..." aria-label="Recherche"  />
               <span class="fas fa-search search-box-icon"></span>
             </form> 
             

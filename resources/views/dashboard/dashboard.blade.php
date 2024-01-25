@@ -122,14 +122,18 @@
                       <th class="sort align-middle text-end ps-3 text-uppercase text-700" scope="col" data-sort="contact-sent" style="width:1%; ">
                         <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-danger me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Statut</span></div>
                       </th>
-                      <th class="sort align-middle text-end ps-3 text-uppercase text-700" scope="col" data-sort="contact-sent" style="width:1%; ">
+
+                      <th class="sort border-end align-middle  px-3 text-uppercase text-700" scope="col" data-sort="closed-won" style="width:1%;">
                         <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-warring me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Année</span></div>
                       </th>
+
+                     
                     </tr>
                   </thead>
                   <tbody class="list tableviewsclass" id="table-deal-forecast-body " >
-                        <td colspan="5">
-                            <h4 style="margin-top:2% ;color:#c0c0c0"> <center><font size="100px"><i class="fa fa-search"  ></i> </font><br><br>
+                        <td colspan="6">
+                            <h4 style="margin-top:1% ;color:#c0c0c0"> 
+                            <center><font size="100px"><i class="fa fa-search"  ></i> </font><br><br>
                             Sélectionner le classeur et l'année</center> </h4>
                           </td>
                   </tbody>
