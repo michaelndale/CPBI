@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Compte;
+use App\Models\Project;
 use App\Models\Rallongebudget;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,18 +12,22 @@ class RallongebudgetController extends Controller
 {
     public function index()
     {
-    
-      $active= 'Project';
-      $title = 'Rallongebudget budgetaire';
+      $ID = session()->get('id');
+      $active= 'Budgetisation';
+      $title = 'Budgetisation';
       $compte= Compte::all();
+      $showData = DB::table('projects')
+                ->join('users', 'projects.userid', '=', 'users.id')
+                ->select('projects.*', 'users.name', 'users.lastname')
+                ->Where('projects.id', $ID)
+                ->get();
 
-      return view(
-        'rallonge.index',
+      return view('rallonge.index',
         [
           'title' => $title,
           'active' => $active,
-          'compte' => $compte
-        
+          'compte' => $compte,
+          'showData' => $showData
         ]
       );
     }
@@ -31,11 +36,13 @@ class RallongebudgetController extends Controller
     public function fetchAll()
     {
       $ID = session()->get('id');
+      
+
       $data = DB::table('rallongebudgets')
-                ->join('comptes', 'rallongebudgets.projetid', '=', 'comptes.id')
+                ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
                 ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero')
                 ->Where('projetid', $ID)
-                ->orderBy('rallongebudgetsid', 'DESC')
+                ->orderBy('rallongebudgets.id', 'ASC')
                 ->get();
 
 
@@ -44,18 +51,18 @@ class RallongebudgetController extends Controller
         $nombre = 1;
         foreach ($data as $datas) {
           $id = $datas->id;
-          $output .= '<tr >
-              <td><b>' . ucfirst($datas->numero). '</b></td>
-              <td><b>' . ucfirst($datas->libelle). '</b></td>
-              <td><b>' . ucfirst($datas->libelle). '</b></td>
-              <td>
-              <a href="#" id="' . $id . '" class="text-success mx-1 savesc" data-bs-toggle="modal" data-bs-target="#addDealModalSousRallongebudget" title="Ajouter sous compte"><i class="fa fa-plus-circle"></i></a>
-                <a href="#" id="' . $id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
-                <a href="#" id="' . $id . '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
-              </td>
+          $ab = 
+          $output .= 
+          '<tr>
+              <td>  ' .$datas->numero.'&nbsp;&nbsp;&nbsp; '.ucfirst($datas->libelle). '   </td>
+              <td align="right">  ' . ucfirst($datas->depensecumule).'  </td>
+              <td align="right">  '. 0 .'  </td>
+              <td align="right"> ' . ucfirst($datas->depensecumule).' </td>
+              <td align="right"> ' . ucfirst($datas->budgetactuel).' </td>
+              <td align="right"> ' . ucfirst($datas->depensecumule).' </td>
+              <td> ' . 2 .'% </td>
             </tr>
-            
-            ';
+          ';
           $nombre++;
         }
         echo $output;

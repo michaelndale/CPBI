@@ -1,5 +1,8 @@
 @extends('layout/app')
 @section('page-content')
+@foreach ($showData as $showDatas)
+@endforeach
+
 <div class="content">
   <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
     <div class="card-header p-4 border-bottom border-300 bg-soft">
@@ -22,26 +25,59 @@
         <div id="tableExample3" data-list='{"valueNames":["name","email"],"page":5,"pagination":true}'>
          
           <div class="table-responsive" >
+          <table class="table table-bordered  table-sm fs--1 mb-0">
+            <tr scope="col" >
+              <td scope="col" style="padding:5px">Rubrique du projet</td>
+              <td scope="col" style="padding:5px">Pays / region</td>
+              <td scope="col" style="padding:5px">No du projet</td>
+            </tr>
+            <tr>
+              <td style="padding:5px"> {{ $showDatas->title }} </td>
+              <td style="padding:5px"> {{ $showDatas->region }} </td>
+              <td style="padding:5px"> {{ $showDatas->numeroprojet }} </td>
+              <td style="padding:5px"> </td>
+            </tr>
+
+            <tr>
+              <td style="padding:5px">La demande a ete redige par (nom du responsable <br> Lieu et date du projet)</td>
+              <td style="padding:5px" >Devise de comptabilite</td>
+              <td style="padding:5px">No financier</td>
+              <td style="padding:5px">Balance reporte no 12</td>
+            </tr>
+            <tr>
+              <td style="padding:5px"> {{ $showDatas->name }} {{ $showDatas->lastname }} , 
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+             </td>
+              <td style="padding:5px"> {{ $showDatas->devise }} </td>
+              <td style="padding:5px">  {{ $showDatas->numerofinance }} </td>
+              <td style="padding:5px"> {{ $showDatas->budget }} </td>
+            </tr>
+
+
+            <tr></tr>
+          </table>
+
+          <br>
 
           <table class="table table-striped table-sm fs--1 mb-0">
           <thead>
-                              <tr>
-                              <th class="sort border-top" data-sort="num">Revele par compte</th>
-                                <th class="sort border-top" data-sort="febnum">Depense cumul</th>
-                                <th class="sort border-top ps-3" data-sort="facture">Cout  estimes pour mener a terme le projet</th>
-                                <th class="sort border-top" data-sort="date">Nouvelle  proposition  de budget</th>
-                                <th class="sort border-top" data-sort="bc">Budget actuel</th>
-                                <th class="sort border-top" data-sort="periode">Modification  budgetaire</th>
+                              <tr style="background-color:#c0c0c0;">
+                              <th class="sort border-top" data-sort="num">Revelé par compte<br>N<sma>o cpte</sma> Titre compte</th>
+                                <th class="sort border-top" data-sort="febnum"><center>A<br>Dépense cumul.selon<br>rapport finance no12</center></th>
+                                <th class="sort border-top ps-3" data-sort="facture"><center> B</br>Coûts  estimés pour <br>mener  à terme le projet </center></th>
+                                <th class="sort border-top" data-sort="date"><center> C(A+B)</br> Nouvelle  proposition  <br>de budget</center></th>
+                                <th class="sort border-top" data-sort="bc"><center> D</br> Budget actuel </center> <br> </center></th>
+                                <th class="sort border-top" data-sort="periode"><center> D(C-D)</br>  Modification  budgetaire <br><br></center></th>
                                 <th class="sort border-top" data-sort="om">%</th>
-                                <th class="sort border-top " >ACTION</th>
+                               
                               </tr>
                             </thead>
                             <tbody id="show_all_rallonge">
+                              
                               <tr>
                               <td colspan="8">
                                 <h5 class="text-center text-secondery my-5">
                                   @include('layout.partiels.load') <br><br>
-                              
                                </td>
                               </tr>
 

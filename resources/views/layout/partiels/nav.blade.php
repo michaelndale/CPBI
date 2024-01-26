@@ -27,7 +27,7 @@
                         </a>
                       </li>
                       <li class="nav-item"><a class="nav-link @if ($title=='Folder') active @endif " href="{{ route('folder') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text">Folder</span></div>
+                          <div class="d-flex align-items-center"><span class="nav-link-text">Dossier</span></div>
                         </a>
                       </li>
                     </ul>
@@ -118,24 +118,14 @@
 
           <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-rapport" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-activite">
                     <div class="d-flex align-items-center">
-                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="bookmark"></span></span><span class="nav-link-text">Rapport</span>
+                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="bookmark"></span></span><span class="nav-link-text">Budgetisation</span>
                     </div>
                   </a>
                   <div class="parent-wrapper label-1">
-                    <ul class="nav collapse parent @if ($active=='Activite') show @endif " data-bs-parent="#navbarVerticalCollapse" id="nv-rapport">
+                    <ul class="nav collapse parent @if ($active=='Budgetisation') show @endif " data-bs-parent="#navbarVerticalCollapse" id="nv-rapport">
                     
-                      <li class="nav-item"><a class="nav-link @if ($title=='Activite') active @endif" href="{{ route('rallongebudget') }}" data-bs-toggle="" aria-expanded="false">
+                      <li class="nav-item"><a class="nav-link @if ($title=='Budgetisation') active @endif" href="{{ route('rallongebudget') }}" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text">Rallonge budgetaire</span></div>
-                        </a>
-                      </li>
-
-                      <li class="nav-item"><a class="nav-link @if ($title=='Activite') active @endif" href="{{ route('rallongebudget') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text">Rallonge budgetaire</span></div>
-                        </a>
-                      </li>
-
-                      <li class="nav-item"><a class="nav-link @if ($title=='Category') active @endif" href="{{ route('catActivity') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text">Categorie </span></div>
                         </a>
                       </li>
                     </ul>
@@ -146,7 +136,7 @@
 
                 <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-activite" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-activite">
                     <div class="d-flex align-items-center">
-                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="bookmark"></span></span><span class="nav-link-text">Activite</span>
+                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="edit"></span></span><span class="nav-link-text">Activité</span>
                     </div>
                   </a>
                   <div class="parent-wrapper label-1">
@@ -169,6 +159,66 @@
                 
 
 
+
+          <div class="nav-item-wrapper">
+                  <a class="nav-link dropdown-indicator label-1" href="#nv-rh" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-rh">
+                    <div class="d-flex align-items-center">
+                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="users"></span></span><span class="nav-link-text">RH</span>
+                    </div>
+                  </a>
+                  <div class="parent-wrapper label-1">
+                    <ul class="nav collapse parent @if ($active=='Parc') show @endif " data-bs-parent="#navbarVerticalCollapse" id="nv-rh">
+                      <li class="nav-item"><a class="nav-link @if ($title=='Recherche vehicule') active @endif" href="" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text">Tableau de bord</span></div>
+                        </a>
+                      </li>
+
+                      <li class="nav-item"><a class="nav-link dropdown-indicator" href="#nv-simple" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-simple">
+                          <div class="d-flex align-items-center">
+                            <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-text">Personnelle </span><span class="fa-solid fa-circle text-info ms-1 new-page-indicator" style="font-size: 6px"></span>
+                          </div>
+                        </a><!-- more inner pages-->
+                        <div class="parent-wrapper">
+                          <ul class="nav collapse parent show" data-bs-parent="#vehicule" id="nv-simple">
+                            <li class="nav-item"><a class="nav-link active" href="{{ route('vehicule')}}" data-bs-toggle="" aria-expanded="false">
+                                <div class="d-flex align-items-center"><span class="nav-link-text">Tous les employés</span></div>
+                              </a><!-- more inner pages-->
+                            </li>
+                            <li class="nav-item"><a class="nav-link" href="" data-bs-toggle="" aria-expanded="false">
+                                <div class="d-flex align-items-center"><span class="nav-link-text">Achats</span></div>
+                              </a><!-- more inner pages-->
+                            </li>
+                          
+                          </ul>
+                        </div>
+                      </li>
+                    </ul>
+                </div>
+            </div>
+
+
+                <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-archivage" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-archivage">
+                    <div class="d-flex align-items-center">
+                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="server"></span></span><span class="nav-link-text">Archivage</span>
+                    </div>
+                  </a>
+                  <div class="parent-wrapper label-1">
+                    <ul class="nav collapse parent @if ($active=='Archivage') show @endif " data-bs-parent="#navbarVerticalCollapse" id="nv-archivage">
+                      <li class="nav-item"><a class="nav-link @if ($title=='Archivage') active @endif" href="{{ route('archivage') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text">Archivage</span></div>
+                        </a>
+                      </li>
+
+                      <li class="nav-item"><a class="nav-link @if ($title=='Classeur') active @endif" href="{{ route('classeur') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text">Classeur</span></div>
+                        </a>
+                      </li>
+                     
+                     
+                     
+                    </ul>
+                  </div>
+                </div>
 
                 <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-parc" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-parc">
                     <div class="d-flex align-items-center">
@@ -238,30 +288,8 @@
                   </div>
                 </div>
 
+               
 
-
-                <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-archivage" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-archivage">
-                    <div class="d-flex align-items-center">
-                      <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-icon"><span data-feather="server"></span></span><span class="nav-link-text">Archivage</span>
-                    </div>
-                  </a>
-                  <div class="parent-wrapper label-1">
-                    <ul class="nav collapse parent @if ($active=='Archivage') show @endif " data-bs-parent="#navbarVerticalCollapse" id="nv-archivage">
-                      <li class="nav-item"><a class="nav-link @if ($title=='Archivage') active @endif" href="{{ route('archivage') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text">Archivage</span></div>
-                        </a>
-                      </li>
-
-                      <li class="nav-item"><a class="nav-link @if ($title=='Classeur') active @endif" href="{{ route('classeur') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text">Classeur</span></div>
-                        </a>
-                      </li>
-                     
-                     
-                     
-                    </ul>
-                  </div>
-                </div>
 
                 
                 <!-- Portier -->
@@ -273,10 +301,7 @@
 
                 
 
-                <div class="nav-item-wrapper"><a class="nav-link label-1 @if ($active=='Users') active @endif" href="{{ route('user') }}" role="button" data-bs-toggle="" aria-expanded="false">
-                    <div class="d-flex align-items-center"><span class="nav-link-icon"><span data-feather="users"></span></span><span class="nav-link-text-wrapper"><span class="nav-link-text"> Personnels</span></span></div>
-                  </a>
-                </div>
+             
 
                 <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-customization" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-customization">
                     <div class="d-flex align-items-center">
@@ -286,11 +311,17 @@
                   <div class="parent-wrapper label-1">
                     <ul class="nav collapse parent @if ($active=='Parameter') show @endif "" data-bs-parent="#navbarVerticalCollapse" id="nv-customization">
                       <li class="collapsed-nav-item-title d-none">Customization</li>
+
+                      <li class="nav-item"><a class="nav-link @if ($active=='Utilisateur') active @endif" href="{{ route('user') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text">Utilisateur</span></div>
+                        </a>
+                      </li>
                       
                       <li class="nav-item"><a class="nav-link @if ($title=='New Indetification' || $title=='Edit Identification') active @endif" href="{{ route('info') }}" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text">Identification</span></div>
                         </a>
                       </li>
+
                       <li class="nav-item"><a class="nav-link @if ($title=='Service') active @endif" href="{{ route('service') }}" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text">Service</span></div>
                         </a>
@@ -379,7 +410,7 @@
                 <div class="callout callout-info">
                   <br>
                   <h5>Projet encours de traitement :</h5>
-                  <p>{{ Session::get('title') }} </p>
+                  <p> {{ Session::get('title') }} </p>
                 </div>
             @else  
         
@@ -476,7 +507,7 @@
                         </a></div>
 
                         <div class="col-4"><a class="d-block hover-bg-200 p-2 rounded-3 text-center text-decoration-none mb-3" href="#!"><font size="5"><i class="far fa-folder-open" alt=""></i></font>
-                          <p class="mb-0 text-black text-truncate fs--2 mt-1 pt-1">Activity</p>
+                          <p class="mb-0 text-black text-truncate fs--2 mt-1 pt-1">Activité</p>
                         </a></div>
 
                         <div class="col-4"><a class="d-block hover-bg-200 p-2 rounded-3 text-center text-decoration-none mb-3" href="#!"><font size="5"><i class="far fa-folder-open" alt=""></i></font>

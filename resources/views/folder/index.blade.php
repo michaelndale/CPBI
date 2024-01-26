@@ -5,11 +5,11 @@
     <div class="card-header p-4 border-bottom border-300 bg-soft">
       <div class="row g-3 justify-content-between align-items-end">
         <div class="col-12 col-md">
-          <h4 class="text-900 mb-0" data-anchor="data-anchor"> <i class="fa fa-folder-open"></i> Folder </h4>
+          <h4 class="text-900 mb-0" data-anchor="data-anchor"> <i class="fa fa-folder-open"></i> Classeur dossier</h4>
 
         </div>
         <div class="col col-md-auto">
-          <button class="btn btn-sm btn-phoenix-secondary bg-white hover-bg-100 me-2" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Add folder</button>
+          <a href="javascript:void()" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter </a>
 
         </div>
       </div>
@@ -46,14 +46,14 @@
           @method('post')
           @csrf
           <div class="modal-header border-0 p-0 mb-2">
-            <h3 class="mb-0">Add folder </h3><button class="btn btn-sm btn-phoenix-secondary" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times text-danger"></span></button>
+            <h3 class="mb-0">Ajouter classeur dossier</h3><button class="btn btn-sm btn-phoenix-secondary" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times text-danger"></span></button>
           </div>
           <div class="modal-body px-0">
             <div class="row g-3">
               <div class="col-lg-12">
                 <div class="mb-4">
-                  <label class="text-1000 fw-bold mb-2">Title</label>
-                  <input class="form-control" name="ftitle" id="ftitle" type="text" placeholder="Entrer title folder"  required />
+                  <label class="text-1000 fw-bold mb-2">Titre</label>
+                  <input class="form-control" name="ftitle" id="ftitle" type="text" placeholder="Entrer le titre"  required />
                  
                 </div>
                 <div>
@@ -62,8 +62,8 @@
             </div>
           </div>
           <div class="modal-footer border-0 pt-6 px-0 pb-0">
-            <button class="btn btn-danger px-3 my-0" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-            <input type="submit" name="sendFolder" id="add_service" value="Save folder" class="btn btn-primary my-0" />
+         
+            <input type="submit" name="sendFolder" id="add_service" value="Sauvegarder" class="btn btn-primary my-0" />
           </div>
         </form>
       </div>

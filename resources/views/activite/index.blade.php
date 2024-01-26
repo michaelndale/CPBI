@@ -15,7 +15,7 @@
           </div>
           <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
             <div class="table-responsive" id="show_all_activite">
-                <h4 class="text-center text-secondery my-5"> Chargement des données ...</h4>
+           <center> @include('layout.partiels.load')</center>
             </div>
             <div class="d-flex justify-content-center mt-3">
               <button class="page-link disabled" data-list-pagination="prev" disabled="">

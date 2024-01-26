@@ -9,7 +9,7 @@
   
 }
 </style>
-<a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModale" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouvelle activite</a>
+<a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModale" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouvelle activité</a>
 
 <div class="modal fade" id="addModale" tabindex="-1" aria-labelledby="addModale" style="display: none;" aria-hidden="true">
 <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -30,12 +30,36 @@
             <tr>
                <td class="align-middle ps-1 name"> Source projet</td>
                <td class="align-middle email" colspan="4">
-                   <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid" >
-                   <input value="{{ Session::get('title') }} " class="form-control" disabled  >      
+                   <input value="{{ Session::get('id') }}" type="hidden" name="projetid" id="projetid" >
+                   <input value="{{ Session::get('title') }}" class="form-control" disabled  >      
                </td>
            </tr>
+           <tr>
+            <td>Titre compte budgetaire</td>
+            <td colspan="4">
+            <div class="col-sm-12 col-md-12">
+                <div class="form-floating">
+                <select class="form-select" id="compteid" name="compteid" required >
+                    <option selected="selected" value="">Ligne budgetaire</option>
+                    @foreach ($compte as $comptes)
+                        <option value="{{ $comptes->id }}"> {{ $comptes->numero }}. {{ $comptes->libelle }} </option>
+                          @php
+                            $idc = $comptes->id ;
+                              $res= DB::select("SELECT * FROM comptes  WHERE compteid= $idc");
+                          @endphp
+                          @foreach($res as $re)
+                            <option value="{{ $re->id }}" > {{ $re->numero }}. {{ $re->libelle }}  </option>
+                          @endforeach 
+                    @endforeach
+                  </select>
+                  
+                  <label for="floatingInputGrid">Ligne budgetaire</label></div>
+              </div>
+            </td>
+           </tr>
+           
             <tr>
-                <td class="align-middle ps-3 name" style="width:10%">Titre</td>
+                <td class="align-middle ps-3 name" style="width:25%">Description detaillee des besoins </td>
                 <td class="align-middle email" colspan="6">
                     <input type="text" class="form-control" name="titre" id="titre" style="width: 100%" />
                 </td>
@@ -48,7 +72,7 @@
                     <input type="text" class="form-control" name="pays" id="pays style="width: 100%" />
                 </td>
 
-                <td class="align-middle ps-3 name" style="width:10%">Montant </td>
+                <td class="align-middle ps-3 name" style="width:10%">Couts estimes </td>
 
                 <td class="align-middle email" colspan="2">
                     <input type="text" class="form-control" name="montant" id="montant" style="width: 100%" />
@@ -56,7 +80,7 @@
             </tr>
 
             <tr>
-                <td class="align-middle ps-3 name" style="width:10%">Categorie</td>
+                <td class="align-middle ps-3 name" style="width:10%">Departement d'execution</td>
                 <td class="align-middle email" colspan="6">
                 <select type="text" class="form-control" name="categorieid" id="categorieid" style="width: 100%" >
                             <option> -- Selection categorie -- </option>

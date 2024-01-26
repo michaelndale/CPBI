@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Activity;
 use App\Models\Catactivity;
+use App\Models\Compte;
 use App\Models\Folder;
 use App\Models\Historique;
 use App\Models\Notification;
@@ -21,13 +22,14 @@ class ActivityController extends Controller
       $active = 'Activite';
       $dataProjet = Project::all();
       $dataCategorie = Catactivity::all();
-      
+      $compte = Compte::where('compteid', '=', NULL)->get();
       return view('activite.index', 
         [
           'title' =>$title,
           'dataProject' => $dataProjet,
           'dataCategorie' => $dataCategorie,
-          'active' => $active
+          'active' => $active,
+          'compte' => $compte,
       ]);
     }
 
@@ -45,9 +47,11 @@ class ActivityController extends Controller
         <thead>
         <tr>
           <th class="align-middle ps-3 name">#</th>
-          <th >Titre</th>
-          <th >Pays</th>
-          <th >Montant</th>
+          <th >Description detaillee des besoins</th>
+         
+          <th >Annee</th>
+          <th >Couts estimes<br> Monnaie BIF</th>
+          
           <th >Date</th>
           <th><center>ACTION</center></th>
         </tr>
@@ -59,7 +63,8 @@ class ActivityController extends Controller
           $output .= '<tr>
               <td class="align-middle ps-3 name">' . $nombre . '</td>
               <td>' . ucfirst($rs->titre). '</td>
-              <td>' . ucfirst($rs->pays). '</td>
+            
+              <td>' . 2024 . '</td>
               <td>' . ucfirst($rs->montantbudget). '</td>
               <td>' . date('d.m.Y', strtotime($rs->created_at)) . '</td>
               <td>
@@ -95,6 +100,7 @@ class ActivityController extends Controller
         $activity = new Activity();
         $activity->titre = $request->titre;
         $activity->projectid = $request->projetid;
+        $activity->compteidr = $request->compteid;
         $activity->pays = $request->pays;
         $activity->montantbudget= $request->montant;
         $activity->catid= $request->categorieid;

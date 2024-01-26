@@ -90,7 +90,7 @@
                 <select class="form-select" id="profileid" name="profileid" >
                     <option value="" selected="selected">Profile</option>
                     @foreach ($profile as $profiles)
-                      <option value="{{ $profiles->p_niveau }}">  {{ $profiles->p_niveau }}</option>
+                      <option value="{{ $profiles->title }}">  {{ $profiles->title }}</option>
                     @endforeach
                   </select>
                   <label for="eventLabel">Profile</label>
@@ -102,7 +102,7 @@
                       <option value="" selected="selected">Departement</option>
                         <option value="Tout"> Tout</option>
                         @foreach ($department as $departments)
-                          <option value="{{ $departments->d_title }}">  {{ $departments->d_title  }}</option>
+                          <option value="{{ $departments->title }}">  {{ $departments->title  }}</option>
                         @endforeach
                     </select>
                     <label for="eventLabel">Departement</label>
@@ -123,7 +123,7 @@
             </div>
                 
               <div class="form-floating mb-3">
-                <input class="form-control" id="identifiant" type="text" name="identifiant" required="required" placeholder="Identifiant" />
+                <input class="form-control" id="identifiant"  name="identifiant"  type="text"required="required" placeholder="Identifiant" />
                 <label for="Identifiant">Identifiant</label>
                 <span id="identifiant_error" name="identifiant_error" class="text text-danger" > </span>
               </div>

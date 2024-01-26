@@ -30,7 +30,7 @@ class FolderController extends Controller
           <thead>
             <tr>
               <th class="sort border-top ps-3" data-sort="name">#</th>
-              <th class="sort border-top ps-3" data-sort="name">Title</th>
+              <th class="sort border-top ps-3" data-sort="name">Titre</th>
               <th class="sort border-top ps-3" data-sort="name">ACTION</th>
             </tr>
           </thead>
@@ -40,7 +40,7 @@ class FolderController extends Controller
         foreach ($folder as $rs) {
           $output .= '<tr>
               <td class="align-middle ps-3 name">' . $nombre . '</td>
-              <td>' . ucfirst($rs->flibelle). '</td>
+              <td>' . ucfirst($rs->title). '</td>
               <td>
               
                 <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_FolderModal"><i class="bi-pencil-square h4"></i> Edit</a>

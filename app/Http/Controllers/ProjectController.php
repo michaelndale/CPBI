@@ -90,7 +90,6 @@ class ProjectController extends Controller
         $project->region = $request->region;
         $project->lead = $request->leader;
         $project->lieuprojet = $request->lieuProjet;
-        $project->ligneid = $request->ligne;
         $project->devise = $request->devise;
         $project->numerorapport = $request->numeroRapport;
         $project->numerodossier = $request->numeroDossier;

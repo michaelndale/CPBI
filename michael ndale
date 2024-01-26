@@ -2,3 +2,22 @@ MICHAEL NDALE
 69974848
 miguel NDALE
 Passionner de la tecbhnologie
+
+<div class="col-sm-2 col-md-12">
+                <div class="form-floating">
+                <select class="form-select" id="ligne" name="ligne" required>
+                    <option selected="selected" value="">Ligne budgetaire</option>
+                    @foreach ($compte as $comptes)
+                        <option value="{{ $comptes->id }}"> {{ $comptes->numero }}. {{ $comptes->libelle }} </option>
+                          @php
+                            $idc = $comptes->id ;
+                              $res= DB::select("SELECT * FROM comptes  WHERE compteid= $idc");
+                          @endphp
+                          @foreach($res as $re)
+                            <option value="{{ $re->id }}" > {{ $re->numero }}. {{ $re->libelle }}  </option>
+                          @endforeach 
+                    @endforeach
+                  </select>
+                  
+                  <label for="floatingInputGrid">Ligne budgetaire</label></div>
+              </div>

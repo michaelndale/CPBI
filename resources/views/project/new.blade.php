@@ -20,25 +20,7 @@
                 <div class="form-floating"><input class="form-control" name="numeroProjet" id="numeroProjet" type="text" placeholder="Numero du projet" /><label for="floatingInputGrid">Numero du projet</label></div>
               </div>
 
-              <div class="col-sm-2 col-md-12">
-                <div class="form-floating">
-                <select class="form-select" id="ligne" name="ligne" required>
-                    <option selected="selected" value="">Ligne budgetaire</option>
-                    @foreach ($compte as $comptes)
-                        <option value="{{ $comptes->id }}"> {{ $comptes->numero }}. {{ $comptes->libelle }} </option>
-                          @php
-                            $idc = $comptes->id ;
-                              $res= DB::select("SELECT * FROM comptes  WHERE compteid= $idc");
-                          @endphp
-                          @foreach($res as $re)
-                            <option value="{{ $re->id }}" > {{ $re->numero }}. {{ $re->libelle }}  </option>
-                          @endforeach 
-                    @endforeach
-                  </select>
-                  
-                  <label for="floatingInputGrid">Ligne budgetaire</label></div>
-              </div>
-
+              
               <div class="col-sm-2 col-md-4">
                 <div class="form-floating"><input class="form-control" name="region" id="region" type="text" placeholder="Pays / Region" /><label for="floatingInputGrid">Pays / Region </label></div>
               </div>

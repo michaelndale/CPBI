@@ -24,8 +24,8 @@ class AuthController extends Controller
 {
   public function index()
   {
-    $title = 'Users';
-    $active = 'Users';
+    $title = 'Utilisateur';
+    $active = 'Parameter';
     $profile= profile::all();
     $department= Departement::all();
     $statut= Status::all();
@@ -143,7 +143,7 @@ class AuthController extends Controller
   }
 
   // insert a new employee ajax request
-  public function store(User $User, Request $request)
+  public function store(Request $request)
   {
     $username= $request->identifiant;
 
@@ -169,12 +169,14 @@ class AuthController extends Controller
 
         }else
         {
-          $User->profil_id= $request->profileid;
-          $User->departments= $request->department;
-          $User->member_id = $request->memberid;
-          $User->identifiant = $request->identifiant;
+          $User = new User();
+          $User->role= $request->profileid;
+          $User->departement= $request->department;
+          $User->identifiant= $request->identifiant;
+          $User->email= $request->identifiant;
           $User->statut= $request->statut;
           $User->password= Hash::make($request->password,['rounds' =>12]);
+          $User->userid = Auth()->user()->id;
           $User->save();
     
           return response()->json([
