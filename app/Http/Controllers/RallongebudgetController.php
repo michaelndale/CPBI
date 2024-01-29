@@ -16,18 +16,23 @@ class RallongebudgetController extends Controller
       $active= 'Budgetisation';
       $title = 'Budgetisation';
       $compte= Compte::all();
-      $showData = DB::table('projects')
-                ->join('users', 'projects.userid', '=', 'users.id')
-                ->select('projects.*', 'users.name', 'users.lastname')
-                ->Where('projects.id', $ID)
-                ->get();
+      $showData = Project::find($ID);
+   
+  
+      $user=  DB::table('users')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+      ->Where('users.id', $showData->lead)
+      ->get();
+
 
       return view('rallonge.index',
         [
           'title' => $title,
           'active' => $active,
           'compte' => $compte,
-          'showData' => $showData
+          'showData' => $showData,
+          'userData' => $user
         ]
       );
     }
@@ -55,12 +60,13 @@ class RallongebudgetController extends Controller
           $output .= 
           '<tr>
               <td>  ' .$datas->numero.'&nbsp;&nbsp;&nbsp; '.ucfirst($datas->libelle). '   </td>
-              <td align="right">  ' . ucfirst($datas->depensecumule).'  </td>
-              <td align="right">  '. 0 .'  </td>
-              <td align="right"> ' . ucfirst($datas->depensecumule).' </td>
               <td align="right"> ' . ucfirst($datas->budgetactuel).' </td>
-              <td align="right"> ' . ucfirst($datas->depensecumule).' </td>
-              <td> ' . 2 .'% </td>
+              <td align="right"> '. 0 .' </td>
+              <td align="right">  '. 0 .'  </td>
+              <td align="right"> '. 0 .' </td>
+              <td align="right"> '. 0 .'</td>
+              <td align="right"> '. 0 .'</td>
+              <td> ' . 0 .'% </td>
             </tr>
           ';
           $nombre++;
@@ -78,7 +84,6 @@ class RallongebudgetController extends Controller
 
       $rallonge->projetid = $request->projetid;
       $rallonge->compteid = $request->compteid;
-      $rallonge->depensecumule = $request->coutestime; 
       $rallonge->budgetactuel = $request->budgetactuel; 
       $rallonge->userid = Auth()->user()->id;
 

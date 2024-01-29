@@ -34,9 +34,8 @@
                                 @include('layout.partiels.load')
                                </td>
                               </tr>
-
                             </tbody>
-        </table>
+                 </table>
         <BR>
     </div>
         <div class="d-flex justify-content-center mt-3">

@@ -167,20 +167,20 @@
                     </div>
                   </a>
                   <div class="parent-wrapper label-1">
-                    <ul class="nav collapse parent @if ($active=='Parc') show @endif " data-bs-parent="#navbarVerticalCollapse" id="nv-rh">
+                    <ul class="nav collapse parent @if ($active=='RH') show @endif " data-bs-parent="#navbarVerticalCollapse" id="nv-rh">
                       <li class="nav-item"><a class="nav-link @if ($title=='Recherche vehicule') active @endif" href="" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text">Tableau de bord</span></div>
                         </a>
                       </li>
 
-                      <li class="nav-item"><a class="nav-link dropdown-indicator" href="#nv-simple" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-simple">
+                      <li class="nav-item"><a class="nav-link dropdown-indicator" href="#nv-personnele" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-simple">
                           <div class="d-flex align-items-center">
                             <div class="dropdown-indicator-icon"><span class="fas fa-caret-right"></span></div><span class="nav-link-text">Personnelle </span><span class="fa-solid fa-circle text-info ms-1 new-page-indicator" style="font-size: 6px"></span>
                           </div>
                         </a><!-- more inner pages-->
                         <div class="parent-wrapper">
-                          <ul class="nav collapse parent show" data-bs-parent="#vehicule" id="nv-simple">
-                            <li class="nav-item"><a class="nav-link active" href="{{ route('vehicule')}}" data-bs-toggle="" aria-expanded="false">
+                          <ul class="nav collapse parent  @if ($title=='Personnel') show @endif  " data-bs-parent="#vehicule" id="nv-personnele">
+                            <li class="nav-item"><a class="nav-link  @if ($title=='Personnel') active @endif  " href="{{ route('personnel')}}" data-bs-toggle="" aria-expanded="false">
                                 <div class="d-flex align-items-center"><span class="nav-link-text">Tous les employés</span></div>
                               </a><!-- more inner pages-->
                             </li>
@@ -312,7 +312,7 @@
                     <ul class="nav collapse parent @if ($active=='Parameter') show @endif "" data-bs-parent="#navbarVerticalCollapse" id="nv-customization">
                       <li class="collapsed-nav-item-title d-none">Customization</li>
 
-                      <li class="nav-item"><a class="nav-link @if ($active=='Utilisateur') active @endif" href="{{ route('user') }}" data-bs-toggle="" aria-expanded="false">
+                      <li class="nav-item"><a class="nav-link @if ($title=='Utilisateur') active @endif" href="{{ route('user') }}" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text">Utilisateur</span></div>
                         </a>
                       </li>
@@ -335,12 +335,12 @@
                         </a>
                       </li>
                       <li class="nav-item"><a class="nav-link @if ($title=='Depatment') active @endif" href="{{ route('department') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text">Department</span></div>
+                          <div class="d-flex align-items-center"><span class="nav-link-text">Departement</span></div>
                         </a>
                       </li>
 
                       <li class="nav-item"><a class="nav-link @if ($title=='History') active @endif" href="{{ route('history') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text">History</span></div>
+                          <div class="d-flex align-items-center"><span class="nav-link-text">Historique</span></div>
                         </a>
                       </li>
 
@@ -409,8 +409,8 @@
             @if (session()->has('id'))   
                 <div class="callout callout-info">
                   <br>
-                  <h5>Projet encours de traitement :</h5>
-                  <p> {{ Session::get('title') }} </p>
+                  <p><b>Projet encours de traitement : </b>{{ Session::get('title') }} </p>
+                 
                 </div>
             @else  
         
@@ -532,7 +532,7 @@
 
             <li class="nav-item dropdown"><a class="nav-link lh-1 pe-0" id="navbarDropdownUser" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                 <div class="avatar avatar-l ">
-                  <img class="rounded-circle " src="{{ asset('elements/assets/img/avatar.webp') }}" alt="" />
+                  <img class="rounded-circle " src=" {{ Session::get('avatar')  }}" alt="" />
                 </div>
               </a>
               <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border border-300" aria-labelledby="navbarDropdownUser">
@@ -544,24 +544,21 @@
                         <a class="d-flex align-items-center text-900 text-hover-1000" href="">
                           <div class="avatar avatar-m">
                             @php
-                              $session_nom = Auth::user()->lastname;
+                              $session_nom = Session::get('nomauth') 
                             @endphp
                               <div class="avatar-name rounded-circle"><span> {{ ucfirst(substr($session_nom,0,1)) }} </span></div>
                           </div>
                       </a>
                       </div>
-                      <h6 class="mt-2 text-black">{{ ucfirst(Auth::user()->lastname) }}  {{ ucfirst(Auth::user()->name) }}  </h6>
+                      <h6 class="mt-2 text-black">{{ ucfirst(Session::get('prenomauth')) }}  {{ ucfirst($session_nom) }} <br>  <br> [ {{ ucfirst(Session::get('fonction')) }} ]  </h6>
                     </div>
                     <div class="mb-3 mx-3"><hr></div>
                   </div>
                   <div class="overflow-auto scrollbar" style="height: 10rem;">
                     <ul class="nav d-flex flex-column mb-2 pb-1">
-                      <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="user"></span><span>Profile</span></a></li>
-                      <li class="nav-item"><a class="nav-link px-3" href="#!"><span class="me-2 text-900" data-feather="pie-chart"></span>Tableau de bord</a></li>
-                      <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="lock"></span>Posts &amp; Activity</a></li>
-                      <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="settings"></span>Settings &amp; Privacy </a></li>
-                      <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="help-circle"></span>Help Center</a></li>
-                      <li class="nav-item"><a class="nav-link px-3" href="#!"> <span class="me-2 text-900" data-feather="globe"></span>Language</a></li>
+                      <li class="nav-item"><a class="nav-link px-3 editpersonnel" href="javascript:voide()"  id="{{ Auth::id() }}"    data-bs-toggle="modal" data-bs-target="#EditPersonnelModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user"></span><span>Profile</span></a></li>
+                       <li class="nav-item"><a class="nav-link px-3 editpersonnelpasseword" href="javascript:voide()" id="{{ Auth::id() }}"  data-bs-toggle="modal" data-bs-target="#EditMotdepasseModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="me-2 text-900" data-feather="edit"></span>Changer mot de passe</a></li>
+                      <li class="nav-item"><a class="nav-link px-3" href="javascript:voide()"  id="{{ Auth::id() }}"> <span class="me-2 text-900" data-feather="globe"></span>Language</a></li>
                     </ul>
                   </div>
                   <div class="card-footer p-0 border-top">
@@ -770,7 +767,187 @@
     </div>
   </div>
 </div>
-      <script>
+
+
+
+<div class="modal fade" id="EditMotdepasseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <form id="addForm" autocomplete="off">
+        @method('post')
+        @csrf
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-user-plus"></i> Modifier mot de passe </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
+          </div>
+          <div class="modal-body">
+          <div class="row" >
+                  <div class="col-sm-6 col-md-12">
+                    <div class="form-floating mb-3">
+                      <input class="form-control" id="nom"  name="nom"  type="text"required="required" placeholder="Identifiant" />
+                      <label for="Identifiant">Anciant mot de paase</label>
+                      <span id="identifiant_error" name="nom_error" class="text text-danger" > </span>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-12">
+                    <div class="form-floating mb-3">
+                      <input class="form-control" id="nom"  name="nom"  type="text"required="required" placeholder="Identifiant" />
+                      <label for="Identifiant">Nouveau mot de paase</label>
+                      <span id="identifiant_error" name="nom_error" class="text text-danger" > </span>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-12">
+                  <div class="form-floating mb-3">
+                    <input class="form-control" id="prenom" type="text" name="prenom" required="required" placeholder="Password" />
+                    <label for="Password">Confirmer le nouveau mot de passe</label>
+                  </div>
+                  </div>
+                </div>
+
+               
+
+              
+          </div>
+          <div class="modal-footer">
+            <button type="submit" name="addbtn" id="addbtn" class="btn btn-primary">Sauvegarder</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal fade" id="EditPersonnelModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <form id="EditPersonnelForm" autocomplete="off">
+        @method('post')
+        @csrf
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-user-plus"></i> Modifier personnel</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
+          </div>
+          <div class="modal-body">
+          <div class="row" >
+
+               
+                 
+
+                 <input  id="per_id"  name="per_id"  type="hidden"/>
+
+                  <div class="col-sm-6 col-md-6">
+                    <div class="form-floating mb-3">
+                      <input class="form-control" id="per_nom"  name="per_nom"  type="text"required="required" placeholder="Identifiant" />
+                      <label for="Identifiant">Nom</label>
+                      <span id="identifiant_error" name="nom_error" class="text text-danger" > </span>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-6">
+                  <div class="form-floating mb-3">
+                    <input class="form-control" id="per_prenom" type="text" name="per_prenom" required="required" placeholder="Password" />
+                    <label for="Password">Prénom </label>
+                  </div>
+                  </div>
+                </div>
+
+                <div class="row" >
+                  <div class="col-sm-6 col-md-6">
+                    <div class="form-floating mb-3">
+                      <select class="form-control" id="per_sexe"  name="per_sexe"  type="text"required="required" placeholder="Identifiant">
+                        <option value="">Séléctionner genre</option>
+                        <option value="Femme">Femme</option>
+                        <option value="Homme">Homme</option>
+                      </select>
+                      <label for="sexe">Sexe</label>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-md-6">
+                  <div class="form-floating mb-3">
+                    <input class="form-control" id="per_phone" type="text" name="per_phone" required="required" placeholder="Téléphone" />
+                    <label for="Password">Téléphone </label>
+                  </div>
+                  </div>
+                </div>
+
+                <div class="row" >
+                  <div class="col-sm-12 col-md-12">
+                    <div class="form-floating mb-3">
+                      <input class="form-control" id="per_email"  name="per_email"  type="text" required="required" placeholder="Email" />
+                      <label for="email">Email</label>
+                      <span id="email_error" name="email_error" class="text text-danger" > </span>
+                    </div>
+                  </div>
+                </div>
+          </div>
+          <div class="modal-footer">
+            
+            <button type="submit" name="EditPersonnelbtn" id="EditPersonnelbtn" class="btn btn-primary">Sauvegarder</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <script>
+    $(function() {
+
+      // Edit personnel ajax request
+      $(document).on('click', '.editpersonnel', function(e) 
+      {
+        e.preventDefault();
+        let id = $(this).attr('id');
+        $.ajax({
+          url: "{{ route('showPersonnel') }}",
+          method: 'get',
+          data: {
+            id: id,
+            _token: '{{ csrf_token() }}'
+          },
+          success: function(response) {
+            $("#per_id").val(response.id);
+            $("#per_nom").val(response.nom);
+            $("#per_prenom").val(response.prenom);
+            $("#per_sexe").val(response.sexe);
+            $("#per_phone").val(response.phone);
+            $("#per_email").val(response.email);
+          }
+        });
+      });
+
+      // update personnel ajax request
+      $("#EditPersonnelForm").submit(function(e) 
+      {
+        e.preventDefault();
+        const fd = new FormData(this);
+        $("#EditPersonnelbtn").text('Mise à jour...');
+        $.ajax({
+          url:"{{ route('updatPersonnel') }}",
+          method: 'post',
+          data: fd,
+          cache: false,
+          contentType: false,
+          processData: false,
+          dataType: 'json',
+          success: function(response) 
+          {
+            if (response.status == 200) {
+             $.notify("Mise à jour  avec succès !", "success");
+              $("#EditPersonnelModal").modal('show');
+             
+            }
+            
+            if (response.status == 202) {
+             // $.notify("Erreur d'execution, verifier votre internet", "error");
+              $("#EditPersonnelModal").modal('show');
+            }
+
+            $("#EditPersonnelbtn").text('Sauvegarder');
+
+          }
+        });
+      });
+    });
+  </script>
+
+  <script>
         var navbarTopShape = window.config.config.phoenixNavbarTopShape;
         var navbarPosition = window.config.config.phoenixNavbarPosition;
         var body = document.querySelector('body');
@@ -863,4 +1040,4 @@
         if (navbarVerticalStyle === 'darker') {
           navbarVertical.classList.add('navbar-darker');
         }
-      </script>
+  </script>

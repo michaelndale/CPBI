@@ -34,13 +34,10 @@
             </select>
           </div>
 
+          
           <div class="col-sm-6 col-lg-12 col-xl-3">
-            <label class="text-1000 fw-bold mb-2">Coûts estimés</label>
-            <input class="form-control" id="coutestime" name="coutestime"  type="text" placeholder="Intitulé du compte" />
-          </div>
-          <div class="col-sm-6 col-lg-12 col-xl-3">
-            <label class="text-1000 fw-bold mb-2">Budget actuel</label>
-            <input class="form-control" id="budgetactuel" name="budgetactuel"  type="text" placeholder="Enter libelle" />
+            <label class="text-1000 fw-bold mb-2">Budget </label>
+            <input class="form-control" id="budgetactuel" name="budgetactuel"  type="number" placeholder="Budget" />
           </div>
           
         </div>

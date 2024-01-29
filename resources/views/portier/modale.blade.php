@@ -60,7 +60,7 @@
                   <select class="form-select" id="chauffeur" name="chauffeur" >
                     <option value="" selected="selected">Séléctionner chauffeur</option>
                     @foreach ($chauffeur as $chauffeurs)
-                      <option value="{{ ucfirst($chauffeurs->name) }} {{ ucfirst($chauffeurs->lastname) }}">{{ ucfirst($chauffeurs->name) }} {{ ucfirst($chauffeurs->lastname) }}</option>
+                      <option value="{{ ucfirst($chauffeurs->nom) }} {{ ucfirst($chauffeurs->prenom) }}">{{ ucfirst($chauffeurs->nom) }} {{ ucfirst($chauffeurs->nom) }}</option>
                     @endforeach
                   </select>
                   <label for="eventLabel">chauffeur</label>
@@ -94,7 +94,7 @@
                   <select class="form-select" id="chefmission" name="chefmission" >
                     <option value="" selected="selected"> Séléctionner Chef </option>
                     @foreach ($chefmission as $chefmissions)
-                      <option value="{{ ucfirst($chefmissions->name) }} {{ ucfirst($chefmissions->lastname) }}">{{ ucfirst($chefmissions->name) }} {{ ucfirst($chefmissions->lastname) }}</option>
+                      <option value="{{ ucfirst($chefmissions->nom) }} {{ ucfirst($chefmissions->prenom) }}">{{ ucfirst($chefmissions->nom) }} {{ ucfirst($chefmissions->prenom) }}</option>
                     @endforeach
                   </select>
                   <label for="eventLabel">Chef de mission</label>

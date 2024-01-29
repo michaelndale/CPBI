@@ -1,6 +1,6 @@
 @extends('layout/app')
 @section('page-content')
-@foreach ($showData as $showDatas)
+@foreach ($userData as $userDatas)
 @endforeach
 
 <div class="content">
@@ -32,9 +32,9 @@
               <td scope="col" style="padding:5px">No du projet</td>
             </tr>
             <tr>
-              <td style="padding:5px"> {{ $showDatas->title }} </td>
-              <td style="padding:5px"> {{ $showDatas->region }} </td>
-              <td style="padding:5px"> {{ $showDatas->numeroprojet }} </td>
+              <td style="padding:5px; width:50%"> {{ $showData->title }} </td>
+              <td style="padding:5px"> {{ $showData->region }} </td>
+              <td style="padding:5px"> {{ $showData->numeroprojet }} </td>
               <td style="padding:5px"> </td>
             </tr>
 
@@ -45,12 +45,12 @@
               <td style="padding:5px">Balance reporte no 12</td>
             </tr>
             <tr>
-              <td style="padding:5px"> {{ $showDatas->name }} {{ $showDatas->lastname }} , 
+              <td style="padding:5px"> {{ $userDatas->nom }} {{ $userDatas->prenom }} , 
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
              </td>
-              <td style="padding:5px"> {{ $showDatas->devise }} </td>
-              <td style="padding:5px">  {{ $showDatas->numerofinance }} </td>
-              <td style="padding:5px"> {{ $showDatas->budget }} </td>
+              <td style="padding:5px"> {{ $showData->devise }} </td>
+              <td style="padding:5px">  {{ $showData->numerofinance }} </td>
+              <td style="padding:5px"> {{ $showData->budget }} </td>
             </tr>
 
 
@@ -59,40 +59,34 @@
 
           <br>
 
-          <table class="table table-striped table-sm fs--1 mb-0">
+          <table class="table table-bordered  table-sm fs--1 mb-0">
           <thead>
-                              <tr style="background-color:#c0c0c0;">
-                              <th class="sort border-top" data-sort="num">Revelé par compte<br>N<sma>o cpte</sma> Titre compte</th>
-                                <th class="sort border-top" data-sort="febnum"><center>A<br>Dépense cumul.selon<br>rapport finance no12</center></th>
-                                <th class="sort border-top ps-3" data-sort="facture"><center> B</br>Coûts  estimés pour <br>mener  à terme le projet </center></th>
-                                <th class="sort border-top" data-sort="date"><center> C(A+B)</br> Nouvelle  proposition  <br>de budget</center></th>
-                                <th class="sort border-top" data-sort="bc"><center> D</br> Budget actuel </center> <br> </center></th>
-                                <th class="sort border-top" data-sort="periode"><center> D(C-D)</br>  Modification  budgetaire <br><br></center></th>
-                                <th class="sort border-top" data-sort="om">%</th>
-                               
-                              </tr>
-                            </thead>
-                            <tbody id="show_all_rallonge">
-                              
-                              <tr>
-                              <td colspan="8">
-                                <h5 class="text-center text-secondery my-5">
-                                  @include('layout.partiels.load') <br><br>
-                               </td>
-                              </tr>
-
-                            </tbody>
+            <tr>
+              <th class="sort border-top"> Ligne budgetaire </th>
+              <th class="sort border-top">        <center> Budget      </center>  </th>
+              <th class="sort border-top ps-3">  <center> Depense  </center>  </th>
+              <th class="sort border-top" >          <center>  T1  </center>  </th>
+              <th class="sort border-top" >          <center>  T2  </center>  </th>
+              <th class="sort border-top" >            <center> T3  </center>  </th>
+              <th class="sort border-top" >       <center>  T4  </center>  </th>
+              <th class="sort border-top" >%                                           </th>
+            </tr>
+          </thead>
+          <tbody id="show_all_rallonge">
+            <tr>
+              <td colspan="8">
+                <h5 class="text-center text-secondery my-5">
+                  @include('layout.partiels.load') <br><br>
+              </td>
+            </tr>
+          </tbody>
         </table>
 
 
           
 
           </div>
-          <div class="d-flex justify-content-between mt-3"><span class="d-none d-sm-inline-block" data-list-info="data-list-info"></span>
-            <div class="d-flex"><button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
-              <ul class="mb-0 pagination"></ul><button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
-            </div>
-          </div>
+         
         </div>
       </div>
     </div>

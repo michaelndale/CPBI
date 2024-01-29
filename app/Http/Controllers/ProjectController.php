@@ -7,6 +7,7 @@ use App\Models\Devise;
 use App\Models\Folder;
 use App\Models\Historique;
 use App\Models\Notification;
+use App\Models\Personnel;
 use App\Models\Project;
 use App\Models\User;
 use Exception;
@@ -19,7 +20,13 @@ class ProjectController extends Controller
     {
       $title='New project';
       $active = 'Project';
-      $members= DB::table('users')->orWhere('fonction', '!=','Chauffeur')->get();
+      $members= DB::table('users')
+              ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+              ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+              ->orWhere('fonction', '!=' ,'Chauffeur')
+              ->orderBy('nom', 'ASC')
+              ->get();
+
       $Folder= Folder::all();
       $devise= Devise::all();
       $compte = Compte::where('compteid', '=', NULL)->get();
@@ -83,6 +90,8 @@ class ProjectController extends Controller
             // fin initialisation notification
 
         // cahrgement du noveau project
+    
+        $budget =str_replace(' ', '', ($request->budget));
         $annee = date('Y');
         $project = new Project();
         $project->title = $request->title;
@@ -95,7 +104,7 @@ class ProjectController extends Controller
         $project->numerodossier = $request->numeroDossier;
         $project->start_date= $request->startdate;
         $project->deadline= $request->deadline;
-        $project->budget= $request->budget;
+        $project->budget= $budget;
         $project->description= $request->description;
         $project->annee= $annee;
         $project->userid = Auth()->user()->id;
@@ -149,8 +158,12 @@ class ProjectController extends Controller
             ->Where('projectid', $key->id)
             ->get();
       
-      $user= User::find($key->userid);
-
+      $user=  DB::table('users')
+            ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+            ->Where('users.id', $key->lead)
+            ->get();
+      
      
 
       return view('project.voir', 

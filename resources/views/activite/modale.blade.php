@@ -35,7 +35,7 @@
                </td>
            </tr>
            <tr>
-            <td>Titre compte budgetaire</td>
+            <td>Ligne budgetaire</td>
             <td colspan="4">
             <div class="col-sm-12 col-md-12">
                 <div class="form-floating">

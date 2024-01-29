@@ -2,9 +2,140 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PersonnelRequest;
+use App\Models\Fonction;
+use App\Models\Personnel;
+use App\Models\Status;
+use Exception;
 use Illuminate\Http\Request;
 
 class PersonnelController extends Controller
 {
-    //
+    public function index()
+    {
+      $title = 'Personnel';
+      $active = 'RH';
+      $fonction= Fonction::all();
+      $statut= Status::all();
+      return view(
+        'personnel.index',
+        [
+          'title' => $title,
+          'active' => $active,
+          'fonction' => $fonction,
+          'statut'=> $statut
+        ]
+      );
+    }
+
+    public function fetchAll()
+    {
+      $personnel =Personnel::orderBy('nom', 'ASC')->get();
+      $output = '';
+      if ($personnel->count() > 0) {
+       
+        foreach ($personnel as $rs) {
+    $output .='<tr class="hover-actions-trigger btn-reveal-trigger position-static">
+    <td class="customer align-middle white-space-nowrap">
+        <a class="d-flex align-items-center text-900 text-hover-1000" href="">
+            <div class="avatar avatar-m">
+                <div class="avatar-name rounded-circle"><span> '.ucfirst(substr($rs->nom,0,1)).' </span></div>
+            </div>
+           <h6 class="mb-0 ms-3 fw-semi-bold">'. ucfirst($rs->nom).' '. ucfirst($rs->prenom).'</h6>
+        </a>
+    </td>
+    <td class="city align-middle white-space-nowrap text-900"> '.$rs->email.'   </td>
+    <td class="city align-middle white-space-nowrap text-900">'. $rs->phone. '  </td>
+    <td class="city align-middle white-space-nowrap text-900">'. $rs->fonction. '  </td>
+    <td class="city align-middle white-space-nowrap text-900">'. $rs->statut. '  </td>
+    <td class="customer align-middle white-space-nowrap">'.  date('d.m.Y', strtotime($rs->created_at)) .' </td>
+    <td>
+    <center>
+      <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+      <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
+    </center>
+  </td>
+  </tr>';
+        
+        }
+        echo $output;
+      } else {
+        echo '
+        <tr class="hover-actions-trigger btn-reveal-trigger position-static">
+          <td  colspan="7" class="customer align-middle white-space-nowrap" align="center">
+            <h5 class="text-center text-secondery my-3" >  Aucun enregistrement dans la base de données  ! </h5>
+          </td>
+        </tr>';
+      }
+    }
+
+
+
+    // insert a new employee ajax request
+  public function store(PersonnelRequest $request)
+  {
+    $email= $request->email;
+    $chek = personnel::where('email', $email)->first();
+    if($chek){
+      return response()->json([
+        'status' => 202,
+      ]);
+
+    }else
+    {
+          $personnel = new Personnel();
+
+          $personnel->nom= $request->nom;
+          $personnel->prenom= $request->prenom;
+          $personnel->sexe= $request->sexe;
+          $personnel->email= $request->email;
+          $personnel->phone= $request->phone;
+          $personnel->fonction= $request->fonction;
+          $personnel->dateemboche= $request->dateemboche;
+          $personnel->statut= $request->statut;
+          $personnel->userid = Auth()->user()->id;
+
+          $personnel->save();
+    
+          return response()->json([
+            'status' => 200,
+          ]);
+        
+     }
+   
+  }
+
+  public function edit(Request $request)
+  {
+    $id = $request->id;
+    $fon = Personnel::find($id);
+    return response()->json($fon);
+  }
+
+  public function update(Request $request)
+  {
+    try {
+          $per = Personnel::find($request->per_id);
+          $per->nom = $request->per_nom;
+          $per->prenom = $request->per_prenom;
+          $per->sexe = $request->per_sexe;
+          $per->email = $request->per_email;
+          $per->phone = $request->per_phone;
+          $per->userid = Auth()->user()->id;
+          $per->update();
+          return response()->json([
+            'status' => 200,
+          ]);
+      
+    } 
+    catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    
+  
+  }
+
+}
+
 }

@@ -54,8 +54,8 @@
              
               <div class="col-12 gy-6">
                 <div class="row g-3 justify-content-end">
-                  <div class="col-auto"><button type="reset" class="btn btn-danger px-5">Cancel</button></div>
-                  <div class="col-auto"><button name="addIndetificationbtn" id="addIndetificationbtn" class="btn btn-primary px-5 px-sm-15">Edit indetification</button></div>
+               
+                  <div class="col-auto"><button name="addIndetificationbtn" id="addIndetificationbtn" class="btn btn-primary px-5 px-sm-15">Sauvegarder</button></div>
                 </div>
               </div>
             </form>

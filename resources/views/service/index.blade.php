@@ -24,8 +24,26 @@
               <span class="fas fa-search search-box-icon"></span>
             </form>
           </div>
-          <div class="table-responsive" id="show_all_service">
-            <h4 class="text-center text-secondery my-5"> Chargement des données ...</h4>
+          <div class="table-responsive" >
+
+          <table class="table table-sm fs--1 mb-0">
+          <thead>
+            <tr>
+            <th class="sort align-middle" scope="col" data-sort="nom"> #</th>
+              <th class="sort align-middle" scope="col" data-sort="nom"> Libellé </th>
+              <th ><center>Action</center></th>
+            </tr>
+          </thead>
+          <tbody  id="show_all_service">
+            <tr>
+              <td colspan="8"><h5 class="text-center text-secondery my-5">
+                  @include('layout.partiels.load')
+                </td>
+              </tr>
+          </tbody>
+        </table>
+            
+           
 
           </div>
           <div class="d-flex justify-content-between mt-3"><span class="d-none d-sm-inline-block" data-list-info="data-list-info"></span>

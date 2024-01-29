@@ -14,22 +14,37 @@
             </nav>
           </div>
           <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
-            <div class="table-responsive" id="show_all">
-                <h4 class="text-center text-secondery my-5"> Chargement des données ...</h4>
-            </div>
-            <div class="d-flex justify-content-center mt-3">
-              <button class="page-link disabled" data-list-pagination="prev" disabled="">
-                <svg class="svg-inline--fa fa-chevron-left" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="chevron-left" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg=""><path fill="currentColor" d="M224 480c-8.188 0-16.38-3.125-22.62-9.375l-192-192c-12.5-12.5-12.5-32.75 0-45.25l192-192c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25L77.25 256l169.4 169.4c12.5 12.5 12.5 32.75 0 45.25C240.4 476.9 232.2 480 224 480z"></path></svg><!-- <span class="fas fa-chevron-left"></span> Font Awesome fontawesome.com --></button>
-                  <ul class="mb-0 pagination"><li class="active"><button class="page" type="button" data-i="1" data-page="5">1</button></li>
-                  <li><button class="page" type="button" data-i="2" data-page="5">2</button></li><li><button class="page" type="button" data-i="3" data-page="5">3</button></li><li class="disabled"><button class="page" type="button">...</button></li><li><button class="page" type="button" data-i="9" data-page="5">9</button></li></ul><button class="page-link pe-0" data-list-pagination="next"><svg class="svg-inline--fa fa-chevron-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="chevron-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg=""><path fill="currentColor" d="M96 480c-8.188 0-16.38-3.125-22.62-9.375c-12.5-12.5-12.5-32.75 0-45.25L242.8 256L73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"></path></svg><!-- <span class="fas fa-chevron-right"></span> Font Awesome fontawesome.com --></button>
+            <div class="table-responsive" >
+            <table class="table table-striped table-sm fs--1 mb-0">
+              <thead>
+                <tr>
+                  <th class="sort border-top" data-sort="num">#</th>
+                  <th class="sort border-top" data-sort="date">Date</th>
+                  <th class="sort border-top ps-3" data-sort="object">Object</th>
+                  <th class="sort border-top" data-sort="ultineraire">Utineraire</th>
+                  <th class="sort border-top" data-sort="Heuredepart"><center> Heure <br> de depart </center> </th>
+                  <th class="sort border-top" data-sort="Heurearriver"><center> Heure <br> d'arriver </center></th>
+                  <th class="sort border-top" data-sort="Chauffeur">Chauffeur</th>
+                  <th class="sort border-top" data-sort="Blaque">Blaque</th>
+                  <th class="sort border-top" data-sort="Chefmission">Chef de mission</th>
+                  <th class="sort border-top" data-sort="signature">Signature</th>
+                  <th class="sort border-top " >ACTION</th>
+                </tr>
+              </thead>
+              <tbody class="show_all" id="show_all">
+                <tr>
+                  <td colspan="11"><h5 class="text-center text-secondery my-5">
+                    @include('layout.partiels.load')
+                  </td>
+                </tr>
+              </tbody>
+            </table>
             </div>
           </div>     
         </div>
     </div>
   </div>
-</div>
-
-
+  
 <script>
     $(function() {
 

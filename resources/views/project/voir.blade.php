@@ -1,6 +1,7 @@
 @extends('layout/app')
 @section('page-content')
-
+@foreach ($responsable as $responsables)
+@endforeach
 <div class="content px-0 pt-9">
         <div class="row g-0">
           <div class="col-12 col-xxl-8 px-0 bg-soft">
@@ -12,12 +13,15 @@
                   </h2>
                   <div class="font-sans-serif btn-reveal-trigger"><button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
                     <div class="dropdown-menu dropdown-menu-end py-2">
+                    
+                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> FEB</a>
+                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> DAP</a>
+                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> DJA</a>                    
+                      
                       <a class="dropdown-item" href="#!"><i class="fas fa-random"></i> Affectation</a>
                       <a class="dropdown-item" href="#!"><i class="fas fa-edit"></i>  Detail du projet</a>
-                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> FEB</a>
+                      
                       <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> BPC</a>
-                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> DAP</a>
-                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> DJA</a>
                       <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> SQR</a>
                       <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> FDT</a>
                       <a class="dropdown-item text-danger" href="#!">Supprimer</a>
@@ -49,7 +53,7 @@
                                   <h5 class="text-900 mb-0 text-nowrap">Responsable :</h5>
                                 </div>
                               </td>
-                              <td class="ps-1 py-1"><a class="fw-semi-bold d-block lh-sm" href="#!">{{  $responsable->name }} {{  $responsable->lastname }}</a></td>
+                              <td class="ps-1 py-1"><a class="fw-semi-bold d-block lh-sm" href="#!">{{  $responsables->nom }} {{  $responsables->prenom }}</a></td>
                             </tr>
                             <tr>
                               <td class="align-top py-1">
@@ -57,7 +61,7 @@
                                   <h5 class="text-900 mb-0 text-nowrap">Budget : </h5>
                                 </div>
                               </td>
-                              <td class="fw-bold ps-1 py-1 text-1000">{{ $dataProject->budget }} {{ $dataProject->devise }}</td>
+                              <td class="fw-bold ps-1 py-1 text-1000"> {{  number_format($dataProject->budget,0, ',', ' ') }} {{ $dataProject->devise }}</td>
                             </tr>
                           </tbody>
                         </table>

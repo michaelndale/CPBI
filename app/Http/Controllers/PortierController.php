@@ -16,8 +16,8 @@ class PortierController extends Controller
     {
       $title  = 'Portier';
       $active = 'Portier';
-      $chauffeur   = DB::table('users')->orWhere('fonction', 'Chauffeur')->get();
-      $chefmission = DB::table('users')->orWhere('fonction', '!=','Chauffeur')->get();
+      $chauffeur   = DB::table('personnels')->orWhere('fonction', 'Chauffeur')->get();
+      $chefmission = DB::table('personnels')->orWhere('fonction', '!=','Chauffeur')->get();
       $vehicule    = DB::table('vehicules')->orWhere('active', 'Activé')->get();
       return view(
         'portier.index',
@@ -36,50 +36,39 @@ class PortierController extends Controller
       $portier = Portier::all();
       $output = '';
       if ($portier->count() > 0) {
-        $output .= '<table class="table table-striped table-sm fs--1 mb-0">
-        <thead>
-        <tr>
-          <th class="align-middle ps-3 name">#</th>
-          <th >Date</th>
-          <th >Object</th>
-          <th >Utineraire</th>
-          <th >Heure de depart</th>
-          <th >Heure arriver</th>
-          <th >Chauffeur</th>
-          <th >Blaque</th>
-          <th >Chef de mission</th>
-          <th >Signature</th>
-          <th><center>ACTION</center></th>
-        </tr>
-          </thead>
-          <tbody class="list">
-           ';
+       
         $nombre = 1;
         foreach ($portier as $rs) {
-          $output .= '<tr>
+          $output .= '
+          <tr>
               <td class="align-middle ps-3 name">' . $nombre . '</td>
               <td>' . date('d.m.Y', strtotime($rs->datep)) . '</td>
               <td>' . ucfirst($rs->	objectp). '</td>
               <td>' . ucfirst($rs->	utineraire). '</td>
-              <td>' . ucfirst($rs->	heuredepart). '</td>
-              <td>' . ucfirst($rs->	heurearrive). '</td>
+              <td><center>' . ucfirst($rs->	heuredepart). '</center></td>
+              <td><center>' . ucfirst($rs->	heurearrive). '</center></td>
               <td>' . ucfirst($rs->	chauffeur). '</td>
               <td>' . ucfirst($rs->	blaque). '</td>
               <td>' . ucfirst($rs->	chefmission). '</td>
               <td>' . ucfirst($rs->	signature). '</td>
-             <td>
-              <center>
-              <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_DepatmentModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-              <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
-                </center>
-                </td>
+              <td>
+             
+                <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_DepatmentModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+                <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
+              
+              </td>
             </tr>';
           $nombre++;
         }
-        $output .= '</tbody></table>';
+     
         echo $output;
       } else {
-        echo '<h3 class="text-center text-secondery my-5" >  Aucun enregistrement dans la base de données </h3>';
+        echo '
+        <tr>
+          <td colspan="11">
+           <h5 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h5>
+          </td>
+        </tr>';
       }
     }
   

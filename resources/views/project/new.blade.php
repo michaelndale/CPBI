@@ -17,7 +17,7 @@
               </div>
 
               <div class="col-sm-2 col-md-3">
-                <div class="form-floating"><input class="form-control" name="numeroProjet" id="numeroProjet" type="text" placeholder="Numero du projet" /><label for="floatingInputGrid">Numero du projet</label></div>
+                <div class="form-floating"><input class="form-control" name="numeroProjet" id="numeroProjet" type="text" placeholder="Numero du projet" /><label for="floatingInputGrid">Numéro du projet</label></div>
               </div>
 
               
@@ -30,7 +30,7 @@
                   <select class="form-select" id="leader" name="leader" required>
                     <option selected="selected" value="">Reponsable du projet </option>
                     @foreach ($dataMember as $dataMembers)
-                    <option value="{{ $dataMembers->id }}">{{ $dataMembers->name }} {{ $dataMembers->lastname }}</option>
+                    <option value="{{ $dataMembers->id }}">{{ $dataMembers->nom }} {{ $dataMembers->nom }}</option>
                     @endforeach
                    
                   </select><label for="floatingSelectAdmin">Reponsable du projet</label></div>
@@ -51,7 +51,7 @@
                    
                   </select>
                 
-                <label for="floatingInputGrid">Devise de comptabilite </label></div>
+                <label for="floatingInputGrid">Devise de comptabilité </label></div>
               </div>
 
               <div class="col-sm-2 col-md-4">
@@ -61,7 +61,7 @@
               <div class="col-sm-2 col-md-4">
                 <div class="form-floating">
                   <select class="form-select" id="numeroDossier" name="numeroDossier">
-                    <option selected="selected">Selectionner fichier </option>
+                    <option selected="selected">Sélectionner fichier </option>
                       @foreach ($dataFolder as $dataFolders)
                       <option value="{{ $dataFolders->id }}">{{ $dataFolders->title }} </option>
                       @endforeach
@@ -69,7 +69,7 @@
               </div>
              
               <div class="col-sm-6 col-md-4">
-                <div class="form-floating"><input class="form-control" id="budget"  name="budget" type="text" placeholder="Budget" /><label for="floatingInputBudget">Budget</label></div>
+                <div class="form-floating"><input class="form-control" id="budget"  name="budget" type="number" placeholder="Budget" /><label for="floatingInputBudget">Budget</label></div>
               </div>
 
               <div class="col-sm-6 col-md-4">
@@ -84,12 +84,12 @@
               </div>
             
               <div class="col-12 gy-2">
-                <div class="form-floating"><textarea class="form-control" id="description" name="description" placeholder="Leave a comment here" style="height: 100px"></textarea><label for="floatingProjectOverview">project overview</label></div>
+                <div class="form-floating"><textarea class="form-control" id="description" name="description" placeholder="Description du projet" style="height: 100px"></textarea><label for="floatingProjectOverview">Description du projet</label></div>
               </div>
               <div class="col-12 gy-3">
                 <div class="row g-3 justify-content-end">
-                  <div class="col-auto"><button type="reset" class="btn btn-danger px-5"> <i class="fa fa-times-circle"></i> Anuller</button></div>
-                  <div class="col-auto"><button name="addProjectbtn" id="addProjectbtn" class="btn btn-primary px-5 px-sm-15"> <i class="fa fa-checked-circle"></i>  Enregitrer </button></div>
+
+                  <div class="col-auto"><button name="addProjectbtn" id="addProjectbtn" class="btn btn-primary px-5 px-sm-15"> Sauvegarder </button></div>
                 </div>
               </div>
             </form>

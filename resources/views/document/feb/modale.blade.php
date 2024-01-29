@@ -106,7 +106,7 @@
                                             <select type="text" class="form-control" name="acce" id="acce">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
-                                                    <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                    <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>  
                                                 @endforeach
                                             </select>
                                         </td>
@@ -114,7 +114,7 @@
                                         <select type="text" class="form-control" name="comptable" id="comptable">
                                             <option value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
-                                                <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>  
                                             @endforeach
                                         </select>
                                                 </td>
@@ -122,7 +122,7 @@
                                             <select type="text" class="form-control" name="chefcomposante" id="chefcomposante">
                                                 <option value="">--Selectionnez personnel--</option>
                                                     @foreach ($personnel as $personnels)
-                                                        <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                        <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>  
                                                     @endforeach
                                                     </select>
                                         </td>

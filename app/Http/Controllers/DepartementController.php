@@ -28,16 +28,7 @@ class DepartementController extends Controller
       $departement = Departement::all();
       $output = '';
       if ($departement->count() > 0) {
-        $output .= '<table class="table table-striped table-sm fs--1 mb-0">
-        <thead style="background-color:#D5F5E3;">
-        <tr>
-          <th class="align-middle ps-3 name">#</th>
-          <th class="sort border-top ps-3" data-sort="name">Libellé</th>
-          <th><center>ACTION</center></th>
-        </tr>
-          </thead>
-          <tbody class="list">
-           ';
+      
         $nombre = 1;
         foreach ($departement as $rs) {
           $output .= '<tr>
@@ -52,7 +43,7 @@ class DepartementController extends Controller
             </tr>';
           $nombre++;
         }
-        $output .= '</tbody></table>';
+       
         echo $output;
       } else {
         echo '<h3 class="text-center text-secondery my-5" >  No record in the database ! </h3>';

@@ -7,6 +7,7 @@ use App\Http\Requests\UseRequest;
 use App\Http\Requests\UserpassupRequest;
 use App\Http\Requests\UserupRequest;
 use App\Models\Departement;
+use App\Models\Personnel;
 use App\Models\Profile;
 use App\Models\Status;
 use App\Models\User;
@@ -26,17 +27,19 @@ class AuthController extends Controller
   {
     $title = 'Utilisateur';
     $active = 'Parameter';
+    $personnel = Personnel::all();
     $profile= profile::all();
     $department= Departement::all();
     $statut= Status::all();
     return view(
       'user.index',
       [
-        'title' => $title,
-        'active' => $active,
-        'profile' => $profile,
-        'department'=> $department,
-        'statut'=> $statut
+        'title'      => $title,
+        'active'     => $active,
+        'profile'    => $profile,
+        'department' => $department,
+        'statut'     => $statut,
+        'personnel'  => $personnel
       ]
     );
   }
@@ -60,33 +63,38 @@ class AuthController extends Controller
 
   public function fetchAll()
   {
-    $User = User::all();
+    $User = DB::table('users')
+            ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+            ->orderBy('nom', 'ASC')
+            ->get();
+
     $output = '';
     if ($User->count() > 0) {
      
       foreach ($User as $rs) {
-  $output .='<tr class="hover-actions-trigger btn-reveal-trigger position-static">
-  <td class="customer align-middle white-space-nowrap">
-      <a class="d-flex align-items-center text-900 text-hover-1000" href="">
-          <div class="avatar avatar-m">
-              <div class="avatar-name rounded-circle"><span> '.ucfirst(substr($rs->lastname,0,1)).' </span></div>
-          </div>
-         <h6 class="mb-0 ms-3 fw-semi-bold">'. ucfirst($rs->name).' '. ucfirst($rs->lastname).'</h6>
-      </a>
-  </td>
-  <td class="city align-middle white-space-nowrap text-900"> '.$rs->email.'   </td>
-  <td class="city align-middle white-space-nowrap text-900">'. $rs->phone. '  </td>
-  <td class="city align-middle white-space-nowrap text-900">'. $rs->role. '  </td>
-  
-  <td class="city align-middle white-space-nowrap text-900">'. $rs->departement. '  </td>
-  <td class="city align-middle white-space-nowrap text-900">'. $rs->fonction. '  </td>
-  <td class="city align-middle white-space-nowrap text-900">'. $rs->statut. '  </td>
-  <td class="customer align-middle white-space-nowrap">'.  date('d.m.Y', strtotime($rs->created_at)) .' </td>
-  <td >
-      <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_profileModal"><i class="bi-pencil-square h4"></i> Edit</a>
-      <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i> Delete </a>
-  </td>
-</tr>';
+        $output .='<tr class="hover-actions-trigger btn-reveal-trigger position-static">
+              <td class="customer align-middle white-space-nowrap">
+                  <a class="d-flex align-items-center text-900 text-hover-1000" href="">
+                      <div class="avatar avatar-m">
+                          <div class="avatar-name rounded-circle"><span> '.ucfirst(substr($rs->nom,0,1)).' </span></div>
+                      </div>
+                    <h6 class="mb-0 ms-3 fw-semi-bold">'. ucfirst($rs->nom).' '. ucfirst($rs->prenom).'</h6>
+                  </a>
+              </td>
+              <td class="city align-middle white-space-nowrap text-900"> '.$rs->identifiant.'   </td>
+         
+              <td class="city align-middle white-space-nowrap text-900">'. $rs->role. '  </td>
+      
+              <td class="city align-middle white-space-nowrap text-900">'. $rs->statut. '  </td>
+              <td class="customer align-middle white-space-nowrap">'.  date('d.m.Y', strtotime($rs->created_at)) .' </td>
+              <td>
+             
+                <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+                <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
+             
+            </td>
+            </tr>';
       
       }
       echo $output;
@@ -103,7 +111,12 @@ class AuthController extends Controller
 
   public function fetchAllcond()
   {
-    $User = DB::table('users')->orWhere('fonction', 'Chauffeur')->get();
+    $User =    DB::table('users')
+    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+    ->orWhere('fonction', 'Chauffeur')
+    ->orderBy('nom', 'ASC')
+    ->get();
     $output = '';
     if ($User->count() > 0) {
      
@@ -112,15 +125,14 @@ class AuthController extends Controller
   <td class="customer align-middle white-space-nowrap">
       <a class="d-flex align-items-center text-900 text-hover-1000" href="">
           <div class="avatar avatar-m">
-              <div class="avatar-name rounded-circle"><span> '.ucfirst(substr($rs->lastname,0,1)).' </span></div>
+              <div class="avatar-name rounded-circle"><span> '.ucfirst(substr($rs->nom,0,1)).' </span></div>
           </div>
-         <h6 class="mb-0 ms-3 fw-semi-bold">'. ucfirst($rs->name).' '. ucfirst($rs->lastname).'</h6>
+         <h6 class="mb-0 ms-3 fw-semi-bold">'. ucfirst($rs->name).' '. ucfirst($rs->prenom).'</h6>
       </a>
   </td>
   <td class="city align-middle white-space-nowrap text-900"> '.$rs->email.'   </td>
   <td class="city align-middle white-space-nowrap text-900">'. $rs->phone. '  </td>
   <td class="city align-middle white-space-nowrap text-900">'. $rs->role. '  </td>
-  <td class="city align-middle white-space-nowrap text-900">'. $rs->departement. '  </td>
   <td class="city align-middle white-space-nowrap text-900">'. $rs->fonction. '  </td>
   <td class="city align-middle white-space-nowrap text-900">'. $rs->statut. '  </td>
   <td class="customer align-middle white-space-nowrap">'.  date('d.m.Y', strtotime($rs->created_at)) .' </td>
@@ -142,15 +154,15 @@ class AuthController extends Controller
     }
   }
 
-  // insert a new employee ajax request
+  // insert a new ajax request
   public function store(Request $request)
   {
+    
     $username= $request->identifiant;
+    $userid=   $request->personnelid;
 
-    $user_id= $request->memberid;
-
-    $chek = User::where('member_id', $user_id)->first();
-
+    
+    $chek = User::where('personnelid', $userid)->first();
     if($chek){
       return response()->json([
         'status' => 202,
@@ -159,9 +171,9 @@ class AuthController extends Controller
     }else
     {
 
-        $check = User::where('identifiant', $username)->first();
+        $checkidentifiant= User::where('identifiant', $username)->first();
 
-        if($check)
+        if($checkidentifiant)
         {
           return response()->json([
             'status' => 201,
@@ -169,23 +181,34 @@ class AuthController extends Controller
 
         }else
         {
-          $User = new User();
-          $User->role= $request->profileid;
-          $User->departement= $request->department;
-          $User->identifiant= $request->identifiant;
-          $User->email= $request->identifiant;
-          $User->statut= $request->statut;
-          $User->password= Hash::make($request->password,['rounds' =>12]);
-          $User->userid = Auth()->user()->id;
-          $User->save();
+
+    $User =             new User;
+    $User->personnelid= $request->personnelid;
+    $User->identifiant= $request->identifiant;
+    $User->role=        $request->profileid;
+    $User->password=    Hash::make($request->password);
+    $User->userid =     Auth()->user()->id;
+    $User->save();
     
-          return response()->json([
-            'status' => 200,
-          ]);
-        }
-     }
-   
+    return response()->json([
+      'status' => 200,
+    ]);
   }
+}
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function login()
     {
@@ -207,10 +230,18 @@ class AuthController extends Controller
         $password = $request->password;
         if (Auth::attempt(['identifiant'=> $username,'password'=> $password])) {
 
-              $user = Auth::User();
-             // session()->put('statut', $user->statut);
+            $user = Auth::User();
+           
              
             if($user->statut=='Activé'){
+
+            
+              $datauser= Personnel::find($user->personnelid);
+              session()->put('nomauth', $datauser->nom);
+              session()->put('prenomauth', $datauser->prenom);
+              session()->put('fonction', $datauser->fonction);
+              session()->put('avatar', $datauser->avatar);
+
               return response()->json([ [1] ]);
              
             }

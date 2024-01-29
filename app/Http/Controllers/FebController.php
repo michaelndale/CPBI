@@ -120,7 +120,12 @@ class FebController extends Controller
     public function list()
     {
         $title="FEB";
-        $personnel = DB::table('users')->Where('fonction', '!=','Chauffeur')->get();
+        $personnel = DB::table('users')
+                    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+                    ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+                    ->orWhere('fonction', '!=' ,'Chauffeur')
+                    ->orderBy('nom', 'ASC')
+                    ->get();
         $active = 'Project';
         $ID = session()->get('id');
         $activite = DB::table('activities')

@@ -8,9 +8,6 @@
           <nav class="mb-1" aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
               <li class="breadcrumb-item active">Notification</li>
-              <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-             
-             
             </ol>
           </nav>
           
@@ -24,7 +21,27 @@
       </div>
           
       <div class="mx-n4 mx-lg-n6 px-4 px-lg-6 mb-9 bg-white border-y border-10 mt-2 position-relative top-1" id="show_all">
-        <h4 class="text-center text-secondery my-5"> Loading data ...</h4> 
+      <table class="table table-sm fs--1 mb-0">
+          <thead>
+            <tr>
+            <th class="sort border-top ps-1" data-sort="name">Date</th>
+              <th class="sort border-top ps-1" data-sort="name">Operation</th>
+              <th class="sort border-top ps-1" data-sort="name">User</th>
+              <th class="sort border-top ps-1" data-sort="name">Link</th>
+             
+            </tr>
+          </thead>
+          <tbody class="list">
+          @foreach ($data as $rs)
+            <tr>
+                <td>{{ ucfirst($rs->updated_at) }} </td>
+                <td>{{ ucfirst($rs->operation) }}</td>
+                <td>{{ ucfirst($rs->user) }}</td>
+                <td><a href="{{ ucfirst($rs->link) }}"> Show</a></td>
+            </tr>
+          @endforeach
+          </tbody>
+      </table>
       </div>
 
       <div class="row align-items-center justify-content-between py-2 pe-0 fs--1">
@@ -35,36 +52,5 @@
           <ul class="mb-0 pagination"></ul><button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
         </div>
       </div>
-    </div>
-  </div>
-       </div>   
-     
-
-
-
-
-
-
-
-
-
-
-
-
-  <script>
-    $(function() {
-      fetchAll();
-      function fetchAll() 
-      {
-        $.ajax({
-          url: "{{ route('fetchAllnotis') }}",
-          method: 'get',
-          success: function(reponse) {
-            $("#show_all").html(reponse);
-          }
-        });
-      }
-    });
-  </script>
-
+  
   @endsection

@@ -51,7 +51,7 @@
               <div class="col-12 gy-3">
                 <div class="row g-2 justify-content-end">
 
-                  <div class="col-auto"><button name="addIndetificationbtn" id="addIndetificationbtn" class="btn btn-primary px-5 px-sm-15">Enregistrer</button></div>
+                  <div class="col-auto"><button name="addIndetificationbtn" id="addIndetificationbtn" class="btn btn-primary px-5 px-sm-15">Sauvegarder</button></div>
                 </div>
               </div>
             </form>

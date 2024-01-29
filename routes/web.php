@@ -20,6 +20,7 @@ use App\Http\Controllers\FonctionController;
 use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PortierController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -27,7 +28,7 @@ use App\Http\Controllers\RallongebudgetController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SqrController;
 use App\Http\Controllers\VehiculeController;
-use App\Models\Rallongebudget;
+
 
 Route::get('/', function () { return view('go'); });
 Route::get('/logout', [AuthController::class, 'logout'] )->name('logout');
@@ -99,11 +100,14 @@ Route::middleware('auth')->group(function (){
         Route::get('/', [AuthController::class, 'index'])->name('user');
         Route::get('/fetchAllUs', [AuthController::class, 'fetchAll'])->name('fetchAllUs');
         Route::post('/storeus', [AuthController::class, 'store'])->name('storeus');
-        Route::delete('/deleteUs', [AuthController::class, 'deleteall'])->name('deleteUs');
-        Route::get('/editUs', [AuthController::class, 'edit'])->name('editUs');
-        Route::post('/updateUs', [AuthController::class, 'update'])->name('updateUs'); 
+        //Route::delete('/deleteUs', [AuthController::class, 'deleteall'])->name('deleteUs');
+        //Route::get('/editUs', [AuthController::class, 'edit'])->name('editUs');
+        //Route::post('/updateUs', [AuthController::class, 'update'])->name('updateUs'); 
        
     });
+
+   
+
 
     Route::prefix('conducteur')->group(function () {
         Route::get('/', [AuthController::class, 'conducteur'])->name('conducteur');
@@ -246,9 +250,8 @@ Route::middleware('auth')->group(function (){
 
 
     Route::prefix('activity')->group(function () {
-
-        Route::get('/new', [ActivityController::class, 'new'])->name('newactivity');
         Route::get('/', [ActivityController::class, 'index'])->name('activity');
+        Route::get('/new', [ActivityController::class, 'new'])->name('newactivity');
         Route::post('/storeact', [ActivityController::class, 'store'])->name('storeact');
         Route::get('/{key}/view/', [ActivityController::class, 'show'])->name('key.viewActivity');
         Route::delete('/deleteact', [ActivityController::class, 'deleteall'])->name('deleteact');
@@ -272,6 +275,21 @@ Route::middleware('auth')->group(function (){
         Route::get('/', [NotificationController::class, 'index'])->name('notis');
         Route::get('/fetchAllnotis', [NotificationController::class, 'fetchAll'])->name('fetchAllnotis');
     });
+
+
+    //DEBUT RH
+
+    Route::prefix('personnel')->group(function () {
+        Route::get('/', [PersonnelController::class, 'index'])->name('personnel');
+        Route::get('/fetchpersonnel', [PersonnelController::class, 'fetchAll'])->name('fetchpersonnel');
+        Route::post('/storepersonnel', [PersonnelController::class, 'store'])->name('storepersonnel');
+        Route::get('/showPersonnel', [PersonnelController::class, 'edit'])->name('showPersonnel');
+        Route::post('/updatPersonnel', [PersonnelController::class, 'update'])->name('updatPersonnel'); 
+       // Route::delete('/deletePersonnel', [PersonnelController::class, 'deleteall'])->name('deletePersonnel');
+    
+    });
+
+    //FIN RH
 
 
 });
