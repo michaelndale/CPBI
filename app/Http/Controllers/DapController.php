@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Compte;
 use App\Models\dap;
 use App\Models\Elementdap;
 use App\Models\Folder;
@@ -134,11 +135,14 @@ class DapController extends Controller
         $active = 'Project';
         // service
         $service = Service::all();
-
+        $compte = Compte::where('compteid', '=', NULL)->get();
         // utilisateur
         $personnel = DB::table('users')
-                    ->Where('fonction', '!=','Chauffeur')
-                    ->get();
+                  ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+                  ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+                  ->orWhere('fonction', '!=' ,'Chauffeur')
+                  ->orderBy('nom', 'ASC')
+                  ->get();
 
         // projet encours
         $ID = session()->get('id');
@@ -164,7 +168,8 @@ class DapController extends Controller
           'activite'  => $activite,
           'personnel' => $personnel,
           'service'   => $service,
-          'feb'       => $feb
+          'feb'       => $feb,
+          'compte'    => $compte
         ]);
     }
 }

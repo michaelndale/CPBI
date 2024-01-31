@@ -10,7 +10,8 @@
           </div>
           <div class="col col-md-auto">
             <nav class="nav nav-underline justify-content-end doc-tab-nav align-items-center" role="tablist">
-                @include('activite.modale')
+            <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModale" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouvelle activité</a>
+
             </nav>
           </div>
           <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
@@ -24,7 +25,7 @@
                   <th class="sort border-top" data-sort="date">Annee</th>
                   <th class="sort border-top" data-sort="date"> Monnaie BIF</th>
                   <th class="sort border-top" data-sort="date"> Date</th>
-                  <th class="sort border-top " >ACTION</th>
+                  <th class="sort border-top" >ACTION</th>
                 </tr>
               </thead>
               <tbody class="show_all" id="show_all_activite">
@@ -42,8 +43,9 @@
         </div>
     </div>
   </div>
-</div>
-</div>
+
+
+  @include('activite.modale')
 
 <script>
     $(function() {
@@ -55,11 +57,11 @@
 
 
       // Add user ajax 
-      $("#addForm").submit(function(e) 
+      $("#addactiviteForm").submit(function(e) 
       {
         e.preventDefault();
         const fd = new FormData(this);
-        $("#addbtn").text('Ajouter...');
+        $("#addactivitebtn").text('Ajouter...');
         $.ajax({
           url: "{{ route('storeact') }}",
           method: 'post',
@@ -72,24 +74,18 @@
             if (response.status == 200) 
             {
               fetchActivite();
-              $.notify("Activité ajouté avec succès !", "success");
-              $("#addbtn").text('Enregistrement');
-              $("#addModale").modal('hide');
-              $("#addForm")[0].reset();
               
-            }
+              $.notify("Activité ajouté avec succès !", "success");
 
-            if (response.status == 201) 
-            {
-              $.notify("Le véhicule avec cette matricule existe déjà !", "error");
-              $("#addbtn").text('Enregistrement');
-              $("#addModale").modal('show');
+              $("#addactivitebtn").text('Enregistrement');
+              $("#addModale").modal('hide');
+              $("#addactiviteForm")[0].reset();
             }
-
+           
             if (response.status == 202) {
               $.notify("Erreur d'execution, verifier votre internet", "error");
               $("#addModale").modal('show');
-              $("#addbtn").text('Enregitrer');
+              $("#addactivitebtn").text('Enregitrer');
             }
            
           }

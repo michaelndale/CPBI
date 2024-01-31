@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Compte;
 use App\Models\Elementfeb;
 use App\Models\Feb;
 use App\Models\Historique;
@@ -46,12 +47,19 @@ class FebController extends Controller
       }
       echo $output;
     } else {
-      echo '
+      echo
+      '
       <tr>
-        <td colspan="8">
-         <h5 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h5>
-        </td>
-      </tr>';
+      <td colspan="8">
+      <center>
+        <h4 style="margin-top:1% ;color:#c0c0c0"> 
+        <center><font size="100px"><i class="far fa-trash-alt"  ></i> </font><br><br>
+        Aucun enregistrement dans la base de données !</center> </h4>
+      </center>
+      </td>
+      </tr>
+      
+      ';
     }
   }
 
@@ -120,6 +128,7 @@ class FebController extends Controller
     public function list()
     {
         $title="FEB";
+        $compte = Compte::where('compteid', '=', NULL)->get();
         $personnel = DB::table('users')
                     ->join('personnels', 'users.personnelid', '=', 'personnels.id')
                     ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
@@ -137,7 +146,8 @@ class FebController extends Controller
           'title' =>$title,
           'active' => $active,
           'activite' => $activite,
-          'personnel' => $personnel
+          'personnel' => $personnel,
+          'compte' => $compte
         ]);
     }
 

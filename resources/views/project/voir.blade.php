@@ -388,7 +388,7 @@
                         <div class="col">
                           <div class="timeline-item-content ps-6 ps-md-3">
                             <h5 class="fs--1 lh-sm">{{ ucfirst($activites->titre) }}</h5>
-                            <p class="fs--1">Region : {{  ucfirst($activites->pays ) }} <br>
+                           
                              Montant : {{ $activites->montantbudget }} </p>
                           </div>
                         </div>

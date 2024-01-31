@@ -1,6 +1,5 @@
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
 
 <a href="javascript:void()" data-bs-toggle="modal" data-bs-target="#dapModale" ><span class="me-2" data-feather="plus-circle"></span>Nouvel fiche DAP</a></nav>
 
@@ -88,12 +87,36 @@
                                 <tr>
                                 <td class="align-middle ps-3 name" ><b>Etablie par : </b></td>
                                     <td class="align-middle email" colspan="2">
-                                        <input type="text" class="form-control" name="etabliepar" id="etabliepar" value="{{ ucfirst(Auth::user()->lastname) }}  {{ ucfirst(Auth::user()->name) }}" disabled style="width: 100%">
+                                        <input type="text" class="form-control" value="{{ ucfirst(Auth::user()->nom) }}  {{ ucfirst(Auth::user()->prenom ) }}" disabled style="width: 100%">
+
+                                        <input type="hidden" class="form-control" name="etabliepar" id="etabliepar" value="{{ ucfirst(Auth::id()) }} " disabled style="width: 100%">
                                     </td>
 
                                     <td class="align-middle ps-3 name"> <b>Ligne budgétaire:</b></td>
                                     <td class="align-middle email" colspan="2">
-                                        <input type="text" class="form-control" name="ligneid" id="ligneid" style="width: 100%">
+
+                                   
+                                        <div class="col-sm-12 col-md-12">
+                                        <div class="form-floating">
+                                        <select class="form-select" id="ligneid" name="ligneid" required  onchange="soldeligne(this.value);">
+                                            <option selected="selected" value="">Ligne budgetaire</option> 
+                                            @foreach ($compte as $comptes)
+                                                <option value="{{ $comptes->id }}"> {{ $comptes->numero }}. {{ $comptes->libelle }} </option>
+                                                @php
+                                                    $idc = $comptes->id ;
+                                                    $res= DB::select("SELECT * FROM comptes  WHERE compteid= $idc");
+                                                @endphp
+                                                @foreach($res as $re)
+                                                    <option value="{{ $re->id }}" > {{ $re->numero }}. {{ $re->libelle }}  </option>
+                                                @endforeach 
+                                            @endforeach
+                                        </select>
+                                        
+                                        <label for="floatingInputGrid">Ligne budgetaire</label></div>
+                                    </div>
+
+                                   
+                                   
                                     </td>
                                 </tr>
 
@@ -132,7 +155,7 @@
                                     <select type="text" class="form-control" name="etablie_nom" id="etablie_nom">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
-                                                    <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                    <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>  
                                                 @endforeach
                                             </select>
                                     </td>
@@ -171,7 +194,7 @@
                                             <select type="text" class="form-control" name="demandeetablie" id="demandeetablie">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
-                                                    <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                    <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>  
                                                 @endforeach
                                             </select>
                                         </td>
@@ -179,7 +202,7 @@
                                         <select type="text" class="form-control" name="chefComposante" id="chefComposante">
                                             <option value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
-                                                <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>  
                                             @endforeach
                                         </select>
                                                 </td>
@@ -206,7 +229,7 @@
                                             <select type="text" class="form-control" name="verifier" id="verifier">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
-                                                    <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                    <option value="{{ $personnels->id }}">{{ $personnels->prenom }} {{ $personnels->prenom }}</option>  
                                                 @endforeach
                                             </select>
                                         </td>
@@ -214,7 +237,7 @@
                                         <select type="text" class="form-control" name="chefcomptable" id="chefcomptable">
                                             <option value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
-                                                <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                <option value="{{ $personnels->id }}">{{ $personnels->prenom }} {{ $personnels->prenom }}</option>  
                                             @endforeach
                                         </select>
                                                 </td>
@@ -239,7 +262,7 @@
                                             <select type="text" class="form-control" name="approuver" id="approuver">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
-                                                    <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                    <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>  
                                                 @endforeach
                                             </select>
                                         </td>
@@ -247,7 +270,7 @@
                                         <select type="text" class="form-control" name="chefservice" id="chefservice">
                                             <option value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
-                                                <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>  
                                             @endforeach
                                         </select>
                                                 </td>
@@ -271,7 +294,7 @@
                                             <select type="text" class="form-control" name="resposablefinancier" id="resposablefinancier">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
-                                                    <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                    <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>  
                                                 @endforeach
                                             </select>
                                         </td>
@@ -279,7 +302,7 @@
                                             <select type="text" class="form-control" name="secretairegenerale" id="secretairegenerale">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
-                                                    <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                    <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>  
                                                 @endforeach
                                             </select>
                                         </td>
@@ -291,7 +314,7 @@
                                             <select type="text" class="form-control" name="chefprogramme" id="chefprogramme">
                                                 <option value="">--Selectionnez personnel--</option>
                                                 @foreach ($personnel as $personnels)
-                                                    <option value="{{ $personnels->id }}">{{ $personnels->name }} {{ $personnels->name }}</option>  
+                                                    <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>  
                                                 @endforeach
                                             </select>
                                         </td>

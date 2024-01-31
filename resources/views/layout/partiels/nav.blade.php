@@ -51,16 +51,7 @@
                     <ul class="nav collapse parent @if ($active=='Project') show @endif" data-bs-parent="#navbarVerticalCollapse" id="nv-project-management">
                       <li class="collapsed-nav-item-title d-none">Projet management</li>
 
-                      <li class="nav-item">
-                        <a class="nav-link @if ($title=='Affectation project') active @endif" href="{{ route('affectation') }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-plus-circle"></i> Affectation projet</span></div>
-                        </a>
-                      </li>
-                      
-                      <li class="nav-item"><a class="nav-link @if ($title=='Show project') active @endif" href="{{ route('key.viewProject', Session::get('id') ) }}" data-bs-toggle="" aria-expanded="false">
-                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-edit"></i> Detail du projet </span></div>
-                        </a>
-                      </li>
+                     
 
                       <li class="nav-item"><a class="nav-link @if ($title=='FEB') active @endif" href="{{ route('listfeb') }}" title="Fiche de transmission de dossier" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> FEB</span></div>
@@ -94,6 +85,17 @@
 
                       <li class="nav-item"><a class="nav-link @if ($title=='FTD') active @endif" href="{{ route('listftd') }}" data-bs-toggle="" aria-expanded="false">
                           <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-list"></i> FDT</span></div>
+                        </a>
+                      </li>
+
+                      <li class="nav-item">
+                        <a class="nav-link @if ($title=='Affectation project') active @endif" href="{{ route('affectation') }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-plus-circle"></i> Affectation projet</span></div>
+                        </a>
+                      </li>
+                      
+                      <li class="nav-item"><a class="nav-link @if ($title=='Show project') active @endif" href="{{ route('key.viewProject', Session::get('id') ) }}" data-bs-toggle="" aria-expanded="false">
+                          <div class="d-flex align-items-center"><span class="nav-link-text"> <i class="fa fa-edit"></i> Detail du projet </span></div>
                         </a>
                       </li>
 

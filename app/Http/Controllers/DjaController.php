@@ -3,35 +3,60 @@
 namespace App\Http\Controllers;
 
 use App\Models\Beneficaire;
+use App\Models\Compte;
 use App\Models\Dja;
 use App\Models\Folder;
 use App\Models\Historique;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DjaController extends Controller
 {
 
       // insert a new employee ajax request
-      public function store(Request $request , Notification $notis, Historique $his)
+      public function store(Request $request)
       {
         
-        $operation ="New activite: ".$request->title;
-        $link ='listactivity';
-        $notis->operation = $operation;
-        $his->userid  = Auth()->user()->id;
-        $notis->link = $link;
-        $notis->save();
+        $djaData= new Dja();
 
+        $djaData->numerodjas = $request->numerodja;
+        $djaData->projetiddja = $request->projetid;
+        $djaData->beneficiaire = $request->beneficiaire;
+        $djaData->datefondrecu= $request->datefondrecu;
+        $djaData->numerofeb= $request->reffeb;
+        $djaData->numerodap= $request->dapnum;
+        $djaData->numeroov= $request->ovch;
+        $djaData->lignebdt= $request->ligneid;
+        $djaData->montant_avance= $request->montant_avance;
+        $djaData->devise= $request->devise;
+        $djaData->duree_avence= $request->dure_avance;
+        $djaData->description= $request->description;
+        $djaData->fondapprouver= $request->fondapprouver;
+        $djaData->sign_fond= $request->sign_fond;
+        $djaData->date_fond= $request->date_fond;
+        $djaData->avance_approuver = $request->avance_approuver;
+        $djaData->sign_avance= $request->sign_avance;
+        $djaData->chefcomptable= $request->chefcomptable;
+        $djaData->date_chefcomptable= $request->date_chefcomptable;
+        $djaData->avence_approuver_deuxieme= $request->avence_approuver_deuxieme;
+        $djaData->signe_deuxieme= $request->signe_deuxieme;
+        $djaData->raf= $request->raf;
+        $djaData->date_raf= $request->date_raf;
+        $djaData->avence_approuver_troisieme= $request->avence_approuver_troisieme;
+        $djaData->sign_avence_apr_troisieme= $request->sign_avence_apr_troisieme;
+        $djaData->sg= $request->sg;
+        $djaData->datesg= $request->datesg;
+        $djaData->fondboursser= $request->fondboursser;
+        $djaData->sign_fonddeboursse= $request->sign_fonddeboursse;
+        $djaData->date_fonddeboursse= $request->date_fonddeboursse;
+        $djaData->fondresu= $request->fondresu;
+        $djaData->signature_fondresu= $request->signature_fondresu;
+        $djaData->date_fondrecu= $request->date_fondrecu;
+        $djaData->userid = Auth()->user()->id;
 
-        $activity = new Dja();
-        $activity->title = $request->title;
-        $activity->numeroprojet = $request->numeroProjet;
-        $activity->region = $request->region;
-        $activity->budget= $request->budget;
-        $activity->description= $request->description;
-        $activity->save();
+        $djaData->save();
 
         return response()->json([
          'status' => 200,
@@ -45,15 +70,24 @@ class DjaController extends Controller
         $title="DJA";
         $data= Dja::all();
         $total = Dja::all()->count();
-        $dataBene= Beneficaire::all();
         $active = 'Project';
+        $compte = Compte::where('compteid', '=', NULL)->get();
+        $personnel = DB::table('users')
+                  ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+                  ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+                  ->orWhere('fonction', '!=' ,'Chauffeur')
+                  ->orderBy('nom', 'ASC')
+                  ->get();
+
+
         return view('document.dja.list', 
         [
           'title' =>$title,
           'data' => $data,
           'total' => $total,
           'active' => $active,
-          'dataBene' => $dataBene
+          'personnel' => $personnel,
+          'compte'    => $compte
         ]);
     }
 }

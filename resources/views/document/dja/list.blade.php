@@ -76,13 +76,14 @@
 
     <script>
         $(function() {
+        
             // Add PROJECT ajax 
-            $("#addProjectForm").submit(function(e) {
+            $("#addjdaForm").submit(function(e) {
                 e.preventDefault();
                 const fd = new FormData(this);
-                $("#addProjectbtn").text('Adding...');
+                $("#adddjabtn").text('Adding...');
                 $.ajax({
-                    url: "{{ route('storeProject') }}",
+                    url: "{{ route('storedja') }}",
                     method: 'post',
                     data: fd,
                     cache: false,
@@ -93,11 +94,13 @@
                         if (response.status == 200) {
                             $.notify("You have Successfully add a project !", "success");
                         }
-                        $("#addProjectbtn").text('Add Project');
-                        $("#addProjectForm")[0].reset();
+                        $("#adddjabtn").text('Add Project');
+                        $("#addjdaForm")[0].reset();
                     }
                 });
             });
+
+           
 
 
         });

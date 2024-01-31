@@ -28,13 +28,16 @@
                                 <th class="sort border-top " >ACTION</th>
                               </tr>
                             </thead>
+                           
+
                             <tbody class="show_all" id="show_all">
                               <tr>
-                              <td colspan="8"><h5 class="text-center text-secondery my-5">
-                                @include('layout.partiels.load')
-                               </td>
+                                <td colspan="6"><h5 class="text-center text-secondery my-5">
+                                  <center> @include('layout.partiels.load') </center>
+                                </td>
                               </tr>
                             </tbody>
+
                  </table>
         <BR>
     </div>
@@ -56,10 +59,10 @@
 <script>
 $(function(){
 
-   $("#addForm").submit(function(e) {
+   $("#addfebForm").submit(function(e) {
                 e.preventDefault();
                 const fd = new FormData(this);
-                $("#addbtn").text('Ajouter...');
+                $("#addfebbtn").text('Ajouter...');
                 $.ajax({
                     url: "{{ route('storefeb') }}",
                     method: 'post',
@@ -73,11 +76,11 @@ $(function(){
                       {
                         fetchAllfeb();
                         $.notify("Feb ajouté avec succès !", "success");
-                        $("#addbtn").text('Sauvegarder');
+                        $("#addfebbtn").text('Sauvegarder');
                         $("#numerofeb_error").text("");
                         $('#numerofeb').addClass('');
 
-                        $("#addForm")[0].reset();
+                        $("#addfebForm")[0].reset();
                         $("#addfebModal").modal('hide');
                   
                         
@@ -92,7 +95,7 @@ $(function(){
                         $("#addfebModal").modal('show');
                       }
 
-                      $("#addbtn").text('Sauvegarder');
+                      $("#addfebbtn").text('Sauvegarder');
                     }
                 });
             });
@@ -157,7 +160,7 @@ function add_input_field(count)
   html += '<tr>';
   html += '<td><input type="text" name="numerodetail[]" id="numerodetail" class="form-control item_numero" value="'+nombre+'" /></td>';
   html += '<td><input type="text" name="description[]" id="description" class="form-control item_description" /></td>';
-  html += '<td><input type="text" name="montant[]" id="montant" class="form-control item_montant"  /></td>';
+  html += '<td><input type="text" name="montant[]" id="montant" class="form-control item_montant" style="width:100%"  /></td>';
   var remove_button = '';
 
   if(count > 0)
@@ -191,6 +194,9 @@ $(document).on('click', '.remove', function(){
   $(this).closest('tr').remove();
 
 });
+
+          
+
 
 });
 </script>

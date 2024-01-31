@@ -83,7 +83,7 @@ class ActivityController extends Controller
 
   
       // insert a new ajax request
-      public function store(Request $request , Notification $notis, Historique $his)
+      public function store(Request $request )
       {
         
        // $operation ="Nouveau activite: ".$request->title;
@@ -95,14 +95,13 @@ class ActivityController extends Controller
 
 
         $activity = new Activity();
-        $activity->titre = $request->titre;
+        
         $activity->projectid = $request->projetid;
         $activity->compteidr = $request->compteid;
-        $activity->pays = $request->pays;
+        $activity->titre = $request->titre;
         $activity->montantbudget= $request->montant;
-        $activity->catid= $request->categorieid;
-        $activity->description= $request->description;
         $activity->userid= Auth::id();
+
         $activity->save();
 
         return response()->json([

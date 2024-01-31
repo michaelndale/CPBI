@@ -1,7 +1,3 @@
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
-
-
 <div class="modal fade" id="addfebModal" tabindex="-1" aria-labelledby="addfebModal"  aria-hidden="true" >
 <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
@@ -9,7 +5,7 @@
                 <h5 class="modal-title">FICHE D’EXPRESSION DES BESOINS "FEB" </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><svg class="svg-inline--fa fa-xmark fs--1" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="xmark" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg=""><path fill="currentColor" d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"></path></svg><!-- <span class="fas fa-times fs--1"></span> Font Awesome fontawesome.com --></button>
             </div>
             <div class="modal-body">
-                <form class="row g-3 mb-6" method="POST" id="addForm">
+                <form class="row g-3 mb-6" method="POST" id="addfebForm">
                 @method('post')
                 @csrf
                 <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
@@ -55,11 +51,32 @@
                                 <tr>
                                     <td class="align-middle ps-3 name">Ligne budgétaire:    </td>
                                     <td class="align-middle email" colspan="3">
-                                        <input type="text" class="form-control" name="ligneid" id="ligneid" style="width: 100%">
+                                    <div class="col-sm-12 col-md-12">
+                                        <div class="form-floating">
+                                        <select class="form-select" id="ligneid" name="ligneid" required  onchange="soldeligne(this.value);">
+                                            <option selected="selected" value="">Ligne budgetaire</option> 
+                                            @foreach ($compte as $comptes)
+                                                <option value="{{ $comptes->id }}"> {{ $comptes->numero }}. {{ $comptes->libelle }} </option>
+                                                @php
+                                                    $idc = $comptes->id ;
+                                                    $res= DB::select("SELECT * FROM comptes  WHERE compteid= $idc");
+                                                @endphp
+                                                @foreach($res as $re)
+                                                    <option value="{{ $re->id }}" > {{ $re->numero }}. {{ $re->libelle }}  </option>
+                                                @endforeach 
+                                            @endforeach
+                                        </select>
+                                        
+                                        <label for="floatingInputGrid">Ligne budgetaire</label></div>
+                                    </div>
+
+                                      
                                     </td>
-                                    <td class="align-middle ps-3 name" style="width:20%"> Taux d’exécution: %</td>
+                                    <td class="align-middle ps-3 name" style="width:20%"> 
+                                        <input type="text" class="form-control" value="100 0000" readonly>
+                                    </td>
                                     <td class="align-middle email">
-                                        <input type="text" class="form-control"  style="width: 100%">
+                                    Taux d’exécution: 100% 
                                     </td>
                                 </tr>
                                 <tr>
@@ -91,7 +108,13 @@
                                     <th style="width:20%">Montant</th>
                                     <th style="width:5% ;"><a href="javascript::;" type="button" name="add" class="btn btn-success btn-sm add"><i class="fas fa-plus"></i></></th>
                                 </tr>
-                                    
+                            </table>
+                            <table class="table table-striped table-sm fs--1 mb-0" >
+                                <tr>
+                                    <td><input type="text" name="" id="" class="form-control"  /></td>
+                                    <td><input type="text" name="" id="" class="form-control" /></td>
+                                    <td><input type="text" name="" id="" class="form-control"  /></td>
+                                </tr>
                             </table>
                                 <hr>
                                 <table class="table table-striped table-sm fs--1 mb-0" >
@@ -139,7 +162,7 @@
             </div>
             </div>
                 <div class="modal-footer">
-                    <button type="submit"  class="btn btn-primary" id="addbtn" name="addbtn" >Sauvegarder</button>
+                    <button type="submit"  class="btn btn-primary" id="addfebbtn" name="addfebbtn" >Sauvegarder</button>
                 </div>
             </form>
         </div>
