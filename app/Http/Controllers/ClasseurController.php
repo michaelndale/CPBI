@@ -26,16 +26,7 @@ class ClasseurController extends Controller
       $Classeur = Classeur::all();
       $output = '';
       if ($Classeur->count() > 0) {
-        $output .= '<table class="table table-striped table-sm fs--1 mb-0">
-            <thead>
-            <tr>
-              <th class="align-middle ps-3 name">#</th>
-              <th class="sort border-top ps-3" data-sort="name">Libellé</th>
-              <th><center>ACTION</center></th>
-            </tr>
-          </thead>
-          <tbody class="list">
-           ';
+       
         $nombre = 1;
         foreach ($Classeur as $rs) {
           $output .= '<tr>
@@ -53,7 +44,7 @@ class ClasseurController extends Controller
             </tr>';
           $nombre++;
         }
-        $output .= '</tbody></table>';
+     
         echo $output;
       } else {
         echo '<h3 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h3>';

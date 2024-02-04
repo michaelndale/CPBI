@@ -1,156 +1,197 @@
 @extends('layout/app')
 @section('page-content')
 
-<div class="content">
-        <div class="row gy-3 mb-6 justify-content-between">
-          <div class="col-md-8 col-auto">
-            <h2 class="mb-2 text-1100">Tableau de bord des projets    </h2>
-            <h5 class="text-70 fw-semi-bold"><a href="javascript::;" > COMMUNAUTÉ DES EGLISES DE PENTECÔTE AU BURUNDI “CEPBU” </a> </h5>
-          </div>
-          <div class="col-md-4 col-auto">
-          
-            <div class="flatpickr-input-container">
+            <div class="main-content">
 
-              <e class="form-control ps-6 " >  @include('dashboard.time')</e>
+                <div class="page-content">
+                    <div class="container-fluid">
 
-              <span class="uil uil-calendar-alt flatpickr-icon text-700"></span></div>
-          </div>
-        </div>
-        <div class="row mb-3 gy-6">
-          <div class="col-12 col-xxl-2">
-            <div class="row align-items-center g-3 g-xxl-0 h-100 align-content-between">
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6 col-xl-3 col-xxl-12">
-                <div class="d-flex align-items-center"><span class="fs-4 lh-1 uil uil-books text-primary-500"></span>
-                  <div class="ms-2">
-                    <div class="d-flex align-items-end">
-                      <h2 class="mb-0 me-2"> {{ $project->count(); }}</h2><span class="fs-1 fw-semi-bold text-900">Projets</span>
-                    </div>
-                    <p class="text-800 fs--1 mb-0">Tous les projets</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6 col-xl-3 col-xxl-12">
-                <div class="d-flex align-items-center"><span class="fs-4 lh-1 uil uil-users-alt text-success-500"></span>
-                  <div class="ms-2">
-                    <div class="d-flex align-items-end">
-                      <h2 class="mb-0 me-2">{{ $user->count(); }}</h2><span class="fs-1 fw-semi-bold text-900">Personneles</span>
-                    </div>
-                    <p class="text-800 fs--1 mb-0">Tous les personeles</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6 col-xl-3 col-xxl-12">
-                <div class="d-flex align-items-center"><span class="fs-4 lh-1 uil uil-invoice text-warning-500"></span>
-                  <div class="ms-2">
-                    <div class="d-flex align-items-end">
-                      <h2 class="mb-0 me-2"> {{ $activite->count(); }}</h2><span class="fs-1 fw-semi-bold text-900">Activités</span>
-                    </div>
-                    <p class="text-800 fs--1 mb-0">Toutes les activités</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-12 col-sm-6 col-md-3 col-lg-6 col-xl-3 col-xxl-12">
-                <div class="d-flex align-items-center"><span class="fs-4 lh-1 uil uil-refresh text-danger-500"></span>
-                  <div class="ms-2">
-                    <div class="d-flex align-items-end">
-                      <h2 class="mb-0 me-2"> {{ $encours }}</h2><span class="fs-1 fw-semi-bold text-900">Projet</span>
-                    </div>
-                    <p class="text-800 fs--1 mb-0">Encours d'exécution</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                        <!-- start page title -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                    <h4 class="mb-sm-0">Tableau de bord des projets <BR> COMMUNAUTÉ DES EGLISES DE PENTECÔTE AU BURUNDI “CEPBU” </h4>
 
+                                    <div class="page-title-right">
+                                    <e class="form-control ps-6 " >  @include('dashboard.time')</e>
+                                    </div>
 
-          <div class="mx-lg-n4 mt-3">
-          <div class="row g-3">
-            <div class="col-12 col-xl-12 col-xxl-7">
-              <div class="card todo-list h-100">
-                <div class="card-header border-bottom-0 pb-0">
-                  <div class="row justify-content-between align-items-center mb-3">
-                    <div class="col-12 col-sm-6 col-md-4 ">
-                      <h3 class="text-1100">Projet </h3>
-                      <p class="mb-0 text-700">Bref résumé de tous les projets</p>
-                    </div>
-                    <div class="col-12 col-sm-2 col-md-7">
-                      <div class="row align-items-center g-0 justify-content-between">
-                         <div class="col-2 col-sm-2 col-md-8 ">
-                          <div class="search-box w-100 mb-2 mb-sm-0" >
-                         
-                            <select class="form-select classcategory"  >
-                              <option disabled="true" selected="true">--Classement de dossier--</option>
-                              @foreach ($folder as $folders)
-                              <option value="{{ $folders->id }}">{{ $folders->title }} </option>
-                              @endforeach
-                            </select>
-                             
-                           
-                          </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-2 col-sm-2 col-md-3">
-                        <select  class="form-select annee" id="annee">
-                              <option value="0" disabled="true" selected="true">--Année--</option>
+                        <!-- end page title -->
+                        
+                        <div class="row">
+                            <div class="col-xl-12">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex flex-wrap pb-3 gap-3">
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <p class="text-truncate mb-2">Projets</p>
+                                                        <h4 class="mt-2 mb-0">{{ $project->count(); }} <span class="badge bg-subtle-primary text-primary font-size-10 ms-1"><i class="mdi mdi-arrow-up"></i> {{ $project->count(); }}%</sup></h4>
+                                                    </div>
+                                                    <div class="text-primary">
+                                                        <div id="chart-mini1" class="apex-chart"></div>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 font-size-14 fw-bold mt-2 "> ~Tout les projets</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex flex-wrap pb-3 gap-3">
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <p class="text-truncate mb-2">Personnel</p>
+                                                        <h4 class="mt-2 mb-0">{{ $user->count(); }}<span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $user->count(); }}%</sup></h4>
+                                                    </div>
+                                                    <div class="text-primary">
+                                                        <div id="chart-mini2" class="apex-chart"></div>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"> ~ Tous les personnels</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex flex-wrap pb-3 gap-3">
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <p class="text-truncate mb-2">Activités</p>
+                                                        <h4 class="mt-2 mb-0">{{ $activite->count(); }} <span class="badge bg-subtle-primary text-primary font-size-10 ms-1"><i class="mdi mdi-arrow-up"></i> 32%</sup></h4>
+                                                    </div>
+                                                    <div class="text-primary">
+                                                        <div id="chart-mini3" class="apex-chart"></div>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate">232<span class="text-muted fw-normal"> ~ vs. previous month</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="d-flex flex-wrap pb-3 gap-3">
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <p class="text-truncate mb-2">Projet</p>
+                                                        <h4 class="mt-2 mb-0">{{ $encours }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
+                                                    </div>
+                                                    <div class="text-primary">
+                                                        <div id="chart-mini4" class="apex-chart"></div>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate">Encours d'exécution<span class="text-muted fw-normal"> ~ vs. previous month</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end row -->
+
+
+                                
+                        <!-- end row -->
+
+                        <div class="row">
+                            <div class="col-xl-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                       
+
+                                        <h4 class="card-title">Recherche projet</h4>
+                                        <div class="mt-4">
+                                           
+        
+                                            <div class="mt-4 text-center">
+                                            <select class="form-select classcategory"  >
+                                                <option disabled="true" selected="true">--Classement de dossier--</option>
+                                                @foreach ($folder as $folders)
+                                                <option value="{{ $folders->id }}">{{ $folders->title }} </option>
+                                                @endforeach
+                                              </select>
+                                            </div>
+
+                                            <div class="mt-4 text-center">
+
+                                            <select  class="form-select annee" id="annee">
+                                              <option value="0" disabled="true" selected="true">--Année--</option>
+                                            </select>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-9">
+                                <div class="card">
+                                    <div class="card-body">
+                                        
+                                        <h4 class="card-title mb-3">Bref résumé de tous les projets en recherche</h4>
+
+
+                                        <div class="table-responsive">
+                                            <table class="table table-centered align-middle table-nowrap mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="width: 20px;" class="align-middle">
+                                                            <div class="form-check font-size-15">
+                                                                <input class="form-check-input" type="checkbox" id="checkAll">
+                                                                <label class="form-check-label" for="checkAll"></label>
+                                                            </div>
+                                                        </th>
+                                                        <th>Numéro</th>
+                                                        <th>Titre projet</th>
+                                                        <th>Date debut</th>
+                                                        <th>Statut</th>
+                                                        <th>Année</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="list tableviewsclass" >
+                                                  <tr>
+                                                    <td colspan="6">
+                                                      <h5 style="margin-top:1% ;color:#c0c0c0"> 
+                                                      <center><font size="5px"><i class="fa fa-search"  ></i> </font><br><br>
+                                                      Sélectionner le classeur et l'année</center> </h5>
+                                                   </td>
+                        
+                                                  </tr>
+                                                      
+                                                     
+                                                    
+                                                </tbody>
+                                            </table>
+
+                                            <a class="fw-bold fs--1 mt-4" href="{{ route('new_project') }}"><span class="fas fa-plus me-1"></span>Ajouter nouveau projet </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end row -->
                             
-                            </select>
-
+                            </div>
+    
+                           
                         </div>
-                      </div>
-                    </div>
-                  </div>
+                        <!-- end row -->
+
+                      
+
+                    </div> <!-- container-fluid -->
                 </div>
+                <!-- End Page-content -->
 
 
-                <div class="card-body py-0 scrollbar to-do-list-body">
 
-             
-            <div class="border-top border-bottom-0 border-300" id="dealForecastTable" data-list='{"valueNames":["contact","appointment","qualified","closed-won","contact-sent"],"page":5}'>
-              <div class="table-responsive scrollbar">
-                <table class="table fs--1 mb-0">
-                  <thead>
-                    <tr>
-                      <th class="sort border-end white-space-nowrap align-middle ps-0 text-uppercase text-70" scope="col" data-sort="contact" style="width:2%;">Numéro</th>
-                      <th class="sort border-end align-middle" scope="col" data-sort="appointment" style="width:20%; ">
-                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-primary me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Titre projet</span></div>
-                      </th>
-                      <th class="sort border-end align-middle  px-3 text-uppercase text-700" scope="col" data-sort="qualified" style="width:1%;">
-                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-primary-300 me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Date debut</span></div>
-                      </th>
-                      <th class="sort border-end align-middle  px-3 text-uppercase text-700" scope="col" data-sort="closed-won" style="width:1%;">
-                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-success me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Date fin</span></div>
-                      </th>
-                      <th class="sort align-middle text-end ps-3 text-uppercase text-700" scope="col" data-sort="contact-sent" style="width:1%; ">
-                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-danger me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Statut</span></div>
-                      </th>
 
-                      <th class="sort border-end align-middle  px-3 text-uppercase text-700" scope="col" data-sort="closed-won" style="width:1%;">
-                        <div class="d-inline-flex flex-center"><span class="fa-solid fa-square fs--3 text-warring me-2" data-fa-transform="up-2"></span><span class="mb-0 fs--1">Année</span></div>
-                      </th>
-
-                     
-                    </tr>
-                  </thead>
-                  <tbody class="list tableviewsclass" id="table-deal-forecast-body " >
-                        <td colspan="6">
-                            <h4 style="margin-top:1% ;color:#c0c0c0"> 
-                            <center><font size="100px"><i class="fa fa-search"  ></i> </font><br><br>
-                            Sélectionner le classeur et l'année</center> </h4>
-                          </td>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-                 
-                </div>
-                <div class="card-footer border-0"><a class="fw-bold fs--1 mt-4" href="{{ route('new_project') }}"><span class="fas fa-plus me-1"></span>Ajouter nouveau projet </a></div>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-        </div>
-
- 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
@@ -252,7 +293,6 @@
 
 	});
 </script>
-
 
 
   

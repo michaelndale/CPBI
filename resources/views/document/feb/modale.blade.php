@@ -23,11 +23,11 @@
                                     <td class="align-middle ps-3 name">Activité</td>
                                     <td class="align-middle email" colspan="6">
                                         <select type="text" class="form-control" name="activityid" id="activityid" style="width: 100%">
-                                        <option value="">--Aucun--</option>
+                                        <option disabled="true" selected="true">--Aucun--</option>
                                         @forelse ($activite as $activites)
                                             <option value="{{ $activites->id }}"> {{ $activites->titre }} </option>
                                         @empty
-                                        <option value="">--Aucun activite trouver--</option>
+                                        <option disabled="true" selected="true">--Aucun activite trouver--</option>
                                         @endforelse
                                     </select>
                                     </td>
@@ -53,8 +53,8 @@
                                     <td class="align-middle email" colspan="3">
                                     <div class="col-sm-12 col-md-12">
                                         <div class="form-floating">
-                                        <select class="form-select" id="ligneid" name="ligneid" required  onchange="soldeligne(this.value);">
-                                            <option selected="selected" value="">Ligne budgetaire</option> 
+                                        <select class="form-select soldeligne" id="ligneid" name="ligneid"  required >
+                                            <option disabled="true" selected="true">Ligne budgetaire</option> 
                                             @foreach ($compte as $comptes)
                                                 <option value="{{ $comptes->id }}"> {{ $comptes->numero }}. {{ $comptes->libelle }} </option>
                                                 @php
@@ -77,6 +77,7 @@
                                     </td>
                                     <td class="align-middle email">
                                     Taux d’exécution: 100% 
+                                    <i id="tauxexecution"></i>
                                     </td>
                                 </tr>
                                 <tr>
@@ -99,23 +100,76 @@
                         </table>
 
                     <hr>
+
+
+
+                    <div class="table-responsive">
+                                    <table class="table table-hover table-white" id="tableEstimate">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 20px">#</th>
+                                              
+                                                <th class="col-md-6">Description</th>
+                                             
+                                                <th style="width:80px;">Qty</th>
+                                                <th>Amount</th>
+                                                <th> </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                          
+                                            <td><input class="form-control"style="min-width:150px" type="text" id="description" name="description[]"></td>
+                                            <td><input class="form-control unit_price" style="width:100px" type="text" id="unit_cost" name="unit_cost[]"></td>
+                                            <td><input class="form-control qty" style="width:80px" type="text" id="qty" value= "1" name="qty[]"></td>
+                                            <td><input class="form-control total" style="width:120px" type="text" id="amount" name="amount[]" value="0" readonly></td>
+                                            <td><a href="javascript:void(0)" class="text-success font-18" title="Add" id="addBtn"><i class="fa fa-plus"></i></a></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-white">
+                                        <tbody>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                                <td class="text-right">Total</td>
+                                                <td>
+                                                    <input class="form-control text-right total" type="text" id="sum_total" name="total" value="0" readonly>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="5" class="text-right">Tax</td>
+                                                <td>
+                                                    <input class="form-control text-right"type="text" id="tax_1" name="tax_1" value="0" readonly>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="5" class="text-right">
+                                                    Discount %
+                                                </td>
+                                                <td>
+                                                    <input class="form-control text-right discount" type="text" id="discount" name="discount" value="10">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="5" style="text-align: right; font-weight: bold">
+                                                    Grand Total
+                                                </td>
+                                                <td style="font-size: 16px;width: 230px">
+                                                    <input class="form-control text-right" type="text" id="grand_total" name="grand_total" value="$ 0.00" readonly>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>                               
+                                </div>
+
                     <div class="table-repsonsive">
                         <span id="error"></span>
-                            <table class="table table-striped table-sm fs--1 mb-0" id="item_table">
-                                <tr>
-                                    <th style="width:5%">N<sup>O</sup></th>
-                                    <th>Description</th>
-                                    <th style="width:20%">Montant</th>
-                                    <th style="width:5% ;"><a href="javascript::;" type="button" name="add" class="btn btn-success btn-sm add"><i class="fas fa-plus"></i></></th>
-                                </tr>
-                            </table>
-                            <table class="table table-striped table-sm fs--1 mb-0" >
-                                <tr>
-                                    <td><input type="text" name="" id="" class="form-control"  /></td>
-                                    <td><input type="text" name="" id="" class="form-control" /></td>
-                                    <td><input type="text" name="" id="" class="form-control"  /></td>
-                                </tr>
-                            </table>
                                 <hr>
                                 <table class="table table-striped table-sm fs--1 mb-0" >
                                     <tr>
@@ -155,12 +209,9 @@
                                         </tr>
                                     </table>
                                     </div>
-                                    
-
-                                
                                 </div>
-            </div>
-            </div>
+                            </div>
+                    </div>
                 <div class="modal-footer">
                     <button type="submit"  class="btn btn-primary" id="addfebbtn" name="addfebbtn" >Sauvegarder</button>
                 </div>

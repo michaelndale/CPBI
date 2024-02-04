@@ -1,46 +1,42 @@
+<!doctype html>
+<html>
 
-<!DOCTYPE html>
-<html lang="fr" dir="ltr">
-<meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title> {{ @$title }} |  {{ config('app.name') }} </title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('elements/assets/img/favicons/logo.png') }}">
-    <script src="{{ asset('elements/assets/js/config.js') }}"></script>
-    <link href="{{ asset('elements/vendors/flatpickr/flatpickr.min.css') }}" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&amp;display=swap" rel="stylesheet">
-    <link href="{{ asset('elements/assets/css/theme.min.css') }}" type="text/css" rel="stylesheet" id="style-default">
-    <script src="{{ asset('elements/jquery-3.7.1.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('elements/notify.js') }}"></script>
-    <script src="{{ asset('elements/sweetalert2@11.js') }}" type="text/javascript"></script>
-   
-    <!--<link href="{{ asset('elements/vendors/simplebar/simplebar.min.css') }}" rel="stylesheet"> -->
-    <link rel="stylesheet" href="{{ asset('elements/unicons.iconscout.com/release/v4.0.8/css/line.css') }}">
-   <!-- <link href="{{ asset('elements/assets/css/theme-rtl.min.css') }}" type="text/css" rel="stylesheet" id="style-rtl"> -->
-<style>
-  input , select{ height: 35px; }
-  tr:nth-child(even) {background: rgba(76, 175, 80, 0.3);}
-</style>
- <script>
-      var phoenixIsRTL = window.config.config.phoenixIsRTL;
-      if (phoenixIsRTL) {
-        var linkDefault = document.getElementById('style-default');
-        var userLinkDefault = document.getElementById('user-style-default');
-        linkDefault.setAttribute('disabled', true);
-        userLinkDefault.setAttribute('disabled', true);
-        document.querySelector('html').setAttribute('dir', 'rtl');
-      } else {
-        var linkRTL = document.getElementById('style-rtl');
-        var userLinkRTL = document.getElementById('user-style-rtl');
-        linkRTL.setAttribute('disabled', true);
-        userLinkRTL.setAttribute('disabled', true);
-      }
-    </script>
-    <link href="{{ asset('elements/vendors/leaflet/leaflet.css') }}" rel="stylesheet">
-    <link href="{{ asset('elements/vendors/leaflet.markercluster/MarkerCluster.css') }}" rel="stylesheet">
-    <link href="{{ asset('elements/vendors/leaflet.markercluster/MarkerCluster.Default.css') }}" rel="stylesheet"> 
-  </head>
-  <body>
-  <main class="main" id="top">
+
+  <meta charset="utf-8" />
+  <title> {{ @$title }} | {{ config('app.name') }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="Application des gestions projet CEPBU" name="GoProjet" />
+  <meta content="IMPACT-JOB" name="MICHAEL NDALE" />
+  <!-- App favicon -->
+  <link rel="shortcut icon" href="{{ asset('element/assets/images/favicon.ico') }}">
+
+  <!-- plugin css -->
+  <link href="{{ asset('element/assets/libs/jsvectormap/css/jsvectormap.min.css') }}" rel="stylesheet" type="text/css" />
+
+   <!-- DataTables -->
+  <link href="{{ asset('element/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
+  <link href="{{ asset('element/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
+  <link href="{{ asset('element/assets/libs/datatables.net-select-bs4/css/select.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
+
+        <!-- Responsive datatable examples -->
+  <link href="{{ asset('element/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />     
+
+
+  <!-- Layout Js -->
+  <script src="{{ asset('element/assets/js/layout.js') }}"></script>
+
+  <!-- Bootstrap Css -->
+  <link href="{{ asset('element/assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+  <!-- Icons Css -->
+  <link href="{{ asset('element/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+  <!-- App Css-->
+  <link href="{{ asset('element/assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+
+  
+  <script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+
+</head>

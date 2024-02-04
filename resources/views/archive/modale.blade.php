@@ -16,7 +16,7 @@
         <div class="row" >
 
       <div class="col-sm-3 col-md-12">
-        <div class="form-floating mb-3">
+        <div class="form-floating mb-1">
           <select class="form-select" id="classeur" name="classeur" >
             <option value="" selected="selected">Séléctionner classeur</option>
             @foreach ($classeur as $classeurs)
@@ -30,14 +30,14 @@
 
         <div class="row" >
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="numerogenerale" type="text" name="numerogenerale" required="required" placeholder="Heure sortie" />
                   <label for="eventLabel">N<sup>o</sup> generale</label>
                 </div>
                 </div>
 
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="numerolettre" type="text" name="numerolettre" required="required" placeholder="Heure retour" />
                   <label for="eventLabel">N<sup>o</sup>  Lettre</label>
                 </div>
@@ -50,7 +50,7 @@
 
                 <div class="row" >
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="datelettre" type="date" name="datelettre" required="required" placeholder="Date du jour" />
                   <label for="eventLabel">Date de la lettre</label>
                 </div>
@@ -59,7 +59,7 @@
 
               
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="dateexpiration" type="date" name="dateexpiration" required="required" placeholder="Utineraire" />
                   <label for="eventLabel">Date expediction</label>
                 </div>
@@ -68,7 +68,7 @@
             
                 <div class="row" >
               <div class="col-sm-6 col-md-12">
-              <div class="form-floating mb-3">
+              <div class="form-floating mb-1">
                   <input class="form-control" id="destinateur" type="text" name="destinateur" required="required" placeholder="Object" />
                   <label for="eventLabel">Nom destinateur</label>
                 </div>
@@ -91,7 +91,7 @@
 
         </div>
         <div class="modal-footer">
-          <button chauffeur="submit" name="addbtn" id="addbtn"  class="btn btn-primary" >Enregistrer</button>
+          <button chauffeur="submit" name="addbtn" id="addbtn"  class="btn btn-primary" >Sauvegarder</button>
         </div>
         </form>
     </div>

@@ -1,102 +1,86 @@
-<!DOCTYPE html>
-<html>
-<meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+<!doctype html>
+<html >
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title> Connexion | GoProjects</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('elements/assets/img/favicons/logo.png') }}">
-    <meta name="theme-color" content="#ffffff">
-    <script src="{{ asset('elements/vendors/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
-    <script src="{{ asset('elements/vendors/simplebar/simplebar.min.js') }}"></script>
-    <script src="{{ asset('elements/assets/js/config.js') }}"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com/">
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&amp;display=swap" rel="stylesheet">
-    <link href="{{ asset('elements/vendors/simplebar/simplebar.min.css') }}" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('elements/unicons.iconscout.com/release/v4.0.8/css/line.css') }}">
-    <link href="{{ asset('elements/assets/css/theme-rtl.min.css') }}" type="text/css" rel="stylesheet" id="style-rtl">
-    <link href="{{ asset('elements/assets/css/theme.min.css') }}" type="text/css" rel="stylesheet" id="style-default">
-    <link href="{{ asset('elements/assets/css/user-rtl.min.css') }}" type="text/css" rel="stylesheet" id="user-style-rtl">
-   
-    <script>
-      var phoenixIsRTL = window.config.config.phoenixIsRTL;
-      if (phoenixIsRTL) {
-        var linkDefault = document.getElementById('style-default');
-        var userLinkDefault = document.getElementById('user-style-default');
-        linkDefault.setAttribute('disabled', true);
-        userLinkDefault.setAttribute('disabled', true);
-        document.querySelector('html').setAttribute('dir', 'rtl');
-      } else {
-        var linkRTL = document.getElementById('style-rtl');
-        var userLinkRTL = document.getElementById('user-style-rtl');
-        linkRTL.setAttribute('disabled', true);
-        userLinkRTL.setAttribute('disabled', true);
-      }
-    </script>
+        <meta charset="utf-8" />
+        <title>Connexion | GoProjects</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="Application des gestions des projets" name="GoProject" />
+        <meta content="GoProject" name="Michael Ndale" />
+        <link rel="shortcut icon" href="{{ asset('element/assets/images/logo.png') }}">
+        <script src="{{ asset('element/assets/js/layout.js') }}"></script>
+        <link href="{{ asset('element/assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('element/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('element/assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+        <style type="text/css">
+          .has-error {
+              border: 1px solid red;
+          }
 
-<style type="text/css">
-.has-error {
-    border: 1px solid red;
-}
+        </style>
+    </head>
 
-</style>
-  </head>
-  <body>
-    
-    <main class="main" id="top">
-      <div class="container">
-        <div class="row flex-center min-vh-100 py-5">
-          <div class="col-sm-10 col-md-8 col-lg-5 col-xl-5 col-xxl-3"><a class="d-flex flex-center text-decoration-none mb-4" href="../../../index.html">
-              <div class="d-flex align-items-center fw-bolder fs-5 d-inline-block"  >
-               
-                <p class="logo-text ms-2 d-none d-sm-block" style="color:#228B22;">
-                  <font size="6px"> <b><i class="far fa-chart-bar"></i>CEPBU</b></font> </p>
-              </div>
-            </a>
-            
-            <div class="position-relative">
-              <hr class="bg-200 mt-5 mb-4" />
-              <div class="divider-content-center">Accédez à votre compte GoProject</div>
+    <body>
+        <div class="auth-maintenance d-flex align-items-center min-vh-100">
+            <div class="bg-overlay bg-light"></div>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-9 col-sm-12">
+                        <div>
+                            
+                            <div class="row justify-content-center align-items-center pt-4">
+                                <div class="col-lg-6 col-md-8">
+                                   <div class="card">
+                                        <div class="card-body">
+                                            <div class="p-3">
+                                              <div class="text-center mt-1">
+                                                <h4 class="font-size-18" >  <font size="6px"> <b><i class="far fa-chart-bar"></i> CEPBU</b></font> </h4>
+                                                <div class="divider-content-center">Accédez à votre compte GoProject</div>
+                                              </div>
+
+                                              <div id="ok" style="color: white; text-align: center; background-color:green ;border-radius:3px 3px 3px 3px;"></div>
+                                              <div id="err" style="color: white; text-align: center; background-color:Tomato;border-radius:3px 3px 3px 3px;"></div>
+
+                                              <form  class="auth-input" name="frm_login" id="frm_login">
+                                              @csrf
+                                                <div class="mb-2">
+                                                    <label for="indetifiant" class="form-label">Identifiant</label>
+                                                    <input type="text" class="form-control" id="email" name="email" placeholder="Identifiant" autocomplete="off" >
+                                                    <small id="erroremail" style="color:red"></small>
+                                                  </div>
+                                        
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="password-input">Mot de passe</label>
+                                                    <input type="password" class="form-control" placeholder="Mot de passe" id="password" name="password" autocomplete="off" >
+                                                    <small id="errorpassword" style="color:red" ></small>
+                                                  </div>
+                                        
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"  >
+                                                    <label class="form-check-label" for="auth-remember-check">Souvenez-vous de moi</label>
+                                                   
+                                                  </div>
+                                        
+                                                <div class="mt-4">
+                                                    <button class="btn btn-primary w-100" type="button" id="connectBtn"  onclick="login()">Se connecter</button>
+                                                </div>
+                                        
+                                               
+                                            </form>
+                                            </div>
+                                            <div class="mt-4 text-center">
+                                                <p> Gestion Suivi Projets  <br>©  2023 - <script>document.write(new Date().getFullYear())</script> GoProject  </p>
+                                            </div>
+                                        </div>
+                                   </div>
+                                </div>
+                            </div>
+                            <!-- end row -->
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div id="ok" style="color: white; text-align: center; background-color:green ;border-radius:3px 3px 3px 3px;"></div>
-            <div id="err" style="color: white; text-align: center; background-color:Tomato;border-radius:3px 3px 3px 3px;"></div>
-            <form name="frm_login" class="form" id="frm_login">    
-                            @csrf
-            
-              <div class="mb-3 text-start"><label class="form-label" for="admin" class="text-info" >Nom d’utilisateur </label>
-              <div class="form-icon-container">
-                <input class="form-control form-icon-input" id="email" name="email" type="text" placeholder="Identifiant" autocomplete="off"  />
-               <span class="fas fa-user text-900 fs--1 form-icon"></span>
-               <small id="erroremail" style="color:red"></small>
-              </div>
-            </div>
-
-
-            <div class="mb-3 text-start"><label class="form-label" for="password">Mot de passe </label>
-              <div class="form-icon-container">
-                <input class="form-control form-icon-input" id="password" name="password" type="password" placeholder="Mot de passe"/>
-                <span class="fas fa-key text-900 fs--1 form-icon"></span>
-                <small id="errorpassword" style="color:red" ></small>
-              </div>
-            </div>
-            
-            <button type="button" id="connectBtn"  onclick="login()" style="background-color:#228B22" class="btn btn-primary w-100 mb-3">Se connecter</button>
-            <br><br>
-            <small>
-                
-            <center>
-              
-            <p class="mb-0 mt-2 mt-sm-0 text-900"> Gestion Suivi Projets<span class="d-none d-sm-inline-block"></span><span class="d-none d-sm-inline-block mx-1">|</span> 
-            <br class="d-sm-none" />2023 &copy;<a class="mx-1" target="_blank" href="https://impactjob.space/"> GoProjects</a></p>
-            </center></small>
-          </form>
-          </div>
         </div>
-      </div>
-      <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script>
 
   
@@ -105,7 +89,7 @@
         if($('#email').val() == "")
         { 
             $('#email').addClass('has-error');
-            $("#erroremail").hide().html("Le nom utilisateur est obligatoire").fadeIn('slow');
+            $("#erroremail").hide().html("L'identifiant est obligatoire").fadeIn('slow');
             return false;
         }
         else if($('#password').val() == "")
@@ -182,17 +166,12 @@
         }
     }
 </script>
-    </main>
-    <script src="{{ asset('elements/vendors/popper/popper.min.js') }}"></script>
-    <script src="{{ asset('elements/vendors/bootstrap/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('elements/vendors/anchorjs/anchor.min.js') }}"></script>
-    <script src="{{ asset('elements/vendors/is/is.min.js') }}"></script>
-    <script src="{{ asset('elements/vendors/fontawesome/all.min.js') }}"></script>
-    <script src="{{ asset('elements/vendors/lodash/lodash.min.js') }}"></script>
-    <script src="{{ asset('elements/polyfill.io/v3/polyfill.min58be.js?features=window.scroll') }}"></script>
-    <script src="{{ asset('elements/vendors/list.js/list.min.js') }}"></script>
-    <script src="{{ asset('elements/vendors/feather-icons/feather.min.js') }}"></script>
-    <script src="{{ asset('elements/vendors/dayjs/dayjs.min.js') }}"></script>
-    <script src="{{ asset('elements/assets/js/phoenix.js') }}"></script>
-  </body>
+        <script src="{{ asset('element/assets/libs/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/metismenu/metisMenu.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/simplebar/simplebar.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/node-waves/waves.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/apexcharts/apexcharts.min.js') }}"></script>
+        <script src="{{ asset('element/assets/js/app.js"></script>
+    </body>
 </html>

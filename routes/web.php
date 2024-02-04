@@ -100,9 +100,9 @@ Route::middleware('auth')->group(function (){
         Route::get('/', [AuthController::class, 'index'])->name('user');
         Route::get('/fetchAllUs', [AuthController::class, 'fetchAll'])->name('fetchAllUs');
         Route::post('/storeus', [AuthController::class, 'store'])->name('storeus');
-        //Route::delete('/deleteUs', [AuthController::class, 'deleteall'])->name('deleteUs');
-        //Route::get('/editUs', [AuthController::class, 'edit'])->name('editUs');
-        //Route::post('/updateUs', [AuthController::class, 'update'])->name('updateUs'); 
+        Route::delete('/deleteUs', [AuthController::class, 'deleteall'])->name('deleteUs');
+        Route::get('/editUs', [AuthController::class, 'edit'])->name('editUs');
+        Route::post('/updateUs', [AuthController::class, 'update'])->name('updateUs'); 
        
     });
 
@@ -180,6 +180,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/', [FebController::class, 'list'])->name('listfeb');
         Route::post('/storefeb', [FebController::class, 'store'])->name('storefeb');
         Route::get('/fetchAllfeb', [FebController::class, 'fetchAll'])->name('fetchAllfeb');
+        Route::get('/findligne',[FebController::class, 'findligne'] )->name('findligne');
         Route::delete('/deletefeb', [FebController::class, 'delete'])->name('deletefeb');
     });
 

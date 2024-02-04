@@ -125,6 +125,27 @@ class FebController extends Controller
        
   }
 
+  public function findligne(Request $request){
+    try {
+      $ID = session()->get('id');
+      $data=DB::table('elementfebs')
+            ->join('febs', 'elementfebs.febid', '=', 'febs.id')
+            ->select('elementfebs.*', 'febs.projetid', 'febs.ligne_bugdetaire')
+            ->orWhere('febs.ligne_bugdetaire', $request->id)
+         //   ->orWhere('febs.projetid', $ID)
+            ->get();
+   
+      return response()->json($data);
+
+   
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
+     
+}
+
     public function list()
     {
         $title="FEB";

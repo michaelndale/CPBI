@@ -1,50 +1,76 @@
 @extends('layout/app')
 @section('page-content')
-<div class="content">
-  <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" >
-    <div class="card-header p-4 border-bottom border-300 bg-soft">
-      <div class="row g-3 justify-content-between align-items-end">
-        <div class="col-12 col-md">
-          <h4 class="text-900 mb-0" data-anchor="data-anchor"> <i class="fa fa-folder-open"></i> Historique </h4>
-        </div>
-      </div>
-    </div>
-    <div class="card-body p-0">
-      <div class="collapse code-collapse" id="search-example-code">
-      </div>
-      <div class="p-4 code-to-copy">
-        <div id="tableExample3" data-list='{"valueNames":["name","email"],"page":5,"pagination":true}'>
-          <div class="table-responsive" id="show_all">
-          <table class="table table-striped table-sm fs--1 mb-0">
-          <thead>
-            <tr>
-              <th class="sort border-top ps-3" data-sort="name">Function</th>
-              <th class="sort border-top ps-3" data-sort="name">Operation</th>
-              <th class="sort border-top ps-3" data-sort="name">User</th>
-              <th class="sort border-top ps-3" data-sort="name">Date</th>
-            </tr>
-          </thead>
-          <tbody class="list">
-            @forelse ($data as  $rs)
-            <tr>
-              <td>{{ ucfirst($rs->fonction) }} </td>
-              <td>{{ ucfirst($rs->operation) }} </td>
-              <td>{{ ucfirst($rs->user) }} </td>
-              <td>{{ ucfirst($rs->updated_at) }} </td>
-            </tr>
-            @empty
-            <h3 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h3>
-            @endforelse
-          
-            </tbody></table>
-          </div>
-          <div class="d-flex justify-content-between mt-3"><span class="d-none d-sm-inline-block" data-list-info="data-list-info"></span>
-            <div class="d-flex"><button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
-              <ul class="mb-0 pagination"></ul><button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
+
+<div class="main-content">
+
+<div class="page-content">
+    <div class="container-fluid">
+
+        <!-- start page title -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">Historique</h4>
+
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">Historique</a></li>
+                            <li class="breadcrumb-item active">Liste</li>
+                        </ol>
+                    </div>
+
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
+        <!-- end page title -->
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-title">Historique</h4>
+                        <p class="card-title-desc">Liste des operations</p>
+
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
+                            <tr style="background-color:#82E0AA">
+                            <th >Fonction</th>
+                            <th >Operation</th>
+                            <th >User</th>
+                            <th >Link</th>
+                          </tr>
+                            </thead>
+
+
+                            <tbody>
+                            @foreach ($data as $rs)
+                              <tr>
+                              <td>{{ ucfirst($rs->fonction) }} </td>
+                              <td>{{ ucfirst($rs->operation) }} </td>
+                              <td>{{ ucfirst($rs->user) }} </td>
+                              <td>{{ ucfirst($rs->updated_at) }} </td>
+                              </tr>
+                            @endforeach
+                           
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+        
+    </div> <!-- container-fluid -->
+</div>
+<!-- End Page-content -->
+
+
+
+</div>
+
+
+
+
+
   @endsection

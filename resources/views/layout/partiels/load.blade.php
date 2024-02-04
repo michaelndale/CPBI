@@ -1,1 +1,1 @@
-<img src="{{ asset('elements/assets/img/R.gif') }}" width="5%"/>
+<img src="{{ asset('element/assets/images/R.gif') }}" width="5%"/>

@@ -1,43 +1,69 @@
 @extends('layout/app')
 @section('page-content')
+<div class="main-content">
 
-<div class="content">
-  <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style="width:60%; margin:auto">
-    <div class="card-header p-4 border-bottom border-300 bg-soft">
-      <div class="row g-3 justify-content-between align-items-end">
-        <div class="col-12 col-md">
-          <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-list"></i> Classeur</h4>
+                <div class="page-content">
+                    <div class="container-fluid">
 
-        </div>
-        <div class="col col-md-auto">
-          <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouveau classeur</a>
-        </div>
-      </div>
-    </div>
-    <div class="card-body p-0">
-      <div class="collapse code-collapse" id="search-example-code">
-      </div>
-      <div class="p-4 code-to-copy">
-        <div id="tableExample3" data-list='{"valueNames":["name","pagination":true}'>
-          <div class="search-box mb-3 mx-auto">
-            <form class="position-relative" data-bs-toggle="search" data-bs-display="static"><input class="form-control search-input search form-control-sm" type="search" placeholder="Recherche" aria-label="Search" />
-              <span class="fas fa-search search-box-icon"></span>
-            </form>
-          </div>
-          <div class="table-responsive" id="show_all">
-          <h4 class="text-center text-secondery my-5"> Chargement des données ...</h4>
+                        <!-- start page title -->
+                        <div class="row">
+                            <div class="col-6" style="margin:auto">
+                                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                    <h4 class="mb-sm-0">Classeur </h4>
 
-          </div>
-          <div class="d-flex justify-content-between mt-3"><span class="d-none d-sm-inline-block" data-list-info="data-list-info"></span>
-            <div class="d-flex"><button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
-              <ul class="mb-0 pagination"></ul><button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
+                                    <div class="page-title-right">
+                                    <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouveau classeur</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end page title -->
+
+                       
+        
+        
+                        <div class="row">
+                            <div class="col-lg-6"style="margin:auto">
+                                <div class="card">
+                                  
+                                         
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered mb-0">
+        
+                                                <thead>
+                                                <tr style="background-color:#82E0AA">
+                                                  <th style="width:10%">#</th>
+                                                  <th>Libellé</th>
+                                                  <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody  id="show_all">
+                                                  <tr>
+                                                    <td colspan="2"><h5 class="text-center text-secondery my-5">
+                                                        @include('layout.partiels.load')
+                                                      </td>
+                                                    </tr>
+                                                </tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+        
+                                   
+                                </div>
+                            </div>
+                            
+                           
+                        </div>
+                     
+                        
+                    </div> <!-- container-fluid -->
+                </div>
+                <!-- End Page-content -->
+                
+              
+                
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
 
 
   {{-- new profile modal --}}

@@ -77,7 +77,7 @@
     <script>
         $(function() {
         
-            // Add PROJECT ajax 
+            // Add  ajax 
             $("#addjdaForm").submit(function(e) {
                 e.preventDefault();
                 const fd = new FormData(this);
@@ -99,10 +99,6 @@
                     }
                 });
             });
-
-           
-
-
         });
     </script>
 

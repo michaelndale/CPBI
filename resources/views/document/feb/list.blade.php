@@ -57,7 +57,136 @@
 <BR><BR>
 
 <script>
+
+var rowIdx = 1;
+            $("#addBtn").on("click", function ()
+            {
+                // Adding a row inside the tbody.
+                $("#tableEstimate tbody").append(`
+                <tr id="R${++rowIdx}">
+                    <td class="row-index text-center"><p> ${rowIdx}</p></td>
+                    <td><input class="form-control" type="text" style="min-width:150px" id="description" name="description[]"></td>
+                    <td><input class="form-control unit_price" style="width:100px" type="text" id="unit_cost" name="unit_cost[]"></td>
+                    <td><input class="form-control qty" style="width:80px" type="text" value= "1"  id="qty" name="qty[]"></td>
+                    <td><input class="form-control total" style="width:120px" type="text" id="amount" name="amount[]" value="0" readonly></td>
+                    <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Remove"><i class="far fa-trash-alt"></i></a></td>
+                </tr>`);
+            });
+            $("#tableEstimate tbody").on("click", ".remove", function ()
+            {
+                // Getting all the rows next to the row
+                // containing the clicked button
+                var child = $(this).closest("tr").nextAll();
+                // Iterating across all the rows
+                // obtained to change the index
+                child.each(function () {
+                // Getting <tr> id.
+                var id = $(this).attr("id");
+
+                // Getting the <p> inside the .row-index class.
+                var idx = $(this).children(".row-index").children("p");
+
+                // Gets the row number from <tr> id.
+                var dig = parseInt(id.substring(1));
+
+                // Modifying row index.
+                idx.html(`${dig - 1}`);
+
+                // Modifying row id.
+                $(this).attr("id", `R${dig - 1}`);
+            });
+    
+                // Removing the current row.
+                $(this).closest("tr").remove();
+    
+                // Decreasing total number of rows by 1.
+                rowIdx--;
+            });
+
+            $("#tableEstimate tbody").on("input", ".unit_price", function () {
+                var unit_price = parseFloat($(this).val());
+                var qty = parseFloat($(this).closest("tr").find(".qty").val());
+                var total = $(this).closest("tr").find(".total");
+                total.val(unit_price * qty);
+
+                calc_total();
+            });
+
+            $("#tableEstimate tbody").on("input", ".qty", function () {
+                var qty = parseFloat($(this).val());
+                var unit_price = parseFloat($(this).closest("tr").find(".unit_price").val());
+                var total = $(this).closest("tr").find(".total");
+                total.val(unit_price * qty);
+                calc_total();
+            });
+            function calc_total() {
+                var sum = 0;
+                $(".total").each(function () {
+                sum += parseFloat($(this).val());
+                });
+                $(".subtotal").text(sum);
+                
+                var amounts = sum;
+                var tax     = 100;
+                $(document).on("change keyup blur", "#qty", function() 
+                {
+                    var qty = $("#qty").val();
+                    var discount = $(".discount").val();
+                    $(".total").val(amounts * qty);
+                    $("#sum_total").val(amounts * qty);
+                    $("#tax_1").val((amounts * qty)/tax);
+                    $("#grand_total").val((parseInt(amounts)) - (parseInt(discount)));
+                }); 
+            }
+
+
+
 $(function(){
+
+
+  $(document).on('change','.soldeligne',function(){
+			var cat_id=$(this).val();
+			var div=$(this).parent();
+			var op=" ";
+			$.ajax({
+				type:'get',
+				url:"{{ route ('findligne') }}",
+				data:{'id':cat_id},
+				success:function(data){
+          console.log(data);
+
+          if (status == 200) 
+                      {
+                        if(data.length == 0){
+                            op+='<input value="0" selected disabled />';
+                            document.getElementById("tauxexecution").innerHTML = op
+                          }else{
+                          
+                          for(var i=0;i<data.length;i++){
+                          op+='<input  value="'+data[i].annee+'" />';
+                          document.getElementById("tauxecution").innerHTML = op
+                          }
+                          }
+                  
+                        
+                      }
+                      if (status == 201) {
+                        alerte('aucune');
+                      }
+
+                      if (status == 202) {
+                        $.notify("Feb ajouté avec succès !", "success");
+                      }
+
+
+       
+				 
+				},
+				error:function(){
+          alert("Attention! \n Erreur de connexion a la base de donnee ,\n verifier votre connection");
+				}
+			});
+		});
 
    $("#addfebForm").submit(function(e) {
                 e.preventDefault();
@@ -148,54 +277,6 @@ $(function(){
         });
         }
 
-
-
-
-var count = 0;
-var nombre = 1;
-function add_input_field(count)
-{
-
-  var html = '';
-  html += '<tr>';
-  html += '<td><input type="text" name="numerodetail[]" id="numerodetail" class="form-control item_numero" value="'+nombre+'" /></td>';
-  html += '<td><input type="text" name="description[]" id="description" class="form-control item_description" /></td>';
-  html += '<td><input type="text" name="montant[]" id="montant" class="form-control item_montant" style="width:100%"  /></td>';
-  var remove_button = '';
-
-  if(count > 0)
-  {
-    remove_button = '<button type="button" name="remove" class="btn btn-danger btn-sm remove"><i class="fas fa-minus"></i></button>';
-  }
-
-  html += '<td>'+remove_button+'</td></tr>';
-
-  return html;
-
-}
-
-$('#item_table').append(add_input_field(0));
-
-///$('.selectpicker').selectpicker('refresh');
-
-$(document).on('click', '.add', function(){
-
-  count++;
-  nombre++;
-
-  $('#item_table').append(add_input_field(count));
-
-  $('.selectpicker').selectpicker('refresh');
-
-});
-
-$(document).on('click', '.remove', function(){
-
-  $(this).closest('tr').remove();
-
-});
-
-          
 
 
 });

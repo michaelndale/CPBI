@@ -2,68 +2,64 @@
 @section('page-content')
 
 <style type="text/css">
-.has-error {
+  .has-error {
     border: 1px solid red;
-}
+  }
 </style>
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12" style="margin:auto">
+          <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0"><i class="fa fa-users"></i> Personnel </h4>
 
-<div class="content">
-  
-  <div id="members" data-list='{"valueNames":["customer","email","mobile_number","city","last_active","joined"],"page":10,"pagination":true}'>
-    <div class="row align-items-center justify-content-between g-3 mb-4">
-      <div class="col col-auto">
-        <div class="search-box">
-          <h4 class="text-bold text-1100 mb-5"><i class="fa fa-users"></i> Personnel</h4>
+            <div class="page-title-right">
+            <a href="javascript:voide();" data-bs-toggle="modal" data-bs-target="#addModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent" > <i class="fa fa-plus-circle"></i> Nouveau personnel</a>
+
+            </div>
+
+          </div>
         </div>
       </div>
-      <div class="col-auto">
-        <div class="d-flex align-items-center">
-        
-         <a href="javascript:voide();" data-bs-toggle="modal" data-bs-target="#addModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent" > <i class="fa fa-plus-circle"></i> Nouveau personnel</a>
-
+     
+      <div class="row">
+        <div class="col-lg-12" style="margin:auto">
+          <div class="card">
+            <div class="table-responsive">
+              <table class="table table-bordered mb-0">
+                <thead>
+                 
+                  <tr style="background-color:#82E0AA">
+                  <th>Nom & prénom </th>
+                  <th>Email</th>
+                  <th>Téléphone</th>
+                  <th>Fonction</th>
+                  <th>Statut</th>
+                  <th>Date</th>
+              
+                  <th ><center>Action</center></th>
+                  </tr>
+             
+                </thead>
+                <tbody id="show_all">
+                  <tr>
+                    <td colspan="8">
+                      <h5 class="text-center text-secondery my-5">
+                        @include('layout.partiels.load')
+                    </td>
+                  </tr>
+                </tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-   
-
-    <div class="mx-n4 mx-lg-n6 px-4 px-lg-6 mb-9 bg-white border-y border-300 mt-2 position-relative top-1">
-      <div class="table-responsive scrollbar ms-n1 ps-1">
-        <table class="table table-sm fs--1 mb-0">
-          <thead>
-            <tr>
-              <th class="sort align-middle" scope="col" data-sort="nom"> Nom & prénom </th>
-              <th class="sort align-middle" scope="col" data-sort="email">Email</th>
-              <th class="sort align-middle" scope="col" data-sort="phone">Téléphone</th>
-              <th class="sort align-middle" scope="col" data-sort="fonction" >Fonction</th>
-              <th class="sort align-middle" scope="col" data-sort="statut">Statut</th>
-              <th class="sort align-middle" scope="col" data-sort="date">Date</th>
-              <th ><center>Action</center></th>
-            </tr>
-          </thead>
-          
-
-          <tbody  id="show_all">
-            <tr>
-              <td colspan="8"><h5 class="text-center text-secondery my-5">
-                  @include('layout.partiels.load')
-                </td>
-              </tr>
-          </tbody>
-
-
-
-        </table>
-      </div>
-      <div class="row align-items-center justify-content-between py-2 pe-0 fs--1">
-        <div class="col-auto d-flex">
-          <p class="mb-0 d-none d-sm-block me-3 fw-semi-bold text-900" data-list-info="data-list-info"></p><a class="fw-semi-bold" href="#!" data-list-view="*">Show all<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a class="fw-semi-bold d-none" href="#!" data-list-view="less">View Less<span class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
-        </div>
-        <div class="col-auto d-flex"><button class="page-link" data-list-pagination="prev"><span class="fas fa-chevron-left"></span></button>
-          <ul class="mb-0 pagination"></ul><button class="page-link pe-0" data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
-        </div>
-      </div>
-    </div>
+    </div> <!-- container-fluid -->
   </div>
+</div>
+
 
   {{-- new personnel modal --}}
 
@@ -79,14 +75,14 @@
         <div class="modal-body">
         <div class="row" >
                 <div class="col-sm-6 col-md-6">
-                  <div class="form-floating mb-3">
+                  <div class="form-floating mb-1">
                     <input class="form-control" id="nom"  name="nom"  type="text"required="required" placeholder="Identifiant" />
                     <label for="Identifiant">Nom</label>
                     <span id="identifiant_error" name="nom_error" class="text text-danger" > </span>
                   </div>
                 </div>
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="prenom" type="text" name="prenom" required="required" placeholder="Password" />
                   <label for="Password">Prénom </label>
                 </div>
@@ -95,7 +91,7 @@
 
               <div class="row" >
                 <div class="col-sm-6 col-md-6">
-                  <div class="form-floating mb-3">
+                  <div class="form-floating mb-1">
                     <select class="form-control" id="sexe"  name="sexe"  type="text"required="required" placeholder="Identifiant">
                       <option value="">Séléctionner genre</option>
                       <option value="Femme">Femme</option>
@@ -105,7 +101,7 @@
                   </div>
                 </div>
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="phone" type="text" name="phone" required="required" placeholder="Téléphone" />
                   <label for="Password">Téléphone </label>
                 </div>
@@ -114,21 +110,21 @@
 
               <div class="row" >
                 <div class="col-sm-12 col-md-12">
-                  <div class="form-floating mb-3">
+                  <div class="form-floating mb-1">
                     <input class="form-control" id="email"  name="email"  type="text" required="required" placeholder="Email" />
                     <label for="email">Email</label>
                     <span id="email_error" name="email_error" class="text text-danger" > </span>
                   </div>
                 </div>
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="dateemboche" type="date" name="dateemboche" required="required"  />
                   <label for="dateemboche">Date amboche </label>
                 </div>
                 </div>
 
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-5">
+                <div class="form-floating mb-1">
                   <select class="form-select" id="statut" name="statut">
                       <option value="" selected="selected">Statut</option>
                       @foreach ($statut as $statuts)
@@ -142,7 +138,7 @@
             
               <div class="row" >
                 <div class="col-sm-12 col-md-12">
-                <div class="form-floating mb-5">
+                <div class="form-floating mb-1">
                   <select class="form-select" id="fonction" name="fonction">
                       <option value="" selected="selected">Fonction</option>
                         @foreach ($fonction as $fonctions)
