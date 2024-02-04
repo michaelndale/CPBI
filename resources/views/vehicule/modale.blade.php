@@ -1,4 +1,3 @@
-<a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addVehiculeModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouveau véhicule</a>
 
 {{-- new vehicule modal --}}
 
@@ -15,7 +14,7 @@
 
         <div class="row" >
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-5">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="matricule" type="text" name="matricule" required="required" placeholder="Blaque matricule" />
                   <label for="eventLabel">Matricule</label>
                   <small id="matricule_error" name="matricule_error" class="text text-danger" ></small>
@@ -24,7 +23,7 @@
                 </div>
 
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-5">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="marque" type="text" name="marque" required="required" placeholder="Marque" />
                   <label for="eventLabel">Marque</label>
                 </div>
@@ -33,14 +32,14 @@
 
               <div class="row" >
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-5">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="modele" type="text" name="modele" required="required" placeholder="Modèle" />
                   <label for="eventLabel">Modèle</label>
                 </div>
                 </div>
 
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-5">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="couleur" type="text" name="couleur" required="required" placeholder="Couleur" />
                   <label for="eventLabel">Couleur</label>
                 </div>
@@ -49,14 +48,14 @@
 
               <div class="row" >
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-5">
+                <div class="form-floating mb-1">
                   <input class="form-control" id="numserie" type="text" name="numserie" required="required" placeholder="Numéro série" />
                   <label for="eventLabel">N<sup>o</sup> Série</label>
                 </div>
                 </div>
 
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-5">
+                <div class="form-floating mb-1">
                   <select class="form-select" id="type" name="type" >
                     <option value="" selected="selected">Séléctionner Type</option>
                     @foreach ($type as $types)
@@ -70,7 +69,7 @@
 
               <div class="row" >
               <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-5">
+                <div class="form-floating mb-1">
                 <select class="form-select" id="carburent" name="carburent" >
                     <option value="" selected="selected">Séléctionner carburant</option>
                     @foreach ($carburent as $carburents)
@@ -83,7 +82,7 @@
                 </div>
 
                 <div class="col-sm-6 col-md-6">
-                <div class="form-floating mb-5">
+                <div class="form-floating mb-1">
                 <select class="form-select" id="statut" name="statut" >
                     <option value="" selected="selected">Séléctionner Statut</option>
                     @foreach ($statut as $statuts)
@@ -97,7 +96,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="submit" name="addbtn" id="addbtn"  class="btn btn-primary" >Enregistrer</button>
+          <button type="submit" name="addbtn" id="addbtn"  class="btn btn-primary" >Sauvegarder</button>
         </div>
         </form>
     </div>

@@ -36,7 +36,10 @@
           @if (session()->has('id'))
           <div class="callout callout-info">
             <br>
-            <p><b>Projet encours de traitement : </b>{{ Session::get('title') }} </p>
+            @php
+              $titprojet = Session::get('title');
+            @endphp
+            <p><b>Projet encours : </b>{{ substr($titprojet, 0, 80)  }} ... </p>
 
           </div>
           @else
@@ -250,7 +253,7 @@
             </li>
 
 
-
+            @if (session()->has('id'))
             <li class="menu-title">Projet</li>
 
 
@@ -260,8 +263,18 @@
                 <span>Projet</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-                <li><a href="email-inbox.html">Inbox</a></li>
-                <li><a href="email-read.html">Read Email</a></li>
+
+                <li><a href="{{ route('key.viewProject', Session::get('id') ) }}">Voir le projet</a></li>
+                <li><a href="{{ route('listfeb') }}">FEB</a></li>
+                <li><a href="{{ route('listdap') }}">DAP</a></li>
+                <li><a href="{{ route('listdja') }}">DJA</a></li>
+                <li><a href="{{ route('listbpc') }}">BPC</a></li>
+                <li><a href="{{ route('listsqr') }}">SQR</a></li>
+                <li><a href="{{ route('listftd') }}">FTD</a></li>
+                <li><a href="{{ route('affectation') }}">Affectation</a></li>
+
+
+
               </ul>
             </li>
 
@@ -271,10 +284,29 @@
                 <span>Activites</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-                <li><a href="email-inbox.html">Inbox</a></li>
-                <li><a href="email-read.html">Read Email</a></li>
+                <li><a href="{{ route('activity') }}">Activite</a></li>
+
               </ul>
             </li>
+
+            @endif
+
+            <li>
+              <a href="javascript: void(0);" class="has-arrow waves-effect">
+                <i class="ri-projector-line"></i>
+                <span>Budgetisation</span>
+              </a>
+              <ul class="sub-menu" aria-expanded="false">
+                <li><a href="{{ route('rallongebudget') }}">Budgetisation</a></li>
+                <li><a href="{{ route('folder') }}">Dossier</a></li>
+                <li><a href="{{ route('gestioncompte') }}">Ligne de compte</a></li>
+
+
+
+              </ul>
+            </li>
+
+
 
             <li class="menu-title">RH</li>
 
@@ -327,7 +359,7 @@
                     <!-- Assurences/Taxes/Visites -->
                   </ul>
                 </li>
-                <li><a href="email-inbox.html">Conducteurs</a></li>
+                <li><a href="{{ route('conducteur') }}">Conducteurs</a></li>
                 <li><a href="email-inbox.html">Entretiens</a></li>
                 <li><a href="email-inbox.html">Reparation</a></li>
                 <li><a href="email-inbox.html">Carburent</a></li>

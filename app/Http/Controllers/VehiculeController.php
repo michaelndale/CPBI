@@ -40,24 +40,7 @@ class VehiculeController extends Controller
       $vehicule = Vehicule::orderBy('id', 'DESC')->get();
       $output = '';
       if ($vehicule->count() > 0) {
-        $output .= '<table class="table table-striped table-sm fs--1 mb-0">
-        <thead>
-        <tr>
-          <th class="align-middle ps-3 name">#</th>
-          <th >Blaque</th>
-          <th >Marque</th>
-          <th >Modèle</th>
-          <th >N<sup>o</sup> Série</th>
-          <th >Couleur</th>
-          <th >Type</th>
-          <th >Carburent</th>
-          <th >Statut</th>
-          <th >Date</th>
-          <th><center>ACTION</center></th>
-        </tr>
-          </thead>
-          <tbody class="list">
-           ';
+       
         $nombre = 1;
         foreach ($vehicule as $rs) {
           $output .= '<tr>
@@ -73,14 +56,14 @@ class VehiculeController extends Controller
               <td>' . date('d.m.Y', strtotime($rs->created_at)) . '</td>
               <td>
               <center>
-              <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_DepatmentModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+              <a href="#" id="' . $rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_DepatmentModal" title="Modifier" ><i class="far fa-edit"></i> </a>
               <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
                 </center>
                 </td>
             </tr>';
           $nombre++;
         }
-        $output .= '</tbody></table>';
+   
         echo $output;
       } else {
         echo '<h3 class="text-center text-secondery my-5" >  Aucun enregistrement dans la base de données ! </h3>';
