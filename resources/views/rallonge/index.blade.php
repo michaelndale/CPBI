@@ -2,7 +2,9 @@
 @section('page-content')
 @foreach ($userData as $userDatas)
 @endforeach
-
+<div class="main-content">
+ <br>
+    
 <div class="content">
   <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
     <div class="card-header p-4 border-bottom border-300 bg-soft">
@@ -84,12 +86,15 @@
 
 
           
-
+        </div>
+        </div>
           </div>
          
         </div>
       </div>
     </div>
+  </div>
+  <br><br>
   </div>
 
   @include('rallonge.modale')

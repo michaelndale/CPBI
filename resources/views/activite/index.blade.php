@@ -1,49 +1,64 @@
 @extends('layout/app')
 @section('page-content')
 
-<div class="content">
-  <div class="row">
-    <div class="col-xl-12" >
-        <div class="row g-3 justify-content-between align-items-center">
-          <div class="col-12 col-md">
-           <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-list"></i> Activités</h4>
-          </div>
-          <div class="col col-md-auto">
-            <nav class="nav nav-underline justify-content-end doc-tab-nav align-items-center" role="tablist">
+<style type="text/css">
+  .has-error {
+    border: 1px solid red;
+  }
+</style>
+<div class="main-content">
+  <div class="page-content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12" style="margin:auto">
+          <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0"><i class="fa fa-folder-open"></i> Activite par projet </h4>
+
+            <div class="page-title-right">
             <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModale" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouvelle activité</a>
 
-            </nav>
-          </div>
-          <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
-            <div class="table-responsive">
-
-            <table class="table table-striped table-sm fs--1 mb-0">
-              <thead>
-                <tr>
-                  <th class="sort border-top" data-sort="num">#</th>
-                  <th class="sort border-top" data-sort="date">Description detaillee des besoins</th>
-                  <th class="sort border-top" data-sort="date">Annee</th>
-                  <th class="sort border-top" data-sort="date"> Monnaie BIF</th>
-                  <th class="sort border-top" data-sort="date"> Date</th>
-                  <th class="sort border-top" >ACTION</th>
-                </tr>
-              </thead>
-              <tbody class="show_all" id="show_all_activite">
-                <tr>
-                  <td colspan="6"><h5 class="text-center text-secondery my-5">
-                    <center> @include('layout.partiels.load') </center>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-           
             </div>
-          </div>     
-        </div>
-    </div>
-  </div>
 
+          </div>
+        </div>
+      </div>
+     
+      <div class="row">
+        <div class="col-lg-12" style="margin:auto">
+          <div class="card">
+            <div class="table-responsive">
+              <table class="table table-bordered mb-0">
+                <thead>
+                 
+                  <tr style="background-color:#82E0AA">
+                  <th>#</th>
+                  <th>Description detaillee des besoins</th>
+                  <th>Année</th>
+                  <th>Montant</th>
+                  <th>Etat de l'activité</th>
+                  
+                  <th> Date</th>
+                  <th class="sort border-top" >ACTION</th>
+                  </tr>
+             
+                </thead>
+                <tbody id="show_all_activite">
+                  <tr>
+                    <td colspan="8">
+                      <h5 class="text-center text-secondery my-5">
+                        @include('layout.partiels.load')
+                    </td>
+                  </tr>
+                </tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> <!-- container-fluid -->
+  </div>
+</div>
 
   @include('activite.modale')
 
@@ -75,7 +90,7 @@
             {
               fetchActivite();
               
-              $.notify("Activité ajouté avec succès !", "success");
+              toastr.success("Activité ajouté avec succès !", "success");
 
               $("#addactivitebtn").text('Enregistrement');
               $("#addModale").modal('hide');
@@ -83,7 +98,7 @@
             }
            
             if (response.status == 202) {
-              $.notify("Erreur d'execution, verifier votre internet", "error");
+              toastr.info("Erreur d'execution, verifier votre internet", "error");
               $("#addModale").modal('show');
               $("#addactivitebtn").text('Enregitrer');
             }
@@ -118,7 +133,7 @@
               },
               success: function(response) {
                 console.log(response);
-                $.notify("Activite supprimer avec succès !", "success");
+                toastr.error("Activité supprimer avec succès !", "success");
                 fetchActivite();
               }
             });

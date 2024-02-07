@@ -35,9 +35,8 @@ class ProfileController extends Controller
             <td class="align-middle ps-3 name">' . $nombre . '</td>
             <td>' . ucfirst($rs->title). '</td>
             <td>
-
             <center>
-            <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_profileModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+            <a href="#" id="' . $rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_profileModal" title="Modifier" ><i class="far fa-edit"></i> </a>
             <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
           </center>
             

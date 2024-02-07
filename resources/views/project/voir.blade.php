@@ -2,6 +2,9 @@
 @section('page-content')
 @foreach ($responsable as $responsables)
 @endforeach
+<div class="main-content">
+
+    
 <div class="content px-0 pt-9">
         <div class="row g-0">
           <div class="col-12 col-xxl-8 px-0 bg-soft">
@@ -367,54 +370,7 @@
           </div>
 
        
-          <div class="col-12 col-xxl-4 px-0 border-start-xxl border-300 border-top-sm">
-            <div class="h-100">
-              <div class="bg-light dark__bg-1100 h-100">
-                <div class="p-4 p-lg-6">
-                  <h3 class="text-1000 mb-4 fw-bold">Activité récente</h3>
-                  <div class="timeline-vertical timeline-with-details">
-
-                  @forelse ($activite as $activites)
-                  <div class="timeline-item position-relative">
-                      <div class="row g-md-3">
-                        <div class="col-12 col-md-auto d-flex">
-                          <div class="timeline-item-date order-1 order-md-0 me-md-4">
-                            <p class="fs--2 fw-semi-bold text-600 text-end"> {{ date('d.m.Y', strtotime($activites->created_at)) }}<br class="d-none d-md-block" /> 7h30 </p>
-                          </div>
-                          <div class="timeline-item-bar position-md-relative me-3 me-md-0 border-400">
-                            <div class="icon-item icon-item-sm rounded-7 shadow-none bg-primary-100"><span class="fa-solid fa-chess text-primary-600 fs--2 dark__text-primary-300"></span></div><span class="timeline-bar border-end border-dashed border-400"></span>
-                          </div>
-                        </div>
-                        <div class="col">
-                          <div class="timeline-item-content ps-6 ps-md-3">
-                            <h5 class="fs--1 lh-sm">{{ ucfirst($activites->titre) }}</h5>
-                           
-                             Montant : {{ $activites->montantbudget }} </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                  @empty
-
-                  <h4> Pas d'activité disponible 
-                  <a class="fw-bold fs--1" href="{{ route('activity') }}"><span class="fas fa-plus me-1"></span>Ajouter l'activité</a>
-                  
-                  </h4>
-                    
-                  @endforelse
-
-                   
-                  </div>
-                </div>
-                
-               
-                <div class="px-5 px-md-6 mt-3 mb-9"><a class="fw-bold fs--1" href="{{ route('activity') }}"><span class="fas fa-plus me-1"></span>Ajouter l'activité</a></div>
-              </div>
-            </div>
-          </div>
         </div>
-        
-
+      
 
 @endsection

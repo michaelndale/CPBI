@@ -8,21 +8,25 @@
         <div class="d-flex">
           <!-- LOGO -->
           <div class="navbar-brand-box">
-            <a href="index.html" class="logo logo-dark">
+            <a href="{{ route('dashboard') }}" class="logo logo-dark">
               <span class="logo-sm">
-                <img src="{{ asset('element/assets/images/logo-sm-dark.png')}}" alt="logo-sm-dark" height="24">
+                <BR>
+              <H1 alt="logo-light" height="25">CEPBU</H1>
               </span>
               <span class="logo-lg">
-                <img src="{{ asset('element/assets/images/logo-dark.png')}}" alt="logo-dark" height="25">
+              <BR>
+              <H2 alt="logo-light" height="25">CEPBU</H2>
               </span>
             </a>
 
-            <a href="index.html" class="logo logo-light">
-              <span class="logo-sm">
-                <img src="{{ asset('element/assets/images/logo-sm-light.png')}}" alt="logo-sm-light" height="24">
+            <a href="{{ route('dashboard') }}" class="logo logo-light">
+            
+              <span class="logo-sm">  
+                          <H1>CEPBU</H1><img src="{{ asset('element/assets/images/logo-sm-light.png')}}" alt="logo-sm-light" height="24">
               </span>
               <span class="logo-lg">
-                <img src="{{ asset('element/assets/images/logo-light.png')}}" alt="logo-light" height="25">
+              
+              <H2 alt="logo-light" height="25" style="margin-top:15%; color:azure">CEPBU</H2>
               </span>
             </a>
           </div>
@@ -213,7 +217,7 @@
                 <i class="fa fa-edit"></i> Fermer la session
               </a>
 
-              <a href="javascript:void(0);" class="dropdown-item notify-item" href="#" data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" role="button" aria-expanded="false"> <span class="me-2" data-feather="log-out" title="Déconnectez-vous en cliquant sur l'icône.">
+              <a href="javascript:void(0);" class="dropdown-item notify-item"  data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" role="button" aria-expanded="false"> <span class="me-2" data-feather="log-out" title="Déconnectez-vous en cliquant sur l'icône.">
                   <i class="fas fa-sign-out-alt"></i> Déconnexion
               </a>
 
@@ -272,9 +276,7 @@
                 <li><a href="{{ route('listsqr') }}">SQR</a></li>
                 <li><a href="{{ route('listftd') }}">FTD</a></li>
                 <li><a href="{{ route('affectation') }}">Affectation</a></li>
-
-
-
+                <li><a href="{{ route('rallongebudget') }}">Budget</a></li>
               </ul>
             </li>
 
@@ -284,7 +286,7 @@
                 <span>Activites</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{ route('activity') }}">Activite</a></li>
+                <li><a href="{{ route('activity') }}">Activités</a></li>
 
               </ul>
             </li>
@@ -294,10 +296,10 @@
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
                 <i class="ri-projector-line"></i>
-                <span>Budgetisation</span>
+                <span>Outils projets</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{ route('rallongebudget') }}">Budgetisation</a></li>
+               
                 <li><a href="{{ route('folder') }}">Dossier</a></li>
                 <li><a href="{{ route('gestioncompte') }}">Ligne de compte</a></li>
 
@@ -375,49 +377,15 @@
 
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="ri-pie-chart-line"></i>
-                <span>Charts</span>
-              </a>
-              <ul class="sub-menu" aria-expanded="true">
-                <li><a href="javascript: void(0);" class="has-arrow">Apexcharts Part 1</a>
-                  <ul class="sub-menu" aria-expanded="true">
-                    <li><a href="charts-line.html">Line</a></li>
-                    <li><a href="charts-area.html">Area</a></li>
-                    <li><a href="charts-column.html">Column</a></li>
-                    <li><a href="charts-bar.html">Bar</a></li>
-                    <li><a href="charts-mixed.html">Mixed</a></li>
-                    <li><a href="charts-timeline.html">Timeline</a></li>
-                    <li><a href="charts-candlestick.html">Candlestick</a></li>
-                    <li><a href="charts-boxplot.html">Boxplot</a></li>
-                  </ul>
-                </li>
-                <li><a href="javascript: void(0);" class="has-arrow">Apexcharts Part 2</a>
-                  <ul class="sub-menu" aria-expanded="true">
-                    <li><a href="charts-bubble.html">Bubble</a></li>
-                    <li><a href="charts-scatter.html">Scatter</a></li>
-                    <li><a href="charts-heatmap.html">Heatmap</a></li>
-                    <li><a href="charts-treemap.html">Treemap</a></li>
-                    <li><a href="charts-pie.html">Pie</a></li>
-                    <li><a href="charts-radialbar.html">Radialbar</a></li>
-                    <li><a href="charts-radar.html">Radar</a></li>
-                    <li><a href="charts-polararea.html">Polararea</a></li>
-                  </ul>
-                </li>
-                <li><a href="charts-echart.html">E Charts</a></li>
-              </ul>
-            </li>
-
-            <li>
-              <a href="javascript: void(0);" class="has-arrow waves-effect">
                 <i class="mdi mdi-cog-outline"></i>
                 <span>Paramètre</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{ route('user') }}">Utilisateur</a></li>
-                <li><a href="{{ route('info') }}">Identification</a></li>
-                <li><a href="{{ route('service') }}">Service</a></li>
-                <li><a href="{{ route('fonction')}}">Fonction</a></li>
-                <li><a href="{{ route('department')}}">Departement</a></li>
+                <li><a href="{{ route('user') }}">Utilisateurs</a></li>
+                <li><a href="{{ route('info') }}">Identifications</a></li>
+                <li><a href="{{ route('service') }}">Services</a></li>
+                <li><a href="{{ route('fonction')}}">Fonctions</a></li>
+                <li><a href="{{ route('department')}}">Departements</a></li>
               </ul>
             </li>
 
@@ -427,25 +395,16 @@
                 <span>Autres</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{ route('notis') }}">Notification</a></li>
-                <li><a href="{{ route('history') }}">Historique</a></li>
+                <li><a href="{{ route('notis') }}">Notifications</a></li>
+                <li><a href="{{ route('history') }}">Historiques</a></li>
               </ul>
             </li>
 
             <li>
-              <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="ri-share-line"></i>
-                <span>Multi Level</span>
+              <a href="javascript:void(0);" class="dropdown-item notify-item"  data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" >
+                <i class="mdi mdi-logout"></i>
+                <span>Déconnexion</span>
               </a>
-              <ul class="sub-menu" aria-expanded="true">
-                <li><a href="javascript: void(0);">Level 1.1</a></li>
-                <li><a href="javascript: void(0);" class="has-arrow">Level 1.2</a>
-                  <ul class="sub-menu" aria-expanded="true">
-                    <li><a href="javascript: void(0);">Level 2.1</a></li>
-                    <li><a href="javascript: void(0);">Level 2.2</a></li>
-                  </ul>
-                </li>
-              </ul>
             </li>
 
           </ul>

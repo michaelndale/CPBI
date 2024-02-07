@@ -100,7 +100,6 @@ class ProjectController extends Controller
         $project->lead = $request->leader;
         $project->lieuprojet = $request->lieuProjet;
         $project->devise = $request->devise;
-        $project->numerorapport = $request->numeroRapport;
         $project->numerodossier = $request->numeroDossier;
         $project->start_date= $request->startdate;
         $project->deadline= $request->deadline;

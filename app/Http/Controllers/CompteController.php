@@ -87,17 +87,7 @@ class CompteController extends Controller
       $service = Compte::where('compteid', '=', NULL)->get();
       $output = '';
       if ($service->count() > 0) {
-        $output .= '<table class="table table-striped table-sm fs--1 mb-0">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Code</th>
-              <th>Title</th>
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody class="list">
-           ';
+       
         $nombre = 1;
         foreach ($service as $rs) {
           $id = $rs->id;
@@ -149,10 +139,12 @@ class CompteController extends Controller
                   <td>' . ucfirst($ssc->libelle). '</td>
                 
                   <td>
-                      <a href="#" id="' . $ssc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
-                      <a href="#" id="' . $ssc->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
-                      <a href="#" id="' . $ssc->id . '" class="text-danger mx-1 deleteIcon"><i class="fa fa-trash"></i> </a>
-                  </td>
+                    <center>
+                    <a href="#" id="' . $ssc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
+                    <a href="#" id="' . $ssc->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
+                    <a href="#" id="' . $ssc->id . '" class="text-danger mx-1 deleteIcon"><i class="fa fa-trash"></i> </a>
+                    </center>
+                     </td>
                 </tr>
           ';
           $nd ++;
@@ -168,7 +160,7 @@ class CompteController extends Controller
             
           $nombre++;
         }
-        $output .= '</tbody></table>';
+      
         echo $output;
       } else {
         echo '<h4 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h4>';

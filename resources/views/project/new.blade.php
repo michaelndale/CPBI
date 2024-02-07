@@ -1,7 +1,13 @@
 @extends('layout/app')
 @section('page-content')
 
-<div class="content" >
+<div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+
+
         
         <div class="row" >
           <div class="col-xl-9" style="margin:auto">
@@ -12,11 +18,11 @@
                 @method('post')
                 @csrf
 
-              <div class="col-sm-2 col-md-9">
+              <div class="col-sm-2 col-md-12">
                 <div class="form-floating"><input class="form-control" name="title" id="title" type="text" placeholder="Titre du Projet" /><label for="floatingInputGrid">Titre du Projet</label></div>
               </div>
 
-              <div class="col-sm-2 col-md-3">
+              <div class="col-sm-2 col-md-4">
                 <div class="form-floating"><input class="form-control" name="numeroProjet" id="numeroProjet" type="text" placeholder="Numero du projet" /><label for="floatingInputGrid">Numéro du projet</label></div>
               </div>
 
@@ -54,9 +60,7 @@
                 <label for="floatingInputGrid">Devise de comptabilité </label></div>
               </div>
 
-              <div class="col-sm-2 col-md-4">
-                <div class="form-floating"><input class="form-control" name="numeroRapport" id="numeroRapport" type="text" placeholder="Devise de comptabilite " /><label for="floatingInputGrid">Rapport financier N<sup>o</sup></label></div>
-              </div>
+             
 
               <div class="col-sm-2 col-md-4">
                 <div class="form-floating">
@@ -74,12 +78,12 @@
 
               <div class="col-sm-6 col-md-4">
                 <div class="flatpickr-input-container">
-                  <div class="form-floating"><input class="form-control datetimepicker" id="startdate" name="startdate" type="text" placeholder="end date" data-options='{"disableMobile":true}' /><label class="ps-6" for="floatingInputStartDate">Date du commencement</label><span class="uil uil-calendar-alt flatpickr-icon text-700"></span></div>
+                  <div class="form-floating"><input class="form-control datetimepicker" id="startdate" name="startdate" type="date" placeholder="end date" data-options='{"disableMobile":true}' /><label class="ps-6" for="floatingInputStartDate">Date du commencement</label><span class="uil uil-calendar-alt flatpickr-icon text-700"></span></div>
                 </div>
               </div>
               <div class="col-sm-6 col-md-4">
                 <div class="flatpickr-input-container">
-                  <div class="form-floating"><input class="form-control datetimepicker" id="deadline" name="deadline" type="text" placeholder="deadline" data-options='{"disableMobile":true}' /><label class="ps-6" for="floatingInputDeadline">Date de la fin</label><span class="uil uil-calendar-alt flatpickr-icon text-700"></span></div>
+                  <div class="form-floating"><input class="form-control datetimepicker" id="deadline" name="deadline" type="date" placeholder="deadline" data-options='{"disableMobile":true}' /><label class="ps-6" for="floatingInputDeadline">Date de la fin</label><span class="uil uil-calendar-alt flatpickr-icon text-700"></span></div>
                 </div>
               </div>
             
@@ -94,8 +98,13 @@
               </div>
             </form>
           </div>
+         
+
         </div>
-  
+        <br>
+        </div>
+        </div>
+        </div>
 
 <script>
     $(function() {
@@ -117,7 +126,7 @@
 
             if (response.status == 200) 
               {
-              $.notify("Creation projet avec succès !", "success");
+                toastr.success("Creation projet avec succès !", "success");
              
               $("#addProjectForm")[0].reset();
               $("#addProjectbtn").text('Enregistrer');
@@ -131,12 +140,12 @@
            
             }
             if (response.status == 201) {
-              $.notify("Attention vous ne pouvez pas enregitrer le project deux fois !", "error");
+              toastr.info("Attention vous ne pouvez pas enregitrer le project deux fois !", "error");
             
             }
 
             if (response.status == 202) {
-              $.notify("Erreur d'execution, verifier votre internet", "error");
+              toastr.error("Erreur d'execution, verifier votre internet", "error");
             
             }
 

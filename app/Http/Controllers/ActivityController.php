@@ -46,12 +46,14 @@ class ActivityController extends Controller
        
         $nombre = 1;
         foreach ($act as $rs) {
+          if($rs->etat_activite=="Annuler"){ $color ='#F08080'; }else{ $color=''; }
           $output .= '
-            <tr>
+            <tr style="background-color:'.$color.'">
               <td class="align-middle ps-3 name">' . $nombre . '</td>
               <td>' . ucfirst($rs->titre). '</td>
               <td>' . 2024 . '</td>
               <td>' . ucfirst($rs->montantbudget). '</td>
+              <td>' . ucfirst($rs->etat_activite). '</td>
               <td>' . date('d.m.Y', strtotime($rs->created_at)) . '</td>
               <td>
                 <center>
@@ -100,6 +102,8 @@ class ActivityController extends Controller
         $activity->compteidr = $request->compteid;
         $activity->titre = $request->titre;
         $activity->montantbudget= $request->montant;
+        $activity->etat_activite= $request->etat;
+        
         $activity->userid= Auth::id();
 
         $activity->save();

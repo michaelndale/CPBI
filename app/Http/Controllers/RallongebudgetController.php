@@ -22,7 +22,7 @@ class RallongebudgetController extends Controller
       $user=  DB::table('users')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
-      ->Where('users.id', $showData->lead)
+       ->Where('users.id', $showData->lead)
       ->get();
 
 

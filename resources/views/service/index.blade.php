@@ -142,18 +142,20 @@
           success: function(response) 
           {
             if (response.status == 200) {
-              $.notify("Service ajouté avec succès !", "success");
+              toastr.success('Service ajouté avec succès .', 'Enregitrement');
               fetchAlldservice();
               $("#add_service_form")[0].reset();
               $("#addDealModal").modal('hide');
             }
             if (response.status == 201) {
-              $.notify("Attention: Libellé service existe déjà !", "info");
+              
+              toastr.info('Libellé service existe déjà .', 'Attention');
               $("#addDealModal").modal('show');
             }
 
             if (response.status == 202) {
-              $.notify("Erreur d'execution, verifier votre internet", "error");
+             
+              toastr.error('Erreur d\'execution, verifier votre internet', 'Erreur');
               $("#addDealModal").modal('show');
             }
 
@@ -200,18 +202,19 @@
           success: function(response) {
 
             if (response.status == 200) {
-              $.notify("Mises a jours fais avec succès !", "success");
+           
+              toastr.success('Mises a jours fais avec succès  .', 'Enregitrement');
               fetchAlldservice();
               $("#edit_service_form")[0].reset();
               $("#edit_ServiceModal").modal('hide');
             }
             if (response.status == 201) {
-              $.notify("Aucune mises ajour apporter !", "info");
+              toastr.info("Aucune mises ajour apporter !", "Info");
               $("#edit_ServiceModal").modal('hide');
             }
 
             if (response.status == 202) {
-              $.notify("Erreur d'execution, verifier votre internet", "error");
+              toastr.error("Erreur d'execution, verifier votre internet", "Error");
               $("#edit_ServiceModal").modal('show');
             }
            

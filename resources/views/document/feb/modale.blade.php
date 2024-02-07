@@ -1,5 +1,5 @@
 <div class="modal fade" id="addfebModal" tabindex="-1" aria-labelledby="addfebModal"  aria-hidden="true" >
-<div class="modal-dialog modal-xl modal-dialog-scrollable">
+<div class="modal-dialog modal-xl  modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">FICHE D’EXPRESSION DES BESOINS "FEB" </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><svg class="svg-inline--fa fa-xmark fs--1" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="xmark" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg=""><path fill="currentColor" d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"></path></svg><!-- <span class="fas fa-times fs--1"></span> Font Awesome fontawesome.com --></button>
@@ -40,12 +40,17 @@
                                     </td>
                                     <td class="align-middle ps-3 name">Période:</td>
                                     <td class="align-middle email">
-                                        <input type="text" class="form-control" name="periode" id="periode" style="width: 100%">
+                                        <select type="text" class="form-control" name="periode" id="periode" style="width: 100%">
+                                            <option value="T1">T1</option>
+                                            <option value="T2">T2</option>
+                                            <option value="T3">T3</option>
+                                            <option value="T4">T4</option>
+                                        </select>
                                     </td>
 
                                     <td class="align-middle ps-3 name">Date:</td>
                                     <td class="align-middle email">
-                                        <input type="text" class="form-control" name="datefeb" id="datefeb" style="width: 100%">
+                                        <input type="text" class="form-control" name="datefeb" id="datefeb" style="width: 100%" value="{{ date('') }}">
                                     </td>
                                 </tr>
                                 <tr>
@@ -111,7 +116,7 @@
                                               
                                                 <th class="col-md-6">Description</th>
                                              
-                                                <th style="width:80px;">Qty</th>
+                                                <th style="width:80px;">Montant</th>
                                                 <th>Amount</th>
                                                 <th> </th>
                                             </tr>
@@ -122,7 +127,7 @@
                                           
                                             <td><input class="form-control"style="min-width:150px" type="text" id="description" name="description[]"></td>
                                             <td><input class="form-control unit_price" style="width:100px" type="text" id="unit_cost" name="unit_cost[]"></td>
-                                            <td><input class="form-control qty" style="width:80px" type="text" id="qty" value= "1" name="qty[]"></td>
+                                            <td><input class="form-control qty" style="width:80px" type="hidden" id="qty" value="1" name="qty[]"></td>
                                             <td><input class="form-control total" style="width:120px" type="text" id="amount" name="amount[]" value="0" readonly></td>
                                             <td><a href="javascript:void(0)" class="text-success font-18" title="Add" id="addBtn"><i class="fa fa-plus"></i></a></td>
                                         </tr>

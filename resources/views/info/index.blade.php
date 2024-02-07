@@ -77,7 +77,7 @@
           {
             if (response.status == 200) 
             {
-              $.notify("You have Successfully add a identification !", "success");
+              toastr.success('Identification enregitrer avec succes .', 'Enregitrement');
               window.location.href = "{{ route('info')}}";
             }
             $("#addIndetificationbtn").text('Enregistrer');

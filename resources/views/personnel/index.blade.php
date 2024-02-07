@@ -102,7 +102,7 @@
                 </div>
                 <div class="col-sm-6 col-md-6">
                 <div class="form-floating mb-1">
-                  <input class="form-control" id="phone" type="text" name="phone" required="required" placeholder="Téléphone" />
+                  <input class="form-control" id="phone" type="number" name="phone" required="required" placeholder="Téléphone" />
                   <label for="Password">Téléphone </label>
                 </div>
                 </div>
@@ -178,8 +178,9 @@
           success: function(response) {
             if (response.status == 200) 
             {
+              toastr.success('Personnel enregitrer avec succes .', 'Enregitrement');
                fetchAll();
-              $.notify("User Added Successfully !", "success");
+               
               $("#addbtn").text('Sauvegarder');
               $("#email_error").text("");
               $('#email').addClass('');
@@ -189,8 +190,9 @@
 
             if (response.status == 201) 
             {
-              $.notify("L'email personnel existe déjà !", "error");
-              //Toastr::error('User add new account fail :)','Error');
+           
+              toastr.info('L\'email personnel existe déjà ! .', 'Enregitrement');
+           
               $("#addbtn").text('Sauvegarder');
               $("#addModal").modal('show');
               $("#email_error").text("L'email personnel existe déjà !");
@@ -199,8 +201,9 @@
 
             if (response.status == 202) 
             {
-              $.notify("Un personnel n'est peut etre enregitrer deux fois !", "error");
-              //Toastr::error('User add new account fail :)','Error');
+            
+              toastr.info('Un personnel n\'est peut etre enregitrer deux fois ! .', 'Enregitrement');
+            
               $("#addbtn").text('Sauvegarder');
               $("#addModal").modal('show');
               $("#email_error").text("Un personnel n'est peut avoir deux compte utilisateur !");

@@ -153,18 +153,18 @@
           {
            
             if (response.status == 200) {
-              $.notify("Departement ajouté avec succès !", "success");
+              toastr.success("Departement ajouté avec succès !", "success");
               fetchAlldepartment();
               $("#add_department_form")[0].reset();
               $("#addDealModal").modal('hide');
             }
             if (response.status == 201) {
-              $.notify("Attention: Libellé departement existe déjà !", "info");
+              toastr.info("Attention: Libellé departement existe déjà !", "info");
               $("#addDealModal").modal('show');
             }
 
             if (response.status == 202) {
-              $.notify("Erreur d'execution, verifier votre internet", "error");
+              toastr.error("Erreur d'execution, verifier votre internet", "error");
               $("#addDealModal").modal('show');
             }
 
@@ -207,18 +207,18 @@
           dataType: 'json',
           success: function(response) {
             if (response.status == 200) {
-              $.notify("Mise à jour  avec succès !", "success");
+              toastr.success("Mise à jour  avec succès !", "success");
               fetchAlldepartment();
               $("#edit_department_form")[0].reset();
               $("#edit_DepatmentModal").modal('hide');
             }
             if (response.status == 201) {
-              $.notify("Attention: Libellé fonction existe déjà !", "info");
+              toastr.info("Attention: Libellé fonction existe déjà !", "info");
               $("#edit_DepatmentModal").modal('hide');
             }
 
             if (response.status == 202) {
-              $.notify("Erreur d'execution, verifier votre internet", "error");
+              toastr.error("Erreur d'execution, verifier votre internet", "error");
               $("#edit_DepatmentModal").modal('show');
             }
 
@@ -252,7 +252,7 @@
               },
               success: function(response) {
                 console.log(response);
-                $.notify("Departement supprimer avec succès !", "success");
+                toastr.info("Departement supprimer avec succès !", "success");
                 fetchAlldepartment();
               }
             });

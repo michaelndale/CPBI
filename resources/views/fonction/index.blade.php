@@ -158,18 +158,18 @@
           success: function(response) {
 
             if (response.status == 200) {
-              $.notify("Fonction ajouté avec succès !", "success");
+              toastr.success("Fonction ajouté avec succès !", "Enregistrement");
               fetchAllfunction();
               $("#add_function_form")[0].reset();
               $("#add_functionModal").modal('hide');
             }
             if (response.status == 201) {
-              $.notify("Attention: Libellé fonction existe déjà !", "info");
+              toastr.info("Attention: Libellé fonction existe déjà !", "info");
               $("#add_functionModal").modal('show');
             }
 
             if (response.status == 202) {
-              $.notify("Erreur d'execution, verifier votre internet", "error");
+              toastr.error("Erreur d'execution, verifier votre internet", "Error");
               $("#add_functionModal").modal('show');
             }
 
@@ -213,18 +213,18 @@
           success: function(response) {
 
             if (response.status == 200) {
-              $.notify("Mise à jour  avec succès !", "success");
+              toastr.success("Mise à jour  avec succès !", "success");
               fetchAllfunction();
               $("#edit_function_form")[0].reset();
               $("#edit_functionModal").modal('hide');
             }
             if (response.status == 201) {
-              $.notify("Attention: Libellé fonction existe déjà !", "info");
+              toastr.info("Attention: Libellé fonction existe déjà !", "info");
               $("#edit_functionModal").modal('hide');
             }
 
             if (response.status == 202) {
-              $.notify("Erreur d'execution, verifier votre internet", "error");
+              toastr.error("Erreur d'execution, verifier votre internet", "error");
               $("#edit_functionModal").modal('show');
             }
 
@@ -259,7 +259,7 @@
               },
               success: function(response) {
                 console.log(response);
-                $.notify("Fonction supprimer avec succès !", "success");
+                toastr.error("Fonction supprimer avec succès !", "success");
                 fetchAllfunction();
               }
             });

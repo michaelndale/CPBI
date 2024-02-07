@@ -93,7 +93,7 @@
               
             }
             $("#addIndetificationbtn").text('Edit identification');
-            $.notify("You have Successfully update a identification !", "success");
+            toastr.success('Identification mises ajours succes .', 'Enregitrement');
           }
         });
       });

@@ -65,7 +65,7 @@
       @csrf
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-user-plus"></i> Nouveau utilisateur</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
+          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-user-plus"></i> Nouveau utilisateur</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:red"></span></button>
         </div>
         <div class="modal-body">
 
@@ -129,7 +129,8 @@
         success: function(response) {
           if (response.status == 200) {
             fetchAllUsers();
-            $.notify("User Added Successfully !", "success");
+      
+           toastr.success('Utilisateur enregitrer avec succes .', 'Enregitrement');
             $("#add_user_btn").text('Sauvegarder');
             $("#identifiant_error").text("");
             $('#identifiant').addClass('');
@@ -138,8 +139,9 @@
           }
 
           if (response.status == 201) {
-            $.notify("L'indetifiant utilisateur existe déjà !", "error");
+           // $.notify("L'indetifiant utilisateur existe déjà !", "error");
             //Toastr::error('User add new account fail :)','Error');
+            toastr.info('L\'indetifiant utilisateur existe déjà .', 'Erreur');
             $("#add_user_btn").text('Sauvegarder');
             $("#addUserModal").modal('show');
             $("#identifiant_error").text("L'indetifiant utilisateur existe déjà !");
@@ -147,8 +149,9 @@
           }
 
           if (response.status == 202) {
-            $.notify("Une personnel n'est peut avoir deux compte utilisateur !", "error");
+            //$.notify("Une personnel n'est peut avoir deux compte utilisateur !", "error");
             //Toastr::error('User add new account fail :)','Error');
+            toastr.error('Une personnel n\'est peut avoir deux compte utilisateur.', 'Erreur');
             $("#add_user_btn").text('Sauvegarder');
             $("#addUserModal").modal('show');
             $("#identifiant_error").text("Une personnel n'est peut avoir deux compte utilisateur !");
@@ -192,7 +195,7 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
-            $.notify("Function update Successfully !", "success");
+          //  $.notify("Function update Successfully !", "success");
             fetchAllUsers();
 
           }
@@ -227,7 +230,7 @@
             },
             success: function(response) {
               console.log(response);
-              $.notify("User deleted Successfully !", "success");
+            //  $.notify("User deleted Successfully !", "success");
               fetchAllUsers();
             }
           });
