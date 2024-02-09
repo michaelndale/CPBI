@@ -13,14 +13,11 @@ return new class extends Migration
     {
         Schema::create('rallongebudgets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('projetid');
-            $table->foreign('projetid')->references('id')->on('projects');
-            $table->unsignedBigInteger('compteid');
-            $table->foreign('compteid')->references('id')->on('comptes');
-            $table->string('depensecumule', 1000)->nullable();
+            $table->string('projetid', 1000)->nullable();
+            $table->string('compteid', 1000)->nullable();
             $table->string('budgetactuel', 1000)->nullable();
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('userid', 1000)->nullable();
+            $table->string('statut', 10)->default('Activé');
             $table->timestamps();
         });
     }

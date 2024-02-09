@@ -223,6 +223,8 @@ class AuthController extends Controller
           session()->put('prenomauth', $datauser->prenom);
           session()->put('fonction', $datauser->fonction);
           session()->put('avatar', $datauser->avatar);
+          session()->put('signature', $datauser->signature);
+         
 
           return response()->json([[1]]);
         } else if ($user->statut == 'Bloqué') {
@@ -321,7 +323,7 @@ class AuthController extends Controller
   {
 
     try {
-      $user->password = $request->password;
+      $user->password = $request->npwd;
 
       $user->update();
       return redirect()->back()->with('success', 'Update blog is successfully .');

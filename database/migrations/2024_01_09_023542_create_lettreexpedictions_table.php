@@ -13,17 +13,15 @@ return new class extends Migration
     {
         Schema::create('lettreexpedictions', function (Blueprint $table) {
             $table->id();
-
-            $table->unsignedBigInteger('classeurid');
-            $table->foreign('classeurid')->references('id')->on('classeurs');
+            $table->string('classeurid', 1000)->nullable();
             $table->string('numerogenerale', 1000)->nullable();
             $table->string('numeolettre', 1000)->nullable();
             $table->date('datelettre');
             $table->date('dateexpedition');
             $table->string('destinateur', 250)->nullable();
             $table->string('note', 1000)->nullable();
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('statut', 25)->default('Activé');
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }

@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->double('projectid', 10)->nullable();
             $table->double('memberid', 10)->nullable();
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }

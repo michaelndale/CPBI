@@ -89,7 +89,7 @@
                             </tr>
                             <tr>
                               <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression du projet:</td>
-                              <td class="text-warning fw-semi-bold ps-3">80%</td>
+                             <!-- <td class="text-warning fw-semi-bold ps-3">80%</td> -->
                             </tr>
                             <tr>
                               <td class="align-top py-1 text-900 text-nowrap fw-bold">Date de creation projet :</td>
@@ -109,8 +109,8 @@
                               <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->lieuprojet }}</td>
                             </tr>
                             <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression :</td>
-                              <td class="text-warning fw-semi-bold ps-3">80%</td>
+                            <!--  <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression :</td>
+                              -<td class="text-warning fw-semi-bold ps-3">80%</td>  -->
                             </tr>
                           </tbody>
                         </table>

@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('folders', function (Blueprint $table) {
             $table->id();
             $table->string('title', 1000)->nullable();
-            $table->string('statut', 50)->default(0);
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('statut', 10)->default('Activé');
+            $table->string('userid', 10)->nullable();
             $table->timestamps();
         });
     }

@@ -21,8 +21,7 @@ return new class extends Migration
             $table->string('oe', 1000)->nullable();
             $table->string('op', 1000)->nullable();
             $table->string('non', 1000)->nullable();
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }

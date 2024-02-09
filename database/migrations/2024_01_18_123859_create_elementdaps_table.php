@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('elementdaps', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('dapid');
-            $table->foreign('dapid')->references('id')->on('daps');
+            $table->string('dapid', 1000)->nullable();
             $table->string('libelle', 1000)->nullable();
-            $table->double('montant', 15)->nullable();
+            $table->string('montant', 25)->nullable();
+            $table->string('statut', 10)->default('Activé');
             $table->timestamps();
         });
     }

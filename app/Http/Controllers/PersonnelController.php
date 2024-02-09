@@ -6,8 +6,10 @@ use App\Http\Requests\PersonnelRequest;
 use App\Models\Fonction;
 use App\Models\Personnel;
 use App\Models\Status;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class PersonnelController extends Controller
 {
@@ -84,7 +86,6 @@ class PersonnelController extends Controller
     }else
     {
           $personnel = new Personnel();
-
           $personnel->nom= $request->nom;
           $personnel->prenom= $request->prenom;
           $personnel->sexe= $request->sexe;
@@ -94,7 +95,6 @@ class PersonnelController extends Controller
           $personnel->dateemboche= $request->dateemboche;
           $personnel->statut= $request->statut;
           $personnel->userid = Auth()->user()->id;
-
           $personnel->save();
     
           return response()->json([
@@ -137,5 +137,104 @@ class PersonnelController extends Controller
   }
 
 }
+
+public function updatprofile(Request $request)
+{
+  try {
+
+        if(!empty($request->image)):
+          $imageName=time().'.'.$request->image->extension();
+          $request->image->move(public_path('element/profile/'),$imageName);
+          $imageurl = ('element/profile/').$imageName;
+        else:
+          return response()->json([
+            'status' => 206,
+          ]);
+        endif;
+
+
+        $per = User::find($request->personneidp);
+  
+        $per->avatar = $imageurl;
+        $per->userid = Auth()->user()->id;
+
+        $per->update();
+        return response()->json([
+          'status' => 200,
+        ]);
+    
+  } 
+  catch (Exception $e) {
+    return response()->json([
+      'status' => 202,
+    ]);
+  
+
+}
+
+}
+
+public function updatsignature(Request $request)
+{
+  try {
+
+        if(!empty($request->signature)):
+          $imageName=time().'.'.$request->signature->extension();
+          $request->signature->move(public_path('element/signature/'),$imageName);
+          $imageurl = ('element/signature/').$imageName;
+        else:
+          return response()->json([
+            'status' => 206,
+          ]);
+        endif;
+
+
+        $per = User::find($request->personneidp);
+  
+        $per->signature = $imageurl;
+        $per->userid = Auth()->user()->id;
+
+        $per->update();
+        return response()->json([
+          'status' => 200,
+        ]);
+    
+  } 
+  catch (Exception $e) {
+    return response()->json([
+      'status' => 202,
+    ]);
+  
+
+}
+
+}
+
+
+public function updatpassword(Request $request)
+{
+  try {
+        $user = User::find($request->userid);
+
+        $user->password =$request->npwd;
+        
+        $user->update();
+
+        return response()->json([
+          'status' => 200,
+        ]);
+    
+  } 
+  catch (Exception $e) {
+    return response()->json([
+      'status' => 202,
+    ]);
+  
+
+}
+
+}
+
+
 
 }

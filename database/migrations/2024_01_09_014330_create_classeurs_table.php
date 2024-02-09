@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('classeurs', function (Blueprint $table) {
             $table->id();
             $table->string('libellec', 1000)->nullable();
-            $table->string('statutc', 50)->default(0);
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('statutc', 50)->default('Activé');
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }

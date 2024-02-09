@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title', 1000)->nullable();
             $table->string('statut', 50)->default(0);
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('userid', 25)->nullable();
             $table->timestamps();
         });
     }

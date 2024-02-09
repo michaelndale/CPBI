@@ -286,7 +286,12 @@ Route::middleware('auth')->group(function (){
         Route::post('/storepersonnel', [PersonnelController::class, 'store'])->name('storepersonnel');
         Route::get('/showPersonnel', [PersonnelController::class, 'edit'])->name('showPersonnel');
         Route::post('/updatPersonnel', [PersonnelController::class, 'update'])->name('updatPersonnel'); 
-       // Route::delete('/deletePersonnel', [PersonnelController::class, 'deleteall'])->name('deletePersonnel');
+        Route::post('/updatUser', [PersonnelController::class, 'updatpassword'])->name('updatUser'); 
+        Route::post('/updatProfile', [PersonnelController::class, 'updatprofile'])->name('updatProfile'); 
+        Route::post('/updatsignature', [PersonnelController::class, 'updatsignature'])->name('updatsignature'); 
+        
+       
+        // Route::delete('/deletePersonnel', [PersonnelController::class, 'deleteall'])->name('deletePersonnel');
     
     });
 

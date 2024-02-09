@@ -63,19 +63,6 @@
   </div>
   <!-- End Page-content -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   {{-- new fonction modal --}}
 
   <div class="modal fade" id="add_functionModal" tabindex="-1" aria-labelledby="add_functionModal"" style=" display: none;" aria-hidden="true">

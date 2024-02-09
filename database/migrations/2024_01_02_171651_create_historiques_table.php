@@ -16,9 +16,8 @@ return new class extends Migration
             $table->string('fonction', 1000)->nullable();
             $table->string('operation', 1000)->nullable();
             $table->string('link', 1000)->nullable();
-            $table->string('statut', 50)->default(0);
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('statut', 10)->default('Activé');
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }

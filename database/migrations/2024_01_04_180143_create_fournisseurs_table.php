@@ -16,8 +16,7 @@ return new class extends Migration
             $table->string('titre', 1000)->nullable();
             $table->string('phone', 1000)->nullable();
             $table->string('phoned', 1000)->nullable();
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }

@@ -13,19 +13,14 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100)->nullable();
-            $table->string('lastname', 100)->nullable();
-            $table->string('role', 100)->nullable();
-            $table->string('email')->unique()->nullable();
-            $table->string('statut', 50)->default(0);
-            $table->string('avatar', 1000)->default('profile/avatar.png');
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('personnelid', 100)->nullable();
+            $table->string('identifiant', 100)->nullable();
+            $table->string('statut', 10)->default('Activé');
             $table->string('password');
-            $table->string('departement', 150)->default(0);
-            $table->string('phone', 25)->default(0);
-            $table->string('fonction', 250)->default(0);
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('avatar', 1000)->default('element/profile/default.png');
+            $table->string('signature', 1000)->default('element/signature/signature.jpg');
+            $table->string('role', 50)->default(0);
+            $table->string('userid', 50)->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

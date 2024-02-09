@@ -206,16 +206,25 @@
 
               <!-- item-->
               <a href="javascript:void(0);" class="dropdown-item notify-item editpersonnel" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#EditPersonnelModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
-                  <i class="fa fa-user-edit"></i> Mon profile
+                  <i class="fa fa-user-edit"></i> Moi
               </a>
 
-              <a href="javascript:void(0);" class="dropdown-item notify-item editpersonnelpasseword" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#EditPersonnelModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
+              <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editMotdepasseModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
                   <i class="fa fa-edit"></i> Modifier le mot de passe
               </a>
 
-              <a href="javascript:void(0);" class="dropdown-item notify-item">
-                <i class="fa fa-edit"></i> Fermer la session
+              <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editprofileModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
+                  <i class="fa fa-edit"></i> Modifier profile
               </a>
+
+              <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" 
+              data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
+                  <i class="fa fa-edit"></i> Modifier signature
+              </a>
+
+             <!-- <a href="javascript:void(0);" class="dropdown-item notify-item">
+                <i class="fa fa-edit"></i> Fermer la session
+              </a> -->
 
               <a href="javascript:void(0);" class="dropdown-item notify-item"  data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" role="button" aria-expanded="false"> <span class="me-2" data-feather="log-out" title="Déconnectez-vous en cliquant sur l'icône.">
                   <i class="fas fa-sign-out-alt"></i> Déconnexion

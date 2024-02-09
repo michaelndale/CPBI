@@ -43,7 +43,7 @@
               </div>
 
               <div class="col-sm-2 col-md-4">
-                <div class="form-floating"><input class="form-control" name="lieuProjet" id="lieuProjet" type="text" placeholder="Lieu et date projet " /><label for="floatingInputGrid">Lieu et date projet </label></div>
+                <div class="form-floating"><input class="form-control" name="lieuProjet" id="lieuProjet" type="text" placeholder="Lieu et date projet " /><label for="floatingInputGrid">Lieu (province)</label></div>
               </div>
 
               <div class="col-sm-2 col-md-4">

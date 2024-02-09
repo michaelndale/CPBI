@@ -23,8 +23,7 @@ return new class extends Migration
             $table->string('description', 1000)->nullable();
             $table->string('urlogo', 1000)->nullable();
             $table->string('statut', 50)->default(0);
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }

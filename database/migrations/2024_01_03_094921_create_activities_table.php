@@ -16,12 +16,8 @@ return new class extends Migration
             $table->string('titre', 1000)->nullable();
             $table->string('pays', 1000)->nullable();
             $table->string('montantbudget', 30)->nullable();
-
-            $table->unsignedBigInteger('projectid');
-            $table->foreign('projectid')->references('id')->on('projects');
-
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('projectid', 1000)->nullable();
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }

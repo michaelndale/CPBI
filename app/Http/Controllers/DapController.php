@@ -72,15 +72,19 @@ class DapController extends Controller
         }else{
 
       $activity = new dap;
+      $activity->comptebancaire= $request->comptebanque;
+      $activity->lieu = $request->lieu;
+      $activity->activiteiddap = $request->activityid;
+
       $activity->numerodap = $request->numerodap;
       $activity->projetiddap = $request->projetid;
-      $activity->activiteiddap = $request->activityid;
+      
       $activity->serviceid= $request->serviceid;
-      $activity->lieu = $request->lieu;
+     
       $activity->referencefeb = $request->febid;
       $activity->etabliepar= $request->etabliepar;
       $activity->lignebud= $request->ligneid;
-      $activity->comptebancaire= $request->comptebanque;
+     
       $activity->ov= $request->ov;
       $activity->cho= $request->ch;
       $activity->etablie_nom= $request->etablie_nom;

@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('comptes', function (Blueprint $table) {
@@ -17,16 +14,12 @@ return new class extends Migration
             $table->string('compteid', 1000)->nullable();
             $table->string('souscompteid', 1000)->nullable();
             $table->string('libelle', 1000)->nullable();
+            $table->string('projetid', 1000)->nullable();
             $table->string('stat', 1000)->nullable();
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('comptes');

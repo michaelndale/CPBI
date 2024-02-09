@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('composantprojet', 1000)->nullable();
             $table->string('lieu', 1000)->nullable();
-            $table->string('activite', 1000)->nullable();
+            $table->string('activiteiddap', 1000)->nullable();
             $table->string('referencefeb', 1000)->nullable();
             $table->string('etabliepar', 1000)->nullable();
             $table->string('lignebud', 1000)->nullable();
@@ -25,10 +25,8 @@ return new class extends Migration
             $table->string('montant', 1000)->nullable();
             $table->string('oud', 1000)->nullable();
             $table->string('cho', 1000)->nullable();
-            $table->unsignedBigInteger('serviceid');
-            $table->foreign('serviceid')->references('id')->on('services');
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('serviceid', 1000)->nullable();
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }

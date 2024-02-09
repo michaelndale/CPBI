@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('elementfebs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('febid');
-            $table->foreign('febid')->references('id')->on('febs');
+            $table->string('febid', 1000)->nullable();
             $table->string('libellee', 1000)->nullable();
-            $table->double('montant', 15)->nullable();
+            $table->string('montant', 25)->nullable();
+            $table->string('statut', 10)->default('Activé');
             $table->timestamps();
         });
     }

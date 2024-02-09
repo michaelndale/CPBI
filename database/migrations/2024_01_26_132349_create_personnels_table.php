@@ -17,13 +17,11 @@ return new class extends Migration
             $table->string('prenom', 100)->nullable();
             $table->string('sexe', 25)->nullable();
             $table->string('email')->unique()->nullable();
-            $table->string('statut', 50)->default('Activé');
-            $table->string('avatar', 1000)->default('profile/avatar.png');
-            $table->timestamp('dateemboche')->nullable();
-            $table->string('phone', 25)->default(0);
-            $table->string('fonction', 250)->default(0);
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('phone', 15)->default(0);
+            $table->string('fonction', 250)->nullable();
+            $table->date('dateemboche')->nullable();
+            $table->string('statut', 10)->default('Activé');
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }

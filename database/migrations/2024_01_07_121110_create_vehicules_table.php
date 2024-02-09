@@ -20,9 +20,8 @@ return new class extends Migration
             $table->string('numeroserie', 1000)->nullable();
             $table->string('type', 1000)->nullable();
             $table->string('carburent', 1000)->nullable();
-            $table->string('active', 1000)->nullable();
-            $table->unsignedBigInteger('userid');
-            $table->foreign('userid')->references('id')->on('users');
+            $table->string('statut', 10)->default('Activé');
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }
