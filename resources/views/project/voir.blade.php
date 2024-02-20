@@ -4,133 +4,158 @@
 @endforeach
 <div class="main-content">
 
+<div class="page-content">
+    <div class="container-fluid">
+
+       
     
-<div class="content px-0 pt-9">
-        <div class="row g-0">
-          <div class="col-12 col-xxl-8 px-0 bg-soft">
-            <div class="px-4 px-lg-6 pt-6 pb-9">
-              <div class="mb-5">
-                <div class="d-flex justify-content-between">
-                  <h2 class="text-black fw-bolder mb-2">{{ $dataProject->title }}
-                    <!--  {{ Session::get('id') }}  -->
-                  </h2>
-                  <div class="font-sans-serif btn-reveal-trigger"><button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"></span></button>
-                    <div class="dropdown-menu dropdown-menu-end py-2">
-                    
-                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> FEB</a>
-                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> DAP</a>
-                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> DJA</a>                    
-                      
-                      <a class="dropdown-item" href="#!"><i class="fas fa-random"></i> Affectation</a>
-                      <a class="dropdown-item" href="#!"><i class="fas fa-edit"></i>  Detail du projet</a>
-                      
-                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> BPC</a>
-                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> SQR</a>
-                      <a class="dropdown-item" href="#!"><i class="fas fa-file-alt"></i> FDT</a>
-                      <a class="dropdown-item text-danger" href="#!">Supprimer</a>
-                      <a class="dropdown-item" href="#!">Telecharger</a>
-                    </div>
-                  </div>
-                </div>
-                
-                <b>Statut du projet :</b> <span class="badge badge-phoenix badge-phoenix-primary">
+    <div class="row g-0">
+      <div class="col-12 col-xxl-8 px-0 bg-soft">
+        <div class="px-4 px-lg-6 pt-6 pb-9">
+          <div class="mb-5">
+            <div class="d-flex justify-content-between">
+              <h2 class="text-black fw-bolder mb-2">{{ $dataProject->title }}
+                <!--  {{ Session::get('id') }}  -->
+              </h2>
 
-                @if ($dataProject->statut==0)
-                  Encours
-                @else
-                    Terminer
-                @endif
-                
-                <span class="ms-1 uil uil-stopwatch"></span></span>
-              </div>
-              <div class="row gx-0 gx-sm-5 gy-8 mb-8">
-                <div class="col-12 col-xl-5 col-xxl-4 pe-xl-0">
-                  <div class="mb-4 mb-xl-7">
-                    <div class="row gx-0 gx-sm-7">
-                      <div class="col-12 col-sm-auto">
-                        <table class="lh-sm mb-4 mb-sm-0 mb-xl-5">
-                          <tbody>
-                            <tr>
-                              <td class="align-top py-1">
-                                <div class="d-flex"><span class="fa-solid fa-user me-2 text-700 fs--1"></span>
-                                  <h5 class="text-900 mb-0 text-nowrap">Responsable :</h5>
-                                </div>
-                              </td>
-                              <td class="ps-1 py-1"><a class="fw-semi-bold d-block lh-sm" href="#!">{{  $responsables->nom }} {{  $responsables->prenom }}</a></td>
-                            </tr>
-                            <tr>
-                              <td class="align-top py-1">
-                                <div class="d-flex"><span class="fa-regular fa-credit-card me-2 text-700 fs--1"></span>
-                                  <h5 class="text-900 mb-0 text-nowrap">Budget : </h5>
-                                </div>
-                              </td>
-                              <td class="fw-bold ps-1 py-1 text-1000"> {{  number_format($dataProject->budget,0, ',', ' ') }} {{ $dataProject->devise }}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div class="col-12 col-sm-auto">
-                        <table class="lh-sm">
-                          <tbody>
-                            <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Numéro projet : </td>
-                              <td class="text-600 fw-semi-bold ps-3">#{{ $dataProject->numeroprojet }}</td>
-                            </tr>
-
-                            <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Début du projet : </td>
-                              <td class="text-600 fw-semi-bold ps-3">{{  date('d.m.Y', strtotime($dataProject->start_date))  }}</td>
-                            </tr>
-
-
-                            <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Fin du projet :</td>
-                              <td class="text-600 fw-semi-bold ps-3">{{  date('d.m.Y', strtotime($dataProject->deadline))  }}</td>
-                            </tr>
-                            <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression du projet:</td>
-                             <!-- <td class="text-warning fw-semi-bold ps-3">80%</td> -->
-                            </tr>
-                            <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Date de creation projet :</td>
-                              <td class="text-warning fw-semi-bold ps-3">{{  date('d.m.Y', strtotime($dataProject->created_at))  }}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-
-                        <table class="lh-sm">
-                          <tbody>
-                            <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Region  : </td>
-                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->region }}</td>
-                            </tr>
-                            <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Lieu:</td>
-                              <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->lieuprojet }}</td>
-                            </tr>
-                            <tr>
-                            <!--  <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression :</td>
-                              -<td class="text-warning fw-semi-bold ps-3">80%</td>  -->
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
+              <div class="dropdown">
+                <button class="btn btn-light btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="mdi mdi-dots-vertical align-middle font-size-16"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <button class="dropdown-item" href="{{ route('listfeb') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      FEB</button>
+                  </li>
+                  <li class="dropdown-divider"></li>
+                  <li>
+                    <button class="dropdown-item" href="{{ route('listdap') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      DAP</button>
+                  </li>
+                  <li class="dropdown-divider"></li>
+                  <li>
+                    <a class="dropdown-item" href="{{ route('listdja') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      DJA</a>
+                  </li>
+                  <li class="dropdown-divider"></li>
+                  <li>
+                    <a class="dropdown-item" href="{{ route('affectation') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      Affectation</a>
+                  </li>
+                  <li class="dropdown-divider"></li>
+                  <li>
+                    <a class="dropdown-item" href="{{ route('gestioncompte') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                    Ligne budgetaire</a>
+                  </li>
+                  <li class="dropdown-divider"></li>
+                  <li>
+                    <a class="dropdown-item" href="{{ route('rallongebudget') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      Budget</a>
+                  </li>
                  
-                </div>
-                <div class="col-12 col-xl-6 col-xxl-8">
-                  <div class="row flex-between-center mb-3 g-3">
-                    <div class="col-auto">
-                      <h4 class="text-black">Description</h4>
-                      <p class="text-800 mb-4">{{ $dataProject->description }}  </p>
-                    </div>
-                   
+                </ul>
+              </div>
+
+            </div>
+
+            <b>Statut du projet :</b> <span class="badge badge-phoenix badge-phoenix-primary">
+
+              @if ($dataProject->statut==0)
+              Encours
+              @else
+              Terminer
+              @endif
+
+              <span class="ms-1 uil uil-stopwatch"></span></span>
+          </div>
+          <div class="row gx-0 gx-sm-5 gy-8 mb-8">
+            <div class="col-12 col-xl-5 col-xxl-4 pe-xl-0">
+              <div class="mb-4 mb-xl-7">
+                <div class="row gx-0 gx-sm-7">
+                  <div class="col-12 col-sm-auto">
+                    <table class="lh-sm mb-4 mb-sm-0 mb-xl-5">
+                      <tbody>
+                        <tr>
+                          <td class="align-top py-1">
+                            <div class="d-flex"><span class="fa-solid fa-user me-2 text-700 fs--1"></span>
+                              <h5 class="text-900 mb-0 text-nowrap">Responsable :</h5>
+                            </div>
+                          </td>
+                          <td class="ps-1 py-1"><a class="fw-semi-bold d-block lh-sm" href="#!">{{ $responsables->nom }} {{ $responsables->prenom }}</a></td>
+                        </tr>
+                        <tr>
+                          <td class="align-top py-1">
+                            <div class="d-flex"><span class="fa-regular fa-credit-card me-2 text-700 fs--1"></span>
+                              <h5 class="text-900 mb-0 text-nowrap">Budget : </h5>
+                            </div>
+                          </td>
+                          <td class="fw-bold ps-1 py-1 text-1000"> {{ number_format($dataProject->budget,0, ',', ' ') }} {{ $dataProject->devise }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
-              
+                  <div class="col-12 col-sm-auto">
+                    <table class="lh-sm">
+                      <tbody>
+                        <tr>
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Numéro projet : </td>
+                          <td class="text-600 fw-semi-bold ps-3">#{{ $dataProject->numeroprojet }}</td>
+                        </tr>
+
+                        <tr>
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Début du projet : </td>
+                          <td class="text-600 fw-semi-bold ps-3">{{ date('d.m.Y', strtotime($dataProject->start_date))  }}</td>
+                        </tr>
+
+
+                        <tr>
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Fin du projet :</td>
+                          <td class="text-600 fw-semi-bold ps-3">{{ date('d.m.Y', strtotime($dataProject->deadline))  }}</td>
+                        </tr>
+                        <tr>
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression du projet:</td>
+                          <!-- <td class="text-warning fw-semi-bold ps-3">80%</td> -->
+                        </tr>
+                        <tr>
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Date de creation projet :</td>
+                          <td class="text-warning fw-semi-bold ps-3">{{ date('d.m.Y', strtotime($dataProject->created_at))  }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <table class="lh-sm">
+                      <tbody>
+                        <tr>
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Region : </td>
+                          <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->region }}</td>
+                        </tr>
+                        <tr>
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Lieu:</td>
+                          <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->lieuprojet }}</td>
+                        </tr>
+                        <tr>
+                          <!--  <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression :</td>
+                              -<td class="text-warning fw-semi-bold ps-3">80%</td>  -->
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-12 col-xl-6 col-xxl-8">
+              <div class="row flex-between-center mb-3 g-3">
+                <div class="col-auto">
+                  <h4 class="text-black">Description</h4>
+                  <p class="text-800 mb-4">{{ $dataProject->description }} </p>
                 </div>
 
-               <!--             
+              </div>
+
+            </div>
+
+            <!--             
                 <div class="col-12 col-sm-5 col-lg-4 col-xl-3 col-xxl-4">
                   <div class="mb-5">
                     <h4 class="text-black">Work loads</h4>
@@ -364,13 +389,13 @@
                 </div>
                 -->
 
-              </div>
-            
-            </div>
           </div>
 
-       
         </div>
-      
+      </div>
 
-@endsection
+
+    </div>
+
+
+    @endsection

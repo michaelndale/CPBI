@@ -29,9 +29,19 @@ class FolderController extends Controller
               <td>' . ucfirst($rs->title) . '</td>
               <td>
               <center>
-                <a href="#" id="' . $rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editFolderModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-                <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
-              </center>
+               
+                <div class="btn-group me-2 mb-2 mb-sm-0">
+                  <a  data-bs-toggle="dropdown" aria-expanded="false">
+                       <i class="mdi mdi-dots-vertical ms-2"></i>
+                  </a>
+                  <div class="dropdown-menu">
+                      <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#editFolderModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
+                      <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
+                  </div>
+               </div>
+              
+              
+                </center>
               </td>
             </tr>';
         $nombre++;
@@ -129,10 +139,9 @@ class FolderController extends Controller
       if ($emp->userid == Auth::id()) {
         $id = $request->id;
         Folder::destroy($id);
-          return response()->json([
-            'status' => 200,
-          ]);
-
+        return response()->json([
+          'status' => 200,
+        ]);
       } else {
         return response()->json([
           'status' => 205,

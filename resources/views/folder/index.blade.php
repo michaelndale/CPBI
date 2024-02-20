@@ -7,33 +7,25 @@
         <div class="col-6" style="margin:auto">
           <div class="page-title-box d-sm-flex align-items-center justify-content-between">
             <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> Dossier </h4>
-
             <div class="page-title-right">
               <a href="javascript:voide();" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouveau </a>
-
             </div>
-
           </div>
         </div>
       </div>
-
       <div class="row">
         <div class="col-lg-6" style="margin:auto">
           <div class="card">
             <div class="table-responsive">
               <table class="table table-bordered mb-0">
                 <thead>
-
                   <tr style="background-color:#82E0AA">
-                    <th style="width:5%"></th>
-                    <th>Libelle</th>
-
+                    <th style="width:5%">#</th>
+                    <th>Libellé</th>
                     <th style="width:25%">
                       <center>Action</center>
                     </th>
-
                   </tr>
-
                 </thead>
                 <tbody id="show_all_folder">
                   <tr>
@@ -135,7 +127,7 @@
       });
     });
 
-    // Edit fonction ajax request
+    // Edit folder ajax request
     $(document).on('click', '.editIcon', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
@@ -199,7 +191,7 @@
       Swal.fire({
         title: 'Vous sure de vouloir supprimer ?',
         text: "Si vous le faite vous ne pouvez plus revenir en arriere !",
-     
+
         showCancelButton: true,
         confirmButtonColor: 'Green',
         cancelButtonColor: '#d33',
@@ -215,8 +207,8 @@
               _token: csrf
             },
             success: function(response) {
-              
-              
+
+
               if (response.status == 200) {
                 toastr.success("Dossier supprimer avec succees !", "Suppression");
                 fetchAlldfolder();

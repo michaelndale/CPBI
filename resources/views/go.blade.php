@@ -10,7 +10,7 @@
         position: absolute;
         top:10%;
         left: 50%;
-        transform: translate(-50%,120%);
+        transform: translate(-50%,50%);
     }
     .box p{
         color:#228B22;

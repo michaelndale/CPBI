@@ -82,7 +82,7 @@
 
             </div>
             <div class="modal-footer">
-              <button type="submit" name="sendService" id="add_service" class="btn btn-primary" type="button">Enregistrer</button>
+              <button type="submit" name="sendService" id="add_service" class="btn btn-primary" >Enregistrer</button>
             </div>
             </form>
         </div>

@@ -9,10 +9,12 @@ class CompteController extends Controller
 {
     public function index()
     {
-    
+      $ID = session()->get('id');
       $active = 'Project';
       $title = 'Compte & Ligne';
-      $compte = Compte::where('compteid', '=', NULL)->get();
+      $compte = Compte::where('compteid', '=', NULL)
+                ->where('projetid',$ID)
+                ->get();
 
       return view(
         'compteligne.index',
@@ -27,7 +29,10 @@ class CompteController extends Controller
   
     public function selectcompte()
     {
-      $service = Compte::where('compteid', '=', NULL)->get();
+      $ID = session()->get('id');
+      $service = Compte::where('compteid', '=', NULL)
+                ->where('projetid',$ID)
+                ->get();
 
       
       $output = '';
@@ -51,13 +56,25 @@ class CompteController extends Controller
       
         echo $output;
       } else {
-        echo '<h4 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h4>';
+        echo ' <tr>
+                <td colspan="4">
+                <center>
+                  <h6 style="margin-top:1% ;color:#c0c0c0"> 
+                  <center><font size="50px"><i class="far fa-trash-alt"  ></i> </font><br><br>
+                Ceci est vide  !</center> </h6>
+                </center>
+                </td>
+                </tr>
+             ';
       }
     }
 
     public function sousselectcompte()
     {
-      $service = Compte::where('compteid', '!=', 'NULL')->get();
+      $ID = session()->get('id');
+      $service = Compte::where('compteid', '!=', 'NULL')
+                ->where('projetid',$ID)
+                ->get();;
       $output = '';
       if ($service->count() > 0) {
 
@@ -96,10 +113,12 @@ class CompteController extends Controller
               <td><b>' . ucfirst($rs->numero). '</b></td>
               <td><b>' . ucfirst($rs->libelle). '</b></td>
               <td>
+              <center>
               <a href="#" id="' . $rs->id . '" class="text-success mx-1 savesc" data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte" title="Ajouter sous compte"><i class="fa fa-plus-circle"></i></a>
                 <a href="#" id="' . $rs->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
                 <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
-              </td>
+                </center>
+                </td>
             </tr>
             
             ';
@@ -117,10 +136,12 @@ class CompteController extends Controller
                     <td>' . ucfirst($sc->libelle). '</td>
                   
                     <td>
+                    <center>
                         <a href="#" id="' . $sc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
                         <a href="#" id="' . $sc->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
                         <a href="#" id="' . $sc->id . '" class="text-danger mx-1 deleteIcon"><i class="fa fa-trash"></i>  </a>
-                    </td>
+                        </center>
+                        </td>
                   </tr>
             ';
             $ndale ++;
@@ -163,13 +184,24 @@ class CompteController extends Controller
       
         echo $output;
       } else {
-        echo '<h4 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h4>';
+        echo ' <tr>
+                <td colspan="4">
+                <center>
+                  <h6 style="margin-top:1% ;color:#c0c0c0"> 
+                  <center><font size="50px"><i class="far fa-trash-alt"  ></i> </font><br><br>
+                Ceci est vide  !</center> </h6>
+                </center>
+                </td>
+                </tr>
+             ';
       }
     }
   
     // insert a new service ajax request
     public function store(Compte $gc, Request $request)
     {
+      $gc = new Compte();
+      $gc->projetid = $request->projetid;
       $gc->numero = $request->code;
       $gc->libelle = $request->libelle;
       $gc->userid = Auth()->user()->id;
@@ -179,13 +211,17 @@ class CompteController extends Controller
       ]);
     }
 
-    public function storesc(Compte $gl, Request $request)
+    public function storesc( Request $request)
     {
+
+      $gl = new Compte();
+      $gl->projetid = $request->projetid;
       $gl->compteid = $request->cid;
       $gl->numero = $request->code;
       $gl->libelle = $request->libelle;
       $gl->userid = Auth()->user()->id;
       $gl->save();
+
       return response()->json([
         'status' => 200,
       ]);
@@ -193,6 +229,8 @@ class CompteController extends Controller
 
     public function storessc(Compte $gl, Request $request)
     {
+      $gl = new Compte();
+      $gl->projetid = $request->projetid;
       $gl->compteid = $request->scid;
       $gl->souscompteid = $request->sscid;
       $gl->numero = $request->code;

@@ -20,6 +20,7 @@ use App\Http\Controllers\FonctionController;
 use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ObservationactiviteController;
 use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PortierController;
 use App\Http\Controllers\ProfileController;
@@ -139,18 +140,9 @@ Route::middleware('auth')->group(function (){
         Route::get('/', [RallongebudgetController::class, 'index'])->name('rallongebudget');
         Route::post('/storerallonge', [RallongebudgetController::class, 'store'])->name('storerallonge');
         Route::get('/fetchRallonge', [RallongebudgetController::class, 'fetchAll'])->name('fetchRallonge');
-        
-      /*  Route::get('/fetchAllGc', [CompteController::class, 'fetchAll'])->name('fetchAllGc');
-        Route::get('/Selectcompte', [CompteController::class, 'selectcompte'])->name('Selectcompte');
-        Route::get('/SelectSousCompte', [CompteController::class, 'sousselectcompte'])->name('SelectSousCompte');
-        Route::post('/storeGc', [CompteController::class, 'store'])->name('storeGc');
-        Route::post('/storeSc', [CompteController::class, 'storesc'])->name('storeSc');
-        Route::post('/storeSSc', [CompteController::class, 'storesSc'])->name('storeSSc');
-        Route::delete('/deleteGc', [CompteController::class, 'deleteall'])->name('deleteGc');
+       
+       
     
-        Route::get('/ShowCompte', [CompteController::class, 'addsc'])->name('ShowCompte');
-        Route::get('/editGc', [CompteController::class, 'edit'])->name('editGc');
-        Route::post('/updateGc', [CompteController::class, 'update'])->name('updateGc');  */
     });
 
     Route::prefix('folder')->group(function () {
@@ -169,6 +161,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/closeproject', [ProjectController::class, 'closeproject'])->name('closeproject');
         Route::get('/{key}/view/', [ProjectController::class, 'show'])->name('key.viewProject');
         
+        
+        
     });
 
     Route::prefix('affectation')->group(function () {
@@ -180,8 +174,11 @@ Route::middleware('auth')->group(function (){
         Route::get('/', [FebController::class, 'list'])->name('listfeb');
         Route::post('/storefeb', [FebController::class, 'store'])->name('storefeb');
         Route::get('/fetchAllfeb', [FebController::class, 'fetchAll'])->name('fetchAllfeb');
+        Route::get('/Sommefeb', [FebController::class, 'Sommefeb'])->name('Sommefeb');
         Route::get('/findligne',[FebController::class, 'findligne'] )->name('findligne');
+        Route::post('/updatefeb', [FebController::class, 'update'])->name('updatefeb');
         Route::delete('/deletefeb', [FebController::class, 'delete'])->name('deletefeb');
+        Route::get('/{key}/view/', [FebController::class, 'show'])->name('key.viewFeb');
     });
 
     Route::prefix('bpc')->group(function () {
@@ -254,10 +251,11 @@ Route::middleware('auth')->group(function (){
         Route::get('/', [ActivityController::class, 'index'])->name('activity');
         Route::get('/new', [ActivityController::class, 'new'])->name('newactivity');
         Route::post('/storeact', [ActivityController::class, 'store'])->name('storeact');
-        Route::get('/{key}/view/', [ActivityController::class, 'show'])->name('key.viewActivity');
+        Route::get('/showactivity', [ActivityController::class, 'show'])->name('showactivity');
         Route::delete('/deleteact', [ActivityController::class, 'deleteall'])->name('deleteact');
         Route::get('/fetchActivite', [ActivityController::class, 'fetchAll'])->name('fetchActivite');
-        
+        Route::post('/updateActivite', [ActivityController::class, 'update'])->name('updateActivite'); 
+        Route::get('/showcommente', [ObservationactiviteController::class, 'fetchAllcommente'])->name('showcommente'); 
     });
 
     Route::prefix('catactivity')->group(function () {

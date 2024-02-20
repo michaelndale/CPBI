@@ -39,9 +39,9 @@ class DapController extends Controller
           <td class="align-middle"> '.$datas->ov.' </td>
           <td class="align-middle"> '.$datas->cho.' </td>
           <td class="align-middle">
-          <a href="#" id="' . $datas->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="fas fa-window-restore"></i>  </a>
-            <a href="#" id="' . $datas->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
-            <a href="#" id="' . $datas->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
+            <a href="#" id="' .$datas->id. '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="fas fa-window-restore"></i>  </a>
+            <a href="#" id="' .$datas->id. '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
+            <a href="#" id="' .$datas->id. '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
           </td>
         </tr>
       '
@@ -50,12 +50,16 @@ class DapController extends Controller
       }
       echo $output;
     } else {
-      echo '
-      <tr>
-        <td colspan="8">
-         <h5 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h5>
+      echo '<tr>
+        <td colspan="9">
+        <center>
+          <h6 style="margin-top:1% ;color:#c0c0c0"> 
+          <center><font size="10px"><i class="far fa-trash-alt"  ></i> </font><br><br>
+          Ceci est vide  !</center> </h6>
+        </center>
         </td>
-      </tr>';
+        </tr>
+        ';
     }
   }
 

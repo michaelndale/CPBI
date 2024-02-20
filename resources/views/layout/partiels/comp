@@ -1,0 +1,96 @@
+$IDP= session()->get('id');
+        $CompteLigne= $request->compteid;
+       
+        // verification LIGNE compte
+        $sommerepartie= DB::table('rallongebudgets')
+       ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+       ->Where('rallongebudgets.projetid', $IDP)
+       ->Where('rallongebudgets.compteid', $CompteLigne)
+       ->SUM('budgetactuel');
+
+       // verificATION ACTIVITE COMPTE
+            $sommeactivite= DB::table('activities')
+            ->Where('projectidd', $IDP)
+            ->Where('compteidr', $CompteLigne)
+            ->SUM('montantbudget');
+
+              $globale = $request->montant+$sommeactivite;
+
+                if($sommerepartie >= $globale){
+
+
+                $activity = new Activity();
+                
+                $activity->projectid = $request->projetid;
+                $activity->compteidr = $request->compteid;
+                $activity->titre = $request->titre;
+                $activity->montantbudget= $request->montant;
+                $activity->etat_activite= $request->etat;
+                $activity->userid= Auth::id();
+
+                $activity->save();
+
+                return response()->json([
+                'status' => 200,
+                
+                ]);
+              }else{
+                return response()->json([
+                  'status' => 201,
+                ]);
+              }
+        
+        
+      }
+
+
+      // Update a new ajax request
+      public function update(Request $request )
+      {
+        try {
+              $act = Activity::find($request->aid);
+
+              $act->compteidr = $request->ligneact;
+              $act->titre = $request->titreact;
+              $act->montantbudget = $request->montantact;
+              $act->etat_activite = $request->etatact;
+              $act->userid =  Auth::id();
+
+              $act->update();
+              
+              return response()->json([
+                'status' => 200,
+              ]);
+          
+        } catch (Exception $e) {
+          return response()->json([
+            'status' => 202,
+          ]);
+        
+      
+      }
+        
+       // $operation ="Nouveau activite: ".$request->title;
+       // $link ='listactivity';
+        //$notis->operation = $operation;
+        ////$his->userid  = Auth()->user()->id;
+       // $notis->link = $link;
+       // $notis->save();
+
+
+        $activity = new Activity();
+        
+        $activity->projectid = $request->projetid;
+        $activity->compteidr = $request->compteid;
+        $activity->titre = $request->titre;
+        $activity->montantbudget= $request->montant;
+        $activity->etat_activite= $request->etat;
+        $activity->userid= Auth::id();
+
+        $activity->save();
+
+        return response()->json([
+         'status' => 200,
+         
+        ]);
+        

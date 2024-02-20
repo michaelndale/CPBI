@@ -66,7 +66,8 @@ class ProjectController extends Controller
             ]);
           }else{
 
-            // insertion historique
+        // Insertion historique
+
             $his = new Historique();
             $function ="Projet";
             $operatio ="Nouveau projet ".$request->title;
@@ -76,40 +77,32 @@ class ProjectController extends Controller
             $his->link = $link;
             $his->userid = Auth()->user()->id;
             $his->save();
-            // fin historique
 
-
-            // notification initialisation
-            $operation ="Nouveau projet : ".$request->title;
-            $link ='projet';
-            $notis = new Notification();
-            $notis->operation = $operation;
-            $notis->userid= $request->leader;
-            $notis->link = $link;
-            $notis->save();
-            // fin initialisation notification
-
-        // cahrgement du noveau project
+        // Noveau project
     
         $budget =str_replace(' ', '', ($request->budget));
         $annee = date('Y');
+        
         $project = new Project();
+
         $project->title = $request->title;
-        $project->numeroprojet = $request->numeroProjet;
-        $project->region = $request->region;
         $project->lead = $request->leader;
-        $project->lieuprojet = $request->lieuProjet;
-        $project->devise = $request->devise;
-        $project->numerodossier = $request->numeroDossier;
         $project->start_date= $request->startdate;
         $project->deadline= $request->deadline;
-        $project->budget= $budget;
+        $project->region = $request->region;
+        $project->numerodossier = $request->numeroDossier;
+        $project->numeroprojet = $request->numeroProjet;
+        $project->lieuprojet = $request->lieuProjet;
+        $project->devise = $request->devise;
         $project->description= $request->description;
+        $project->budget= $budget;
         $project->annee= $annee;
         $project->userid = Auth()->user()->id;
+
         $project->save();
 
         $lastInsertedId= $project->id;
+
         return response()->json([
          'status' => 200,
          'lastid' =>  $lastInsertedId
@@ -126,6 +119,11 @@ class ProjectController extends Controller
         
         
       }
+
+
+
+
+      
 
     public function list()
     {
@@ -150,6 +148,7 @@ class ProjectController extends Controller
       session()->put('numeroprojet', $key->numeroprojet);
       session()->put('ligneid', $key->ligneid);
       session()->put('devise', $key->devise);
+      session()->put('budget', $key->budget);
 
       $ID = session()->get('id');
       $act = DB::table('activities')
@@ -175,5 +174,32 @@ class ProjectController extends Controller
           
         ]);
     }
+
+    public function revisionbudget()
+    {
+      $IDP = session()->get('id');
+    
+      $title = 'Budgetisation';
+      $compte= Compte::all();
+      $showData = Project::find($IDP);
+
+      $compte = Compte::where('compteid', '=', NULL)
+      ->where('projetid',$IDP)
+      ->get();
+
+      return view('project.revision',
+        [
+          'title' => $title,
+          'compte' => $compte,
+          'showData' => $showData,
+          'compte' => $compte
+
+         
+        ]
+      );
+    }
+
+
+    
     
 }

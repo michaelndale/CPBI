@@ -98,6 +98,8 @@
                                 
                         <!-- end row -->
 
+                        @if (!session()->has('id'))
+
                         <div class="row">
                             <div class="col-xl-3">
                                 <div class="card">
@@ -175,6 +177,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        @endif
                         <!-- end row -->
                             
                             </div>

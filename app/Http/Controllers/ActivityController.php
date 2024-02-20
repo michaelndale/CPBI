@@ -10,6 +10,7 @@ use App\Models\Historique;
 use App\Models\Notification;
 use App\Models\Project;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,22 +20,27 @@ class ActivityController extends Controller
     public function index ()
     {
       $title='Activite';
-      $active = 'Activite';
+     
       $dataProjet = Project::all();
       $dataCategorie = Catactivity::all();
-      $compte = Compte::where('compteid', '=', NULL)->get();
+
+      $ID = session()->get('id');
+      $compte = Compte::Where('projetid', $ID)
+                ->get();
+
       return view('activite.index', 
         [
           'title' =>$title,
           'dataProject' => $dataProjet,
           'dataCategorie' => $dataCategorie,
-          'active' => $active,
+         
           'compte' => $compte,
       ]);
     }
 
     public function fetchAll()
     {
+      $devise =session()->get('devise');
       $ID = session()->get('id');
       $act = DB::table('activities')
             ->orderby('id','DESC')
@@ -46,21 +52,52 @@ class ActivityController extends Controller
        
         $nombre = 1;
         foreach ($act as $rs) {
-          if($rs->etat_activite=="Annuler"){ $color ='#F08080'; }else{ $color=''; }
+          if($rs->etat_activite=="Annuler"){ $color ='#F08080'; $class='danger' ;}
+      
+
+         elseif($rs->etat_activite=="Terminée"){
+          $color=''; $class='primary';
+         }
+
+         elseif($rs->etat_activite=="Contrainte"){
+          $color=''; $class='warning';
+         }
+
+         elseif($rs->etat_activite=="Encours"){
+          $color=''; $class='info';
+         }
+
+         else{
+
+         }
+          
           $output .= '
             <tr style="background-color:'.$color.'">
               <td class="align-middle ps-3 name">' . $nombre . '</td>
-              <td>' . ucfirst($rs->titre). '</td>
-              <td>' . 2024 . '</td>
-              <td>' . ucfirst($rs->montantbudget). '</td>
-              <td>' . ucfirst($rs->etat_activite). '</td>
-              <td>' . date('d.m.Y', strtotime($rs->created_at)) . '</td>
               <td>
-                <center>
-                  <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_DepatmentModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-                  <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
-                </center>
+              <center>
+               
+                <div class="btn-group me-2 mb-2 mb-sm-0">
+                  <a  data-bs-toggle="dropdown" aria-expanded="false">
+                       <i class="mdi mdi-dots-vertical ms-2"></i>
+                  </a>
+                  <div class="dropdown-menu">
+                  <a class="dropdown-item text-success mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#AddCommenteModale" title="Modifier"><i class="ri-wechat-line"></i> Ajouter un onbservation</a>
+                      <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#EditModale" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
+                      <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
+                  </div>
+               </div>
+              
+
               </td>
+              <td>' . ucfirst($rs->titre). '
+              <a href="#" id="' . $rs->id . '" class="text-success mx-1 observationshow" data-bs-toggle="modal" data-bs-target="#TableCommenteModale" title="Observation" ><i class="ri-wechat-line"></i> </a>
+              </td>
+           
+              <td>' . ucfirst($rs->montantbudget).' '. $devise.'</td>
+              <td><center><span class="badge rounded-pill bg-'.$class.' font-size-11">' . ucfirst($rs->etat_activite). '</span></center></td>
+              <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
+              
             </tr>';
           $nombre++;
         }
@@ -71,9 +108,9 @@ class ActivityController extends Controller
             <tr>
             <td colspan="6">
             <center>
-              <h4 style="margin-top:1% ;color:#c0c0c0"> 
-              <center><font size="100px"><i class="far fa-trash-alt"  ></i> </font><br><br>
-              Aucun enregistrement dans la base de données !</center> </h4>
+              <h6 style="margin-top:1% ;color:#c0c0c0"> 
+              <center><font size="10px"><i class="far fa-trash-alt"  ></i> </font><br><br>
+              Ceci est vide  !</center> </h6>
             </center>
             </td>
             </tr>
@@ -103,7 +140,6 @@ class ActivityController extends Controller
         $activity->titre = $request->titre;
         $activity->montantbudget= $request->montant;
         $activity->etat_activite= $request->etat;
-        
         $activity->userid= Auth::id();
 
         $activity->save();
@@ -116,35 +152,71 @@ class ActivityController extends Controller
         
       }
 
-    public function list()
-    {
-        $title="List activity";
-        $data= Activity::all();
-        $total = Activity::all()->count();
-        $active = 'Activity';
-        return view('project.list', 
-        [
-          'title' =>$title,
-          'data' => $data,
-          'total' => $total,
-          'active' => $active
-        ]);
-    }
 
-    public function show(Project $cle)
-    {
-      $title="Show project";
-      $active = 'Project';
-      $dataProject= Project::all();
-      //where('id', $cle )->firstOrFail();
-      return view('project.voir', 
-        [
-          'title' =>$title,
-          'active' => $active,
-          'dataProject' => $dataProject,
+      // Update a new ajax request
+      public function update(Request $request )
+      {
+        try {
+              $act = Activity::find($request->aid);
+
+              $act->compteidr = $request->ligneact;
+              $act->titre = $request->titreact;
+              $act->montantbudget = $request->montantact;
+              $act->etat_activite = $request->etatact;
+              $act->userid =  Auth::id();
+
+              $act->update();
+              
+              return response()->json([
+                'status' => 200,
+              ]);
           
+        } catch (Exception $e) {
+          return response()->json([
+            'status' => 202,
+          ]);
+        
+      
+      }
+        
+       // $operation ="Nouveau activite: ".$request->title;
+       // $link ='listactivity';
+        //$notis->operation = $operation;
+        ////$his->userid  = Auth()->user()->id;
+       // $notis->link = $link;
+       // $notis->save();
+
+
+        $activity = new Activity();
+        
+        $activity->projectid = $request->projetid;
+        $activity->compteidr = $request->compteid;
+        $activity->titre = $request->titre;
+        $activity->montantbudget= $request->montant;
+        $activity->etat_activite= $request->etat;
+        $activity->userid= Auth::id();
+
+        $activity->save();
+
+        return response()->json([
+         'status' => 200,
+         
         ]);
-    }
+        
+        
+      }
+
+
+   
+
+    // edit an folder ajax request
+  public function show(Request $request)
+  {
+    $id = $request->id;
+    $fon =Activity::find($id);
+  
+    return response()->json($fon);
+  }
 
     public function deleteall(Request $request,)
     {

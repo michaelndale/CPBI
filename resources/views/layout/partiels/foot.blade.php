@@ -161,9 +161,9 @@
                <div class="row">
                  <div class="custom-file">
                    <input id="personneidp" name="personneidp" type="hidden" value="{{ Auth::user()->id }}" />
-                   <input type="file" class="custom-file-input" name="image" name="image" accept="image/*" onchange="preview_image(event)">
+                   <input type="file"  class="form-control" id="customFile" name="image" accept="image/*" onchange="preview_image(event)">
 
-                   <label for="logo" class="custom-file-label">Choose image </label>
+                 
                  </div>
                  <br><br>
 
@@ -204,9 +204,7 @@
                <div class="row">
                  <div class="custom-file">
                    <input id="personneidp" name="personneidp" type="hidden" value="{{ Auth::user()->id }}" />
-                   <input type="file" class="custom-file-input" name="signature" name="signature" accept="image/*" onchange="preview_image(event)">
-
-                   <label for="logo" class="custom-file-label">Choose image </label>
+                   <input type="file"  class="form-control" id="customFile" name="signature" accept="image/*" onchange="preview_image(event)">
                  </div>
                  <br><br>
 

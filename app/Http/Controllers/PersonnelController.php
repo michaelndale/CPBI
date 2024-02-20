@@ -39,12 +39,7 @@ class PersonnelController extends Controller
         foreach ($personnel as $rs) {
     $output .='<tr class="hover-actions-trigger btn-reveal-trigger position-static">
     <td class="customer align-middle white-space-nowrap">
-        <a class="d-flex align-items-center text-900 text-hover-1000" href="">
-            <div class="avatar avatar-m">
-                <div class="avatar-name rounded-circle"><span> '.ucfirst(substr($rs->nom,0,1)).' </span></div>
-            </div>
-           <h6 class="mb-0 ms-3 fw-semi-bold">'. ucfirst($rs->nom).' '. ucfirst($rs->prenom).'</h6>
-        </a>
+      <h6 >'. ucfirst($rs->nom).' '. ucfirst($rs->prenom).'</h6>
     </td>
     <td class="city align-middle white-space-nowrap text-900"> '.$rs->email.'   </td>
     <td class="city align-middle white-space-nowrap text-900">'. $rs->phone. '  </td>

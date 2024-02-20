@@ -10,53 +10,43 @@
     <div class="card-header p-4 border-bottom border-300 bg-soft">
       <div class="row g-3 justify-content-between align-items-end">
         <div class="col-12 col-md">
-          <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-edit"></i> Demande de révision budgétaire ou de rallonge budgétaire </h4>
+          <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Budgétisation  <a href=""><i class="ri-refresh-line"></i></a> </h4>
         </div>
         <div class="col col-md-auto">
 
-          <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter la ligne </a>
+          <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter le budget </a>
 
          
         </div>
       </div>
     </div>
     <div class="card-body p-0">
-      <div class="collapse code-collapse" id="search-example-code">
-      </div>
+     
       <div class="p-4 code-to-copy">
         <div id="tableExample3" data-list='{"valueNames":["name","email"],"page":5,"pagination":true}'>
          
           <div class="table-responsive" >
           <table class="table table-bordered  table-sm fs--1 mb-0">
             <tr scope="col" >
-              <td scope="col" style="padding:5px">Rubrique du projet</td>
-              <td scope="col" style="padding:5px">Pays / region</td>
-              <td scope="col" style="padding:5px">No du projet</td>
+              <td scope="col" style="padding:5px"><b>Rubrique du projet</b></td>
+              <td scope="col" style="padding:5px"><b>Pays / region</b></td>
+              <td scope="col" style="padding:5px"><b>N<sup>o</sup> Projet</b></td>
+              <td scope="col" style="padding:5px"><b>Budget</b></td>
+              <td scope="col" style="padding:5px"><b><center>Statut</center></b></td>
             </tr>
             <tr>
               <td style="padding:5px; width:50%"> {{ $showData->title }} </td>
               <td style="padding:5px"> {{ $showData->region }} </td>
               <td style="padding:5px"> {{ $showData->numeroprojet }} </td>
-              <td style="padding:5px"> </td>
-            </tr>
-
-            <tr>
-              <td style="padding:5px">La demande a ete redige par (nom du responsable <br> Lieu et date du projet)</td>
-              <td style="padding:5px" >Devise de comptabilite</td>
-              <td style="padding:5px">No financier</td>
-              <td style="padding:5px">Balance reporte no 12</td>
-            </tr>
-            <tr>
-              <td style="padding:5px"> {{ $userDatas->nom }} {{ $userDatas->prenom }} , 
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-             </td>
-              <td style="padding:5px"> {{ $showData->devise }} </td>
-              <td style="padding:5px">  {{ $showData->numerofinance }} </td>
-              <td style="padding:5px"> {{ $showData->budget }} </td>
-            </tr>
-
-
-            <tr></tr>
+              <td style="padding:5px"> {{ number_format($showData->budget ,0, ',', ' ') }} {{ $showData->devise }}   </td>
+              <td> 
+                @if($sommerapartie == $showData->budget)
+                <center><span class="badge rounded-pill bg-primary font-size-11">Terminer</span></center>
+                @else
+                <center><span class="badge rounded-pill bg-success font-size-11">Encours</span></center>
+                @endif
+              </td>
+           
           </table>
 
           <br>
@@ -64,14 +54,15 @@
           <table class="table table-bordered  table-sm fs--1 mb-0">
           <thead>
             <tr>
-              <th class="sort border-top"> Ligne budgetaire </th>
-              <th class="sort border-top">        <center> Budget      </center>  </th>
-              <th class="sort border-top ps-3">  <center> Depense  </center>  </th>
-              <th class="sort border-top" >          <center>  T1  </center>  </th>
-              <th class="sort border-top" >          <center>  T2  </center>  </th>
-              <th class="sort border-top" >            <center> T3  </center>  </th>
-              <th class="sort border-top" >       <center>  T4  </center>  </th>
-              <th class="sort border-top" >%                                           </th>
+              <th class="sort border-top"><b>Ligne budgétaire</b></th>
+              <th class="sort border-top"><center><b>Budget</b></center></th>
+              <th class="sort border-top"> <center><b>T1</b></center></th>
+              <th class="sort border-top" ><center><B>T2</B></center></th>
+              <th class="sort border-top" ><center><B>T3</B></center></th>
+              <th class="sort border-top" ><center><B>T4</B></center></th>
+              <th class="sort border-top ps-3"><center> <B>Dépense</B></center></th>
+
+              <th class="sort border-top" ><b>%</b> </th>
             </tr>
           </thead>
           <tbody id="show_all_rallonge">
@@ -119,12 +110,32 @@
           success: function(response) 
           {
             if (response.status == 200) {
-              $.notify("Enregistrement reussi !", "success");
-               fetchAllrallonge();
+              toastr.success("Budget reussi avec succès !", "Enregistrement");
+              fetchAllrallonge();
+               $("#addFOrm")[0].reset();
+              $("#addDealModal").modal('hide');
             }
+
+            if (response.status == 201) {
+              toastr.error("Le budget est supérieur au montant globale du budget !", "Attention");
+              
+            $("#addDealModal").modal('show');
+            }
+
+            if (response.status == 202) {
+              toastr.error("Erreur d'execution  !", "Erreur");
+              
+            $("#addDealModal").modal('show');
+            }
+
+            if (response.status == 203) {
+              toastr.error("Une ligne de compte n'est peut recevoir de fois le montant !", "Erreur");
+              
+            $("#addDealModal").modal('show');
+            }
+
             $("#savebtn").text('Sauvegarder');
-            $("#addFOrm")[0].reset();
-            $("#addDealModal").modal('hide');
+           
           }
         });
       });
@@ -202,7 +213,7 @@
           dataType: 'json',
           success: function(response) {
             if (response.status == 200) {
-              $.notify("Compte update Successfully !", "success");
+              toastr.info("Compte update Successfully !", "success");
               Selectdcompte();
                 fetchAlldcompte();
                 Selectsouscompte();
@@ -238,7 +249,7 @@
               },
               success: function(response) {
                 console.log(response);
-                $.notify("Compte deleted Successfully !", "success");
+                toastr.success("Compte deleted Successfully !", "success");
                 fetchAllrallonge();
               }
             });

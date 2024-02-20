@@ -9,7 +9,8 @@
   <meta content="Application des gestions projet CEPBU" name="GoProjet" />
   <meta content="IMPACT-JOB" name="MICHAEL NDALE" />
   <!-- App favicon -->
-  <link rel="shortcut icon" href="{{ asset('element/assets/images/favicon.ico') }}">
+
+  <link rel="shortcut icon" href="{{ asset('element/assets/images/logo.png') }}">
 
   <!-- plugin css -->
   <link href="{{ asset('element/assets/libs/jsvectormap/css/jsvectormap.min.css') }}" rel="stylesheet" type="text/css" />

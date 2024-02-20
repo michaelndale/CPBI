@@ -46,7 +46,16 @@ class DepartementController extends Controller
        
         echo $output;
       } else {
-        echo '<h3 class="text-center text-secondery my-5" >  No record in the database ! </h3>';
+        echo '<tr>
+        <td colspan="3">
+        <center>
+          <h6 style="margin-top:1% ;color:#c0c0c0"> 
+          <center><font size="10px"><i class="far fa-trash-alt"  ></i> </font><br><br>
+          Ceci est vide  !</center> </h6>
+        </center>
+        </td>
+        </tr>
+        ';
       }
     }
   
