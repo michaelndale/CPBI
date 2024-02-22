@@ -185,16 +185,20 @@
                                         <td class="align-middle ps-3 name">Période:</td>
                                         <td class="align-middle email">
                                             <select type="text" class="form-control" name="periode" id="periode" style="width: 100%">
-                                                <option value="T1">T1</option>
-                                                <option value="T2">T2</option>
-                                                <option value="T3">T3</option>
-                                                <option value="T4">T4</option>
+                                             @php
+                                                $periode= Session::get('periode')
+                                             @endphp
+
+                                             @for($i =1 ; $i <= $periode ; $i++ )
+                                                 <option value="T{{$i}}" > T{{$i}} </option>
+                                             @endfor
+                                              
                                             </select>
                                         </td>
 
                                         <td class="align-middle ps-3 name">Date:</td>
                                         <td class="align-middle email">
-                                            <input type="text" class="form-control" name="datefeb" id="datefeb" style="width: 100%" value="{{ date('') }}">
+                                            <input type="date" class="form-control" name="datefeb" id="datefeb" style="width: 100%" value="{{ date('') }}">
                                         </td>
                                     </tr>
                                     <tr>
@@ -223,17 +227,17 @@
 
                                         </td>
                                         <td class="align-middle ps-3 name" style="width:20%">
-                                            <input type="text" class="form-control" value="100 0000" readonly>
+                                           <!-- <input type="text" class="form-control" value="100 0000" readonly> -->
                                         </td>
                                         <td class="align-middle email">
-                                            Taux d’exécution: 100%
-                                            <i id="tauxexecution"></i>
+                                          <!--  Taux d’exécution: 100%
+                                            <i id="tauxexecution"></i> -->
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="align-middle ps-3 name">BC:</td>
                                         <td class="align-middle email">
-                                            <input type="text" class="form-control" name="bc" id="bc" style="width: 100%">
+                                           <input type="text" class="form-control" name="bc" id="bc" style="width: 100%">
                                         </td>
 
                                         <td class="align-middle ps-3 name">Facture:</td>
@@ -257,22 +261,26 @@
                                 <table class="table table-hover table-white" id="tableEstimate">
                                     <thead>
                                         <tr>
-                                            <th style="width: 20px">#</th>
-
-                                            <th class="col-md-6">Description</th>
-
-                                            <th style="width:80px;">Montant</th>
+                                            <th>Num</th>
+                                            <th>Description</th>
+                                            <th>Unité</th>
+                                            <th>Q<sup>té</sup></th>
+                                            <th>Frequence</th>
+                                            <th>P.U</th>
+                                            <th>P.T</th>
 
                                             <th> </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><input class="form-control" style="min-width:40px" type="text" id="numerodetail" name="numerodetail[]" value="1"></td>
-                                            <td><input class="form-control" style="min-width:150px" type="text" id="description" name="description[]"></td>
-                                            <td><input class="form-control unit_price" style="width:200px" type="text" id="unit_cost" name="unit_cost[]"></td>
-                                            <td><input class="form-control qty" type="hidden" id="qty" value="1" name="qty[]"></td>
-                                            <td><input class="form-control total" style="width:200px" type="text" id="amount" name="amount[]" value="0" readonly></td>
+                                            <td><input  style="width:40px" type="text" id="numerodetail" name="numerodetail[]" value="1"></td>
+                                            <td><input  style="width:15px" type="text" id="description" name="description[]"></td>
+                                            <td><input  style="width:15px" type="text" class="unit_price"  id="unit_cost" name="unit_cost[]"></td>
+                                            <td><input  style="width:15px" type="number" class="qty"  id="qty"  name="qty[]"></td>
+                                            <td><input  style="width:15px" type="number" class="frenquency" id="frenquency"  name="frenquency[]""></td>
+                                            <td><input  style="width:15px" type="text"   class="total" id="amount" name="amount[]" value="0" readonly></td>
+                                            <td><input  style="width:15px" type="number" class="frenquency" id="frenquency"  name="frenquency[]""></td>
                                             <td><a href="javascript:void(0)" class="text-success font-18" title="Add" id="addBtn"><i class="fa fa-plus"></i></a></td>
                                         </tr>
 

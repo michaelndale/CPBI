@@ -9,7 +9,7 @@
             <h4 class="mb-sm-0"><i class="fa fa-list"></i> Ligne budgetaire </h4>
 
             <div class="page-title-right">
-            <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter ligne budgetaire </a>
+            <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter la ligne budgetaire </a>
 
             </div>
 
@@ -69,13 +69,13 @@
             <div class="row g-2">
               <div class="col">
               <input value="{{ Session::get('id') }}" type="hidden" name="projetid" id="projetid" >
-                <input id="code" name="code" class="form-control" type="number" placeholder="Entrer le code" /></div>     
+                <input id="code" name="code" class="form-control" type="text" placeholder="Entrer le code" required/></div>     
               </div>
             </div>
 
             <div class="col-sm-6 col-lg-12 col-xl-12">
               <label class="text-1000 fw-bold mb-2">Intitulé du compte</label>
-              <textarea class="form-control" id="libelle" name="libelle"  type="text" placeholder="Entrer la description" style="height:150px"></textarea>
+              <textarea class="form-control" id="libelle" name="libelle"  type="text" placeholder="Entrer la description" style="height:150px" required></textarea>
             </div>
             
           </div>
@@ -115,13 +115,13 @@
             <div class="row g-2">
               <div class="col">
               <input value="{{ Session::get('id') }}" type="hidden" name="projetid" id="projetid" >  
-              <input id="code" name="code" class="form-control" type="number" placeholder="Entrer le code" /></div>     
+              <input id="code" name="code" class="form-control" type="text" placeholder="Entrer le code" required/></div>     
               </div>
             </div>
 
             <div class="col-sm-6 col-lg-12 col-xl-12">
               <label class="text-1000 fw-bold mb-2">Intitulé du compte</label>
-              <textarea class="form-control" id="libelle" name="libelle"  type="text" placeholder="Entrer la description" style="height:100px"></textarea>
+              <textarea class="form-control" id="libelle" name="libelle"  type="text" placeholder="Entrer la description" style="height:100px" required></textarea>
             </div>
             
           </div>
@@ -163,13 +163,13 @@
               <label class="text-1000 fw-bold mb-2">Acc. Non</label>
 
               <div class="row g-2">
-                <div class="col"><input id="code" name="code" class="form-control" type="number" placeholder="Entrer code" /></div>
+                <div class="col"><input id="code" name="code" class="form-control" type="number" placeholder="Entrer code" required/></div>
               </div>
             </div>
 
             <div class="col-sm-6 col-lg-12 col-xl-12">
               <label class="text-1000 fw-bold mb-2">Intitulé du compte</label>
-              <textarea class="form-control" id="libelle" name="libelle" type="text" placeholder="Entrer description" style="height:100px"> </textarea>
+              <textarea class="form-control" id="libelle" name="libelle" type="text" placeholder="Entrer description" style="height:100px" required> </textarea>
             </div>
 
           </div>
@@ -241,15 +241,30 @@
           dataType: 'json',
           success: function(response) 
           {
-            if (response.status == 200) {
-                toastr.success("Compte ajouter avec succees !", "Enregistrement");
+
+          if (response.status == 200) {
+              toastr.success("La ligne de compte ajouté avec succès. !", "Enregistrement");
                 Selectdcompte();
                 fetchAlldcompte();
                 Selectsouscompte();
-            }
-            $("#sendCompte").text('Add compte');
-            $("#addcompteform")[0].reset();
-            $("#addDealModal").modal('hide');
+
+                $("#sendCompte").text('Sauvegarder');
+                $("#addDealModal").modal('hide');
+                $("#addcompteform")[0].reset();
+          }
+
+          if (response.status == 201) {
+            toastr.error("La ligne de compte dans ce projet existe déjà !", "Attention");
+            $("#addDealModal").modal('show');
+            $("#sendCompte").text('Sauvegarder');
+          }
+
+          if (response.status == 202) {
+            toastr.info("Erreur d'execution, Vérifier l’état de votre connexion", "Erreur");
+            $("#addDealModal").modal('show');
+            $("#sendCompte").text('Sauvegarder');
+          }
+
           }
         });
       });

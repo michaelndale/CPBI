@@ -37,15 +37,25 @@
                                 <td>Date : {{ $dataFeb->datefeb }} </td>
                             </tr>
                             <tr>
-                                <td>Ligne budgétaire: {{ $dataLigne->libelle }} <br>
-                                    Taux d’exécution: {{ $sommelignpourcentage }} %</td>
-                                <td rowspan="2">
+                                <td>Ligne budgétaire: {{ $dataLigne->libelle }} </td>
+                            </tr>
+                              <tr>
+                                 <td>   Taux d’exécution de la ligne budgetaire: {{ $sommelignpourcentage }} %</td>
+                            </tr>
+                            <tr>
+                                <td> Taux  globale d’exécution: {{ $POURCENTAGE_GLOGALE }}%</td>
+                            </tr>
+                            <tr>
+                                <td rowspan="3">
                                     Références : <br>
 
                                     B.C: {{ $dataFeb->bc }} &nbsp; &nbsp;&nbsp; Facture: {{ $dataFeb->facture }} &nbsp;&nbsp;&nbsp;O.M : {{ $dataFeb->om }}
 
                                 </td>
                             </tr>
+
+                          
+
                             <tr>
                                 <td>Bénéficiaire :
 
@@ -154,15 +164,15 @@
 
                             <input type="hidden" name="febid" id="febid" value="{{ $dataFeb->id }}" >
 
-                            @if(Auth::id() ==  $dataFeb->acce)
+                            @if(Auth::user()->personnelid ==  $dataFeb->acce)
                             <input type="checkbox" name="accesignature" id="accesignature"  {{ $dataFeb->acce_signe=="1"? 'checked':'' }}> Poser la signature  
                             @endif
 
-                            @if(Auth::id() ==  $dataFeb->comptable)
+                            @if(Auth::user()->personnelid ==  $dataFeb->comptable)
                             <input type="checkbox" name="comptablesignature" id="comptablesignature" {{ $dataFeb->comptable_signe=="1"? 'checked':'' }}> Poser la signature  
                             @endif
 
-                            @if(Auth::id() ==  $dataFeb->chefcomposante)
+                            @if(Auth::user()->personnelid ==  $dataFeb->chefcomposante)
                             <input type="checkbox" id="chefsignature" name="chefsignature"  {{ $dataFeb->chef_signe=="1"? 'checked':'' }}> Poser la signature  
                             @endif
                             

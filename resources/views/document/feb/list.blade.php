@@ -67,6 +67,10 @@
                   </tbody>
 
                 </table>
+
+                <br><br><br><br> <br><br>
+             
+             
                 
               </div>
              
@@ -242,14 +246,19 @@
 
             }
             if (response.status == 201) {
-              toastr.error("Attention: FEB numéro existe déjà !", "info");
+              toastr.error("Attention: FEB numéro existe déjà !", "AAttention");
               $("#addfebModal").modal('show');
               $("#numerofeb_error").text("Numéro existe");
               $('#numerofeb').addClass('has-error');
             }
 
             if (response.status == 202) {
-              toastr.error("Erreur d'execution, verifier votre internet", "error");
+              toastr.error("Erreur d'execution, verifier votre internet", "Attention");
+              $("#addfebModal").modal('show');
+            }
+
+            if (response.status == 203) {
+              toastr.error("Le montant global du feb depasse le budget de la ligne encours", "Attention");
               $("#addfebModal").modal('show');
             }
 

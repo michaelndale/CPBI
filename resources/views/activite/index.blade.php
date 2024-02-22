@@ -98,17 +98,20 @@
             $("#addactiviteForm")[0].reset();
           }
 
-          if (response.status == 202) {
-            toastr.info("Erreur d'execution, verifier votre internet", "error");
+          if (response.status == 201) {
+            toastr.error("Le montant est supérieur au budget du ligne de compte !", "Attention");
             $("#addModale").modal('show');
             $("#addactivitebtn").text('Sauvegarder');
           }
 
-          if (response.status == 201) {
-            toastr.error("Le budget est supérieur au montant globale du budegt du ligne de compte !", "Attention");
+          if (response.status == 202) {
+            toastr.info("Erreur d'execution, verifier votre internet", "Erreur");
+            
             $("#addModale").modal('show');
             $("#addactivitebtn").text('Sauvegarder');
           }
+
+          
 
         }
       });

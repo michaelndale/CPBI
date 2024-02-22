@@ -102,7 +102,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="add_user_btn" id="add_user_btn" class="btn btn-primary">Sauvegarder</button>
+          <button type="submit" name="add_user_btn" id="add_user_btn" class="btn btn-primary"><i class="fas fa-check-circle"></i> Sauvegarder</button>
         </div>
       </div>
     </form>

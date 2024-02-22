@@ -18,7 +18,7 @@ class RallongebudgetController extends Controller
       $budget =session()->get('budget');
     
       $title = 'Budgetisation';
-      $compte= Compte::all();
+      $compte= Compte::where('projetid', $IDP)->get();
       $showData = Project::find($IDP);
 
       $sommerepartie= DB::table('rallongebudgets')
@@ -104,17 +104,24 @@ class RallongebudgetController extends Controller
 
       // poucentage all
 
-      $alldepense_pourcentage = round(($alldepense*100)/$budget);
+      //$alldepense_pourcentage = round(($alldepense*100)/$budget);
 
 
 
       $output = '';
       if ($data->count() > 0) {
         $nombre = 1;
-       
+        $pourcatagesum=0;
         foreach ($data as $datas) {
           $id = $datas->id;
           $ligne = $datas->compteid;
+
+
+          $somme_budget_ligne= DB::table('rallongebudgets')
+          ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+          ->Where('rallongebudgets.projetid', $IDP)
+          ->Where('rallongebudgets.compteid', $ligne )
+          ->SUM('rallongebudgets.budgetactuel');
 
 
           // T1 SOMME
@@ -174,9 +181,9 @@ class RallongebudgetController extends Controller
 
            // poucentage depense
 
-           $pourcentage_depense =round(($total_T*100)/$budget);
+           $pourcentage_depense =round(($total_T*100)/$somme_budget_ligne);
 
-
+           $pourcatagesum += $pourcentage_depense;
 
          
           $montant_budget = number_format($datas->budgetactuel,0, ',', ' ');
@@ -185,12 +192,12 @@ class RallongebudgetController extends Controller
           '<tr>
               <td>  ' .$datas->numero.'&nbsp;&nbsp;&nbsp; '.ucfirst($datas->libelle). '   </td>
               <td align="right"> ' . $montant_budget.' '.$devise.'</td>
-              <td align="right"> ' . $T1 .' '.$devise.'</td>
-              <td align="right"> ' . $T2 .' '.$devise.' </td>
-              <td align="right"> ' . $T3 .' '.$devise.' </td>
-              <td align="right"> ' . $T4 .' '.$devise.'</td>
-              <td align="right"> ' . $total_T  .' '.$devise.'</td>
-              <td align="right"> ' . $pourcentage_depense  .'% </td>
+              <td align="right"> ' .  number_format($T1,0, ',', ' ') .' '.$devise.'</td>
+              <td align="right"> ' . number_format($T2,0, ',', ' ') .' '.$devise.' </td>
+              <td align="right"> ' . number_format($T3,0, ',', ' ') .' '.$devise.' </td>
+              <td align="right"> ' . number_format($T4,0, ',', ' ') .' '.$devise.'</td>
+              <td align="right"> ' . number_format($total_T,0, ',', ' ')  .' '.$devise.'</td>
+              <td align="right"> ' . number_format($pourcentage_depense,0, ',', ' ')  .'% </td>
             </tr>
           ';
           $nombre++;
@@ -199,13 +206,13 @@ class RallongebudgetController extends Controller
         
         $output .= '<tr>
         <td><b>Total</b></td>
-        <td align="right">'.$somme_budget.' '.$devise.'</td>
-        <td align="right">'.$depenseT1.' '.$devise.'</td>
-        <td align="right">'.$depenseT2.' '.$devise.' </td>
-        <td align="right">'.$depenseT3.' '.$devise.'</td>
-        <td align="right">'.$depenseT4.' '.$devise.'</td>
-        <td align="right">'.$alldepense.' '.$devise.'</td>
-        <td align="right">'.$alldepense_pourcentage.'%</td>
+        <td align="right">'.number_format($somme_budget,0, ',', ' ').' '.$devise.'</td>
+        <td align="right">'.number_format($depenseT1,0, ',', ' ').' '.$devise.'</td>
+        <td align="right">'.number_format($depenseT2,0, ',', ' ').' '.$devise.' </td>
+        <td align="right">'.number_format($depenseT3,0, ',', ' ').' '.$devise.'</td>
+        <td align="right">'.number_format($depenseT4,0, ',', ' ').' '.$devise.'</td>
+        <td align="right">'.number_format($alldepense,0, ',', ' ').' '.$devise.'</td>
+        <td align="right">'.number_format($pourcatagesum,0, ',', ' ').'%</td>
         </tr>';
        
         echo $output;
@@ -229,8 +236,12 @@ class RallongebudgetController extends Controller
 
 
       try {
+        $ID = session()->get('id');
         $compte =$request->compteid;
-        $check = Rallongebudget::where('compteid',$compte)->first();
+        
+        $check = Rallongebudget::where('compteid',$compte)
+        ->where('projetid', $ID)
+        ->first();
         
         if($check){
           return response()->json([

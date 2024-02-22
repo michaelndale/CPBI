@@ -160,7 +160,7 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
-            toastr.success("Dossier modifier avec succees !", "Modification");
+            toastr.success("Dossier modifier avec succès !", "Modification");
             fetchAlldfolder();
             $("#editfolderbtn").text('Sauvegarder');
             $("#editFolderModal").modal('hide');
@@ -189,8 +189,8 @@
       let id = $(this).attr('id');
       let csrf = '{{ csrf_token() }}';
       Swal.fire({
-        title: 'Vous sure de vouloir supprimer ?',
-        text: "Si vous le faite vous ne pouvez plus revenir en arriere !",
+        title: 'Êtes vous sûr de vouloir supprimer?',
+        text: "Si vous le faite vous ne pouvez plus revenir en arrière !",
 
         showCancelButton: true,
         confirmButtonColor: 'Green',
@@ -210,7 +210,7 @@
 
 
               if (response.status == 200) {
-                toastr.success("Dossier supprimer avec succees !", "Suppression");
+                toastr.success("Dossier supprimer avec succès !", "Suppression");
                 fetchAlldfolder();
               }
 

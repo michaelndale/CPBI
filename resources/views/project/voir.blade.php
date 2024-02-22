@@ -24,6 +24,18 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li>
+                    <button class="dropdown-item" href="{{ route('listfeb') }}"><i class=" fas fa-times-circle  font-size-16 align-middle me-2 text-muted"></i>
+                      Bloquer la modification</button>
+                  </li>
+
+                  <li>
+                    <button class="dropdown-item" href="{{ route('listfeb') }}"><i class=" mdi mdi-check-circle font-size-16 align-middle me-2 text-muted"></i> Autoriser la modification</button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item" href="{{ route('listfeb') }}"><i class="fas fa-edit font-size-16 align-middle me-2 text-muted"></i>
+                      Modifier le projet</button>
+                  </li>
+                  <li>
                     <button class="dropdown-item" href="{{ route('listfeb') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
                       FEB</button>
                   </li>
@@ -58,13 +70,15 @@
 
             </div>
 
-            <b>Statut du projet :</b> <span class="badge badge-phoenix badge-phoenix-primary">
+            <b><i class="fa fa-info-circle"></i> Statut du projet :</b> <span class="badge rounded-pill bg-success" >  {{ $dataProject->statut }} </span>  <br>
 
-              @if ($dataProject->statut==0)
-              Encours
+            <b><i class="fa fa-edit"></i> Autorisation de modification :</b>  
+            @if($dataProject->autorisation==1)
+              <span class="badge rounded-pill bg-primary" > Projet Ouvert </span>
               @else
-              Terminer
-              @endif
+              <span class="badge rounded-pill bg-danger" > Fermer </span>
+            @endif
+              
 
               <span class="ms-1 uil uil-stopwatch"></span></span>
           </div>
@@ -77,16 +91,16 @@
                       <tbody>
                         <tr>
                           <td class="align-top py-1">
-                            <div class="d-flex"><span class="fa-solid fa-user me-2 text-700 fs--1"></span>
-                              <h5 class="text-900 mb-0 text-nowrap">Responsable :</h5>
+                            <div class="d-flex">
+                              <h5 class="text-900 mb-0 text-nowrap"><i class="fa fa-user-circle"></i> Responsable  :</h5>
                             </div>
                           </td>
-                          <td class="ps-1 py-1"><a class="fw-semi-bold d-block lh-sm" href="#!">{{ $responsables->nom }} {{ $responsables->prenom }}</a></td>
+                          <td class="ps-1 py-1"><a class="fw-semi-bold d-block lh-sm" href="#!"> {{ ucfirst($responsables->nom) }} {{ ucfirst($responsables->prenom) }}</a></td>
                         </tr>
                         <tr>
                           <td class="align-top py-1">
-                            <div class="d-flex"><span class="fa-regular fa-credit-card me-2 text-700 fs--1"></span>
-                              <h5 class="text-900 mb-0 text-nowrap">Budget : </h5>
+                            <div class="d-flex">
+                              <h5 class="text-900 mb-0 text-nowrap"> <span class="fas fa-money-check-alt"></span> Budget : </h5>
                             </div>
                           </td>
                           <td class="fw-bold ps-1 py-1 text-1000"> {{ number_format($dataProject->budget,0, ',', ' ') }} {{ $dataProject->devise }}</td>
@@ -99,7 +113,7 @@
                       <tbody>
                         <tr>
                           <td class="align-top py-1 text-900 text-nowrap fw-bold">Numéro projet : </td>
-                          <td class="text-600 fw-semi-bold ps-3">#{{ $dataProject->numeroprojet }}</td>
+                          <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->numeroprojet }}</td>
                         </tr>
 
                         <tr>
@@ -114,17 +128,26 @@
                         </tr>
                         <tr>
                           <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression du projet:</td>
-                          <!-- <td class="text-warning fw-semi-bold ps-3">80%</td> -->
+                            @php
+                             $pourcentage = round(($sommerepartie*100)/$dataProject->budget) ;
+                             if($pourcentage < 50){
+                                $color= 'primary';
+                             }elseif($pourcentage >=50 AND $pourcentage < 80){
+                                $color= 'success';
+                             }elseif($pourcentage <= 80 AND $pourcentage >= 100){
+                                $color= 'danger';
+                             }else{
+                              $color= 'warning';
+                             }
+                           @endphp 
+                           <td class="text-{{ $color }} fw-semi-bold ps-3">  {{ $pourcentage }} %
+                            </td> 
                         </tr>
                         <tr>
                           <td class="align-top py-1 text-900 text-nowrap fw-bold">Date de creation projet :</td>
-                          <td class="text-warning fw-semi-bold ps-3">{{ date('d.m.Y', strtotime($dataProject->created_at))  }}</td>
+                          <td class="text-600 fw-semi-bold ps-3">{{ date('d.m.Y', strtotime($dataProject->created_at))  }}</td>
                         </tr>
-                      </tbody>
-                    </table>
-
-                    <table class="lh-sm">
-                      <tbody>
+                      
                         <tr>
                           <td class="align-top py-1 text-900 text-nowrap fw-bold">Region : </td>
                           <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->region }}</td>

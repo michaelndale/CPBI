@@ -31,6 +31,7 @@ class AffectationController extends Controller
                 $module_affectation = [
                     'projectid' => $request->project_id,
                     'userid' => Auth::id(),
+                    'role' => $request->role[$i],
                     'memberid' => $request->personnel[$i],
                 ];
                 DB::table('affectations')->insert($module_affectation);
@@ -43,8 +44,10 @@ class AffectationController extends Controller
             {
                 $module_affectation = [
                     'projectid' => $request->project_id,
-                    'userid' => Auth::id(),
                     'memberid' => $request->personnel[$i],
+                    'role' => $request->role[$i],
+                    'userid' => Auth::id(),
+                    
                 ];
                 DB::table('affectations')->insert($module_affectation);
             }
@@ -60,7 +63,7 @@ class AffectationController extends Controller
     public function index ()
     {
       $title='Affectation project';
-      $member = DB::table('users')->orWhere('fonction', '!=','Chauffeur')->get();
+      $member = DB::table('personnels')->orWhere('fonction', '!=','Chauffeur')->get();
       $active = 'Project';
 
       $idp = session()->get('id');

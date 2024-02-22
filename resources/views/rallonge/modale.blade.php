@@ -24,11 +24,11 @@
           <div class="col-sm-6 col-lg-12 col-xl-8">
             <label class="text-1000 fw-bold mb-2">Intitulé du compte</label>
             <select class="form-select" id="compteid" name="compteid"  type="text" placeholder="Entrer intitulé du compte" required>
-              <option>--Selectionner compte--</option>
+            <option disabled="true" selected="true" value="">--Selectionner compte--</option>
               @forelse ($compte as $comptes)
               <option value="{{ $comptes->id }}">{{ ucfirst($comptes->numero) }} : {{ ucfirst($comptes->libelle) }}</option>
               @empty
-              <option>--Aucun compte--</option>
+              <option disabled="true" selected="true">--Aucun compte--</option>
               @endforelse
               
             </select>

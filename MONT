@@ -1,0 +1,40 @@
+<?PHP
+  $IDP = session()->get('id');
+  $IDL = $request->compteid;
+
+      $somme_budget_ligne= DB::table('rallongebudgets')
+       ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+       ->Where('rallongebudgets.projetid', $IDP)
+       ->Where('rallongebudgets.compteid', $IDL)
+       ->SUM('rallongebudgets.budgetactuel');
+
+
+       $somme_activite_ligne= DB::table('activities')
+       ->Where('projectid', $IDP)
+       ->Where('compteidr', $IDL)
+       ->SUM('montantbudget');
+
+
+       $montant_somme = $request->montant + $somme_activite_ligne;
+
+       if($somme_budget_ligne >= $montant_somme ){ 
+
+            OK
+       }else{
+
+            non
+       }
+
+
+
+
+       $ID = session()->get('id');
+      $compte = DB::table('rallongebudgets')
+              ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+              ->Where('rallongebudgets.projetid', $ID)
+              ->get();
+
+              $sommerepartie= DB::table('rallongebudgets')
+              ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+              ->Where('rallongebudgets.projetid', $key->id)
+              ->SUM('budgetactuel');

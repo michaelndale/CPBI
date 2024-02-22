@@ -117,7 +117,7 @@
             }
 
             if (response.status == 201) {
-              toastr.error("Le budget est supérieur au montant globale du budget !", "Attention");
+              toastr.error("Le montant est supérieur au montant globale du budget !", "Attention");
               
             $("#addDealModal").modal('show');
             }

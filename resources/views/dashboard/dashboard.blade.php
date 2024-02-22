@@ -36,7 +36,7 @@
                                                         <div id="chart-mini1" class="apex-chart"></div>
                                                     </div>
                                                 </div>
-                                                <p class="mb-0 font-size-14 fw-bold mt-2 "> ~Tout les projets</span></p>
+                                                <p class="mb-0 font-size-14 fw-bold mt-2 "> <span class="text-muted fw-normal"> ~  Tout les projets</span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -53,7 +53,7 @@
                                                         <div id="chart-mini2" class="apex-chart"></div>
                                                     </div>
                                                 </div>
-                                                <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"> ~ Tous les personnels</span></p>
+                                                <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~  Tous les personnels</span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -64,13 +64,13 @@
                                                 <div class="d-flex flex-wrap pb-3 gap-3">
                                                     <div class="flex-grow-1 overflow-hidden">
                                                         <p class="text-truncate mb-2">Activités</p>
-                                                        <h4 class="mt-2 mb-0">{{ $activite->count(); }} <span class="badge bg-subtle-primary text-primary font-size-10 ms-1"><i class="mdi mdi-arrow-up"></i> 32%</sup></h4>
+                                                        <h4 class="mt-2 mb-0">{{ $activite->count(); }} <span class="badge bg-subtle-primary text-primary font-size-10 ms-1"><i class="mdi mdi-arrow-up"></i> {{ $activite->count(); }}%</sup></h4>
                                                     </div>
                                                     <div class="text-primary">
                                                         <div id="chart-mini3" class="apex-chart"></div>
                                                     </div>
                                                 </div>
-                                                <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate">232<span class="text-muted fw-normal"> ~ vs. previous month</span></p>
+                                                <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Tout les activités </span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -87,7 +87,7 @@
                                                         <div id="chart-mini4" class="apex-chart"></div>
                                                     </div>
                                                 </div>
-                                                <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate">Encours d'exécution<span class="text-muted fw-normal"> ~ vs. previous month</span></p>
+                                                <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Encours d'exécution</span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -111,10 +111,10 @@
                                            
         
                                             <div class="mt-4 text-center">
-                                            <select class="form-select classcategory"  >
-                                                <option disabled="true" selected="true">--Classement de dossier--</option>
+                                            <select class="form-select classcategory"  id="classcategory" >
+                                                <option disabled="true" selected="true">--Dossier--</option>
                                                 @foreach ($folder as $folders)
-                                                <option value="{{ $folders->id }}">{{ $folders->title }} </option>
+                                                <option value="{{ $folders->id }}">{{ ucfirst($folders->title) }} </option>
                                                 @endforeach
                                               </select>
                                             </div>
@@ -150,7 +150,7 @@
                                                         </th>
                                                         <th>Numéro</th>
                                                         <th>Titre projet</th>
-                                                        <th>Date debut</th>
+                                                        <th>Date début</th>
                                                         <th>Statut</th>
                                                         <th>Année</th>
                                                     </tr>
@@ -158,9 +158,9 @@
                                                 <tbody class="list tableviewsclass" >
                                                   <tr>
                                                     <td colspan="6">
-                                                      <h5 style="margin-top:1% ;color:#c0c0c0"> 
+                                                      <h6 style="margin-top:1% ;color:#c0c0c0"> 
                                                       <center><font size="5px"><i class="fa fa-search"  ></i> </font><br><br>
-                                                      Sélectionner le classeur et l'année</center> </h5>
+                                                      Sélectionner le dossier et l'année</center> </h6>
                                                    </td>
                         
                                                   </tr>
@@ -217,7 +217,9 @@
             op+='<option value="0" selected disabled>Aucun </option>';
             document.getElementById("annee").innerHTML = op
 
-            alert("Attention!!\n le classeur n'a pas de projet refferencer ! ");
+          
+
+            toastr.error("Attention!!\n le dossier n'a pas de projet", "Information");
 
             
           }else{
@@ -230,14 +232,15 @@
 				 
 				},
 				error:function(){
-          alert("Attention! \n Erreur de connexion a la base de donnee ,\n verifier votre connection");
+      
+          toastr.error("Erreur de connexion a la base de donnee ,\n verifier votre connection", "Attention");
 				}
 			});
 		});
 
 		$(document).on('change','.annee',function () {
-			var ann_id=$(this).val();
-    
+			var ann_id= $(this).val();
+            var classcategory =  document.getElementById('classcategory').value; 
 
 			var a=$(this).parent();
 		
@@ -246,7 +249,7 @@
 				type:'get',
 				
         url:"{{ route ('findAnnee') }}",
-				data:{'id':ann_id},
+				data:{'id':ann_id,'docid':classcategory},
 				dataType:'json',
 				success:function(data){
 
@@ -272,7 +275,7 @@
           tarea += '<td class="closed-won border-end ">'+data[i].title+'</td>';
           tarea += '<td class="closed-won border-end "><center>'+data[i].start_date+'</center></td>';
           tarea += '<td class="closed-won border-end"><center>'+data[i].deadline+'</center></td>';
-          tarea += '<td class="closed-won border-end"><center>'+statut+'</center></td>';
+          tarea += '<td class="closed-won border-end"><center>'+data[i].statut+'</center></td>';
           tarea += '<td ><center>'+data[i].annee+'</center></td>';
           tarea += '</tr>';
         

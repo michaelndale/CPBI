@@ -7,6 +7,7 @@ use App\Http\Requests\UseRequest;
 use App\Http\Requests\UserpassupRequest;
 use App\Http\Requests\UserupRequest;
 use App\Models\Departement;
+use App\Models\Fonction;
 use App\Models\Personnel;
 use App\Models\Profile;
 use App\Models\Status;
@@ -28,7 +29,7 @@ class AuthController extends Controller
     $title = 'Utilisateur';
     $active = 'Parameter';
     $personnel = Personnel::all();
-    $profile = profile::all();
+    $profile = Fonction::all();
     $department = Departement::all();
     $statut = Status::all();
     return view(

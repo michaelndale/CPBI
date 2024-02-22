@@ -9,6 +9,7 @@ use App\Models\Folder;
 use App\Models\Historique;
 use App\Models\Notification;
 use App\Models\Project;
+use App\Models\Rallongebudget;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -22,17 +23,22 @@ class ActivityController extends Controller
       $title='Activite';
      
       $dataProjet = Project::all();
-      $dataCategorie = Catactivity::all();
+   
 
       $ID = session()->get('id');
-      $compte = Compte::Where('projetid', $ID)
-                ->get();
+      $compte = DB::table('rallongebudgets')
+              ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+              ->Where('rallongebudgets.projetid', $ID)
+              ->get();
+
+           
+       
 
       return view('activite.index', 
         [
           'title' =>$title,
           'dataProject' => $dataProjet,
-          'dataCategorie' => $dataCategorie,
+         
          
           'compte' => $compte,
       ]);
@@ -46,6 +52,12 @@ class ActivityController extends Controller
             ->orderby('id','DESC')
             ->Where('projectid', $ID)
             ->get();
+
+            $somme_activite= DB::table('activities')
+            ->Where('projectid', $ID)
+            ->SUM('montantbudget');
+
+           
                
       $output = '';
       if ($act->count() > 0) {
@@ -94,13 +106,25 @@ class ActivityController extends Controller
               <a href="#" id="' . $rs->id . '" class="text-success mx-1 observationshow" data-bs-toggle="modal" data-bs-target="#TableCommenteModale" title="Observation" ><i class="ri-wechat-line"></i> </a>
               </td>
            
-              <td>' . ucfirst($rs->montantbudget).' '. $devise.'</td>
+              <td align="right">' . number_format($rs->montantbudget,0, ',', ' ').' '. $devise.'</td>
               <td><center><span class="badge rounded-pill bg-'.$class.' font-size-11">' . ucfirst($rs->etat_activite). '</span></center></td>
               <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
               
             </tr>';
           $nombre++;
         }
+        $output.='
+        <tr>
+          <td colspan="3">
+            Total
+          </td>
+            <td align="right"> 
+            
+              <b> '.number_format($somme_activite,0, ',', ' ').' BIF</b>
+            
+            </td>
+           
+        </tr>';
         echo $output;
       } else {
         echo
@@ -124,31 +148,58 @@ class ActivityController extends Controller
       // insert a new ajax request
       public function store(Request $request )
       {
-        
-       // $operation ="Nouveau activite: ".$request->title;
-       // $link ='listactivity';
-        //$notis->operation = $operation;
-        ////$his->userid  = Auth()->user()->id;
-       // $notis->link = $link;
-       // $notis->save();
+
+        try {
+
+        $IDP = session()->get('id');
+        $IDL = $request->compteid;
+      
+       $somme_budget_ligne= DB::table('rallongebudgets')
+       ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+       ->Where('rallongebudgets.projetid', $IDP)
+       ->Where('rallongebudgets.compteid', $IDL)
+       ->SUM('rallongebudgets.budgetactuel');
 
 
-        $activity = new Activity();
-        
-        $activity->projectid = $request->projetid;
-        $activity->compteidr = $request->compteid;
-        $activity->titre = $request->titre;
-        $activity->montantbudget= $request->montant;
-        $activity->etat_activite= $request->etat;
-        $activity->userid= Auth::id();
+       $somme_activite_ligne= DB::table('activities')
+       ->Where('projectid', $IDP)
+       ->Where('compteidr', $IDL)
+       ->SUM('montantbudget');
 
-        $activity->save();
+      
 
+       $montant_somme = $request->montant + $somme_activite_ligne;
+
+       if($somme_budget_ligne >= $montant_somme ){
+          $activity = new Activity();
+          
+          $activity->projectid = $request->projetid;
+          $activity->compteidr = $request->compteid;
+          $activity->titre = $request->titre;
+          $activity->montantbudget= $request->montant;
+          $activity->etat_activite= $request->etat;
+          $activity->userid= Auth::id();
+
+          $activity->save();
+
+          return response()->json([
+          'status' => 200,
+          
+          ]);
+       }else{
         return response()->json([
-         'status' => 200,
-         
+          'status' => 201,
         ]);
         
+       }
+
+      } catch (Exception $e) {
+        return response()->json([
+          'status' => 202,
+         // dd($e)
+        ]);
+      }
+      
         
       }
 

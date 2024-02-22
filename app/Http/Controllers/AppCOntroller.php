@@ -21,8 +21,8 @@ class AppCOntroller extends Controller
       $project = Project::all();
       $user = User::all();
       $activite= Activity::all();
-      $encours = Project::where('statut',1)->Count();
-      $folder = Folder::all();
+      $encours = Project::where('statut','Activé')->Count();
+      $folder = Folder::orderBy('title', 'ASC')->get();
     //  $dernier = Project::orderBy('id', 'DESC')->limit(1)->get();
       
       return view('dashboard.dashboard', 
@@ -64,9 +64,14 @@ class AppCOntroller extends Controller
 
     try {
 
+      $anne = $request->id;
+      $docid= $request->docid;
+
+  
 		    $p=DB::table('projects')
           ->select('numeroprojet','title','start_date','deadline','annee','id','statut')
-          ->where('annee',$request->id)
+          ->where('annee',$anne)
+          ->where('numerodossier',$docid)
           ->orderBy('id', 'DESC')
           ->get();
           return response()->json($p);

@@ -10,6 +10,7 @@ use App\Models\Historique;
 use App\Models\Notification;
 use App\Models\Service;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -66,7 +67,9 @@ class DapController extends Controller
       // insert a new employee ajax request
       public function store(Request $request , Notification $notis, Historique $his)
       {
-        
+
+        try {
+          
         $numerodap = $request->numerodap;
         $check = dap::where('numerodap',$numerodap)->first();
         if($check){
@@ -135,6 +138,12 @@ class DapController extends Controller
        
       ]);
     }   
+
+  } catch (Exception $e) {
+    return back()->with('failed', 'Echec ! vous avez une erreur d\'execution ');
+  }
+
+
   }
 
     public function list()

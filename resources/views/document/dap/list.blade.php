@@ -82,6 +82,33 @@
 
   <BR><BR>
 
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $(document).on('change', '.febid', function() {
+            var febref = $(this).val();
+            var div = $(this).parent();
+            var op = " ";
+            $.ajax({
+                type: 'get',
+                url: "{{ route ('getfeb') }}",
+                data: {
+                    'id': febref
+                },
+                success: function(reponse) {
+                    $("#Showpoll").html(reponse);
+                 },
+                error: function() {
+                    alert("Attention! \n Erreur de connexion a la base de donnee ,\n verifier votre connection");
+                }
+            });
+        });
+    });
+</script>
+
   <script>
 $(function(){
 

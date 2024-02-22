@@ -367,10 +367,10 @@
                   </ul>
                 </li>
                 <li><a href="{{ route('conducteur') }}">Conducteurs</a></li>
-                <li><a href="email-inbox.html">Entretiens</a></li>
-                <li><a href="email-inbox.html">Reparation</a></li>
-                <li><a href="email-inbox.html">Carburent</a></li>
-                <li><a href="email-inbox.html">Piece</a></li>
+                <li><a href="#">Entretiens</a></li>
+                <li><a href="#">Reparation</a></li>
+                <li><a href="#">Carburent</a></li>
+                <li><a href="#">Piece</a></li>
               </ul>
             </li>
 

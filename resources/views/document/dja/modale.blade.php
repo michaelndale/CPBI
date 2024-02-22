@@ -21,6 +21,10 @@
                                         <input value="{{ Session::get('id') }}" type="hidden" name="projetid" id="projetid" >
                                         <input value="{{ Session::get('title') }}" class="form-control" disabled  >     
                                     </td>
+
+                                    
+                               
+                               
                                 </tr>
                                 <tr>
                                     <td class="align-middle ps-3 name" colspan="3">Béneficiaire <br>

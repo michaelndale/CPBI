@@ -97,6 +97,7 @@ class ProjectController extends Controller
         $project->description= $request->description;
         $project->budget= $budget;
         $project->annee= $annee;
+        $project->periode= $request->periode;
         $project->userid = Auth()->user()->id;
 
         $project->save();
@@ -149,8 +150,9 @@ class ProjectController extends Controller
       session()->put('ligneid', $key->ligneid);
       session()->put('devise', $key->devise);
       session()->put('budget', $key->budget);
+      session()->put('periode', $key->periode);
 
-      $ID = session()->get('id');
+     
       $act = DB::table('activities')
             ->orderby('id','DESC')
             ->Where('projectid', $key->id)
@@ -161,8 +163,15 @@ class ProjectController extends Controller
             ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
             ->Where('users.id', $key->lead)
             ->get();
+
+           
       
-     
+            $sommerepartie= DB::table('rallongebudgets')
+            ->Where('projetid', $key->id)
+            ->SUM('budgetactuel');
+
+           
+
 
       return view('project.voir', 
         [
@@ -170,7 +179,8 @@ class ProjectController extends Controller
           'active' => $active,
           'dataProject' => $key,
           'activite' => $act,
-          'responsable' => $user
+          'responsable' => $user,
+          'sommerepartie' => $sommerepartie
           
         ]);
     }

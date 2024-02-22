@@ -39,6 +39,10 @@ Route::post('/login', [AuthController::class, 'handlelogin'])->name('handlelogin
 
 Route::middleware('auth')->group(function (){ 
 
+    
+
+   
+
     Route::prefix('dashboard')->group(function () {
         Route::get('/', [AppCOntroller::class, 'index'] )->name('dashboard');
         Route::get('/findClaseur',[AppCOntroller::class, 'findClaseur'] )->name('findClaseur');
@@ -180,6 +184,8 @@ Route::middleware('auth')->group(function (){
         Route::delete('/deletefeb', [FebController::class, 'delete'])->name('deletefeb');
         Route::get('/{key}/view/', [FebController::class, 'show'])->name('key.viewFeb');
     });
+
+    Route::get('/getfeb',[FebController::class, 'findfebelement'] )->name('getfeb');
 
     Route::prefix('bpc')->group(function () {
      

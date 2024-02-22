@@ -3,60 +3,50 @@
 namespace App\Http\Controllers;
 
 use App\Models\Compte;
+use Exception;
 use Illuminate\Http\Request;
 
 class CompteController extends Controller
 {
-    public function index()
-    {
-      $ID = session()->get('id');
-      $active = 'Project';
-      $title = 'Compte & Ligne';
-      $compte = Compte::where('compteid', '=', NULL)
-                ->where('projetid',$ID)
-                ->get();
+  public function index()
+  {
+    $ID = session()->get('id');
+    $active = 'Project';
+    $title = 'Compte & Ligne';
+    $compte = Compte::where('compteid', '=', NULL)
+      ->where('projetid', $ID)
+      ->get();
+    return view(
+      'compteligne.index',
+      [
+        'title' => $title,
+        'active' => $active,
+        'compte' => $compte
+      ]
+    );
+  }
 
-      return view(
-        'compteligne.index',
-        [
-          'title' => $title,
-          'active' => $active,
-          'compte' => $compte,
-        
-        ]
-      );
-    }
-  
-    public function selectcompte()
-    {
-      $ID = session()->get('id');
-      $service = Compte::where('compteid', '=', NULL)
-                ->where('projetid',$ID)
-                ->get();
+  public function selectcompte()
+  {
+    $ID = session()->get('id');
+    $service = Compte::where('compteid', '=', NULL)
+      ->where('projetid', $ID)
+      ->get();
+    $output = '';
+    if ($service->count() > 0) {
 
-      
-      $output = '';
-      if ($service->count() > 0) {
-
-       $output .=' <select class="form-select" id="compteid" name="compteid">
+      $output .= ' <select class="form-select" id="compteid" name="compteid">
        <option value="">Aucun</option>';
-        foreach ($service as $rs) {
-          
-          $output .= '
-         
-          <option value="' .$rs->id. '" >' . ucfirst($rs->gc_libelle). '</option>
-         
+      foreach ($service as $rs) {
+        $output .=
+          '
+              <option value="' . $rs->id . '" >' . ucfirst($rs->gc_libelle) . '</option>
             ';
-           
-            }
-
-           $output .=' </select>';
-
-         
-      
-        echo $output;
-      } else {
-        echo ' <tr>
+      }
+      $output .= ' </select>';
+      echo $output;
+    } else {
+      echo ' <tr>
                 <td colspan="4">
                 <center>
                   <h6 style="margin-top:1% ;color:#c0c0c0"> 
@@ -66,52 +56,50 @@ class CompteController extends Controller
                 </td>
                 </tr>
              ';
-      }
     }
+  }
 
-    public function sousselectcompte()
-    {
-      $ID = session()->get('id');
-      $service = Compte::where('compteid', '!=', 'NULL')
-                ->where('projetid',$ID)
-                ->get();;
-      $output = '';
-      if ($service->count() > 0) {
+  public function sousselectcompte()
+  {
 
-       $output .=' <select class="form-select" id="souscompteid" name="souscompteid">
+    $ID = session()->get('id');
+    $service = Compte::where('compteid', '!=', 'NULL')
+      ->where('projetid', $ID)
+      ->get();;
+    $output = '';
+    if ($service->count() > 0) {
+
+      $output .= '<select class="form-select" id="souscompteid" name="souscompteid">
        <option value="">Aucun</option>';
-        foreach ($service as $rs) {
-          
-          $output .= '
-         
-          <option value="'.$rs->id.'" >' . ucfirst($rs->libelle). '</option>
-         
+      foreach ($service as $rs) {
+        $output .= '
+            <option value="' . $rs->id . '" >' . ucfirst($rs->libelle) . '</option>
             ';
-           
-            }
-
-           $output .=' </select>';
-      
-        echo $output;
-      } else {
-        echo '<h3 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h3>';
       }
+      $output .= ' </select>';
+      echo $output;
+    } else {
+      echo '<h3 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h3>';
     }
+  }
 
 
-    public function fetchAll()
-    {
-      $service = Compte::where('compteid', '=', NULL)->get();
-      $output = '';
-      if ($service->count() > 0) {
-       
-        $nombre = 1;
-        foreach ($service as $rs) {
-          $id = $rs->id;
-          $output .= '<tr >
+  public function fetchAll()
+  {
+    $ID = session()->get('id');
+    $service = Compte::where('compteid', '=', NULL)
+      ->where('projetid', $ID)
+      ->get();
+    $output = '';
+    if ($service->count() > 0) {
+
+      $nombre = 1;
+      foreach ($service as $rs) {
+        $id = $rs->id;
+        $output .= '<tr >
               <td class="align-middle ps-3 name"><b>' . $nombre . '</td>
-              <td><b>' . ucfirst($rs->numero). '</b></td>
-              <td><b>' . ucfirst($rs->libelle). '</b></td>
+              <td><b>' . ucfirst($rs->numero) . '</b></td>
+              <td><b>' . ucfirst($rs->libelle) . '</b></td>
               <td>
               <center>
               <a href="#" id="' . $rs->id . '" class="text-success mx-1 savesc" data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte" title="Ajouter sous compte"><i class="fa fa-plus-circle"></i></a>
@@ -120,21 +108,21 @@ class CompteController extends Controller
                 </center>
                 </td>
             </tr>
-            
             ';
 
-          $sous_compte= Compte::where('compteid', $id)->where('souscompteid', '=', NULL)->get();
-          if ($sous_compte->count() > 0) {
-            $ndale = 1;
+        $sous_compte = Compte::where('compteid', $id)
+          ->where('souscompteid', '=', NULL)
+          ->where('projetid', $ID)
+          ->get();
+        if ($sous_compte->count() > 0) {
+          $ndale = 1;
           foreach ($sous_compte as $sc) {
             $ids = $sc->id;
-            $output .='
+            $output .= '
                   <tr>
-                    <td class="align-middle ps-3 name">' .$nombre.'.'.$ndale . '</td>
-                 
-                    <td>' . ucfirst($sc->numero). '</td>
-                    <td>' . ucfirst($sc->libelle). '</td>
-                  
+                    <td class="align-middle ps-3 name">' . $nombre . '.' . $ndale . '</td>
+                    <td>' . ucfirst($sc->numero) . '</td>
+                    <td>' . ucfirst($sc->libelle) . '</td>
                     <td>
                     <center>
                         <a href="#" id="' . $sc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
@@ -144,21 +132,21 @@ class CompteController extends Controller
                         </td>
                   </tr>
             ';
-            $ndale ++;
+            $ndale++;
           }
 
-        
-          $sous_sous_compte= Compte::where('souscompteid', $ids)->get();
-        if ($sous_sous_compte->count() > 0) {
-          $nd = 1;
-        foreach ($sous_sous_compte as $ssc) {
-          $output .='
+
+          $sous_sous_compte = Compte::where('souscompteid', $ids)
+            ->where('projetid', $ID)
+            ->get();
+          if ($sous_sous_compte->count() > 0) {
+            $nd = 1;
+            foreach ($sous_sous_compte as $ssc) {
+              $output .= '
                 <tr>
-                  <td class="align-middle ps-3 name">' .$nombre.'.'.$ndale.'.'.$nd. '</td>
-               
-                  <td>' . ucfirst($ssc->numero). '</td>
-                  <td>' . ucfirst($ssc->libelle). '</td>
-                
+                  <td class="align-middle ps-3 name">' . $nombre . '.' . $ndale . '.' . $nd . '</td>
+                  <td>' . ucfirst($ssc->numero) . '</td>
+                  <td>' . ucfirst($ssc->libelle) . '</td>
                   <td>
                     <center>
                     <a href="#" id="' . $ssc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
@@ -168,23 +156,21 @@ class CompteController extends Controller
                      </td>
                 </tr>
           ';
-          $nd ++;
+              $nd++;
+            }
+          }
         }
-        
+
+
+
+
+
+        $nombre++;
       }
-          
-        }
 
-
-        
-            
-            
-          $nombre++;
-        }
-      
-        echo $output;
-      } else {
-        echo ' <tr>
+      echo $output;
+    } else {
+      echo ' <tr>
                 <td colspan="4">
                 <center>
                   <h6 style="margin-top:1% ;color:#c0c0c0"> 
@@ -194,88 +180,125 @@ class CompteController extends Controller
                 </td>
                 </tr>
              ';
+    }
+  }
+
+  // Insert a new ligne budgetaire ajax request
+  public function store(Compte $gc, Request $request)
+  {
+    try {
+      $ID = session()->get('id');
+      $title = $request->libelle;
+      $check = Compte::where('libelle', $title)
+        ->where('projetid', $ID)
+        ->first();
+      if ($check) {
+        return response()->json([
+          'status' => 201,
+        ]);
+      } else {
+        $gc = new Compte();
+
+        $gc->projetid = $request->projetid;
+        $gc->numero = $request->code;
+        $gc->libelle = $request->libelle;
+        $gc->userid = Auth()->user()->id;
+
+        $gc->save();
+        return response()->json([
+          'status' => 200,
+        ]);
       }
-    }
-  
-    // insert a new service ajax request
-    public function store(Compte $gc, Request $request)
-    {
-      $gc = new Compte();
-      $gc->projetid = $request->projetid;
-      $gc->numero = $request->code;
-      $gc->libelle = $request->libelle;
-      $gc->userid = Auth()->user()->id;
-      $gc->save();
+    } catch (Exception $e) {
       return response()->json([
-        'status' => 200,
+        'status' => 202,
       ]);
     }
+  }
 
-    public function storesc( Request $request)
-    {
+  public function storesc(Request $request)
+  {
 
-      $gl = new Compte();
-      $gl->projetid = $request->projetid;
-      $gl->compteid = $request->cid;
-      $gl->numero = $request->code;
-      $gl->libelle = $request->libelle;
-      $gl->userid = Auth()->user()->id;
-      $gl->save();
+    try {
+      $ID = session()->get('id');
+      $title = $request->libelle;
+      $check = Compte::where('libelle', $title)
+        ->where('projetid', $ID)
+        ->first();
+      if ($check) {
+        return response()->json([
+          'status' => 201,
+        ]);
+      } else {
 
+        $gl = new Compte();
+        $gl->projetid = $request->projetid;
+        $gl->compteid = $request->cid;
+        $gl->numero = $request->code;
+        $gl->libelle = $request->libelle;
+        $gl->userid = Auth()->user()->id;
+        $gl->save();
+
+        return response()->json([
+          'status' => 200,
+        ]);
+      }
+    } catch (Exception $e) {
       return response()->json([
-        'status' => 200,
+        'status' => 202,
       ]);
     }
+  }
 
-    public function storessc(Compte $gl, Request $request)
-    {
-      $gl = new Compte();
-      $gl->projetid = $request->projetid;
-      $gl->compteid = $request->scid;
-      $gl->souscompteid = $request->sscid;
-      $gl->numero = $request->code;
-      $gl->libelle = $request->libelle;
-      $gl->userid = Auth()->user()->id;
-      $gl->save();
-      return response()->json([
-        'status' => 200,
-      ]);
-    }
+  public function storessc(Compte $gl, Request $request)
+  {
+    $gl = new Compte();
+    $gl->projetid = $request->projetid;
+    $gl->compteid = $request->scid;
+    $gl->souscompteid = $request->sscid;
+    $gl->numero = $request->code;
+    $gl->libelle = $request->libelle;
+    $gl->userid = Auth()->user()->id;
+    $gl->save();
+    return response()->json([
+      'status' => 200,
+    ]);
+  }
 
-     // edit an service ajax request
-     public function edit(Request $request)
-     {
-       $id = $request->id;
-       $fon = Compte::find($id);
-       return response()->json($fon);
-     }
-  
-    // edit an service ajax request
-    public function addsc(Request $request)
-    {
-      $id = $request->id;
-      $fon = Compte::find($id);
-      return response()->json($fon);
-    }
+  // edit an service ajax request
+  public function edit(Request $request)
+  {
+    $id = $request->id;
+    $fon = Compte::find($id);
+    return response()->json($fon);
+  }
+
+  // edit an service ajax request
+  public function addsc(Request $request)
+  {
+    $id = $request->id;
+    $fon = Compte::find($id);
+    return response()->json($fon);
+  }
 
 
-  
-    // update an service ajax request
-    public function update(Request $request)
-    {
-      $emp = Compte::find($request->gc_id);
-      $emp->gc_title = $request->gc_title;
-      $emp->update();
-      
-      return response()->json([
-        'status' => 200,
-      ]);
-    }
-  
-    // supresseion
-    public function deleteall(Request $request)
-    {
-      $id = $request->id;
-      Compte::destroy($id);
-    }
+
+  // update an service ajax request
+  public function update(Request $request)
+  {
+    $emp = Compte::find($request->gc_id);
+    $emp->gc_title = $request->gc_title;
+    $emp->update();
+
+    return response()->json([
+      'status' => 200,
+    ]);
+  }
+
+  // supresseion
+  public function deleteall(Request $request)
+  {
+    $id = $request->id;
+    Compte::destroy($id);
+  }
 }
