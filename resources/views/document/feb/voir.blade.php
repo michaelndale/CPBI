@@ -69,15 +69,19 @@
 
                 <div class="py-2">
                   
-                    <h5 class="font-size-15">Détails sur l’utilisation des fonds demandés :</h5>
+                    <h5 class="font-size-15"><b>Détails sur l’utilisation des fonds demandés : </b></h5>
 
                     <div class="table-responsive">
-                        <table class="table align-middle table-nowrap table-centered mb-0">
+                        <table class="table table-striped table-sm fs--1 mb-0 table-bordered  " >
                             <thead>
                                 <tr>
                                     <th>N<sup>o</sup></th>
                                     <th>Designation</th>
-                                    <th>Montant</th>
+                                    <th> <center>Unité</center></th>
+                                    <th> <center>Quantité  </center></th>
+                                    <th> <center>Frequence  </center> </th>
+                                    <th> <center>Prix Unitaire  </center></th>
+                                    <th> <center>Prix total  </center></th>
                                 </tr>
                             </thead><!-- end thead -->
                             <tbody>
@@ -87,8 +91,12 @@
                                 @foreach ($datElement as $datElements)
                                 <tr>
                                     <td>{{$n }} </td>
-                                    <td><h5 class="text-truncate font-size-14 mb-1">{{ $datElements->libellee }}</h5></td>
-                                    <td> {{ number_format($datElements->montant,0, ',', ' ') }}</td>
+                                    <td>{{ ucfirst($datElements->libellee) }}</h5></td>
+                                    <td align="center">{{ $datElements->unite }}</h5></td>
+                                    <td align="right">{{ $datElements->quantite }}</h5></td>
+                                    <td align="right">{{ $datElements->frequence }}</h5></td>
+                                    <td align="right">{{  number_format($datElements->pu,0, ',', ' ') }}  {{ Session::get('devise') }}</h5></td>
+                                    <td align="right"> {{ number_format($datElements->montant,0, ',', ' ') }}  {{ Session::get('devise') }} </td>
                                 </tr>
                                 @php
                                     $n++
@@ -96,13 +104,14 @@
                                 @endforeach
 
                                 <tr>
-                                    <td colspan="2">Total</td>
-                                    <td><h5 class="text-truncate font-size-14 mb-1">  {{ number_format($sommefeb,0, ',', ' ') }} </h5></td>
+                                    <td colspan="6" >Total</td>
+                                    <td align="right">  {{ number_format($sommefeb,0, ',', ' ') }}  {{ Session::get('devise') }}</h5></td>
                                   
                                 </tr>
                             </tbody>
                             
                         </table>
+                        <br>
                         
                         <table>
                             <table style="width:80%; margin:auto">

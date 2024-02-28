@@ -1,152 +1,8 @@
-<div class="modal fade" id="voirfebModal" tabindex="-1" role="dialog" aria-labelledby="voirfebModal" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalScrollableTitle">Scrollable Modal</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-            <div class="card">
-                                    <div class="card-body">
-                                        <div class="invoice-title">
-                                            <h4 class="float-end font-size-15">Invoice #DS0204 <span class="badge bg-success font-size-12 ms-2">Paid</span></h4>
-                                            <div class="mb-4">
-                                                <img src="assets/images/logo-light.png" alt="logo" height="28"/>
-                                            </div>
-                                            <div class="text-muted">
-                                                <p class="mb-1">3184 Spruce Drive Pittsburgh, PA 15201</p>
-                                                <p class="mb-1"><i class="mdi mdi-email-outline me-1"></i> xyz@987.com</p>
-                                                <p><i class="mdi mdi-phone-outline me-1"></i> 012-345-6789</p>
-                                            </div>
-                                        </div>
-
-                                        <hr class="my-4">
-
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                <div class="text-muted">
-                                                    <h5 class="font-size-16 mb-3">Billed To:</h5>
-                                                    <h5 class="font-size-15 mb-2">Preston Miller</h5>
-                                                    <p class="mb-1">4068 Post Avenue Newfolden, MN 56738</p>
-                                                    <p class="mb-1">PrestonMiller@armyspy.com</p>
-                                                    <p>001-234-5678</p>
-                                                </div>
-                                            </div>
-                                            <!-- end col -->
-                                            <div class="col-sm-6">
-                                                <div class="text-muted text-sm-end">
-                                                    <div>
-                                                        <h5 class="font-size-15 mb-1">Invoice No:</h5>
-                                                        <p>#DZ0112</p>
-                                                    </div>
-                                                    <div class="mt-4">
-                                                        <h5 class="font-size-15 mb-1">Invoice Date:</h5>
-                                                        <p>12 Feb, 2023</p>
-                                                    </div>
-                                                    <div class="mt-4">
-                                                        <h5 class="font-size-15 mb-1">Order No:</h5>
-                                                        <p>#1123456</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- end col -->
-                                        </div>
-                                        <!-- end row -->
-                                        
-                                        <div class="py-2">
-                                            <h5 class="font-size-15">Order Summary</h5>
-
-                                            <div class="table-responsive">
-                                                <table class="table align-middle table-nowrap table-centered mb-0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="width: 70px;">No.</th>
-                                                            <th>Item</th>
-                                                            <th>Price</th>
-                                                            <th>Quantity</th>
-                                                            <th class="text-end" style="width: 120px;">Total</th>
-                                                        </tr>
-                                                    </thead><!-- end thead -->
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">01</th>
-                                                            <td>
-                                                                <div>
-                                                                    <h5 class="text-truncate font-size-14 mb-1">Black Strap A012</h5>
-                                                                    <p class="text-muted mb-0">Watch, Black</p>
-                                                                </div>
-                                                            </td>
-                                                            <td>$ 245.50</td>
-                                                            <td>1</td>
-                                                            <td class="text-end">$ 245.50</td>
-                                                        </tr>
-                                                        <!-- end tr -->
-                                                        <tr>
-                                                            <th scope="row">02</th>
-                                                            <td>
-                                                                <div>
-                                                                    <h5 class="text-truncate font-size-14 mb-1">Stainless Steel S010</h5>
-                                                                    <p class="text-muted mb-0">Watch, Gold</p>
-                                                                </div>
-                                                            </td>
-                                                            <td>$ 245.50</td>
-                                                            <td>2</td>
-                                                            <td class="text-end">$491.00</td>
-                                                        </tr>
-                                                        <!-- end tr -->
-                                                        <tr>
-                                                            <th scope="row" colspan="4" class="text-end">Sub Total</th>
-                                                            <td class="text-end">$732.50</td>
-                                                        </tr>
-                                                        <!-- end tr -->
-                                                        <tr>
-                                                            <th scope="row" colspan="4" class="border-0 text-end">
-                                                                Discount :</th>
-                                                            <td class="border-0 text-end">- $25.50</td>
-                                                        </tr>
-                                                        <!-- end tr -->
-                                                        <tr>
-                                                            <th scope="row" colspan="4" class="border-0 text-end">
-                                                                Shipping Charge :</th>
-                                                            <td class="border-0 text-end">$20.00</td>
-                                                        </tr>
-                                                        <!-- end tr -->
-                                                        <tr>
-                                                            <th scope="row" colspan="4" class="border-0 text-end">
-                                                                Tax</th>
-                                                            <td class="border-0 text-end">$12.00</td>
-                                                        </tr>
-                                                        <!-- end tr -->
-                                                        <tr>
-                                                            <th scope="row" colspan="4" class="border-0 text-end">Total</th>
-                                                            <td class="border-0 text-end"><h4 class="m-0 fw-semibold">$739.00</h4></td>
-                                                        </tr>
-                                                        <!-- end tr -->
-                                                    </tbody><!-- end tbody -->
-                                                </table><!-- end table -->
-                                            </div><!-- end table responsive -->
-                                           
-                                        </div>
-                                    </div>
-                                </div>
-
-               
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary waves-effect waves-light">Save changes</button>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-
 <div class="modal fade" id="addfebModal" tabindex="-1" aria-labelledby="addfebModal" aria-hidden="true">
     <div class="modal-dialog modal-xl  modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">FICHE D’EXPRESSION DES BESOINS "FEB" </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+                <h5 class="modal-title"><i class="far fa-file-alt "></i> FICHE D’EXPRESSION DES BESOINS "FEB" </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
             </div>
             <div class="modal-body">
                 <form class="row g-3 mb-6" method="POST" id="addfebForm">
@@ -160,95 +16,89 @@
                                         <td class="align-middle ps-3 name" style="width:20%">Composante/ Projet/Section</td>
                                         <td class="align-middle email" colspan="6">
                                             <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
-                                            <input value="{{ Session::get('title') }} " class="form-control" disabled>
+                                            <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="align-middle ps-3 name">Activité</td>
-                                        <td class="align-middle email" colspan="6">
-                                            <select type="text" class="form-control" name="activityid" id="activityid" style="width: 100%">
+                                        <td class="align-middle email" colspan="3">
+                                            <select type="text" class="form-select form-control-sm" name="activityid" id="activityid" style="width: 100%">
                                                 <option disabled="true" selected="true">--Aucun--</option>
                                                 @forelse ($activite as $activites)
                                                 <option value="{{ $activites->id }}"> {{ $activites->titre }} </option>
                                                 @empty
-                                                <option disabled="true" selected="true">--Aucun activite trouver--</option>
+                                                
                                                 @endforelse
                                             </select>
                                         </td>
+
+                                        <td class="align-middle ps-3 name">Ligne budgétaire: </td>
+                                        <td class="align-middle email" colspan="3">
+                                          
+                                        <div class="col-lg-12">
+                                                <div class="mb-0">
+
+                                                <select class="form-select  select2-search-disable" id="referenceid" name="referenceid" required>
+                                                    <option>Ligne budgétaire</option>
+                                                    @foreach ($compte as $comptes)
+                                                    <optgroup label="{{ $comptes->libelle }}">
+                                                    @php
+                                                    $idc = $comptes->id ;
+                                                    $res= DB::select("SELECT * FROM comptes WHERE compteid= $idc");
+                                                    @endphp
+                                                    @foreach($res as $re)
+                                                    <option value="{{ $comptes->id }} - {{ $re->id }}"> {{ $comptes->id }}-{{ $re->id }}   {{ $re->numero }}. {{ $re->libelle }} </option>
+                                                    @endforeach
+
+                                                    </optgroup>
+                                                    @endforeach
+
+                                                </select>
+
+                                                </div>
+
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td class="align-middle ps-3 name">Numéro fiche </td>
-                                        <td class="align-middle email">
-                                            <input type="text" class="form-control" name="numerofeb" id="numerofeb" style="width: 100%">
-                                            <small id="numerofeb_error" name="numerofeb_error" class="text text-danger"></small>
-                                        </td>
-                                        <td class="align-middle ps-3 name">Période:</td>
-                                        <td class="align-middle email">
-                                            <select type="text" class="form-control" name="periode" id="periode" style="width: 100%">
+                                        <td class="align-middle ps-3 name">Numéro fiche <br>
+                                        <input type="text" class="form-control form-control-sm"  style="width: 100% ; background-color:#c0c0c0" value="0***" readonly >
+                                       
+                                    </td>
+                                       
+                                        <td class="align-middle ps-3 name">Période: <br>
+                                            <select type="text" class="form-control form-control-sm" name="periode" id="periode" style="width: 100%">
                                              @php
                                                 $periode= Session::get('periode')
                                              @endphp
-
                                              @for($i =1 ; $i <= $periode ; $i++ )
                                                  <option value="T{{$i}}" > T{{$i}} </option>
                                              @endfor
-                                              
                                             </select>
+
+                                        </td>
+                                        
+                                        <td class="align-middle ps-3 name">Date: <br> 
+                                        <input type="date" class="form-control form-control-sm" name="datefeb" id="datefeb" style="width: 100%" value="{{ date('') }}">
+                        
+                                         </td>
+
+                                         <td class="align-middle ps-3 name">BC:<br>
+                                           <input type="text" class="form-control form-control-sm" name="bc" id="bc" style="width: 100%">
                                         </td>
 
-                                        <td class="align-middle ps-3 name">Date:</td>
-                                        <td class="align-middle email">
-                                            <input type="date" class="form-control" name="datefeb" id="datefeb" style="width: 100%" value="{{ date('') }}">
+                                        <td class="align-middle ps-3 name">Facture: <br>
+                                            <input type="text" class="form-control form-control-sm" name="facture" id="facture" style="width: 100%">
                                         </td>
+
+                                        <td class="align-middle ps-3 name">O.M: <br>
+                                            <input type="text" class="form-control form-control-sm" name="om" id="om" style="width: 100%">
+                                        </td>
+                                       
                                     </tr>
+                                   
                                     <tr>
-                                        <td class="align-middle ps-3 name">Ligne budgétaire: </td>
-                                        <td class="align-middle email" colspan="3">
-                                            <div class="col-sm-12 col-md-12">
-                                                <div class="form-floating">
-                                                    <select class="form-select soldeligne" id="ligneid" name="ligneid" required>
-                                                        <option disabled="true" selected="true">Ligne budgetaire</option>
-                                                        @foreach ($compte as $comptes)
-                                                        <option value="{{ $comptes->id }}"> {{ $comptes->numero }}. {{ $comptes->libelle }} </option>
-                                                        @php
-                                                        $idc = $comptes->id ;
-                                                        $res= DB::select("SELECT * FROM comptes WHERE compteid= $idc");
-                                                        @endphp
-                                                        @foreach($res as $re)
-                                                        <option value="{{ $re->id }}"> {{ $re->numero }}. {{ $re->libelle }} </option>
-                                                        @endforeach
-                                                        @endforeach
-                                                    </select>
-
-                                                    <label for="floatingInputGrid">Ligne budgetaire</label>
-                                                </div>
-                                            </div>
-
-
-                                        </td>
-                                        <td class="align-middle ps-3 name" style="width:20%">
-                                           <!-- <input type="text" class="form-control" value="100 0000" readonly> -->
-                                        </td>
-                                        <td class="align-middle email">
-                                          <!--  Taux d’exécution: 100%
-                                            <i id="tauxexecution"></i> -->
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="align-middle ps-3 name">BC:</td>
-                                        <td class="align-middle email">
-                                           <input type="text" class="form-control" name="bc" id="bc" style="width: 100%">
-                                        </td>
-
-                                        <td class="align-middle ps-3 name">Facture:</td>
-                                        <td class="align-middle email">
-                                            <input type="text" class="form-control" name="facture" id="facture" style="width: 100%">
-                                        </td>
-
-                                        <td class="align-middle ps-3 name">O.M:</td>
-                                        <td class="align-middle email">
-                                            <input type="text" class="form-control" name="om" id="om" style="width: 100%">
-                                        </td>
+                                       
                                     </tr>
                                 </tbody>
                             </table>
@@ -261,30 +111,31 @@
                                 <table class="table table-hover table-white" id="tableEstimate">
                                     <thead>
                                         <tr>
-                                            <th>Num</th>
-                                            <th>Description</th>
-                                            <th>Unité</th>
-                                            <th>Q<sup>té</sup></th>
-                                            <th>Frequence</th>
-                                            <th>P.U</th>
-                                            <th>P.T</th>
+                                            <th style="width:80px">Num</th>
+                                            <th style="width:600px">Description</th>
+                                            <th style="width:150px">Unité</th>
+                                            <th style="width:100px">Q<sup>té</sup></th>
+                                            <th style="width:50px">Frequence</th>
+                                            <th style="width:150px">P.U</th>
+                                            <th style="width:200px">P.T</th>
 
                                             <th> </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><input  style="width:40px" type="text" id="numerodetail" name="numerodetail[]" value="1"></td>
-                                            <td><input  style="width:15px" type="text" id="description" name="description[]"></td>
-                                            <td><input  style="width:15px" type="text" class="unit_price"  id="unit_cost" name="unit_cost[]"></td>
-                                            <td><input  style="width:15px" type="number" class="qty"  id="qty"  name="qty[]"></td>
-                                            <td><input  style="width:15px" type="number" class="frenquency" id="frenquency"  name="frenquency[]""></td>
-                                            <td><input  style="width:15px" type="text"   class="total" id="amount" name="amount[]" value="0" readonly></td>
-                                            <td><input  style="width:15px" type="number" class="frenquency" id="frenquency"  name="frenquency[]""></td>
-                                            <td><a href="javascript:void(0)" class="text-success font-18" title="Add" id="addBtn"><i class="fa fa-plus"></i></a></td>
+                                            <td><input  style="width:100%" type="number" id="numerodetail" name="numerodetail[]"  class="form-control form-control-sm"  value="1"></td>
+                                            <td><input  style="width:100%" type="text"   id="description"  name="description[]"   class="form-control form-control-sm"></td>
+                                            <td><input  style="width:100%" type="text"   id="unit_cost"    name="unit_cost[]"     class="form-control form-control-sm unit_price" ></td>
+                                            <td><input  style="width:100%" type="number" id="qty"          name="qty[]"           class="form-control form-control-sm qty"    ></td>
+                                            <td><input  style="width:100%" type="number" id="frenquency"   name="frenquency[]"    class="form-control form-control-sm frenquency"   ></td>
+                                            <td><input  style="width:100%" type="number" id="pu"           name="pu[]"            class="form-control form-control-sm pu"   ></td>
+                                            <td><input  style="width:100%" type="text"   id="amount"       name="amount[]"        class="form-control form-control-sm total"   value="0" readonly></td>
+                                           
+                                            <td><a href="javascript:void(0)" class="text-primary font-18" title="Add" id="addBtn"><i class="fa fa-plus-circle"></i></a></td>
                                         </tr>
 
-                                        <tr>
+                                     <!--   <tr>
 
                                             <td></td>
                                             <td></td>
@@ -296,7 +147,7 @@
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                        </tr>
+                                        </tr> -->
 
                                         <input class="form-control text-right" type="hidden" id="tax_1" name="tax_1" value="0" readonly>
 
@@ -310,8 +161,8 @@
 
                             <div class="table-repsonsive">
                                 <span id="error"></span>
-                                <hr>
-                                <table class="table table-striped table-sm fs--1 mb-0">
+                             
+                                <table class="table table-striped table-sm fs--1 mb-0" >
                                     <tr>
                                     <tr>
                                         <td>Etablie par (AC/CE/CS) </td>
@@ -320,26 +171,22 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <select type="text" class="form-control" name="acce" id="acce">
-                                                <option value="">--Selectionnez personnel--</option>
-                                                @foreach ($personnel as $personnels)
-                                                <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                            <input type="hidden" class="form-control form-control-sm" name="acce" id="acce" value="{{ Auth::id() }}" />
+                                           {{ ucfirst(Session::get('nomauth')) }} {{ ucfirst(Session::get('prenomauth')) }} 
+                                        </td>
+                                        <td>
+                                            <select type="text" class="form-control form-control-sm" name="comptable" id="comptable">
+                                                <option value="">--Sélectionnez comptable--</option>
+                                                @foreach ($comptable as $comptables)
+                                                <option value="{{ $comptables->id }}">{{ $comptables->nom }} {{ $comptables->prenom }}</option>
                                                 @endforeach
                                             </select>
                                         </td>
                                         <td>
-                                            <select type="text" class="form-control" name="comptable" id="comptable">
-                                                <option value="">--Selectionnez personnel--</option>
-                                                @foreach ($personnel as $personnels)
-                                                <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <select type="text" class="form-control" name="chefcomposante" id="chefcomposante">
-                                                <option value="">--Selectionnez personnel--</option>
-                                                @foreach ($personnel as $personnels)
-                                                <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                            <select type="text" class="form-control form-control-sm" name="chefcomposante" id="chefcomposante">
+                                                <option value="">--Sélectionnez Chef de Composante/Projet/Section--</option>
+                                                @foreach ($chefcompable as $chefcompables)
+                                                <option value="{{ $chefcompables->id }}">{{ $chefcompables->nom }} {{ $chefcompables->prenom }}</option>
                                                 @endforeach
                                             </select>
                                         </td>
@@ -353,7 +200,7 @@
                     </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" id="addfebbtn" name="addfebbtn">Sauvegarder</button>
+                <button type="submit" class="btn btn-primary" id="addfebbtn" name="addfebbtn"><i class="fa fa-check-circle"></i> Sauvegarder</button>
             </div>
             </form>
         </div>

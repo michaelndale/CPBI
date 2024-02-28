@@ -13,20 +13,33 @@
 
                     <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
                         <div class="table-responsive">
-                            <table class="table table-striped table-sm fs--1 mb-0">
+                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
                                 <tbody class="list">
-
                                     <tr>
-                                        <td class="align-middle ps-3 name" style="width:20%"><b>Composante/ Projet/Section </b></td>
-                                        <td class="align-middle email">
-                                            <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
-                                            <input value="{{ Session::get('title') }} " class="form-control" disabled>
+                                        <td style="width:120px"> Numéro fiche </br> <input type="text" id="numerodap" name="numerodap" class="form-control form-control-sm"></td>
+
+                                        <td style="width:300px"> Service <br>
+                                            <select type="text" name="serviceid" id="serviceid" style="width: 100%" class="form-control form-control-sm">
+                                                <option value="">--Aucun--</option>
+                                                @forelse ($service as $services)
+                                                <option value="{{ $services->id }}"> {{ $services->title }} </option>
+                                                @empty
+                                                <option value="">--Aucun service trouver--</option>
+                                                @endforelse
+                                            </select>
                                         </td>
 
-                                        <td class="align-middle ps-3 name"><b> FEB Nº: </b> </td>
+
+                                        <td>
+                                            <b>Composante/ Projet/Section </b><br>
+                                            <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
+                                            <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
+                                        </td>
+
 
                                         <td class="align-middle email" style="width:20%">
-                                            <select type="text" class="form-control febid" name="febid" id="febid" style="width: 100%">
+                                            <b>FEB Nº: </b> <br>
+                                            <select type="text" class="form-control form-control-sm febid" name="febid" id="febid" style="width: 100%">
                                                 <option value="">--Aucun--</option>
                                                 @forelse ($feb as $febs)
                                                 <option value="{{ $febs->numerofeb }}"> {{ $febs->numerofeb }} </option>
@@ -37,203 +50,125 @@
 
                                         </td>
                                     </tr>
+
                             </table>
+                            <hr>
+                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+                                <tr>
+
+                                    <td> Lieu
+                                        <input type="text" name="lieu" id="lieu" style="width: 100%" class="form-control form-control-sm" />
+                                    </td>
+
+                                    <td> Compte bancaire (BQ):
+                                        <input type="text" class="form-control form-control-sm" name="comptebanque" id="comptebanque" style="width: 100%">
+                                    </td>
+
+                                    <td> Solde comptable (BQ):
+                                        <input type="text" class="form-control form-control-sm">
+                                    </td>
+
+                                    <td>OV nº :
+                                        <input type="text" class="form-control form-control-sm" name="ov" id="ov" style="width: 100%">
+                                    </td>
+
+                                    <td>CHQ nº
+                                        <input type="text" class="form-control form-control-sm" name="ch" id="ch" style="width: 100%">
+                                    </td>
+                                </tr>
+
+                            </table>
+
+
+                            <hr>
 
                             <div id="Showpoll" class="Showpoll">
-
+                                <h6 style="margin-top:1% ;color:#c0c0c0">
+                                    <center>
+                                        <font size="5px"><i class="fa fa-search"></i> </font><br><br>
+                                        En attente ... <br> Veuillez Sélectionner le FEB Nº:
+                                    </center>
+                                </h6>
                             </div>
 
 
 
 
-                            <br><br>
-
-                            <table>
-                              
-                                <tr>
-                                    <td class="align-middle ps-3 name"> <b>Numéro fiche </b></td>
-                                    <td><input type="text" id="numerodap" name="numerodap" class="form-control"></td>
-                                    <td class="align-middle ps-3 name"><b> Service</b> </td>
-
-                                    <td class="align-middle email" colspan="6">
-                                        <select type="text" class="form-control" name="serviceid" id="serviceid" style="width: 100%">
-                                            <option value="">--Aucun--</option>
-                                            @forelse ($service as $services)
-                                            <option value="{{ $services->id }}"> {{ $services->title }} </option>
-                                            @empty
-                                            <option value="">--Aucun service trouver--</option>
-                                            @endforelse
-                                        </select>
-                                    </td>
-                                    <td class="align-middle ps-3 name"><b>Lieu </b>
-                                    </td>
-                                    <td class="align-middle email" colspan="1">
-                                        <input type="text" class="form-control" name="lieu" id="lieu" style="width: 100%" />
-                                    </td>
-
-
-                                    </td>
-
-                                </tr>
-
-                                <tr>
-                                   
-                                   
-                                </tr>
-
-                              
-                                <tr>
-                                    <td class="align-middle ps-3 name"><b>Compte bancaire (BQ):</b>
-                                    </td>
-                                    <td class="align-middle email" colspan="2">
-                                        <input type="text" class="form-control" name="comptebanque" id="comptebanque" style="width: 100%">
-                                    </td>
-
-                                    <td class="align-middle ps-3 name"><b>Solde comptable BQ </b></td>
-                                    <td class="align-middle email" colspan="2">
-                                        <input type="text" class="form-control" value="" disabled>
-                                    </td>
-                                </tr>
-
-                                </tbody>
-                            </table>
-                            <table class="table table-striped table-sm fs--1 mb-0">
-                                <tbody class="list">
-
-                                    <tr>
-                                        <td class="align-middle ps-3 name"><b>OV nº :</b>
-                                        </td>
-                                        <td class="align-middle email" colspan="2">
-                                            <input type="text" class="form-control" name="ov" id="ov" style="width: 100%">
-                                        </td>
-
-                                        <td class="align-middle ps-3 name"><b>CHQ nº </b></td>
-                                        <td class="align-middle email" colspan="2">
-                                            <input type="text" class="form-control" name="ch" id="ch" style="width: 100%">
-                                        </td>
-
-                                        <td class="align-middle ps-3 name"><b>Etabli au nom de: </b></td>
-                                        <td class="align-middle email" colspan="2">
-                                            <select type="text" class="form-control" name="etablie_nom" id="etablie_nom">
-                                                <option value="">--Selectionnez personnel--</option>
-                                                @foreach ($personnel as $personnels)
-                                                <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-                                                @endforeach
-                                            </select>
-                                        </td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-
                             <hr>
-                            <div class="table-repsonsive">
-                                <span id="error"></span>
-                                <table class="table table-bordered" id="item_table">
-                                    <tr>
-                                        <th style="width:5%">N<sup>O</sup></th>
-                                        <th>Description</th>
-                                        <th style="width:20%">Montant</th>
-                                        <th style="width:5% ;"><button type="button" name="add" class="btn btn-success btn-sm add"><i class="fas fa-plus"></i></button></th>
-                                    </tr>
-                                </table>
-                            </div>
-                            <hr>
-                            <table class="table table-striped table-sm fs--1 mb-0" style="padding:2px">
+
+
+                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+
                                 <tr>
-                                <tr>
-                                    <td colspan="4"><b> Vérification et Approbation de la Demande de paiement </b></td>
+                                    <td colspan="3"><b> Vérification et Approbation de la Demande de paiement </b></td>
 
                                 </tr>
                                 <tr>
-                                    <td> <b> Demande établie par </b>  </td>
-                                    <td> <b> Chef de Composante/Projet/Section </b> </td>
-                                    <td> <b>
-                                            <center> Signature:</center>
-                                        </b> </td>
-                                    <td> <b>
-                                            <center> Date:</center>
-                                        </b> </td>
+                                    <td> <b> Demande établie par </b> <br>
+                                        <small> Chef de Composante/Projet/Section </small>  
+                                    </td>
+
+                                    <td> <b> Vérifiée par :</b> <br>
+                                        <small> Chef Comptable</small>
+                                         
+                                    </td>
+
+                                    <td> <b> Approuvée par : </b> <br>
+                                        <small>Chef de Service</small>
+                                         
+                                    </td>
+
+
                                 </tr>
                                 <tr>
+
                                     <td>
-                                        <select type="text" class="form-control" name="demandeetablie" id="demandeetablie">
-                                            <option value="">--Selectionnez personnel--</option>
+                                        <select type="text" class="form-control form-control-sm" name="demandeetablie" id="demandeetablie">
+                                            <option value="">-- Chef de Composante/Projet/Section --</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
                                         </select>
                                     </td>
                                     <td>
-                                        <select type="text" class="form-control" name="chefComposante" id="chefComposante">
-                                            <option value="">--Selectionnez personnel--</option>
-                                            @foreach ($personnel as $personnels)
-                                            <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <center>
-                                            <input class="form-check-input" type="checkbox" name="signaturechef" id="signaturechefC" />
-                                        </center>
-
-                                    </td>
-                                    <td>
-                                        <input class="form-control" id="basic-form-dob" type="date" name="datechefcomposante" id="datechefcomposante" />
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <td> <b> Vérifiée par :</b> </td>
-                                    <td> <b> Chef Comptable </b> </td>
-                                    <td> <b>
-                                            <center> Signature:</center>
-                                        </b></td>
-                                    <td> <b>
-                                            <center> Date:</center>
-                                        </b> </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <select type="text" class="form-control" name="verifier" id="verifier">
-                                            <option value="">--Selectionnez personnel--</option>
+                                        <select type="text" class="form-control form-control-sm" name="verifier" id="verifier">
+                                            <option value="">--Chef Comptable--</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->id }}">{{ $personnels->prenom }} {{ $personnels->prenom }}</option>
                                             @endforeach
                                         </select>
                                     </td>
+
+
                                     <td>
-                                        <select type="text" class="form-control" name="chefcomptable" id="chefcomptable">
-                                            <option value="">--Selectionnez personnel--</option>
+                                        <select type="text" class="form-control form-control-sm" name="approuver" id="approuver">
+                                            <option value="">--Chef de Service --</option>
                                             @foreach ($personnel as $personnels)
-                                            <option value="{{ $personnels->id }}">{{ $personnels->prenom }} {{ $personnels->prenom }}</option>
+                                            <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
                                         </select>
                                     </td>
-                                    <td>
-                                        <center> <input class="form-check-input" type="checkbox" id="signaturechefcomptable" name="signaturechefcomptable" /> </center>
-
-                                    </td>
-                                    <td>
-                                        <input class="form-control" id="basic-form-dob" id="datechefcomptable" name="datechefcomptable" type="date" />
-                                    </td>
                                 </tr>
 
+                            </table>
+
+                            <hr>
+
+                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
 
                                 <tr>
-                                    <td> <b> Approuvée par : </b> </td>
-                                    <td> <b> Chef de Service </b></td>
-                                    <td> <b>
-                                            <center> Signature:</center>
-                                        </b></td>
-                                    <td> <b>
-                                            <center> Date:</center>
-                                        </b></td>
+                                    <td colspan="4"><b> Autorisaction de paiement</b></td>
+
                                 </tr>
+
+                                </tr>
+
                                 <tr>
+                                    <td aligne="center">Autorisé le <center> <input class="form-control form-control-sm" id="basic-form-dob" type="date" id="datesecretairegenerale" name="datesecretairegenerale" /></center>
+                                    </td>
                                     <td>
-                                        <select type="text" class="form-control" name="approuver" id="approuver">
+                                        Responsable Administratif et Financier : <br>
+                                        <select type="text" class="form-control form-control-sm" name="resposablefinancier" id="resposablefinancier">
                                             <option value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
@@ -241,53 +176,19 @@
                                         </select>
                                     </td>
                                     <td>
-                                        <select type="text" class="form-control" name="chefservice" id="chefservice">
+                                        Secrétaire Général de la CEPBU : <br>
+                                        <select type="text" class="form-control form-control-sm" name="secretairegenerale" id="secretairegenerale">
                                             <option value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
                                         </select>
                                     </td>
-                                    <td>
-                                        <center> <input class="form-check-input" type="checkbox" name="signaturechefservice" id="signaturechefservice" /> </center>
-                                    </td>
-                                    <td>
-                                        <input class="form-control" id="basic-form-dob" type="date" id="datechefservice" name="datechefservice" />
-                                    </td>
-                                </tr>
 
 
-                                <tr>
-                                    <td> <b> Responsable Administratif et Financier :  </b></td>
-                                    <td> <b> Secrétaire Général de la CEPBU </b></td>
-                                    <td> <b>
-                                            <center> Autorisé le</center>
-                                        </b></td>
-                                    <td> <b> Chef des Programmes </b> </td>
-                                </tr>
-                                <tr>
                                     <td>
-                                        <select type="text" class="form-control" name="resposablefinancier" id="resposablefinancier">
-                                            <option value="">--Selectionnez personnel--</option>
-                                            @foreach ($personnel as $personnels)
-                                            <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <select type="text" class="form-control" name="secretairegenerale" id="secretairegenerale">
-                                            <option value="">--Selectionnez personnel--</option>
-                                            @foreach ($personnel as $personnels)
-                                            <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-                                            @endforeach
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <center> <input class="form-control" id="basic-form-dob" type="date" id="datesecretairegenerale" name="datesecretairegenerale" /></center>
-                                    </td>
-
-                                    <td>
-                                        <select type="text" class="form-control" name="chefprogramme" id="chefprogramme">
+                                        Chef des Programmes </br>
+                                        <select type="text" class="form-control form-control-sm" name="chefprogramme" id="chefprogramme">
                                             <option value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
@@ -298,15 +199,12 @@
 
 
                                 <tr>
-                                    <td colspan="4"><b>Observations/Instructions du SG : </b></td>
-
-                                </tr>
-                                <tr>
-                                    <td colspan="4">
-                                        <textarea class="form-control" name="observation"></textarea>
+                                    <td colspan="4"><b>Observations/Instructions du SG : </b> <br>
+                                        <textarea class="form-control form-control-sm" name="observation"></textarea>
                                     </td>
 
                                 </tr>
+
 
                             </table>
 
@@ -316,7 +214,9 @@
 
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" id="adddapbtn" name="addapbtn">Sauvegarder</button>
+
+
+                <button type="submit" class="btn btn-primary" id="adddapbtn" name="adddapbtn"><i class="fa fa-check-circle"></i> Sauvegarder</button>
             </div>
             </form>
         </div>

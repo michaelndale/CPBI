@@ -43,7 +43,6 @@
                   <thead>
                     <tr>
                       <th class="sort border-top "><center>Action</center></th>
-                      <th class="sort border-top" data-sort="id"> ID </th>
                       <th class="sort border-top" data-sort="febnum">N<sup>o</sup> FEB </th>
                       <th class="sort border-top ps-3" data-sort="facture">Facture</th>
                       <th class="sort border-top" data-sort="date">Date FEB</th>
@@ -68,8 +67,9 @@
 
                 </table>
 
-                <br><br><br><br> <br><br>
-             
+                <br><br><br><br>
+                <br><br><br><br>
+                <br>
              
                 
               </div>
@@ -90,15 +90,18 @@
     var rowIdx = 1;
     $("#addBtn").on("click", function() {
       // Adding a row inside the tbody.
-      $("#tableEstimate tbody").append(`
+      $("#tableEstimate tbody").append(` 
                 <tr id="R${++rowIdx}">
-                    <td class="row-index text-center"><input class="form-control"style="min-width:40px" type="text" id="numerodetail" name="numerodetail[]" value="${rowIdx}"></p></td>
-                    <td><input class="form-control" type="text" style="min-width:150px" id="description" name="description[]"></td>
-                    <td><input class="form-control unit_price" style="width:100px" type="text" id="unit_cost"  name="unit_cost[]"></td>
-                    <td><input class="form-control qty" style="width:80px" type="hidden" value= "1"  id="qty" name="qty[]"></td>
-                    <td><input class="form-control total" style="width:120px" type="text" id="amount" name="amount[]" value="0" readonly></td>
-                    <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Remove"><i class="far fa-trash-alt"></i></a></td>
-                </tr>`);
+                    <td><input style="width:100%" type="number"    id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="${rowIdx}" ></td>
+                    <td><input style="width:100%" type="text"    id="description"  name="description[]"  class="form-control form-control-sm" ></td>
+                    <td><input style="width:100%" type="text"    id="unit_cost"    name="unit_cost[]"    class="form-control form-control-sm" ></td>
+                    <td><input style="width:100%" type="number"  id="qty"          name="qty[]"          class="form-control form-control-sm qty"     ></td>
+                    <td><input style="width:100%" type="number"  id="frenquency"   name="frenquency[]"   class="form-control form-control-sm frenquency"   ></td>
+                    <td><input style="width:100%" type="number"  id="pu"           name="pu[]"           class="form-control form-control-sm pu"   ></td>
+                    <td><input style="width:100%" type="text"    id="amount"       name="amount[]"       class="form-control form-control-sm total"   value="0" readonly></td>
+                    
+                    <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
+                    </tr>`);
     });
     $("#tableEstimate tbody").on("click", ".remove", function() {
       // Getting all the rows next to the row
@@ -130,20 +133,20 @@
       rowIdx--;
     });
 
-    $("#tableEstimate tbody").on("input", ".unit_price", function() {
-      var unit_price = parseFloat($(this).val());
+    $("#tableEstimate tbody").on("input", ".pu", function() {
+      var pu = parseFloat($(this).val());
       var qty = parseFloat($(this).closest("tr").find(".qty").val());
       var total = $(this).closest("tr").find(".total");
-      total.val(unit_price * qty);
+      total.val(pu * qty * frenquency);
 
       calc_total();
     });
 
     $("#tableEstimate tbody").on("input", ".qty", function() {
       var qty = parseFloat($(this).val());
-      var unit_price = parseFloat($(this).closest("tr").find(".unit_price").val());
+      var pu = parseFloat($(this).closest("tr").find(".pu").val());
       var total = $(this).closest("tr").find(".total");
-      total.val(unit_price * qty);
+      total.val(pu * qty * frenquency);
       calc_total();
     });
 
@@ -154,23 +157,9 @@
       });
       $(".subtotal").text(sum);
 
-      var amounts = sum;
-      var tax = 100;
-      $(document).on("change keyup blur", "#qty", function() {
-        var qty = $("#qty").val();
-        var discount = $(".discount").val();
-        $(".total").val(amounts * qty);
-        $("#sum_total").val(amounts * qty);
-        $("#tax_1").val((amounts * qty) / tax);
-        $("#grand_total").val((parseInt(amounts)) - (parseInt(discount)));
-      });
     }
 
-
-
     $(function() {
-
-
       $(document).on('change', '.soldeligne', function() {
         var cat_id = $(this).val();
         var div = $(this).parent();
@@ -328,12 +317,6 @@
           }
         });
       }
-
-    
-
-      
-
-
 
     });
   </script>

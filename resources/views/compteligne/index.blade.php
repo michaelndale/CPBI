@@ -105,9 +105,15 @@
         <div class="modal-body">
 
         <div class="row g-3">
-
-          <input type="text" name="ctitle" id="ctitle" class="form-control" readonly disabled />
+        <div class="col-sm-6 col-lg-12 col-xl-3">
+          Code
+          <input type="text" name="ccode" id="ccode" class="form-control"  disabled style="background-color:#F5F5F5" /> 
+        </div>
+        <div class="col-sm-6 col-lg-12 col-xl-9">
+          Titre
+          <input type="text" name="ctitle" id="ctitle" class="form-control"  disabled style="background-color:#F5F5F5" />
           <input type="hidden" name="cid" id="cid"  />
+        </div>
 
           <div class="col-sm-6 col-lg-12 col-xl-12">
             <label class="text-1000 fw-bold mb-2">Acc. Non</label>
@@ -289,10 +295,17 @@
                 Selectdcompte();
                 fetchAlldcompte();
                 Selectsouscompte();
-            }
-            $("#sendsousCompte").text('Add compte');
+                $("#sendsousCompte").text('Add compte');
             $("#addsouscompteform")[0].reset();
             $("#addDealModalSousCompte").modal('hide');
+            }
+
+            if (response.status == 201) {
+            toastr.info("Erreur , vous ne pouvez pas creer deux fois la ligne.", "Attention");
+            $("##addDealModalSousCompte").modal('show');
+            $("#sendCompte").text('Sauvegarder');
+          }
+        
           }
         });
       });
@@ -360,6 +373,7 @@
             _token: '{{ csrf_token() }}'
           },
           success: function(response) {
+            $("#ccode").val(response.numero);
             $("#ctitle").val(response.libelle);
             $("#cid").val(response.id);
           }
@@ -390,7 +404,7 @@
       {
         e.preventDefault();
         const fd = new FormData(this);
-        $("#editcomptebtn").text('Updating...');
+        $("#editcomptebtn").text('Modification...');
         $.ajax({
           url:"{{ route('updateGc') }}",
           method: 'post',
@@ -401,7 +415,7 @@
           dataType: 'json',
           success: function(response) {
             if (response.status == 200) {
-              $.notify("Compte update Successfully !", "success");
+              toastr.success("Compte modifie !", "Modification");
               Selectdcompte();
                 fetchAlldcompte();
                 Selectsouscompte();
@@ -419,13 +433,13 @@
         let id = $(this).attr('id');
         let csrf = '{{ csrf_token() }}';
         Swal.fire({
-          title: 'Are you sure?',
-          text: "You won't be able to revert this!",
-          icon: 'warning',
+          title: 'Êtes-vous sûr ?',
+          text: "Vous ne pourrez plus revenir en arrière !",
+        
           showCancelButton: true,
-          confirmButtonColor: '#3085d6',
+          confirmButtonColor: 'green',
           cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, delete it!'
+          confirmButtonText: 'Oui, Supprimer !'
         }).then((result) => {
           if (result.isConfirmed) {
             $.ajax({
@@ -437,10 +451,13 @@
               },
               success: function(response) {
                 console.log(response);
-                $.notify("Compte deleted Successfully !", "success");
+
                 Selectdcompte();
                 fetchAlldcompte();
                 Selectsouscompte();
+
+                toastr.success("Compte supprimer avec succes !", "Suppression");
+               
               }
             });
           }

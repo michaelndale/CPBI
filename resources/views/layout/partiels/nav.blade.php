@@ -255,16 +255,37 @@
             <li class="menu-title">Menu</li>
 
             <li>
+              @php
+                $documentNombre= DB::table('febs')
+                ->Where('acce', Auth::id() )
+                ->Where('acce_signe', '=', 0)
+                ->Where('chef_signe', '=', 0)
+                ->Where('comptable_signe', '=', 0)
+
+                ->orWhere('comptable', Auth::id() )
+                ->orWhere('chefcomposante', Auth::id() )
+               
+                ->get()
+                ->count()
+              @endphp
+
+              @if ( $documentNombre != 0)
               <a href="{{ route('dashboard') }}" class="waves-effect">
-                <i class="ri-dashboard-2-line"></i><span class="badge rounded-pill bg-success float-end">3</span>
+                <i class="ri-dashboard-2-line"></i><span class="badge rounded-pill bg-danger float-end">{{ $documentNombre }}</span>
+                <span>Document</span>
+              </a>
+              </li>
+              @endif
+
+            <li>
+              <a href="{{ route('dashboard') }}" class="waves-effect">
+                <i class="ri-dashboard-2-line"></i>
                 <span>Tableau de bord</span>
               </a>
             </li>
 
-
             @if (session()->has('id'))
             <li class="menu-title">Projet</li>
-
 
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -275,6 +296,8 @@
                 <li><a href="{{ route('key.viewProject', Session::get('id') ) }}">Voir le projet</a></li>
                 <li><a href="{{ route('gestioncompte') }}">Ligne budgétaire</a></li>
                 <li><a href="{{ route('rallongebudget') }}">Budget</a></li>
+                <li><a href="{{ route('rapportcumule') }}">Rapport commulatif</a></li>
+                <li><a href="{{ route('planoperationnel') }}">Plan d'action</a></li>
                 <li><a href="{{ route('listfeb') }}">FEB</a></li>
                 <li><a href="{{ route('listdap') }}">DAP</a></li>
                 <li><a href="{{ route('listdja') }}">DJA</a></li>
@@ -361,9 +384,7 @@
                   <ul class="sub-menu" aria-expanded="true">
                     <li><a href="{{ route('vehicule') }}">Vehicule</a></li>
                     <li><a href="javascript: void(0);">A.L</a></li>
-                    <!--Achats / Locations -->
                     <li><a href="javascript: void(0);">A.T.V</a></li>
-                    <!-- Assurences/Taxes/Visites -->
                   </ul>
                 </li>
                 <li><a href="{{ route('conducteur') }}">Conducteurs</a></li>

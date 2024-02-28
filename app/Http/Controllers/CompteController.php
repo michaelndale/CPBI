@@ -13,7 +13,7 @@ class CompteController extends Controller
     $ID = session()->get('id');
     $active = 'Project';
     $title = 'Compte & Ligne';
-    $compte = Compte::where('compteid', '=', NULL)
+    $compte = Compte::where('compteid', '=', 0)
       ->where('projetid', $ID)
       ->get();
     return view(
@@ -29,7 +29,7 @@ class CompteController extends Controller
   public function selectcompte()
   {
     $ID = session()->get('id');
-    $service = Compte::where('compteid', '=', NULL)
+    $service = Compte::where('compteid', '=', 0)
       ->where('projetid', $ID)
       ->get();
     $output = '';
@@ -63,7 +63,7 @@ class CompteController extends Controller
   {
 
     $ID = session()->get('id');
-    $service = Compte::where('compteid', '!=', 'NULL')
+    $service = Compte::where('compteid', '!=', '0')
       ->where('projetid', $ID)
       ->get();;
     $output = '';
@@ -87,7 +87,7 @@ class CompteController extends Controller
   public function fetchAll()
   {
     $ID = session()->get('id');
-    $service = Compte::where('compteid', '=', NULL)
+    $service = Compte::where('compteid', '=', 0)
       ->where('projetid', $ID)
       ->get();
     $output = '';
@@ -96,39 +96,41 @@ class CompteController extends Controller
       $nombre = 1;
       foreach ($service as $rs) {
         $id = $rs->id;
-        $output .= '<tr >
+        $output .= '<tr style="background-color:#F5F5F5">
               <td class="align-middle ps-3 name"><b>' . $nombre . '</td>
               <td><b>' . ucfirst($rs->numero) . '</b></td>
               <td><b>' . ucfirst($rs->libelle) . '</b></td>
-              <td>
-              <center>
+              <td align="right">
+             
               <a href="#" id="' . $rs->id . '" class="text-success mx-1 savesc" data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte" title="Ajouter sous compte"><i class="fa fa-plus-circle"></i></a>
                 <a href="#" id="' . $rs->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
                 <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
-                </center>
+               
                 </td>
             </tr>
             ';
 
         $sous_compte = Compte::where('compteid', $id)
-          ->where('souscompteid', '=', NULL)
+          ->where('souscompteid', '=', 0)
           ->where('projetid', $ID)
           ->get();
         if ($sous_compte->count() > 0) {
           $ndale = 1;
           foreach ($sous_compte as $sc) {
             $ids = $sc->id;
+
+            // <a href="#" id="' . $sc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
             $output .= '
                   <tr>
-                    <td class="align-middle ps-3 name">' . $nombre . '.' . $ndale . '</td>
+                    <td class="align-left" style="background-color:#F5F5F5"></td>
                     <td>' . ucfirst($sc->numero) . '</td>
                     <td>' . ucfirst($sc->libelle) . '</td>
-                    <td>
-                    <center>
-                        <a href="#" id="' . $sc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
+                    <td align="right">
+                   
+                        
                         <a href="#" id="' . $sc->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
                         <a href="#" id="' . $sc->id . '" class="text-danger mx-1 deleteIcon"><i class="fa fa-trash"></i>  </a>
-                        </center>
+                    
                         </td>
                   </tr>
             ';
@@ -189,7 +191,9 @@ class CompteController extends Controller
     try {
       $ID = session()->get('id');
       $title = $request->libelle;
+      $code= $request->code;
       $check = Compte::where('libelle', $title)
+        ->where('numero', $code)
         ->where('projetid', $ID)
         ->first();
       if ($check) {
@@ -222,7 +226,9 @@ class CompteController extends Controller
     try {
       $ID = session()->get('id');
       $title = $request->libelle;
+      $code= $request->code;
       $check = Compte::where('libelle', $title)
+        ->where('numero', $code)
         ->where('projetid', $ID)
         ->first();
       if ($check) {

@@ -26,14 +26,12 @@ class ActivityController extends Controller
    
 
       $ID = session()->get('id');
-      $compte = DB::table('rallongebudgets')
-              ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
-              ->Where('rallongebudgets.projetid', $ID)
+      $compte = DB::table('comptes')
+              ->Where('comptes.projetid', $ID)
+              ->Where('compteid','=', 0)
               ->get();
 
-           
-       
-
+              
       return view('activite.index', 
         [
           'title' =>$title,
@@ -80,7 +78,7 @@ class ActivityController extends Controller
          }
 
          else{
-
+          $color=''; $class='success';
          }
           
           $output .= '
@@ -124,7 +122,9 @@ class ActivityController extends Controller
             
             </td>
            
-        </tr>';
+        </tr>
+        
+        ';
         echo $output;
       } else {
         echo
@@ -149,21 +149,29 @@ class ActivityController extends Controller
       public function store(Request $request )
       {
 
-        try {
+     
 
-        $IDP = session()->get('id');
-        $IDL = $request->compteid;
+      $IDP = session()->get('id');
+      $comp= $request->compteid;
+      $compp=explode("-", $comp);
+     
+      $grandcompte = $compp[0];
+      $souscompte  = $compp[1];
       
-       $somme_budget_ligne= DB::table('rallongebudgets')
+
+       
+    $somme_budget_ligne= DB::table('rallongebudgets')
        ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
        ->Where('rallongebudgets.projetid', $IDP)
-       ->Where('rallongebudgets.compteid', $IDL)
+       ->Where('rallongebudgets.compteid', $grandcompte)
+       ->Where('rallongebudgets.souscompte', $souscompte)
        ->SUM('rallongebudgets.budgetactuel');
 
 
        $somme_activite_ligne= DB::table('activities')
        ->Where('projectid', $IDP)
-       ->Where('compteidr', $IDL)
+       ->Where('grandcompte', $grandcompte)
+       ->Where('compteidr', $souscompte)
        ->SUM('montantbudget');
 
       
@@ -174,7 +182,8 @@ class ActivityController extends Controller
           $activity = new Activity();
           
           $activity->projectid = $request->projetid;
-          $activity->compteidr = $request->compteid;
+          $activity->compteidr = $souscompte;
+          $activity->grandcompte = $grandcompte;
           $activity->titre = $request->titre;
           $activity->montantbudget= $request->montant;
           $activity->etat_activite= $request->etat;
@@ -193,12 +202,9 @@ class ActivityController extends Controller
         
        }
 
-      } catch (Exception $e) {
-        return response()->json([
-          'status' => 202,
-         // dd($e)
-        ]);
-      }
+       
+
+      
       
         
       }
@@ -210,7 +216,15 @@ class ActivityController extends Controller
         try {
               $act = Activity::find($request->aid);
 
-              $act->compteidr = $request->ligneact;
+              $comp= $request->ligneact;
+              $compp=explode("-", $comp);
+             
+              $grandcompte = $compp[0];
+              $souscompte  = $compp[1];
+        
+
+              $act->grandcompte = $grandcompte;
+              $act->compteidr =$souscompte;
               $act->titre = $request->titreact;
               $act->montantbudget = $request->montantact;
               $act->etat_activite = $request->etatact;

@@ -18,64 +18,72 @@
                     <td class="align-middle ps-1 name"> Source projet</td>
                     <td class="align-middle email" colspan="4">
                       <input value="{{ Session::get('id') }}" type="hidden" name="projetid" id="projetid">
-                      <input value="{{ Session::get('title') }}" class="form-control" disabled>
+                      <input value="{{ Session::get('title') }}" class="form-control form-control-sm" disabled>
                     </td>
                   </tr>
                   <tr>
-                    <td>Ligne budgetaire</td>
+                    <td>Ligne budgétaire</td>
                     <td colspan="4">
-                      <div class="col-sm-12 col-md-12">
-                        <div class="form-floating">
-                          <select class="form-select" id="compteid" name="compteid" required>
-                            <option selected="selected" value="">Ligne budgetaire</option>
+
+                      <div class="col-lg-12">
+                        <div class="mb-0">
+
+                          <select class="form-select  select2-search-disable" id="compteid" name="compteid" required>
+                            <option>Ligne budgétaire</option>
                             @foreach ($compte as $comptes)
-                            <option value="{{ $comptes->id }}"> {{ $comptes->numero }}. {{ $comptes->libelle }} </option>
-                            @php
-                            $idc = $comptes->id ;
-                            $res= DB::select("SELECT * FROM comptes WHERE compteid= $idc");
-                            @endphp
-                            @foreach($res as $re)
-                            <option value="{{ $re->id }}"> {{ $re->numero }}. {{ $re->libelle }} </option>
+                            <optgroup label="{{ $comptes->libelle }}">
+                              @php
+                              $idc = $comptes->id ;
+                              $res= DB::select("SELECT * FROM comptes WHERE compteid= $idc");
+                              @endphp
+                              @foreach($res as $re)
+                              <option value="{{ $comptes->id }}-{{ $re->id }}">{{ $re->numero }}. {{ $re->libelle }} </option>
+                              @endforeach
+
+                            </optgroup>
                             @endforeach
-                            @endforeach
+
                           </select>
 
-                          <label for="floatingInputGrid">Ligne budgetaire</label>
                         </div>
+
                       </div>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td class="align-middle ps-3 name" style="width:25%">Description detaillee des besoins </td>
-                    <td class="align-middle email" colspan="6">
-                      <input type="text" class="form-control" name="titre" id="titre" style="width: 100%" />
-                    </td>
-                  </tr>
+           
 
 
-                  <tr>
-                    <td class="align-middle ps-3 name" style="width:10%">Couts estimes </td>
-                    <td class="align-middle email" colspan="2">
-                      <input type="number" class="form-control" name="montant" id="montant" style="width: 100%" />
-                    </td>
+            </td>
+            </tr>
+
+            <tr>
+              <td class="align-middle ps-3 name" style="width:25%">Description detaillee des besoins </td>
+              <td class="align-middle email" colspan="6">
+                <input type="text" class="form-control form-control-sm" name="titre" id="titre" required />
+              </td>
+            </tr>
 
 
-                  </tr>
+            <tr>
+              <td class="align-middle ps-3 name" style="width:10%">Coût estimatif</td>
+              <td class="align-middle email" colspan="2">
+                <input type="number" class="form-control form-control-sm" name="montant" id="montant" style="width: 100%" required />
+              </td>
 
-                  <input value="Encours" type="hidden" name="etat" id="etat">
 
-                </tbody>
-              </table>
-            </div>
+            </tr>
+
+            <input value="Nouveau" type="hidden" name="etat" id="etat">
+
+            </tbody>
+            </table>
           </div>
       </div>
-      <div class="modal-footer">
-        <button type="submit" name="addactivitebtn" id="addactivitebtn" class="btn btn-primary px-5 px-sm-15 addactivitebtn"> Sauvegarder </button>
-      </div>
     </div>
-    </form>
+    <div class="modal-footer">
+      <button type="submit" name="addactivitebtn" id="addactivitebtn" class="btn btn-primary px-5 px-sm-15 addactivitebtn"><i class="fa fa-check-circle" ></i> Sauvegarder </button>
+    </div>
   </div>
+  </form>
+</div>
 </div>
 
 
@@ -102,38 +110,44 @@
                     <td class="align-middle email" colspan="4">
                       <input type="hidden" class="form-control" name="aid" id="aid" />
                       <input value="{{ Session::get('id') }}" type="hidden" name="projetide" id="projetide">
-                      <input value="{{ Session::get('title') }}" class="form-control" disabled>
+                      <input value="{{ Session::get('title') }}" class="form-control form-control-sm" disabled>
                     </td>
                   </tr>
                   <tr>
-                    <td>Ligne budgetaire</td>
+                    <td>Ligne budgetaire </td>
                     <td colspan="4">
-                      <div class="col-sm-12 col-md-12">
-                        <div class="form-floating">
-                          <select class="form-select" id="ligneact" name="ligneact" required>
-                            <option selected="selected">Ligne budgetaire</option>
+                    <div class="col-lg-12">
+                        <div class="mb-0">
+
+                          <select class="form-control "  id="ligneact" name="ligneact" required>
+                            <option>Ligne budgétaire</option>
                             @foreach ($compte as $comptes)
-                            <option value="{{ $comptes->id }}"> {{ $comptes->numero }}. {{ $comptes->libelle }} </option>
-                            @php
-                            $idc = $comptes->id ;
-                            $res= DB::select("SELECT * FROM comptes WHERE compteid= $idc");
-                            @endphp
-                            @foreach($res as $re)
-                            <option value="{{ $re->id }}"> {{ $re->numero }}. {{ $re->libelle }} </option>
+                            <optgroup label="{{ $comptes->libelle }}">
+                              @php
+                              $idc = $comptes->id ;
+                              $res= DB::select("SELECT * FROM comptes WHERE compteid= $idc");
+                              @endphp
+                              @foreach($res as $re)
+                              <option value="{{ $comptes->id }}-{{ $re->id }}">{{ $re->numero }}. {{ $re->libelle }} </option>
+                              @endforeach
+
+                            </optgroup>
                             @endforeach
-                            @endforeach
+
                           </select>
 
-                          <label for="floatingInputGrid">Ligne budgetaire</label>
                         </div>
+
                       </div>
+
+
                     </td>
                   </tr>
 
                   <tr>
                     <td class="align-middle ps-3 name" style="width:25%">Description detaillee des besoins </td>
                     <td class="align-middle email" colspan="6">
-                      <input type="text" class="form-control" name="titreact" id="titreact" style="width: 100%" />
+                      <input type="text" class="form-control form-control-sm" name="titreact" id="titreact" style="width: 100%" />
                     </td>
                   </tr>
 
@@ -141,7 +155,7 @@
                   <tr>
                     <td class="align-middle ps-3 name" style="width:10%">Couts estimes </td>
                     <td class="align-middle email" colspan="2">
-                      <input type="number" class="form-control" name="montantact" id="montantact" style="width: 100%" />
+                      <input type="number" class="form-control form-control-sm" name="montantact" id="montantact" style="width: 100%" />
                     </td>
 
 
@@ -152,6 +166,7 @@
                     <td class="align-middle email" colspan="2">
                       <select type="text" class="form-control" name="etatact" id="etatact" style="width: 100%" />
                       <option>Aucune</option>
+                      <option value="Nouveau">Nouveau</option>
                       <option value="Encours">Encours</option>
                       <option value="Terminée">Terminée</option>
                       <option value="Contrainte">Contrainte</option>
@@ -168,7 +183,7 @@
           </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" name="editactivitebtn" id="editactivitebtn" class="btn btn-primary px-5 px-sm-15 addactivitebtn"> Sauvegarder </button>
+        <button type="submit" name="editactivitebtn" id="editactivitebtn" class="btn btn-primary px-5 px-sm-15 editactivitebtn"> Sauvegarder </button>
       </div>
     </div>
     </form>
@@ -178,7 +193,7 @@
 
 
 
-ADD COMM
+
 
 
 
@@ -189,11 +204,11 @@ ADD COMM
       <div class="modal-header">
         <h5 class="modal-title">Obsevation </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
       </div>
-      <div class="modal-body" >
+      <div class="modal-body">
 
 
 
-        // debut
+        
 
         <ul class="list-unstyled chat-list" data-simplebar="init" style="max-height: 415px;">
           <div class="simplebar-wrapper" style="margin: 0px;">
@@ -206,7 +221,7 @@ ADD COMM
                   <div class="simplebar-content" style="padding: 0px;" id="showAllcommente">
 
 
-                    // ici
+                   
 
 
 
@@ -227,7 +242,7 @@ ADD COMM
         </ul>
       </div>
 
-      // fin
+    
 
     </div>
 
@@ -249,18 +264,18 @@ ADD COMM
           @csrf
 
           <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
-          
-              
-                    <input type="hidden" class="form-control" name="aidcom" id="aidcom" />
-                      <input value="{{ Session::get('id') }}" type="hidden" name="projetidcomment" id="projetidcommente">
-                  
-                      <textarea type="text" class="form-control" name="titrecom" id="titrecom" style="height:150px" ></textarea>
-                    
-           
+
+
+            <input type="hidden" class="form-control" name="aidcom" id="aidcom" />
+            <input value="{{ Session::get('id') }}" type="hidden" name="projetidcomment" id="projetidcommente">
+
+            <textarea type="text" class="form-control" name="titrecom" id="titrecom" style="height:150px"></textarea>
+
+
           </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" name="Addcommentebtn" id="Addcommentebtn" class="btn btn-primary px-5 px-sm-15 addactivitebtn"> Sauvegarder </button>
+        <button type="submit" name="Addcommentebtn" id="Addcommentebtn" class="btn btn-primary px-5 px-sm-15 Addcommentebtn"> Sauvegarder </button>
       </div>
     </div>
     </form>

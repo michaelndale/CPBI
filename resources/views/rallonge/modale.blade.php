@@ -16,23 +16,32 @@
           <div class="row g-2">
             <div class="col">
               <input id="projetid" name="projetid" type="hidden" value="{{ Session::get('id') }}" />
-              <input  class="form-control" type="text" placeholder="Enter code" value="{{ Session::get('title') }}" readonly disabled />
+              <input  class="form-control" type="text" placeholder="Enter code" value="{{ Session::get('title') }}" readonly disabled  style="background-color:#F5F5F5" />
             </div>     
             </div>
         </div>
 
-          <div class="col-sm-6 col-lg-12 col-xl-8">
-            <label class="text-1000 fw-bold mb-2">Intitulé du compte</label>
-            <select class="form-select" id="compteid" name="compteid"  type="text" placeholder="Entrer intitulé du compte" required>
-            <option disabled="true" selected="true" value="">--Selectionner compte--</option>
+          <div class="col-sm-6 col-lg-12 col-xl-12">
+          
+            <label class="text-1000 fw-bold mb-2">Compte principal</label>
+            <select class="form-select compteid" id="compteid" name="compteid"  type="text" placeholder="Entrer intitulé du compte" required>
+            <option disabled="true" selected="true" value=""> -- Sélectionner compte principal -- </option>
               @forelse ($compte as $comptes)
-              <option value="{{ $comptes->id }}">{{ ucfirst($comptes->numero) }} : {{ ucfirst($comptes->libelle) }}</option>
+                <option value="{{ $comptes->id }}">{{ ucfirst($comptes->numero) }} : {{ ucfirst($comptes->libelle) }}</option>
               @empty
               <option disabled="true" selected="true">--Aucun compte--</option>
               @endforelse
               
             </select>
           </div>
+
+          <div class="col-sm-6 col-lg-12 col-xl-8">
+          
+          <label class="text-1000 fw-bold mb-2">Sous compte</label>
+          <select class="form-select scomptef" id="scomptef" name="scomptef"  type="text" placeholder="Entrer intitulé du compte" required>
+            <option disabled="true" selected="true"> -- Sélectionner sous compte -- </option>
+          </select>
+        </div>
 
           
           <div class="col-sm-6 col-lg-12 col-xl-4">
@@ -43,7 +52,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit"name="savebtn" id="savebtn" class="btn btn-primary" type="button">Sauvegarder</button>
+        <button type="submit" name="savebtn" id="savebtn" class="btn btn-primary" type="button"> Sauvegarder</button>
       </div>
       </form>
   </div>

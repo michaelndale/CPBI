@@ -22,7 +22,7 @@
 
             <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;num&quot;,&quot;febnum&quot;,&quot;facture&quot;date&quot;bc&quot;periode&quot;om&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
               <div class="table-responsive">
-                <table class="table table-striped table-sm fs--1 mb-0"  style="background-color:#c0c0c0">
+                <table class="table table-striped table-sm fs--1 mb-0 table-bordere"  style="background-color:#c0c0c0">
                  
 
 

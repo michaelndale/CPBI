@@ -230,7 +230,7 @@
         let csrf = '{{ csrf_token() }}';
         Swal.fire({
           title: 'Êtes-vous sûr ?',
-          text: "Vous ne pourrez pas revenir en arrière !",
+          text: "Vous ne pourrez plus revenir en arrière !",
         
           showCancelButton: true,
           confirmButtonColor: 'green',
