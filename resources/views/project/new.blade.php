@@ -92,9 +92,9 @@
             <div class="col-12 gy-2">
               <div class="form-floating"><textarea class="form-control" id="description" name="description" placeholder="Description du projet" style="height: 100px" required></textarea><label for="floatingProjectOverview">Description du projet</label></div>
             </div>
-            <div class="col-12 gy-3">
+            <div class="col-12 gy-4">
               <div class="row g-3 justify-content-end">
-                <div class="col-auto"><button name="addProjectbtn" id="addProjectbtn" class="btn btn-primary px-5 px-sm-15"> <i class="fas fa-check-circle"></i> Sauvegarder </button></div>
+                <div class="col-auto"><button name="addProjectbtn" id="addProjectbtn" class="savebtn btn btn-primary px-5 px-sm-15">  Sauvegarder </button></div>
               </div>
             </div>
           </form>
@@ -108,12 +108,16 @@
 </div>
 
 <script>
-  $(function() {
+   save_btn = document.querySelector('.savebtn');
+   
+   save_btn.onclick = function() {
     // Add PROJECT ajax 
     $("#addProjectForm").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#addProjectbtn").text('Ajouter...');
+
+      this.innerHTML = "<div class='loader'></div>";
+
       $.ajax({
         url: "{{ route('storeProject') }}",
         method: 'post',
@@ -149,15 +153,15 @@
 
           }
 
+          document.getElementById("connectBtn").disabled = false;
 
         }
-
-
+   
       });
     });
 
 
-  });
+  };
 </script>
 
 

@@ -44,4 +44,34 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
+  <style type="text/css">
+          .has-error {
+              border: 1px solid red;
+          }
+
+          .savebtn{
+            display: grid;
+            place-content: center;
+          }
+
+          .loader{
+            pointer-events: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #fff ;
+            animation: an1 1s ease infinite;
+          }
+          @keyframes  an1 {
+            0% {
+                transform: rotate(0turn);
+            }
+            100% {
+                transform: rotate(1turn);
+            }
+          }
+
+        </style>
+
 </head>

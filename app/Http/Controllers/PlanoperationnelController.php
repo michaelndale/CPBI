@@ -45,12 +45,14 @@ class PlanoperationnelController extends Controller
               $elementplan->activite           =  $request->activite[$key];
               $elementplan->lieu               =  $request->lieu[$key];
               $elementplan->categoriebenpre    =  $request->categoriebenpre[$key];
+              
+              $elementplan->hommebenprev    =  $request->hommebenprev[$key];
+              $elementplan->femmebenprev   =  $request->femmebenprev[$key];
+              $elementplan->dateprev    =  $request->datefin[$key];
+
               $elementplan->nombrebenpre       =  $request->nombrebenpre[$key];
               $elementplan->nombreseancepre    =  $request->nombreseancepre[$key];
-              $elementplan->restejourpre       =  $request->restejourpre[$key];
-              $elementplan->nombrebenrev       =  $request->nombrebenrev[$key];
-              $elementplan->nombreseanrev      =  $request->nombreseanrev[$key];
-              $elementplan->restejourrev       =  $request->restejourrev[$key];
+            
               $elementplan->save();
             }
   
@@ -83,7 +85,7 @@ class PlanoperationnelController extends Controller
         <th colspan="3"><center>Réalisation</center></th>
       </tr>
 
-      <tr style="background-color:#DCDCDC">
+      <tr style="background-color:#DCDCDC"> 
         <th style="width:50px">N<sup>o</sup></th>
         <th style="width:300px">Catégorie</th>
         <th style="width:300px">Activité</th>
@@ -110,7 +112,12 @@ class PlanoperationnelController extends Controller
          
           <tr>
             <td rowspan="'.$count.'" >'.$nombre.'</td>
-            <td rowspan="'.$count.'" >'. ucfirst($datas->categorie).'</td>
+            <td rowspan="'.$count.'" >'. ucfirst($datas->categorie).' 
+            <a href="" class="AjouterPlan" id="'.$datas->id.'"  data-bs-toggle="modal" data-bs-target="#Ajouterrelisation" > Ajouter la Realisation</a><br>
+            <a href="" class="editerPlan" id="'.$datas->id.'" data-bs-toggle="modal" data-bs-target="#modification" > Modifier</a> <br>
+            <a href="" class="deletePlan" id="'.$datas->id.'" > Supprimer</a>
+            
+            </td>
           </tr>
 
           
@@ -158,4 +165,12 @@ class PlanoperationnelController extends Controller
         ';
       }
     }
+
+     // edit an employee ajax request
+     public function showplan(Request $request)
+     {
+       $id = $request->id;
+       $fon = Planoperationnel::find($id);
+       return response()->json($fon);
+     }
 }

@@ -36,15 +36,14 @@
     $("#tableEstimate tbody").append(` 
                 <tr id="R${++rowIdx}">
                     <td><input style="width:100%" type="number"   id="numero" name="numero[]"                  class="form-control form-control-sm" value="${rowIdx}" ></td>
-                    <td><textarea  style="width:100%" type="text" id="activite"         name="activite[]"       class="form-control form-control-sm" ></textarea></td>
-                    <td><input  style="width:100%" type="text"    id="lieu"             name="lieu[]"           class="form-control form-control-sm" ></td>
+                    <td><textarea  style="width:100%" type="text" id="activite"         name="activite[]"     class="form-control form-control-sm" required></textarea></td>
+                    <td><input  style="width:100%" type="text"    id="lieu"             name="lieu[]"     class="form-control form-control-sm" required></td>
                     <td><input  style="width:100%" type="text"  id="categoriebenpre"  name="categoriebenpre[]"           class="form-control form-control-sm"    ></td>
                     <td><input  style="width:100%" type="number"  id="nombrebenpre"     name="nombrebenpre[]"    class="form-control form-control-sm"   ></td>
-                    <td><input  style="width:100%" type="number"  id="nombreseancepre"  name="nombreseancepre[]"            class="form-control form-control-sm"   ></td>
-                    <td><input  style="width:100%" type="number"  id="restejourpre"     name="restejourpre[]"        class="form-control form-control-sm" ></td>
-                    <td><input  style="width:100%" type="number"  id="nombrebenrev"     name="nombrebenrev[]"        class="form-control form-control-sm" ></td>
-                    <td><input  style="width:100%" type="number"  id="nombreseanrev"    name="nombreseanrev[]"        class="form-control form-control-sm" ></td>
-                    <td><input  style="width:100%" type="number"  id="restejourrev"     name="restejourrev[]"        class="form-control form-control-sm" ></td>
+                    <td><input  style="width:100%" type="number"  id="hommebenprev"  name="hommebenprev[]"            class="form-control form-control-sm"   ></td>
+                    <td><input  style="width:100%" type="number"    id="femmebenprev"     name="femmebenprev[]"        class="form-control form-control-sm" ></td>
+                    <td><input  style="width:100%" type="number"    id="nombreseancepre"     name="nombreseancepre[]"        class="form-control form-control-sm" ></td>
+                    <td><input  style="width:100%" type="date"    id="datefin"     name="datefin[]"        class="form-control form-control-sm" ></td>
                     <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
                     </tr>`);
   });

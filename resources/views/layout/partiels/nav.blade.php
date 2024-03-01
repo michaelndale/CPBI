@@ -296,27 +296,17 @@
                 <li><a href="{{ route('key.viewProject', Session::get('id') ) }}">Voir le projet</a></li>
                 <li><a href="{{ route('gestioncompte') }}">Ligne budgétaire</a></li>
                 <li><a href="{{ route('rallongebudget') }}">Budget</a></li>
-                <li><a href="{{ route('rapportcumule') }}">Rapport commulatif</a></li>
-                <li><a href="{{ route('planoperationnel') }}">Plan d'action</a></li>
+                <li><a href="{{ route('activity') }}">Activités</a></li>
                 <li><a href="{{ route('listfeb') }}">FEB</a></li>
                 <li><a href="{{ route('listdap') }}">DAP</a></li>
                 <li><a href="{{ route('listdja') }}">DJA</a></li>
+                <li><a href="{{ route('rapportcumule') }}">Rapport commulatif</a></li>
+                <li><a href="{{ route('planoperationnel') }}">Plan d'action</a></li>
                 <!--<li><a href="{{ route('listbpc') }}">BPC</a></li>
                 <li><a href="{{ route('listsqr') }}">SQR</a></li>
                 <li><a href="{{ route('listftd') }}">FTD</a></li> -
                
                 <li><a href="{{ route('affectation') }}">Affectation</a></li> -->
-              </ul>
-            </li>
-
-            <li>
-              <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="ri-projector-line"></i>
-                <span>Activites</span>
-              </a>
-              <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{ route('activity') }}">Activités</a></li>
-
               </ul>
             </li>
 

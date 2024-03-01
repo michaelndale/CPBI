@@ -16,6 +16,29 @@
               border: 1px solid red;
           }
 
+          .btn{
+            display: grid;
+            place-content: center;
+          }
+
+          .loader{
+            pointer-events: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: #fff ;
+            animation: an1 1s ease infinite;
+          }
+          @keyframes  an1 {
+            0% {
+                transform: rotate(0turn);
+            }
+            100% {
+                transform: rotate(1turn);
+            }
+          }
+
         </style>
     </head>
 
@@ -28,7 +51,16 @@
                         <div>
                             
                             <div class="row justify-content-center align-items-center pt-4">
+
+                           
+
+
                                 <div class="col-lg-6 col-md-8">
+
+                                <div class="" id="ok"></div>
+                              
+                                 <div class="" id="err"></div>
+
                                    <div class="card">
                                         <div class="card-body">
                                             <div class="p-3">
@@ -37,14 +69,14 @@
                                                 <div class="divider-content-center">Accédez à votre compte GoProject</div>
                                               </div>
 
-                                              <div id="ok" style="color: white; text-align: center; background-color:green ;border-radius:3px 3px 3px 3px;"></div>
-                                              <div id="err" style="color: white; text-align: center; background-color:Tomato;border-radius:3px 3px 3px 3px;"></div>
+                                              
 
-                                              <form  class="auth-input" name="frm_login" id="frm_login">
+                                              <form  class="auth-input" name="frm_login" id="frm_login" >
                                               @csrf
                                                 <div class="mb-2">
                                                     <label for="indetifiant" class="form-label">Identifiant</label>
-                                                    <input type="text" class="form-control" id="email" name="email" placeholder="Identifiant" autocomplete="off" >
+                                                    <input type="text" class="form-control" id="email" name="email" placeholder="Identifiant"  autocomplete="off" readonly 
+    onfocus="this.removeAttribute('readonly');" >
                                                     <small id="erroremail" style="color:red"></small>
                                                   </div>
                                         
@@ -61,19 +93,23 @@
                                                   </div>
                                         
                                                 <div class="mt-4">
-                                                    <button class="btn btn-primary w-100" type="button" id="connectBtn"  onclick="login()">Se connecter</button>
+                                                    <button class="savebtn btn btn-primary w-100" type="button" id="connectBtn"  > 
+                                                      Se connecter  
+                                                </button>
                                                 </div>
                                         
                                                
                                             </form>
                                             </div>
-                                            <div class="mt-4 text-center">
-                                                <p> Gestion Suivi Projets  <br>©  2023 - <script>document.write(new Date().getFullYear())</script> GoProject  </p>
-                                            </div>
+                                            
                                         </div>
                                    </div>
                                 </div>
                             </div>
+                           <center>
+                                                <small> Gestion Suivi Projets  <br>©  2023 - <script>document.write(new Date().getFullYear())</script> GoProject </small> 
+                                                </center>
+                            
                             <!-- end row -->
                         </div>
                     </div>
@@ -82,9 +118,9 @@
         </div>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script>
-
+    save_btn = document.querySelector('.savebtn');
   
-    function login()
+    save_btn.onclick = function() {
     { 
         if($('#email').val() == "")
         { 
@@ -107,9 +143,12 @@
             $('#password').addClass('has-success');
 
 
-            $("#connectBtn").text('Connexion...');
+            
+            this.innerHTML = "<div class='loader'></div>";
+
+
             document.getElementById("connectBtn").disabled = true;
-            $("#ok").hide().html("Autentification...").fadeIn('slow');
+            $("#ok").hide().html(" <div class='alert alert-info alert-dismissible fade show' role='alert'>  <i class='mdi mdi-bullseye-arrow me-2'></i> Verification autentification encours ... <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close></button></div> ").fadeIn('slow');
  
             $.ajaxSetup({
                 headers: {
@@ -126,36 +165,36 @@
                     console.log(response); 
                     if(response == 1)
                     {
-                        $("#ok").hide().html("Connexion établie. Redirection en cours…").fadeIn('slow');
+                        $("#ok").hide().html("<div class='alert alert-success alert-dismissible fade show' role='alert'> <i class='mdi mdi-check-all me-2'></i> Connexion établie. Redirection en cours…  <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close></button></div>").fadeIn('slow');
                         $("#err").hide()
                         setTimeout("location.href = '{{ route('dashboard')}}';",1000);
                     }
                     else if(response == 2)
                     {
                         $("#ok").hide()
-                        $("#err").hide().html("Votre compte est bloqué. Vérifiez s'il vous plaît").fadeIn('slow');
+                        $("#err").hide().html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><i class='mdi mdi-block-helper me-2'></i>  Votre compte est bloqué. Vérifiez s'il vous plaît <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close></button></div>").fadeIn('slow');
                         $("#connectBtn").text('Se connecter');
-                        connectBtn
+                        
                       }
 
                     else if(response == 3)
                     {
                         $("#ok").hide()
-                        $("#err").hide().html("Votre compte est désactivé. Vérifiez s'il vous plaît").fadeIn('slow');
+                        $("#err").hide().html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><i class='mdi mdi-block-helper me-2'></i> Votre compte est désactivé. Vérifiez s'il vous plaît <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close></button></div>").fadeIn('slow');
                         $("#connectBtn").text('Se connecter');
                       }
 
                     else if(response == 4)
                     {
                       $("#ok").hide()
-                      $("#err").hide().html("Identifiant ou mot de passe incorrect. Vérifiez s'il vous plaît").fadeIn('slow');
+                      $("#err").hide().html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><i class='mdi mdi-block-helper me-2'></i> Identifiant ou mot de passe incorrect ! <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close></button></div> ").fadeIn('slow');
                       $("#connectBtn").text('Se connecter');
                     }
 
                     else if(response == 4)
                     {
                       $("#ok").hide()
-                      $("#err").hide().html("Attention : votre serveur distant n'est pas connecter").fadeIn('slow');
+                      $("#err").hide().html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><i class='mdi mdi-block-helper me-2'></i>Attention : votre serveur distant n'est pas connecter  <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close></button></div> ").fadeIn('slow');
                       $("#connectBtn").text('Se connecter');
                     }
 
@@ -165,6 +204,8 @@
             });
         }
     }
+       
+    } 
 </script>
         <script src="{{ asset('element/assets/libs/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('element/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
