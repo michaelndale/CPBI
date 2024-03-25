@@ -13,11 +13,11 @@
                             <table class="table table-striped table-sm fs--1 mb-0">
                                 <tbody class="list">
                                     <tr>
-                                        <td class="align-middle ps-3 name" style="width:20%">Catégorie</td>
-                                        <td class="align-middle email" colspan="6">
-                                           
-                                            <input class="form-control form-control-sm"  id="categorie" name="categorie" required>
-                                        </td>
+                                        <td class="align-middle ps-3 name" style="width:10%">Catégorie</td>
+                                        <td class="align-middle email"  style="width:75%"> <input class="form-control form-control-sm"  id="categorie" name="categorie" required></td>
+                                       
+                                        <td class="align-middle ps-3 name" style="width:5%">Période</td>
+                                        <td class="align-middle email" style="width:15%"> <input class="form-control form-control-sm"  id="periode" name="periode" type="number" required></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -37,8 +37,8 @@
                                         <th style="width:300px">Activité</th>
                                         <th style="width:150px">Lieu</th>
                                         <th style="width:180px"> <center> Catégorie des bénéficiaires </center> </th>
-                                        <th style="width:50px" colspan="3"><center> Nombre des bénéficiaires</center></th>
-                                        <th style="width:150px">Nombre de séances</th>
+                                        <th style="width:50px" colspan="3"><center> Bénéficiaires</center></th>
+                                        <th style="width:150px">Nombre des séances</th>
                                         <th style="width:150px" colspan="2">Date fin</th>
 
                                   
@@ -75,6 +75,7 @@
 
                             
                     </div>
+            </div>
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary" id="addplanbbtn" name="addplanbtn"><i class="fa fa-check-circle"></i> Sauvegarder</button>

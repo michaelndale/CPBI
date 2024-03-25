@@ -98,7 +98,7 @@
   <div class="modal fade" id="edit_ServiceModal" tabindex="-1" aria-labelledby="edit_ServiceModal" style="display: none;" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
-          <form method="POST" id="edit_service_form"">
+          <form method="POST" id="edit_service_form">
           @method('post')
           @csrf
             <div class="modal-header">

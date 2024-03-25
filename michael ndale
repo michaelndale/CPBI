@@ -21,3 +21,32 @@ Passionner de la tecbhnologie
                   
                   <label for="floatingInputGrid">Ligne budgetaire</label></div>
               </div>
+
+              /*Edit fonction ajax request
+      $(document).on('click', '.showligne', function(e) {
+    e.preventDefault();
+    let id = $(this).attr('id');
+    $.ajax({
+        url: "{{ route('showligneR') }}",
+        method: 'get',
+        data: {
+            id: id,
+            _token: '{{ csrf_token() }}'
+        },
+        success: function(response) {
+            console.log(response); // Vérifiez la réponse dans la console
+            if (response && response.id) {
+                $("#titreligne").val(response.libelle);
+                $("#idligne").val(response.id);
+                $("#montantligne").val(response.budgetactuel);
+            } else {
+                console.log("Données de réponse incorrectes ou manquantes."); // Affichez un message d'erreur dans la console
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText); // Affichez les erreurs éventuelles
+        }
+    });
+});
+
+*/

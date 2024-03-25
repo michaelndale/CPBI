@@ -19,51 +19,69 @@
               </h2>
 
               <div class="dropdown">
-                <button class="btn btn-light btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="mdi mdi-dots-vertical align-middle font-size-16"></i>
+                <button class="btn btn-primary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Action <i class="mdi mdi-dots-vertical align-middle font-size-16"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                  <li>
+                <li>
+                    <a class="dropdown-item" href="{{ route('key.editProject', Session::get('id') ) }}"><i class="fas fa-edit font-size-16 align-middle me-2 text-muted"></i>
+                      Modifier le projet</a>
+                  </li>
+
+                 <!-- <li>
                     <button class="dropdown-item" href="{{ route('listfeb') }}"><i class=" fas fa-times-circle  font-size-16 align-middle me-2 text-muted"></i>
                       Bloquer la modification</button>
                   </li>
 
                   <li>
                     <button class="dropdown-item" href="{{ route('listfeb') }}"><i class=" mdi mdi-check-circle font-size-16 align-middle me-2 text-muted"></i> Autoriser la modification</button>
-                  </li>
-                  <li>
-                    <button class="dropdown-item" href="{{ route('listfeb') }}"><i class="fas fa-edit font-size-16 align-middle me-2 text-muted"></i>
-                      Modifier le projet</button>
-                  </li>
-                  <li>
-                    <button class="dropdown-item" href="{{ route('listfeb') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
-                      FEB</button>
-                  </li>
-                  <li class="dropdown-divider"></li>
-                  <li>
-                    <button class="dropdown-item" href="{{ route('listdap') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
-                      DAP</button>
-                  </li>
-                  <li class="dropdown-divider"></li>
-                  <li>
-                    <a class="dropdown-item" href="{{ route('listdja') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
-                      DJA</a>
-                  </li>
-                  <li class="dropdown-divider"></li>
-                  <li>
-                    <a class="dropdown-item" href="{{ route('affectation') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
-                      Affectation</a>
-                  </li>
-                  <li class="dropdown-divider"></li>
+                  </li> -->
+                 
                   <li>
                     <a class="dropdown-item" href="{{ route('gestioncompte') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
                     Ligne budgetaire</a>
                   </li>
-                  <li class="dropdown-divider"></li>
+                 
                   <li>
                     <a class="dropdown-item" href="{{ route('rallongebudget') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
                       Budget</a>
                   </li>
+                  <li>
+                    <a class="dropdown-item" href="{{ route('activity') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      Activites</a>
+                  </li>
+
+                  <li>
+                    <a class="dropdown-item" href="{{ route('listfeb') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      FEB</a>
+                  </li>
+                  
+                  <li>
+                    <a class="dropdown-item" href="{{ route('listdap') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      DAP</a>
+                  </li>
+                  
+                  <li>
+                    <a class="dropdown-item" href="{{ route('listdja') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      DJA</a>
+                  </li>
+                
+                  <li>
+                    <a class="dropdown-item" href="{{ route('affectation') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      Affectation</a>
+                  </li>
+                
+                  <li>
+                    <a class="dropdown-item" href="{{ route('rapportcumule') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      Rapport cummulatif</a>
+                  </li>
+
+                  <li>
+                    <a class="dropdown-item" href="{{ route('planoperationnel') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                      Plan d'action</a>
+                  </li>
+
+                
                  
                 </ul>
               </div>
@@ -156,10 +174,12 @@
                           <td class="align-top py-1 text-900 text-nowrap fw-bold">Lieu:</td>
                           <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->lieuprojet }}</td>
                         </tr>
+
                         <tr>
-                          <!--  <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression :</td>
-                              -<td class="text-warning fw-semi-bold ps-3">80%</td>  -->
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Notre en periode:</td>
+                          <td class="text-600 fw-semi-bold ps-3">{{ $dataProject->periode }}</td>
                         </tr>
+                        
                       </tbody>
                     </table>
                   </div>

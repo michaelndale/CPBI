@@ -44,103 +44,155 @@ class ActivityController extends Controller
 
     public function fetchAll()
     {
-      $devise =session()->get('devise');
       $ID = session()->get('id');
-      $act = DB::table('activities')
-            ->orderby('id','DESC')
-            ->Where('projectid', $ID)
-            ->get();
-
-            $somme_activite= DB::table('activities')
-            ->Where('projectid', $ID)
-            ->SUM('montantbudget');
-
-           
-               
+      $devise =session()->get('devise');
+      $service = Compte::where('compteid', '=', 0)
+        ->where('projetid', $ID)
+        ->get();
       $output = '';
-      if ($act->count() > 0) {
-       
+      if ($service->count() > 0) {
+  
         $nombre = 1;
-        foreach ($act as $rs) {
-          if($rs->etat_activite=="Annuler"){ $color ='#F08080'; $class='danger' ;}
+        foreach ($service as $rs) {
+          $id = $rs->id;
+          $output .= '<tr style="background-color:#F5F5F5">
+                <td class="align-middle ps-3 name"><b>' . $nombre . '</td>
+                <td><b>' . ucfirst($rs->numero) . '</b></td>
+                <td colspan="5"><b>' . ucfirst($rs->libelle) . '</b></td>
+              
+              </tr>
+              ';
+  
+          $sous_compte = Compte::where('compteid', $id)
+            ->where('souscompteid', '=', 0)
+            ->where('projetid', $ID)
+            ->get();
+          if ($sous_compte->count() > 0) {
+            $ndale = 1;
+            foreach ($sous_compte as $sc) {
+              $ids = $sc->id;
+  
+              // <a href="#" id="' . $sc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
+              $output .= '
+                    <tr>
+                      <td class="align-left" style="background-color:#F5F5F5"></td>
+                      <td style="width:15px">' . ucfirst($sc->numero) . '</td>
+                      <td style="width:250px">' . ucfirst($sc->libelle) . '</td>
+                      <td> ';
+
+                      $act = DB::table('activities')
+                            ->Where('projectid', $ID)
+                            ->Where('compteidr', $ids)
+                            ->orderby('id','DESC')
+                            ->get();
+                      $nombre = 1;
+                      $output .= ' <table id="venteTable" class="table table-bordered table-striped mb-0 table-sm">';
+                        foreach ($act as $rs) { 
+                          if($rs->etat_activite=="Annuler"){ $color ='#F08080'; $class='danger' ;}
       
 
-         elseif($rs->etat_activite=="Terminée"){
-          $color=''; $class='primary';
-         }
-
-         elseif($rs->etat_activite=="Contrainte"){
-          $color=''; $class='warning';
-         }
-
-         elseif($rs->etat_activite=="Encours"){
-          $color=''; $class='info';
-         }
-
-         else{
-          $color=''; $class='success';
-         }
-          
-          $output .= '
-            <tr style="background-color:'.$color.'">
-              <td class="align-middle ps-3 name">' . $nombre . '</td>
-              <td>
-              <center>
-               
-                <div class="btn-group me-2 mb-2 mb-sm-0">
-                  <a  data-bs-toggle="dropdown" aria-expanded="false">
-                       <i class="mdi mdi-dots-vertical ms-2"></i>
-                  </a>
-                  <div class="dropdown-menu">
-                  <a class="dropdown-item text-success mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#AddCommenteModale" title="Modifier"><i class="ri-wechat-line"></i> Ajouter un onbservation</a>
-                      <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#EditModale" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
-                      <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
-                  </div>
-               </div>
+                          elseif($rs->etat_activite=="Terminée"){
+                           $color=''; $class='primary';
+                          }
+                 
+                          elseif($rs->etat_activite=="Contrainte"){
+                           $color=''; $class='warning';
+                          }
+                 
+                          elseif($rs->etat_activite=="Encours"){
+                           $color=''; $class='info';
+                          }
+                 
+                          else{
+                           $color=''; $class='success';
+                          }
+                          $output .= '
+                          
+                          <tr style="background-color:'.$color.'">
+                            <td class="align-middle ps-3 name" >' . $nombre . '</td>
+                            <td style="width:20px">
+                            <center>
+                             
+                              <div class="btn-group me-2 mb-2 mb-sm-0">
+                                <a  data-bs-toggle="dropdown" aria-expanded="false">
+                                     <i class="mdi mdi-dots-vertical ms-2"></i>
+                                </a>
+                                <div class="dropdown-menu">
+                                <a class="dropdown-item text-success mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#AddCommenteModale" title="Modifier"><i class="ri-wechat-line"></i> Ajouter un onbservation</a>
+                                    <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#EditModale" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
+                                    <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
+                                </div>
+                             </div>
+                            
               
+                            </td>
+                            <td>' . ucfirst($rs->titre). '
+                            <a href="#" id="' . $rs->id . '" class="text-success mx-1 observationshow" data-bs-toggle="modal" data-bs-target="#TableCommenteModale" title="Observation" ><i class="ri-wechat-line"></i> </a>
+                            </td>
+                         
+                            <td align="right">' . number_format($rs->montantbudget,0, ',', ' ').' '. $devise.'</td>
+                            <td><center><span class="badge rounded-pill bg-'.$class.' font-size-11">' . ucfirst($rs->etat_activite). '</span></center></td>
+                           
+                          </tr>';
+                        $nombre++;
 
-              </td>
-              <td>' . ucfirst($rs->titre). '
-              <a href="#" id="' . $rs->id . '" class="text-success mx-1 observationshow" data-bs-toggle="modal" data-bs-target="#TableCommenteModale" title="Observation" ><i class="ri-wechat-line"></i> </a>
-              </td>
-           
-              <td align="right">' . number_format($rs->montantbudget,0, ',', ' ').' '. $devise.'</td>
-              <td><center><span class="badge rounded-pill bg-'.$class.' font-size-11">' . ucfirst($rs->etat_activite). '</span></center></td>
-              <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
-              
-            </tr>';
+                        }
+ 
+                        $output .= '</table> ';
+                     
+                  $output .= '</td>
+                    </tr>
+              ';
+              $ndale++;
+            }
+  
+  
+            $sous_sous_compte = Compte::where('souscompteid', $ids)
+              ->where('projetid', $ID)
+              ->get();
+            if ($sous_sous_compte->count() > 0) {
+              $nd = 1;
+              foreach ($sous_sous_compte as $ssc) {
+                $output .= '
+                  <tr>
+                    <td class="align-middle ps-3 name">' . $nombre . '.' . $ndale . '.' . $nd . '</td>
+                    <td>' . ucfirst($ssc->numero) . '</td>
+                    <td>' . ucfirst($ssc->libelle) . '</td>
+                    <td>
+                     hello
+                     
+                       </td>
+                  </tr>
+            ';
+                $nd++;
+              }
+            }
+          }
+  
+  
+  
+  
+  
           $nombre++;
         }
-        $output.='
-        <tr>
-          <td colspan="3">
-            Total
-          </td>
-            <td align="right"> 
-            
-              <b> '.number_format($somme_activite,0, ',', ' ').' BIF</b>
-            
-            </td>
-           
-        </tr>
-        
-        ';
+  
         echo $output;
       } else {
-        echo
-            '
-            <tr>
-            <td colspan="6">
-            <center>
-              <h6 style="margin-top:1% ;color:#c0c0c0"> 
-              <center><font size="10px"><i class="far fa-trash-alt"  ></i> </font><br><br>
-              Ceci est vide  !</center> </h6>
-            </center>
-            </td>
-            </tr>
-            
-            ';
+        echo ' <tr>
+                  <td colspan="4">
+                  <center>
+                    <h6 style="margin-top:1% ;color:#c0c0c0"> 
+                    <center><font size="50px"><i class="far fa-trash-alt"  ></i> </font><br><br>
+                  Ceci est vide  !</center> </h6>
+                  </center>
+                  </td>
+                  </tr>
+               ';
       }
+
+
+
+
     }
 
 
@@ -282,6 +334,8 @@ class ActivityController extends Controller
   
     return response()->json($fon);
   }
+
+  
 
     public function deleteall(Request $request,)
     {

@@ -67,7 +67,24 @@ class RallongebudgetController extends Controller
                 ->SUM('budgetactuel');
       // Fin Budget 
 
+      // FEB DATA
 
+          $datasommefeb = DB::table('elementfebs')
+          ->orderby('id', 'DESC')
+          ->Where('projetids', $IDP)
+          ->SUM('montant');
+
+        $pourcentagefeb = round(($datasommefeb * 100) / $budget);
+        $sommefeb = number_format($datasommefeb, 0, ',', ' ');
+
+        if($pourcentagefeb == 100){
+          $messageFEB='<center><span class="badge rounded-pill bg-primary font-size-11">Terminer</span></center>';
+        }else{
+          $messageFEB='<center><span class="badge rounded-pill bg-success font-size-11">Encours</span></center>';
+        }
+
+
+        //
      
 
       $output = '';
@@ -83,10 +100,17 @@ class RallongebudgetController extends Controller
           $message='<center><span class="badge rounded-pill bg-success font-size-11">Encours</span></center>';
         }
 
+        $poursommerepartie = round(($sommerepartie*100)/$showData->budget);
+        if($poursommerepartie == 100){
+          $messageR='<center><span class="badge rounded-pill bg-primary font-size-11">Terminer</span></center>';
+        }else{
+          $messageR='<center><span class="badge rounded-pill bg-success font-size-11">Encours</span></center>';
+        }
+
         $output .='
 
         <table class="table table-bordered  table-sm fs--1 mb-0">
-        <tr scope="col" >
+        <tr scope="col">
           <td scope="col" style="padding:5px"><b>Rubrique du projet</b></td>
           <td scope="col" style="padding:5px"><b>Pays / region</b></td>
           <td scope="col" style="padding:5px"><b>N<sup>o</sup> Projet</b></td>
@@ -106,13 +130,18 @@ class RallongebudgetController extends Controller
         <tr>
           <td colspan="3" >Montant total repartie </td>
           <td style="padding:5px" align="right">'.number_format($somme_budget,0, ',', ' ').' '.$showData->devise.'  </td>
-         
-          <td colspan="2" style="background-color:#c0c0c0"></td>
+          <td><center>'.$pglobale.' %</center></td>
+        <td> '.$messageR.'</td>
         </tr>
+
+        <tr>
+        <td colspan="3" >Montant encours de consommation</td>
+        <td style="padding:5px" align="right">'.$sommefeb.' '.$showData->devise.'  </td>
+        <td><center>'.$pourcentagefeb.' %</center></td>
+        <td> '.$messageFEB.'</td>
+      </tr>
       </table>
       <br>
-
-     
         ';
 
         $output .= '
@@ -121,7 +150,7 @@ class RallongebudgetController extends Controller
         <thead>
           <tr >
             <th ><b>#</b></th>
-            <th ><b>Code</b></th>
+            <th  style="padding:5px"><b>Code</b></th>
             <th ><b>Ligne budgétaire</b></th>
             <th ><center><b>Budget</b></center></th>
         ';
@@ -198,6 +227,7 @@ class RallongebudgetController extends Controller
           // recuperation element de la ligne
           $sous_compte = DB::table('rallongebudgets')
           ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
+          ->select('rallongebudgets.*', 'comptes.libelle','comptes.numero')
           ->Where('rallongebudgets.projetid', $IDP)
           ->where('rallongebudgets.compteid', $datas->id)
           ->get();
@@ -206,17 +236,21 @@ class RallongebudgetController extends Controller
           $ndale = 1;
           foreach ($sous_compte as $sc) {
             $ids = $sc->id;
-
-             
+            $route = route('showligne', $ids);
+            
            
             
            
             // <a href="#" id="' . $sc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
             $output .= '
                   <tr>
-                    <td class="align-left" style="background-color:#F5F5F5"></td>
+                    <td class="align-left" style="background-color:#F5F5F5">
+                      <center> 
+                        <a  href="'.$route.'"  ><i class="fa fa-edit"></i> </a> 
+                      </center>
+                    </td>
                     <td>' . ucfirst($sc->numero) . '</td>
-                    <td>' . ucfirst($sc->libelle) . '</td>
+                    <td  style="width:400px"> ' . ucfirst($sc->libelle) . '</td>
                     <td align="right">' . number_format($sc->budgetactuel,0, ',', ' ').' '.$devise.'</td>
                     ';
 
@@ -344,14 +378,59 @@ class RallongebudgetController extends Controller
       ]);
     }
 
+
+    public function updatlignebudget(Request $request)
+    {
+      $IDP = session()->get('id');
+      $budget =session()->get('budget');
+
+        // TOTAL Budget 
+        $somme_budget= DB::table('rallongebudgets')
+        ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
+        ->Where('rallongebudgets.projetid', $IDP)
+        ->SUM('budgetactuel');
+
+        $globale = $request->montantligne+$somme_budget;
+
+        if($budget >= $globale){
+        $MisesA = Rallongebudget::find($request->id);
+        $MisesA ->budgetactuel	= $request->montantligne;
+        $MisesA ->update();
+          
+        if ($MisesA ) {
+          return redirect()->route('rallongebudget')->with('success', 'Très bien! le budgetaire  est bien modifier');
+      } else {
+          return back()->with('failed', 'Echec ! lle budgetaire  n\'est pas creer ');
+      }
+    }else{
+      return back()->with('failed', 'Attention ! Vous ne devez pas depasser le montant du budget  global ');
+    }
+    }
+
+
    
 
-     // edit an service ajax request
-     public function edit(Request $request)
+
+
+     // SHOW ELEMENT
+     public function show(Rallongebudget $key)
      {
-       $id = $request->id;
-       $fon = Rallongebudget::find($id);
-       return response()->json($fon);
+       
+       $dataJon =DB::table('rallongebudgets')
+          ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
+          ->select('rallongebudgets.*', 'comptes.libelle')
+          ->where('rallongebudgets.id', $key->id)
+          ->get();
+
+       
+
+          return view('rallonge.viewligne',
+          [
+            'dataJon' => $dataJon
+          ]
+        );
+         
+      // return response()->json($datar);
      }
   
     // edit an service ajax request

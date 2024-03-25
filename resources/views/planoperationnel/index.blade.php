@@ -27,6 +27,7 @@
 </div>
 
 @include('planoperationnel.modale')
+@include('planoperationnel.realisation')
 <br><br>
 
 <script>
@@ -123,15 +124,45 @@
       });
     });
 
+
+    $("#addrealisationForm").submit(function(e) {
+      e.preventDefault();
+      const fd = new FormData(this);
+      $("#addrealisationbtn").text('Ajouter...');
+      $.ajax({
+        url: "{{ route('storerealisation') }}",
+        method: 'post',
+        data: fd,
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+          if (response.status == 200) {
+            fetchAllplan();
+            $("#addrealisationbtn").text('Sauvegarder');
+            $("#addrealisationForm")[0].reset();
+            $("#ajouterrelisation").modal('hide');
+            toastr.success("Réalisaction ajouté avec succès !", "Enregistrement");
+          }
+          if (response.status == 202) {
+            toastr.error("Erreur d'execution, verifier votre internet", "Attention");
+            $("#addrealisationModal").modal('show');
+          }
+          $("#addrealisationbtn").text('Sauvegarder');
+        }
+      });
+    });
+
     // Delete feb ajax request
 
-    $(document).on('click', '.deleteIcon', function(e) {
+    $(document).on('click', '.deletePlan', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
       let csrf = '{{ csrf_token() }}';
       Swal.fire({
         title: 'Êtes-vous sûr ?',
-        text: "FEB est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ?  ",
+        text: "Plan d\'action est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ?  ",
 
         showCancelButton: true,
         confirmButtonColor: 'green',
@@ -141,7 +172,7 @@
       }).then((result) => {
         if (result.isConfirmed) {
           $.ajax({
-            url: "{{ route('deletefeb') }}",
+            url: "{{ route('deletePlan') }}",
             method: 'delete',
             data: {
               id: id,
@@ -149,7 +180,7 @@
             },
             success: function(response) {
               console.log(response);
-              toastr.success("FEB supprimer avec succès !", "Suppression");
+              toastr.success("Plan d'action supprimer avec succès !", "Suppression");
               fetchAllplan();
             }
           });
@@ -157,6 +188,24 @@
       })
     });
 
+     // recuperation fonction ajax request
+     $(document).on('click', '.ajouterplan', function(e) {
+        e.preventDefault();
+        let id = $(this).attr('id');
+        $.ajax({
+          url: "{{ route('showplanelement') }}", 
+          method: 'get',
+          data: {
+            id: id,
+            _token: '{{ csrf_token() }}'
+          },
+          success: function(response) {
+            $("#planid").val(response.plano);
+            $("#activiteid").val(response.id);
+            $("#activitetitre").val(response.activite);
+          }
+        });
+      });
 
 
     fetchAllplan();

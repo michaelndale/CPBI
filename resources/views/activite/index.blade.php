@@ -12,7 +12,7 @@
       <div class="row">
         <div class="col-12" style="margin:auto">
           <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0"><i class="fa fa-folder-open"></i> Activite par projet </h4>
+            <h4 class="mb-sm-0"><i class="fa fa-folder-open"></i> Activite par ligne budgetaire </h4>
 
             <div class="page-title-right">
               <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModale" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouvelle activité</a>
@@ -31,16 +31,13 @@
                 <thead>
 
                   <tr style="background-color:#82E0AA">
-                    <th>#</th>
+                    <th>N<sup>o</sup></th>
                     <th>
-                      <center>Action</center>
+                      <center>Code</center>
                     </th>
-                    <th>Description detaillee des besoins</th>
-
-                    <th>Montant</th>
-                    <th><center>Statut</center></th>
-
-                    <th> Date</th>
+                    <th >Ligne et sous ligne  budgetaire </th>
+                    <th>Activite</th>
+                  
                     
                   </tr>
 

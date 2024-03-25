@@ -139,7 +139,6 @@
 
             var url = key + '/view';
 
-
             window.location.href = url;
 
           }

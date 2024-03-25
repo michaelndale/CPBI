@@ -150,6 +150,9 @@ Route::middleware('auth')->group(function (){
         Route::post('/storerallonge', [RallongebudgetController::class, 'store'])->name('storerallonge');
         Route::get('/fetchRallonge', [RallongebudgetController::class, 'fetchAll'])->name('fetchRallonge');
         Route::get('/findSousCompte',[RallongebudgetController::class, 'findSousCompte'] )->name('findSousCompte');
+        Route::get('{key}/showligne/', [RallongebudgetController::class, 'show'])->name('showligne');
+        Route::put('/updatligne/{cle}', [RallongebudgetController::class, 'updatlignebudget'])->name('updatligne'); 
+        
        
     
     });
@@ -169,6 +172,8 @@ Route::middleware('auth')->group(function (){
         Route::post('/storeProject', [ProjectController::class, 'store'])->name('storeProject');
         Route::get('/closeproject', [ProjectController::class, 'closeproject'])->name('closeproject');
         Route::get('/{key}/view/', [ProjectController::class, 'show'])->name('key.viewProject');
+        Route::get('/{key}/edit/', [ProjectController::class, 'editshow'])->name('key.editProject');
+        Route::put('/updatprojet/{cle}', [ProjectController::class, 'updateprojet'])->name('updatprojet'); 
         
         
         
@@ -307,12 +312,13 @@ Route::middleware('auth')->group(function (){
         Route::get('/', [PlanoperationnelController::class, 'index'])->name('planoperationnel');
         Route::get('/fetchAllplan', [PlanoperationnelController::class, 'fetchAll'])->name('fetchAllplan');
         Route::post('/storeplan', [PlanoperationnelController::class, 'save'])->name('storeplan');
-       // Route::get('/showPersonnel', [PersonnelController::class, 'edit'])->name('showPersonnel');
+        Route::post('/storerealisation', [PlanoperationnelController::class, 'saverealisation'])->name('storerealisation');
+        Route::get('/showplanelement', [PlanoperationnelController::class, 'showplanElement'])->name('showplanelement');
        // Route::post('/updatPersonnel', [PersonnelController::class, 'update'])->name('updatPersonnel'); 
        // Route::post('/updatUser', [PersonnelController::class, 'updatpassword'])->name('updatUser'); 
        // Route::post('/updatProfile', [PersonnelController::class, 'updatprofile'])->name('updatProfile'); 
        // Route::post('/updatsignature', [PersonnelController::class, 'updatsignature'])->name('updatsignature'); 
-       // Route::delete('/deletePersonnel', [PersonnelController::class, 'deleteall'])->name('deletePersonnel');
+       Route::delete('/deletePlan', [PlanoperationnelController::class, 'deletePlan'])->name('deletePlan');
     });
 
     //FIN RH

@@ -185,6 +185,92 @@ class ProjectController extends Controller
         ]);
     }
 
+
+    public function editshow(Project $key)
+    {
+      $title="Show project";
+      $active = 'Project';
+      
+      session()->put('id', $key->id);
+      session()->put('title', $key->title);
+      session()->put('numeroprojet', $key->numeroprojet);
+      session()->put('ligneid', $key->ligneid);
+      session()->put('devise', $key->devise);
+      session()->put('budget', $key->budget);
+      session()->put('periode', $key->periode);
+
+     
+      $act = DB::table('activities')
+            ->orderby('id','DESC')
+            ->Where('projectid', $key->id)
+            ->get();
+      
+      $user=  DB::table('users')
+            ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+            ->Where('users.id', $key->lead)
+            ->get();
+
+           
+      
+            $sommerepartie= DB::table('rallongebudgets')
+            ->Where('projetid', $key->id)
+            ->SUM('budgetactuel');
+
+           
+
+
+      return view('project.modifier', 
+        [
+          'title' =>$title,
+          'active' => $active,
+          'dataProject' => $key,
+          'activite' => $act,
+          'responsable' => $user,
+          'sommerepartie' => $sommerepartie
+          
+        ]);
+    }
+
+
+
+    public function updateprojet(Request $request)
+    {
+        $project = Project::find($request->pid);
+
+        $project->title = $request->ptitre;
+        $project->lead = $request->resid;
+        $project->budget= $request->montant;
+        $project->numeroprojet= $request->numero;
+        $project->created_at= $request->datecreation;
+        $project->start_date= $request->datedebut;
+        $project->deadline= $request->datefin;
+        $project->region = $request->region;
+        $project->lieuprojet = $request->lieu;
+        $project->description= $request->description;
+        $project->devise= $request->devise;
+        $project->periode= $request->periode;
+        $project->autorisation= $request->autorisation;
+    
+        $project->update();
+          
+        if ($project) {
+
+          session()->put('id', $project->id);
+          session()->put('title', $project->title);
+          session()->put('numeroprojet', $project->numeroprojet);
+          session()->put('ligneid', $project->ligneid);
+          session()->put('devise', $project->devise);
+          session()->put('budget', $project->budget);
+          session()->put('periode', $project->periode);
+          
+          return back()->with('success', 'Très bien! le projet  est bien modifier');
+      } else {
+          return back()->with('failed', 'Echec ! le categorie n\'est pas creer ');
+      }
+    }
+
+
     public function revisionbudget()
     {
       $IDP = session()->get('id');
