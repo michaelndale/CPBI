@@ -112,6 +112,9 @@ class IdentificationController extends Controller
         $emp->fax=$request->fax;
         $emp->description= $request->description;
         $emp->urlogo= $fileName;
+        $emp->entete = $request->entete;
+        $emp->sousentete = $request->sousentete;
+        $emp->piedpage = $request->piedpage;
         $emp->userid = Auth()->user()->id;
         $emp->Update();
          

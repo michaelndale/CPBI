@@ -50,3 +50,14 @@ Passionner de la tecbhnologie
 });
 
 */
+
+     $elementsSelectionnes= $request->elements;
+          foreach ($elementsSelectionnes as $element) {
+            $activityfeb = new activitefeb();
+        
+            $activityfeb->projeid    = $request->projetid;
+            $activityfeb->febid      = $IDf;
+            $activityfeb->activiteid = $element;
+        
+            $activityfeb->save();
+        }

@@ -96,27 +96,39 @@ class DapController extends Controller
       $dap->referencefeb = $request->febid;
       $dap->lieu = $request->lieu;
       $dap->comptabiliteb= $request->comptebanque;
-      $dap->ovd= $request->ov;
+      $dap->ov= $request->ov;
       $dap->cho= $request->ch;
       $dap->demandeetablie= $request->demandeetablie;
       $dap->verifierpar= $request->verifier;
       $dap->approuverpar= $request->approuver;
       $dap->responsable= $request->resposablefinancier;
-      $dap->ssecretaire= $request->secretairegenerale;
+      $dap->secretaire= $request->secretairegenerale;
       $dap->chefprogramme= $request->chefprogramme;
       $dap->observation= $request->observation;
       $dap->userid = Auth::id();
 
-      $dap->save();
-         
-      return response()->json([
-       'status' => 200,
-       
-      ]);
+      $go = $dap->save();
+      
+      if($go){
+        return response()->json([
+          'status' => 200,
+          
+         ]);
+      }else{
+        return response()->json([
+          'status' => 202,
+          
+         ]);
+      }
+    
     }   
 
   } catch (Exception $e) {
-    return back()->with('failed', 'Echec ! vous avez une erreur d\'execution ');
+    return response()->json([
+      'status' => 203,
+      
+     ]);
+  
   }
 
 

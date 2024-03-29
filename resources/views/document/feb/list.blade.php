@@ -1,5 +1,11 @@
 @extends('layout/app')
 @section('page-content')
+<style>
+  .custom-modal-dialog {
+  max-width: 400px; /* Réglez la largeur maximale du popup selon vos besoins */
+  max-height: 50px; /* Réglez la hauteur maximale du popup selon vos besoins */
+}
+</style>
 <div class="main-content">
 <br>
     
@@ -8,9 +14,12 @@
         <div class="card-header p-4 border-bottom border-300 bg-soft">
           <div class="row g-3 justify-content-between align-items-end">
             <div class="col-12 col-md">
-              <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Fiche d'Expression des Besoins "FEB"  </h4>
+              <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Fiche d'Expression des Besoins "FEB"   </h4>
             </div>
             <div class="col col-md-auto">
+
+            <a href="#" id="fetchDataLink"  > <i class="fas fa-sync-alt"></i> Actualiser</a>
+
     
             <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addfebModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle"></span> Nouvel fiche FEB</a>
              
@@ -19,12 +28,10 @@
         </div>
         <div class="card-body p-0">
 
-            <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;num&quot;,&quot;febnum&quot;,&quot;facture&quot;date&quot;bc&quot;periode&quot;om&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
+            <div id="tableExample2" >
               <div class="table-responsive">
-                <table class="table table-striped table-sm fs--1 mb-0"  style="background-color:#c0c0c0">
+                <table class="table table-striped table-sm fs--1 mb-0"  style="background-color:#3CB371;color:white">
                  
-
-
                   <tbody   id="showSommefeb">
                     
                   </tbody>
@@ -37,19 +44,24 @@
 
 
 
-            <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;num&quot;,&quot;febnum&quot;,&quot;facture&quot;date&quot;bc&quot;periode&quot;om&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
+            <div id="tableExample2" >
               <div class="table-responsive">
                 <table class="table table-striped table-sm fs--1 mb-0" >
                   <thead>
                     <tr>
                       <th class="sort border-top "><center>Action</center></th>
                       <th class="sort border-top" data-sort="febnum">N<sup>o</sup> FEB </th>
-                      <th class="sort border-top ps-3" data-sort="facture">Facture</th>
-                      <th class="sort border-top" data-sort="date">Date FEB</th>
-                      <th class="sort border-top" data-sort="bc">BC</th>
-                      <th class="sort border-top" data-sort="periode">Période</th>
-                      <th class="sort border-top" data-sort="om">OM</th>
                       <th class="sort border-top" data-sort="om">Montant total</th>
+                      <th class="sort border-top" data-sort="periode"><center>Période</center></th>
+                      <th class="sort border-top ps-3" data-sort="facture"><center>Facture</center></th>
+                      <th class="sort border-top" data-sort="om"><center>OM</center></th>
+                      <th class="sort border-top" data-sort="bc"><center>BC</center></th>
+                      <th class="sort border-top" data-sort="bc"><center>NEC</center></th>
+                      <th class="sort border-top" data-sort="bc"><center>FP/Devis</center></th>
+                      <th class="sort border-top" data-sort="date"><center>Date</center></th>
+                      
+                    
+                      
                       <th class="sort border-top" data-sort="om"> % </th>
                       
                     </tr>
@@ -58,7 +70,7 @@
 
                   <tbody class="show_all" id="show_all" >
                     <tr >
-                      <td colspan="10">
+                      <td colspan="11">
                         <h5 class="text-center text-secondery my-5">
                           <center> @include('layout.partiels.load') </center>
                       </td>
@@ -86,78 +98,119 @@
 
   <BR><BR>
 
+ 
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+
+    $(document).on('change', '.ligneid', function() {
+      var ligid = $(this).val();
+      var div = $(this).parent();
+      var op = " ";
+      $.ajax({
+        type: 'get',
+        url: "{{ route ('getactivite') }}",
+        data: {
+          'id': ligid
+        },
+        success: function(reponse) {
+          $("#Showpoll").html(reponse);
+        },
+        error: function() {
+          alert("Attention! \n Erreur de connexion a la base de donnee ,\n verifier votre connection");
+        }
+      });
+    });
+  });
+</script>
+
   <script>
-    var rowIdx = 1;
-    $("#addBtn").on("click", function() {
-      // Adding a row inside the tbody.
-      $("#tableEstimate tbody").append(` 
-                <tr id="R${++rowIdx}">
-                    <td><input style="width:100%" type="number"    id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="${rowIdx}" ></td>
-                    <td><input style="width:100%" type="text"    id="description"  name="description[]"  class="form-control form-control-sm" ></td>
-                    <td><input style="width:100%" type="text"    id="unit_cost"    name="unit_cost[]"    class="form-control form-control-sm" ></td>
-                    <td><input style="width:100%" type="number"  id="qty"          name="qty[]"          class="form-control form-control-sm qty"     ></td>
-                    <td><input style="width:100%" type="number"  id="frenquency"   name="frenquency[]"   class="form-control form-control-sm frenquency"   ></td>
-                    <td><input style="width:100%" type="number"  id="pu"           name="pu[]"           class="form-control form-control-sm pu"   ></td>
-                    <td><input style="width:100%" type="text"    id="amount"       name="amount[]"       class="form-control form-control-sm total"   value="0" readonly></td>
-                    
-                    <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
-                    </tr>`);
-    });
-    $("#tableEstimate tbody").on("click", ".remove", function() {
-      // Getting all the rows next to the row
-      // containing the clicked button
-      var child = $(this).closest("tr").nextAll();
-      // Iterating across all the rows
-      // obtained to change the index
-      child.each(function() {
-        // Getting <tr> id.
+
+    // Variable pour stocker le numéro de ligne actuel
+var rowIdx = 2;
+
+// Ajouter une ligne au clic sur le bouton "Ajouter"
+// Ajouter une ligne au clic sur le bouton "Ajouter"
+$("#addBtn").on("click", function() {
+    // Ajouter une nouvelle ligne au tableau
+    $("#tableEstimate tbody").append(`
+        <tr id="R${rowIdx}">
+            <td><input style="width:100%" type="number" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="${rowIdx}" ></td>
+            <td> 
+                <div id="Showpoll${rowIdx}" class="Showpoll">
+                  
+                </div>
+            </td>
+            <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm"></td>
+            <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm" ></td>
+            <td><input style="width:100%" type="number" id="qty" name="qty[]" class="form-control form-control-sm qty" ></td>
+            <td><input style="width:100%" type="number" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency" ></td>
+            <td><input style="width:100%" type="number" id="pu" name="pu[]" class="form-control form-control-sm pu" ></td>
+            <td><input style="width:100%" type="text" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
+            <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
+        </tr>
+    `);
+
+    // Cloner le contenu de l'élément Showpoll dans la nouvelle ligne
+    var $originalShowpoll = $('#Showpoll');
+    var $newShowpoll = $originalShowpoll.clone().attr('id', `Showpoll${rowIdx}`);
+    $(`#R${rowIdx}`).find('.Showpoll').replaceWith($newShowpoll);
+
+    // Incrémenter le numéro de ligne
+    rowIdx++;
+});
+
+
+// Supprimer une ligne au clic sur le bouton "Enlever"
+$("#tableEstimate tbody").on("click", ".remove", function() {
+    // Récupérer toutes les lignes suivant la ligne supprimée
+    var child = $(this).closest("tr").nextAll();
+    
+    // Modifier les numéros de ligne des lignes suivantes
+    child.each(function() {
         var id = $(this).attr("id");
-
-        // Getting the <p> inside the .row-index class.
-        var idx = $(this).children(".row-index").children("p");
-
-        // Gets the row number from <tr> id.
         var dig = parseInt(id.substring(1));
-
-        // Modifying row index.
-        idx.html(`${dig - 1}`);
-
-        // Modifying row id.
         $(this).attr("id", `R${dig - 1}`);
-      });
-
-      // Removing the current row.
-      $(this).closest("tr").remove();
-
-      // Decreasing total number of rows by 1.
-      rowIdx--;
+        $(this).find(".row-index").text(dig - 1);
     });
 
-    $("#tableEstimate tbody").on("input", ".pu", function() {
-      var pu = parseFloat($(this).val());
-      var qty = parseFloat($(this).closest("tr").find(".qty").val());
-      var total = $(this).closest("tr").find(".total");
-      total.val(pu * qty * frenquency);
+    // Supprimer la ligne
+    $(this).closest("tr").remove();
 
-      calc_total();
+    // Mettre à jour le numéro de ligne
+    rowIdx--;
+});
+
+// Mettre à jour les totaux lors de la modification des champs "pu", "qty", et "frenquency"
+$("#tableEstimate tbody").on("input", ".pu, .qty, .frenquency", function() {
+    var pu = parseFloat($(this).closest("tr").find(".pu").val()) || 0;
+    var qty = parseFloat($(this).closest("tr").find(".qty").val()) || 0;
+    var frenquency = parseFloat($(this).closest("tr").find(".frenquency").val()) || 0;
+    var total = pu * qty * frenquency;
+    $(this).closest("tr").find(".total").val(total.toFixed(2));
+
+    calc_total();
+});
+
+// Fonction pour calculer le total
+
+
+function calc_total() {
+    var sum = 0;
+    $(".total").each(function() {
+        sum += parseFloat($(this).val()) || 0;
     });
+    $(".subtotal").text(sum.toFixed(2));
 
-    $("#tableEstimate tbody").on("input", ".qty", function() {
-      var qty = parseFloat($(this).val());
-      var pu = parseFloat($(this).closest("tr").find(".pu").val());
-      var total = $(this).closest("tr").find(".total");
-      total.val(pu * qty * frenquency);
-      calc_total();
-    });
+    // Mettre à jour le total global
+    $(".total-global").text(sum.toFixed(2));
+}
 
-    function calc_total() {
-      var sum = 0;
-      $(".total").each(function() {
-        sum += parseFloat($(this).val());
-      });
-      $(".subtotal").text(sum);
 
-    }
+ 
 
     $(function() {
       $(document).on('change', '.soldeligne', function() {
@@ -208,7 +261,8 @@
       $("#addfebForm").submit(function(e) {
         e.preventDefault();
         const fd = new FormData(this);
-        $("#addfebbtn").text('Ajouter...');
+        $("#addfebbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+        $("#loadingModal").modal('show'); // Affiche le popup de chargement
         $.ajax({
           url: "{{ route('storefeb') }}",
           method: 'post',
@@ -228,15 +282,18 @@
               $('#numerofeb').addClass('');
 
               $("#addfebForm")[0].reset();
+               
               $("#addfebModal").modal('hide');
 
+              
+             
+
               toastr.success("Feb ajouté avec succès !", "Enregistrement");
-
-
             }
             if (response.status == 201) {
               toastr.error("Attention: FEB numéro existe déjà !", "AAttention");
               $("#addfebModal").modal('show');
+              
               $("#numerofeb_error").text("Numéro existe");
               $('#numerofeb').addClass('has-error');
             }
@@ -244,14 +301,20 @@
             if (response.status == 202) {
               toastr.error("Erreur d'execution, verifier votre internet", "Attention");
               $("#addfebModal").modal('show');
+             
             }
 
             if (response.status == 203) {
               toastr.error("Le montant global du feb depasse le budget de la ligne encours", "Attention");
               $("#addfebModal").modal('show');
+             
             }
 
             $("#addfebbtn").text('Sauvegarder');
+            $("#loadingModal").modal('hide'); 
+            setTimeout(function() {
+                $("#loadingModal").modal('hide');
+            }, 600); // 2000 millisecondes = 2 secondes
           }
         });
       });
@@ -291,6 +354,18 @@
         })
       });
 
+      $(document).ready(function() {
+    // Attachement de l'événement click au lien
+    
+        $("#fetchDataLink").click(function(e) {
+          $("#loadingModal").modal('show'); // Affiche le popup de chargement
+            e.preventDefault(); // Empêche le comportement par défaut du lien (rechargement de la page)
+            fetchAllfeb(); // Appel à la fonction pour charger les données
+            setTimeout(function() {
+                $("#loadingModal").modal('hide');
+            }, 1000); // 2000 millisecondes = 2 secondes
+        });
+    });
 
 
       fetchAllfeb();
@@ -317,6 +392,8 @@
           }
         });
       }
+
+     
 
     });
   </script>

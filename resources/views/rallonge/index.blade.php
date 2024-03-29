@@ -1,5 +1,12 @@
 @extends('layout/app')
 @section('page-content')
+<style>
+    /* Style pour le texte caché */
+    .hidden-link {
+        display: none;
+    }
+</style>
+
 <div class="main-content">
   <div class="content">
     <div class="card-header p-4 border-bottom border-300 bg-soft">
@@ -29,6 +36,30 @@
 
 
 @include('rallonge.modale')
+
+
+<script>
+    // Sélection des lignes (<tr>) avec la classe "hoverable-tr"
+    const hoverableTrs = document.querySelectorAll('.hoverable-tr');
+
+    // Écoute des événements de survol pour chaque ligne
+    hoverableTrs.forEach(tr => {
+        tr.addEventListener('mouseover', () => {
+            // Sélection de l'élément <a> à l'intérieur de la ligne
+            const editLink = tr.querySelector('.edit-link');
+            // Ajout de la classe pour afficher le lien
+            editLink.classList.remove('hidden-link');
+        });
+        // Événement pour cacher le lien lorsque la souris quitte la ligne
+        tr.addEventListener('mouseleave', () => {
+            // Sélection de l'élément <a> à l'intérieur de la ligne
+            const editLink = tr.querySelector('.edit-link');
+            // Suppression de la classe pour cacher le lien
+            editLink.classList.add('hidden-link');
+        });
+    });
+</script>
+
 <script>
   $(document).ready(function() {
     $('#dtHorizontalVerticalExample').DataTable({
@@ -40,6 +71,8 @@
 </script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
 
 <script type="text/javascript">
   $(document).ready(function() {
@@ -246,7 +279,6 @@
       })
     });
 
-     
 
 
     fetchAllrallonge();

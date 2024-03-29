@@ -14,43 +14,81 @@
                 @csrf
 
               <div class="col-sm-12 gy-1">
-                <div class="form-floating">
+                
+                <label for="floatingInputGrid">Nom institution </label>
                 <input  name="info_id" id="info_id" type="hidden"  value="{{ $info->id }}" />
                 <input type="hidden" name="emp_avatar" id="emp_avatar" value="{{ $info->urllogo }}" >
-                    <input class="form-control" name="name" id="name" type="text" placeholder="Nom intitution"  value="{{ $info->nominstitution	 }}" /><label for="floatingInputGrid">Nom institution </label></div>
-              </div>
+                    <input class="form-control form-control-sm" name="name" id="name" type="text" placeholder="Nom intitution"  value="{{ $info->nominstitution	 }}" />
+                    </div>
+
             
               <div class="col-md-6 gy-1">
-                <div class="form-floating"><input class="form-control" id="nif"  name="nif" type="text" placeholder="NIF" value="{{ $info->nif }}" /><label for="floatingInputBudget">NIF</label></div>
+              <label for="floatingInputBudget">NIF</label>
+               <input class="form-control form-control-sm" id="nif"  name="nif" type="text" placeholder="NIF" value="{{ $info->nif }}" />
+              
               </div>
 
               <div class="col-md-6 gy-1">
-                <div class="form-floating"><input class="form-control" id="phone"  name="phone" type="text" placeholder="Telephone"  value="{{ $info->phone }}" /><label for="floatingInputBudget">Numero de telephone</label></div>
+                
+                <label for="floatingInputBudget">Numero de telephone</label>
+                  <input class="form-control form-control-sm" id="phone"  name="phone" type="text" placeholder="Telephone"  value="{{ $info->phone }}" />
+                 
               </div>
 
               <div class="col-md-6 gy-1">
-                <div class="form-floating"><input class="form-control" id="bp"  name="bp" type="text" placeholder="BP" value="{{ $info->bp }}" /><label for="floatingInputBudget">B.P</label></div>
+              <label for="floatingInputBudget">B.P</label>
+              
+                  <input class="form-control form-control-sm" id="bp"  name="bp" type="text" placeholder="BP" value="{{ $info->bp }}" />
+                
               </div>
 
               <div class="col-md-6 gy-1">
-                <div class="form-floating"><input class="form-control" id="fax"  name="fax" type="text" placeholder="fax"  value="{{ $info->fax }}" /><label for="floatingInputBudget">Fax</label></div>
+              <label >Fax</label>
+                  <input class="form-control form-control-sm" id="fax"  name="fax" type="text" placeholder="fax"  value="{{ $info->fax }}" />
+                 
               </div>
 
               <div class="col-12 gy-1">
-                <div class="form-floating"><textarea class="form-control" id="adresse" name="adresse" placeholder="Adresse" 
-                 style="height: 70px">{{ $info->adresse }}</textarea><label for="floatingProjectOverview">Adresse</label></div>
-              </div>
-
-              <div class="col-md-6 gy-1">
-                <div class="form-floating"><input class="form-control" id="email"  name="email" type="text" placeholder="Email" value="{{ $info->email }}" /><label for="floatingInputBudget">Email</label></div>
-              </div>
-
-              <div class="col-md-6 gy-1">
-                <div class="form-floating"><input class="form-control" id="file"  name="file" type="file"   /><label for="floatingInputBudget"></label></div>
+                <label for="floatingProjectOverview">En tete </label>
+                  <input class="form-control form-control-sm" id="entete" name="entete" value="{{ $info->entete }}" />
               </div>
 
               <div class="col-12 gy-1">
-                <div class="form-floating"><textarea class="form-control" id="description" name="description" placeholder="Description" style="height: 100px">{{ $info->description }} </textarea><label for="floatingProjectOverview"> Description</label></div>
+                <label for="floatingProjectOverview">Devise</label>
+                  <input class="form-control form-control-sm" id="sousentete" name="sousentete" value="{{ $info->sousentete }}" />
+              </div>
+
+              <div class="col-12 gy-1">
+                <label for="floatingProjectOverview">Pied page</label>
+                  <input class="form-control form-control-sm" id="piedpage" name="piedpage" value="{{ $info->piedpage }}" />
+              </div>
+
+              <div class="col-6 gy-1">
+                <label for="floatingProjectOverview">Adresse</label>
+                <input class="form-control form-control-sm" id="adresse" name="adresse" value="{{ $info->adresse }}" />
+              </div>
+
+              <div class="col-md-6 gy-1">
+              <label for="floatingInputBudget">Email</label>
+                  <input class=" form-control form-control-sm"" id="email"  name="email" type="text" placeholder="Email" value="{{ $info->email }}" />
+                  
+              </div>
+
+              <div class="col-md-12 gy-1">
+              <label for="floatingInputBudget">Logo ,  <a href="" class="form-control-sm"> Voir le logo ici </a>
+                </label>
+                <input class="form-control form-control-sm" id="file"  name="file" type="file"   />
+                
+              </div>
+              <br>
+
+              
+
+
+              <div class="col-12 gy-1">
+                  <label for="floatingProjectOverview"> Description</label>
+                  <textarea class="form-control form-control-sm"" id="description" name="description" placeholder="Description" >{{ $info->description }} </textarea>
+                  
               </div>
              
               <div class="col-12 gy-2">
@@ -72,6 +110,8 @@
         @endforeach
   
 <script>
+
+
     $(function() {
       // Add PROJECT ajax 
       $("#addIdentificationForm").submit(function(e) {

@@ -7,11 +7,11 @@
             </div>
             <div class="modal-body">
 
-                <form class="row g-3 mb-6" method="POST" id="adddapForm">
+                <form class="row g-3 mb-6" method="POST" id="adddapForm"> 
                     @method('post')
                     @csrf
 
-                    <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
+                    <div id="tableExample2">
                         <div class="table-responsive">
                             <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
                                 <tbody class="list">
@@ -64,7 +64,7 @@
                                         <input type="text" class="form-control form-control-sm" name="comptebanque" id="comptebanque" style="width: 100%">
                                     </td>
 
-                                    <td> Solde comptable (BQ):
+                                    <td> Solde comptable (Sc):
                                         <input type="text" class="form-control form-control-sm">
                                     </td>
 
@@ -200,7 +200,7 @@
 
                                 <tr>
                                     <td colspan="4"><b>Observations/Instructions du SG : </b> <br>
-                                        <textarea class="form-control form-control-sm" name="observation"></textarea>
+                                        <textarea class="form-control form-control-sm" name="observation" id="observation"></textarea>
                                     </td>
 
                                 </tr>

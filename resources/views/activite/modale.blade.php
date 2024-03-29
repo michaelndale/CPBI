@@ -57,7 +57,7 @@
             <tr>
               <td class="align-middle ps-3 name" style="width:25%">Description detaillee des besoins </td>
               <td class="align-middle email" colspan="6">
-                <input type="text" class="form-control form-control-sm" name="titre" id="titre" required />
+                <textarea type="text" class="form-control form-control-sm" name="titre" id="titre" required></textarea>
               </td>
             </tr>
 

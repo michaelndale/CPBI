@@ -1,3 +1,17 @@
+<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered custom-modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+      <span style="color:#3CB371">
+        <i class="fas fa-spinner fa-spin"></i> Chargement en cours...
+      </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="modal fade" id="addfebModal" tabindex="-1" aria-labelledby="addfebModal" aria-hidden="true">
     <div class="modal-dialog modal-xl  modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
@@ -8,97 +22,114 @@
                 <form class="row g-3 mb-6" method="POST" id="addfebForm">
                     @method('post')
                     @csrf
-                    <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
+                    <div id="tableExample2" >
                         <div class="table-responsive">
                             <table class="table table-striped table-sm fs--1 mb-0">
                                 <tbody class="list">
                                     <tr>
                                         <td class="align-middle ps-3 name" style="width:20%">Composante/ Projet/Section</td>
-                                        <td class="align-middle email" colspan="6">
+                                        <td class="align-middle email" colspan="7">
                                             <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
                                             <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="align-middle ps-3 name">Activité</td>
-                                        <td class="align-middle email" colspan="3">
-                                            <select type="text" class="form-select form-control-sm" name="activityid" id="activityid" style="width: 100%">
-                                                <option disabled="true" selected="true">--Aucun--</option>
-                                                @forelse ($activite as $activites)
-                                                <option value="{{ $activites->id }}"> {{ $activites->titre }} </option>
-                                                @empty
-                                                
-                                                @endforelse
-                                            </select>
-                                        </td>
 
                                         <td class="align-middle ps-3 name">Ligne budgétaire: </td>
-                                        <td class="align-middle email" colspan="3">
-                                          
-                                        <div class="col-lg-12">
-                                                <div class="mb-0">
+                                        <td class="align-middle email" colspan="7">
 
-                                                <select class="form-select  select2-search-disable" id="referenceid" name="referenceid" required>
-                                                    <option>Ligne budgétaire</option>
-                                                    @foreach ($compte as $comptes)
-                                                    <optgroup label="{{ $comptes->libelle }}">
+
+
+                                            <select class="form-control  form-control-sm ligneid" id="referenceid" name="referenceid" required>
+                                                <option>Sélectionner la ligne budgétaire</option>
+                                                @foreach ($compte as $comptes)
+                                                <optgroup label="{{ $comptes->libelle }}">
                                                     @php
                                                     $idc = $comptes->id ;
                                                     $res= DB::select("SELECT * FROM comptes WHERE compteid= $idc");
                                                     @endphp
                                                     @foreach($res as $re)
-                                                    <option value="{{ $comptes->id }} - {{ $re->id }}"> {{ $comptes->id }}-{{ $re->id }}   {{ $re->numero }}. {{ $re->libelle }} </option>
+                                                    <option value="{{ $comptes->id }} - {{ $re->id }}"> {{ $re->numero }}. {{ $re->libelle }} </option>
                                                     @endforeach
 
-                                                    </optgroup>
-                                                    @endforeach
+                                                </optgroup>
+                                                @endforeach
 
-                                                </select>
+                                            </select>
 
-                                                </div>
 
-                                            </div>
+                                        </td>
+
+
+
+                                    </tr>
+                                    <tr>
+
+                                    </tr>
+
+                                    </tr>
+                                    <tr>
+                                        <td class="align-middle ps-3 name" colo>Activités </td>
+                                        <td colspan="7">
+                                            <input type="text" class="form-control form-control-sm" name="descriptionf" id="descriptionf" required>
+                                        </td>
+
+
                                         </td>
                                     </tr>
                                     <tr>
                                         <td class="align-middle ps-3 name">Numéro fiche <br>
-                                        <input type="text" class="form-control form-control-sm"  style="width: 100% ; background-color:#c0c0c0" value="0***" readonly >
-                                       
-                                    </td>
-                                       
+                                            <input type="text" class="form-control form-control-sm" style="width: 100% ; background-color:#c0c0c0" value="0***" readonly>
+                                        </td>
+
                                         <td class="align-middle ps-3 name">Période: <br>
-                                            <select type="text" class="form-control form-control-sm" name="periode" id="periode" style="width: 100%">
-                                             @php
+                                            <select type="text" class="form-control form-control-sm" name="periode" id="periode" style="width: 100%" required>
+                                                @php
                                                 $periode= Session::get('periode')
-                                             @endphp
-                                             @for($i =1 ; $i <= $periode ; $i++ )
-                                                 <option value="T{{$i}}" > T{{$i}} </option>
-                                             @endfor
+                                                @endphp
+                                                @for($i =1 ; $i <= $periode ; $i++ ) <option value="T{{$i}}"> T{{$i}} </option>
+                                                    @endfor
                                             </select>
-
-                                        </td>
-                                        
-                                        <td class="align-middle ps-3 name">Date: <br> 
-                                        <input type="date" class="form-control form-control-sm" name="datefeb" id="datefeb" style="width: 100%" value="{{ date('') }}">
-                        
-                                         </td>
-
-                                         <td class="align-middle ps-3 name">BC:<br>
-                                           <input type="text" class="form-control form-control-sm" name="bc" id="bc" style="width: 100%">
                                         </td>
 
-                                        <td class="align-middle ps-3 name">Facture: <br>
-                                            <input type="text" class="form-control form-control-sm" name="facture" id="facture" style="width: 100%">
+                                        <td class="align-middle ps-3 name"> Date: <br>
+                                            <input type="date" class="form-control form-control-sm" name="datefeb" id="datefeb" style="width: 100%" value="{{ date('') }}" required>
                                         </td>
 
-                                        <td class="align-middle ps-3 name">O.M: <br>
-                                            <input type="text" class="form-control form-control-sm" name="om" id="om" style="width: 100%">
+                                        <td class="align-middle ps-3 name">
+                                            <center>BC:<br>
+                                                <input type="checkbox" class="form-check-input" name="bc" id="bc">
+                                            </center>
                                         </td>
-                                       
+
+                                        <td class="align-middle ps-3 name">
+                                            <center>Facture: <br>
+                                                <input type="checkbox" class="form-check-input" name="facture" id="facture">
+                                            </center>
+                                        </td>
+
+                                        <td class="align-middle ps-3 name">
+                                            <center>O.M: <br>
+                                                <input type="checkbox" class="form-check-input" name="om" id="om">
+                                            </center>
+                                        </td>
+
+                                        <td class="align-middle ps-3 name">
+                                            <center>NEC: <br>
+                                                <input type="checkbox" class="form-check-input" name="nec" id="nec">
+                                            </center>
+                                        </td>
+
+                                        <td class="align-middle ps-3 name">
+                                            <center>FP/Devis <br>
+                                                <input type="checkbox" class="form-check-input" name="fpdevis" id="fpdevis">
+                                            </center>
+                                        </td>
+
                                     </tr>
-                                   
+
                                     <tr>
-                                       
+
                                     </tr>
                                 </tbody>
                             </table>
@@ -113,6 +144,7 @@
                                         <tr>
                                             <th style="width:80px">Num</th>
                                             <th style="width:600px">Description</th>
+                                            <th style="width:300px">Libelle</th>
                                             <th style="width:150px">Unité</th>
                                             <th style="width:100px">Q<sup>té</sup></th>
                                             <th style="width:50px">Frequence</th>
@@ -124,45 +156,45 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><input  style="width:100%" type="number" id="numerodetail" name="numerodetail[]"  class="form-control form-control-sm"  value="1"></td>
-                                            <td><input  style="width:100%" type="text"   id="description"  name="description[]"   class="form-control form-control-sm"></td>
-                                            <td><input  style="width:100%" type="text"   id="unit_cost"    name="unit_cost[]"     class="form-control form-control-sm unit_price" ></td>
-                                            <td><input  style="width:100%" type="number" id="qty"          name="qty[]"           class="form-control form-control-sm qty"    ></td>
-                                            <td><input  style="width:100%" type="number" id="frenquency"   name="frenquency[]"    class="form-control form-control-sm frenquency"   ></td>
-                                            <td><input  style="width:100%" type="number" id="pu"           name="pu[]"            class="form-control form-control-sm pu"   ></td>
-                                            <td><input  style="width:100%" type="text"   id="amount"       name="amount[]"        class="form-control form-control-sm total"   value="0" readonly></td>
-                                           
+                                            <td><input style="width:100%" type="number" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="1"></td>
+                                            <td>
+                                                <div id="Showpoll" class="Showpoll">
+                                                    <input style="width:100%" type="text" class="form-control form-control-sm">
+                                                </div>
+                                            </td>
+                                            <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required></td>
+                                            <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm unit_price" required></td>
+                                            <td><input style="width:100%" type="number" id="qty" name="qty[]" class="form-control form-control-sm qty" required></td>
+                                            <td><input style="width:100%" type="number" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency" required></td>
+                                            <td><input style="width:100%" type="number" id="pu" name="pu[]" class="form-control form-control-sm pu" required></td>
+                                            <td><input style="width:100%" type="text" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
+
                                             <td><a href="javascript:void(0)" class="text-primary font-18" title="Add" id="addBtn"><i class="fa fa-plus-circle"></i></a></td>
                                         </tr>
 
-                                     <!--   <tr>
-
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td class="text-right">Total</td>
-                                            <td>
-                                                <input class="form-control text-right total" type="text" id="sum_total" name="total" value="0" readonly>
-                                            </td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr> -->
-
-                                        <input class="form-control text-right" type="hidden" id="tax_1" name="tax_1" value="0" readonly>
-
-                                        <input class="form-control text-right discount" type="hidden" id="discount" name="discount" value="10">
-
-                                        <input class="form-control text-right" type="hidden" id="grand_total" name="grand_total" value="$ 0.00" readonly>
+                                        <tr>
 
                                     </tbody>
                                 </table>
+
+                                <table class="table table-striped table-sm fs--1 mb-0">
+                                    <tfoot style="background-color:#c0c0c0">
+                                        <tr>
+                                            <td colspan="8">Total global : 0 ({{ Session::get('devise') }} )</td>
+                                            <td align="right"><span class="total-global">0.00 {{ Session::get('devise') }} </span></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                                <hr>
+
                             </div>
 
                             <div class="table-repsonsive">
                                 <span id="error"></span>
-                             
-                                <table class="table table-striped table-sm fs--1 mb-0" >
+
+                                <table class="table table-striped table-sm fs--1 mb-0">
                                     <tr>
                                     <tr>
                                         <td>Etablie par (AC/CE/CS) </td>
@@ -172,19 +204,19 @@
                                     <tr>
                                         <td>
                                             <input type="hidden" class="form-control form-control-sm" name="acce" id="acce" value="{{ Auth::id() }}" />
-                                           {{ ucfirst(Session::get('nomauth')) }} {{ ucfirst(Session::get('prenomauth')) }} 
+                                            {{ ucfirst(Session::get('nomauth')) }} {{ ucfirst(Session::get('prenomauth')) }}
                                         </td>
                                         <td>
-                                            <select type="text" class="form-control form-control-sm" name="comptable" id="comptable">
-                                                <option value="">--Sélectionnez comptable--</option>
+                                            <select type="text" class="form-control form-control-sm" name="comptable" id="comptable" required>
+                                                <option value="">--Sélectionner comptable--</option>
                                                 @foreach ($comptable as $comptables)
                                                 <option value="{{ $comptables->id }}">{{ $comptables->nom }} {{ $comptables->prenom }}</option>
                                                 @endforeach
                                             </select>
                                         </td>
                                         <td>
-                                            <select type="text" class="form-control form-control-sm" name="chefcomposante" id="chefcomposante">
-                                                <option value="">--Sélectionnez Chef de Composante/Projet/Section--</option>
+                                            <select type="text" class="form-control form-control-sm" name="chefcomposante" id="chefcomposante" required>
+                                                <option value="">--Sélectionner Chef de Composante/Projet/Section--</option>
                                                 @foreach ($chefcompable as $chefcompables)
                                                 <option value="{{ $chefcompables->id }}">{{ $chefcompables->nom }} {{ $chefcompables->prenom }}</option>
                                                 @endforeach

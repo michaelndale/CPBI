@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\activitefeb;
 use App\Models\Activity;
 use App\Models\Compte;
 use App\Models\Elementfeb;
 use App\Models\Feb;
 use App\Models\Historique;
+use App\Models\Identification;
 use App\Models\Rallongebudget;
 use Exception;
 use Illuminate\Http\Request;
@@ -40,6 +42,12 @@ class FebController extends Controller
 
         $sommefeb = number_format($sommefeb, 0, ',', ' ');
 
+        if($datas->facture==1){ $facture="checked" ; } else{ $facture=""; }
+        if($datas->om==1){ $om="checked" ; } else{ $om=""; }
+        if($datas->bc==1){ $bc="checked" ; } else{ $bc=""; }
+        if($datas->nec==1){ $nec="checked" ; } else{ $nec=""; }
+        if($datas->fpdevis==1){ $fpdevis="checked" ; } else{ $fpdevis=""; }
+        
         $output .= '
         <tr>
         <td>
@@ -49,22 +57,24 @@ class FebController extends Controller
                     <i class="mdi mdi-dots-vertical ms-2"></i> Action
                 </button>
                 <div class="dropdown-menu">
-                    <a href="feb/' . $datas->id . '/view" class="dropdown-item text-success mx-1 voirIcon" id="' . $datas->id . '"  ><i class="far fa-edit"></i> Voir feb</a>
-                    <a class="dropdown-item text-primary mx-1 editIcon " id="' . $datas->id . '"  data-bs-toggle="modal" data-bs-target="#editFolderModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
+                    <a href="feb/'.$datas->id.'/view" class="dropdown-item text-success mx-1 voirIcon" id="'.$datas->id.'"  ><i class="far fa-edit"></i> Voir feb</a>
+                    <a href="feb/'.$datas->id.'/edit" class="dropdown-item text-primary mx-1 editIcon " id="'.$datas->id.'"  title="Modifier"><i class="far fa-edit"></i> Modifier</a>
                     <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
                 </div>
             </div>
           </center>
 
           </td>
-          <td> <b>' . $datas->numerofeb . ' </b>  </td>
-          <td> ' . $datas->facture . '  </td>
-          <td> ' . $datas->datefeb . ' </td>
-          <td> ' . $datas->bc . ' </td>
-          <td> ' . $datas->periode . ' </td>
-          <td> ' . $datas->om . ' </td>
+          <td> <b>'. $datas->numerofeb .' </b>  </td>
           <td> <b> ' . $sommefeb . ' ' . $devise . '</b>  </td>
-          <td> ' . $pourcentage . '%</td>
+          <td align="center"> ' . $datas->periode . ' </td>
+          <td align="center"> <input type="checkbox"  '. $facture .' class="form-check-input" />  </td>
+          <td align="center"> <input type="checkbox"  '. $om .' class="form-check-input" />  </td>
+          <td align="center"> <input type="checkbox"  '. $bc .' class="form-check-input" />  </td>
+          <td align="center"> <input type="checkbox"  '. $nec .' class="form-check-input" />  </td>
+          <td align="center"> <input type="checkbox"  '. $fpdevis.' class="form-check-input" />  </td>
+          <td align="center"> ' .date('d-m-Y', strtotime($datas->datefeb)). '  </td>
+          <td align="center"> ' . $pourcentage . '%</td>
           
         </tr>
       ';
@@ -75,11 +85,11 @@ class FebController extends Controller
       echo
       '
       <tr>
-      <td colspan="10">
+      <td colspan="11">
       <center>
         <h6 style="margin-top:1% ;color:#c0c0c0"> 
-        <center><font size="50px"><i class="far fa-trash-alt"  ></i> </font><br><br>
-        Ceci est vice !</center> </h6>
+        <center><font size="50px"><i class="fas fa-info-circle"  ></i> </font><br><br>
+        Ceci est vide !</center> </h6>
       </center>
       </td>
       </tr>
@@ -106,8 +116,8 @@ class FebController extends Controller
     $sommefeb = number_format($data, 0, ',', ' ');
 
     $output .= '
-          <td > Montant globale d\'expression des besoins</td>
-          <td class="align-right" padding-left:5px> <b> ' . $sommefeb . ' ' . $devise . '</b>  </td>
+          <td > &nbsp; Montant global de l\'expression des besoins</td>
+          <td class="align-right" > ' . $sommefeb . ' ' . $devise . ' </td>
           <td > ' . $pourcentage . '%</td> 
           <td> &nbsp;</td>
       ';
@@ -117,8 +127,6 @@ class FebController extends Controller
   }
 
 
-
-  // insert a new employee ajax request
   public function store(Request $request)
   {
     try {
@@ -172,16 +180,24 @@ class FebController extends Controller
           ]);
         } else {
 
+          if($request->has('bc')){ $bc=1 ; } else{ $bc=0 ; }
+          if($request->has('om')){ $om=1 ; } else{ $om=0 ; }
+          if($request->has('facture')){ $facture=1 ; } else{ $facture=0 ; }
+          if($request->has('fpdevis')){ $fpdevis=1 ; } else{ $fpdevis=0 ; }
+          if($request->has('nec')){ $nec=1 ; } else{ $nec=0 ; }
+
           $activity = new Feb();
           $activity->numerofeb = '000' . $datanumero;
           $activity->projetid = $request->projetid;
-          $activity->activiteid = $request->activityid;
           $activity->periode = $request->periode;
           $activity->datefeb = $request->datefeb;
           $activity->ligne_bugdetaire = $grandcompte;
-          $activity->bc = $request->bc;
-          $activity->facture = $request->facture;
-          $activity->om = $request->om;
+          $activity->descriptionf = $request->descriptionf;
+          $activity->bc = $bc;
+          $activity->facture = $facture;
+          $activity->om = $om;
+          $activity->fpdevis = $fpdevis;
+          $activity->nec = $nec;
           $activity->acce = $request->acce;
           $activity->comptable = $request->comptable;
           $activity->chefcomposante = $request->chefcomposante;
@@ -189,9 +205,13 @@ class FebController extends Controller
           $activity->userid = Auth::id();
           $activity->save();
 
+
           $IDf = $activity->id;
           // insersion module elments de details
-          foreach ($request->numerodetail as $key => $items) {
+
+          $elementsSelectionnes= $request->numerodetail;
+          foreach ($elementsSelectionnes as $key => $items) {
+        
 
             $element1 = $request->pu[$key];
             $element2 = $request->qty[$key];
@@ -204,6 +224,7 @@ class FebController extends Controller
 
             $elementfeb->febid      =  $IDf;
             $elementfeb->libellee   =  $request->description[$key];
+            $elementfeb->libelle_description   =  $request->libelle_description[$key];
             $elementfeb->unite      =  $request->unit_cost[$key];
             $elementfeb->quantite   =  $request->qty[$key];
             $elementfeb->frequence  =  $request->frenquency[$key];
@@ -216,6 +237,7 @@ class FebController extends Controller
             $elementfeb->numero     =  '000' . $datanumero;
 
             $elementfeb->save();
+
           }
 
           return response()->json([
@@ -237,6 +259,66 @@ class FebController extends Controller
   }
 
 
+  public function Updatestore(Request $request)
+  {
+    try {
+      $activity = Feb::find($request->febid);
+
+     
+          if($request->has('bc')){ $bc=1 ; } else{ $bc=0 ; }
+          if($request->has('om')){ $om=1 ; } else{ $om=0 ; }
+          if($request->has('facture')){ $facture=1 ; } else{ $facture=0 ; }
+          if($request->has('fpdevis')){ $fpdevis=1 ; } else{ $fpdevis=0 ; }
+          if($request->has('nec')){ $nec=1 ; } else{ $nec=0 ; }
+
+
+          $activity->numerofeb = $request->numerofeb;
+          $activity->activiteid = $request->activityid;
+          $activity->periode = $request->periode;
+          $activity->datefeb = $request->datefeb;
+          $activity->ligne_bugdetaire = $request->referenceid;
+          $activity->bc = $bc;
+          $activity->facture = $facture;
+          $activity->om = $om;
+          $activity->fpdevis = $fpdevis;
+          $activity->nec = $nec;
+          $activity->comptable = $request->comptable;
+          $activity->chefcomposante = $request->chefcomposante;
+          //$activity->total = $sum;
+         //$activity->userid = Auth::id();
+         
+          $do = $activity->update();
+
+  
+          foreach ($request->numerodetail as $key => $items) {
+
+            $elementfeb = Elementfeb::find($request->idfd[$key]);
+           
+            $elementfeb->libellee   =  $request->description[$key];
+            $elementfeb->unite      =  $request->unit_cost[$key];
+            $elementfeb->quantite   =  $request->qty[$key];
+            $elementfeb->frequence  =  $request->frenquency[$key];
+            $elementfeb->pu         =  $request->pu[$key];
+            $elementfeb->montant    =  $request->amount[$key];
+          
+            $elementfeb->save();
+
+          } 
+          if($do){
+            return redirect()->back()->with('success', 'Mises ajours reussi avec succès.');
+          }else{
+            return redirect()->back()->with('faided', 'Erreur de mises ajours.');
+          }
+          
+        
+   
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
+  }
+  
 
   public function findligne(Request $request)
   {
@@ -255,6 +337,40 @@ class FebController extends Controller
         'status' => 202,
       ]);
     }
+  }
+
+  public function getactivite(Request $request)
+  {
+    $output = '';
+
+    $comp = str_replace(' ', '', $request->id);
+      $compp = explode("-",$comp);
+
+      $grandcompte = $compp[0];
+      $souscompte  = $compp[1];
+   
+    $activiteligne = Activity::where('compteidr', $souscompte) ->get();
+
+   // dd($souscompte);
+    if ($activiteligne->count() > 0) {
+
+     
+      $output .= '
+        <select type="text" class="form-control form-control-sm"   name="description[]" id="description" >
+        <option disabled="true" selected="true">--Aucun--</option>';
+      foreach ($activiteligne as $datas) {
+        $output .= '
+          <option value="'.$datas->id.'">'.$datas->titre.'</option>
+        ';
+      }
+      $output .= '</select>';
+    }
+    else{
+      $output .= 'Aucune element trouver ';
+    }
+
+    echo $output;
+    
   }
 
 
@@ -376,6 +492,7 @@ class FebController extends Controller
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
       ->Where('role', '=', 'Chef de Composante/Projet/Section')
+      ->orWhere('role', '=', 'Chef de Service')
       ->orderBy('nom', 'ASC')
       ->get();
 
@@ -409,7 +526,10 @@ class FebController extends Controller
     $idl = $key->ligne_bugdetaire;
     $idfeb =  $key->id;
 
-    $dataActivite = Activity::where('id', $ida)->first();
+   // $dataActivite =  DB::table('activities')
+  //  ->join('activitefebs', 'activities.id', '=', 'activitefebs.activiteid')
+   // ->Where('activitefebs.febid', $idfeb)
+    //->get();
 
     $dataLigne = Compte::where('id', $idl)->first();
 
@@ -462,11 +582,133 @@ class FebController extends Controller
 
     $datElement = Elementfeb::where('febid', $idfeb)->get();
 
+    $dateinfo = Identification::all();
+
     return view(
       'document.feb.voir',
       [
         'title' => $title,
         'dataFeb' => $key,
+       // 'dataActivite' => $dataActivite,
+        'dataLigne' => $dataLigne,
+        'sommelignpourcentage' => $sommelignpourcentage,
+        'datElement' => $datElement,
+        'sommefeb' => $sommefeb,
+        'etablienom' => $etablienom,
+        'comptable_nom' => $comptable_nom,
+        'checcomposant_nom' => $checcomposant_nom,
+        'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE,
+        'dateinfo' => $dateinfo
+
+      ]
+    );
+  }
+
+  public function showonefeb(Feb $key)
+  {
+    $budget = session()->get('budget');
+    $IDB = session()->get('id');
+   
+
+    $title = 'Feb';
+    $ida = $key->activiteid;
+    $idl = $key->ligne_bugdetaire;
+    $idfeb =  $key->id;
+
+    $ID = session()->get('id');
+    $compte =  DB::table('comptes')
+      ->Where('comptes.projetid', $ID)
+      ->Where('compteid', '=', 0)
+      ->get();
+
+    $dataJosonfeb = Feb::find($idfeb);
+    //$febactivite = Activity::find($idfeb);
+
+    $personnel = DB::table('users')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+      ->Where('fonction', '!=', 'Chauffeur')
+      ->orderBy('nom', 'ASC')
+      ->get();
+
+    $comptable = DB::table('users')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+      ->Where('role', '=', 'Comptable')
+      ->orderBy('nom', 'ASC')
+      ->get();
+
+    $chefcomposant = DB::table('users')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+      ->Where('role', '=', 'Chef de Composante/Projet/Section')
+      ->orWhere('role', '=', 'Chef de Service')
+      ->orderBy('nom', 'ASC')
+      ->get();
+
+    $activite = DB::table('activities')
+      ->orderby('id', 'DESC')
+      ->Where('projectid', $ID)
+      ->get();
+
+    $dataActivite = activitefeb::where('activiteid', $ida)->get();
+
+    $dataLigne = Compte::where('id', $idl)->first();
+
+    // Debut % ligfne
+    $sommelign = DB::table('elementfebs')
+      ->Where('eligne', $idl)
+      ->SUM('montant');
+    $sommelignpourcentage = round(($sommelign * 100) / $budget);
+    // fin
+
+    // sommes element
+
+    $sommefeb = DB::table('elementfebs')
+      ->Where('febid', $idfeb)
+      ->SUM('montant');
+
+    //
+
+    // DEBUT DE TAUX EXECUTION DU PROJET
+    $sommerepartie = DB::table('rallongebudgets')
+      ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+      ->Where('rallongebudgets.projetid', $IDB)
+      ->SUM('budgetactuel');
+    $POURCENTAGE_GLOGALE = round(($sommerepartie * 100) / $budget);
+    // FIN TAUX EXECUTION 
+
+
+
+    //etablie par 
+    $etablienom =  DB::table('users')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction')
+      ->Where('users.id', $key->acce)
+      ->first();
+
+    //comptable
+    $comptable_nom =  DB::table('users')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id')
+      ->Where('users.id', $key->comptable)
+      ->first();
+
+
+    //chef composant
+    $checcomposant_nom =  DB::table('users')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id')
+      ->Where('users.id', $key->chefcomposante)
+      ->first();
+
+    $datElement = Elementfeb::where('febid', $idfeb)->get();
+
+    return view(
+      'document.feb.edit',
+      [
+        'title' => $title,
+        'dataFe' => $dataJosonfeb,
         'dataActivite' => $dataActivite,
         'dataLigne' => $dataLigne,
         'sommelignpourcentage' => $sommelignpourcentage,
@@ -475,7 +717,13 @@ class FebController extends Controller
         'etablienom' => $etablienom,
         'comptable_nom' => $comptable_nom,
         'checcomposant_nom' => $checcomposant_nom,
-        'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE
+        'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE,
+        'activite' => $activite,
+        'personnel' => $personnel,
+        'compte' => $compte,
+
+        'comptable' => $comptable,
+        'chefcompable' => $chefcomposant
 
       ]
     );
@@ -514,8 +762,6 @@ class FebController extends Controller
       return back()->with('failed', 'Echec ! le signature  n\'est pas creer ');
     }
   }
-
-
 
   public function delete(Request $request)
   {

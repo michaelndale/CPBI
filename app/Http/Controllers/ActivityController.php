@@ -126,12 +126,14 @@ class ActivityController extends Controller
                             
               
                             </td>
-                            <td>' . ucfirst($rs->titre). '
+                            <td style="width:60%">  
+                            ' . ucfirst($rs->titre). '
+                            <span class="badge rounded-pill bg-'.$class.' font-size-11">' . ucfirst($rs->etat_activite). '</span>
                             <a href="#" id="' . $rs->id . '" class="text-success mx-1 observationshow" data-bs-toggle="modal" data-bs-target="#TableCommenteModale" title="Observation" ><i class="ri-wechat-line"></i> </a>
                             </td>
                          
                             <td align="right">' . number_format($rs->montantbudget,0, ',', ' ').' '. $devise.'</td>
-                            <td><center><span class="badge rounded-pill bg-'.$class.' font-size-11">' . ucfirst($rs->etat_activite). '</span></center></td>
+                           
                            
                           </tr>';
                         $nombre++;

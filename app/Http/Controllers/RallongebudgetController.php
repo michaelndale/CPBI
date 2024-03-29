@@ -243,10 +243,10 @@ class RallongebudgetController extends Controller
            
             // <a href="#" id="' . $sc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
             $output .= '
-                  <tr>
+                  <tr class="hoverable-tr">
                     <td class="align-left" style="background-color:#F5F5F5">
                       <center> 
-                        <a  href="'.$route.'"  ><i class="fa fa-edit"></i> </a> 
+                        <a  href="'.$route.'" class="edit-link" ><i class="fa fa-edit"></i> </a> 
                       </center>
                     </td>
                     <td>' . ucfirst($sc->numero) . '</td>
@@ -389,8 +389,10 @@ class RallongebudgetController extends Controller
         ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
         ->Where('rallongebudgets.projetid', $IDP)
         ->SUM('budgetactuel');
+        
+        $globale = $somme_budget-$request->ancienmontantligne;
 
-        $globale = $request->montantligne+$somme_budget;
+        $globale = $request->montantligne+$globale;
 
         if($budget >= $globale){
         $MisesA = Rallongebudget::find($request->id);
@@ -398,6 +400,13 @@ class RallongebudgetController extends Controller
         $MisesA ->update();
           
         if ($MisesA ) {
+
+        $updateligne = Compte::find($request->souscompteid);
+        $updateligne ->numero	= $request->code;
+        $updateligne ->libelle	= $request->titreligne;
+        $updateligne ->update();
+
+
           return redirect()->route('rallongebudget')->with('success', 'Très bien! le budgetaire  est bien modifier');
       } else {
           return back()->with('failed', 'Echec ! lle budgetaire  n\'est pas creer ');
@@ -418,7 +427,7 @@ class RallongebudgetController extends Controller
        
        $dataJon =DB::table('rallongebudgets')
           ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
-          ->select('rallongebudgets.*', 'comptes.libelle')
+          ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero')
           ->where('rallongebudgets.id', $key->id)
           ->get();
 
@@ -476,15 +485,13 @@ class RallongebudgetController extends Controller
 	}
 
 
-   
-
-   
   
-    // supresseion
-    public function deleteall(Request $request)
+    public function deleterb($id)
     {
-      $id = $request->id;
-      Rallongebudget::destroy($id);
+        $rallonge = Rallongebudget::findOrFail($id);
+        $rallonge->delete();
+
+        return redirect()->route('rallongebudget')->with('success', 'Element supprimé avec succès.');
     }
 
 

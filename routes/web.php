@@ -152,7 +152,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/findSousCompte',[RallongebudgetController::class, 'findSousCompte'] )->name('findSousCompte');
         Route::get('{key}/showligne/', [RallongebudgetController::class, 'show'])->name('showligne');
         Route::put('/updatligne/{cle}', [RallongebudgetController::class, 'updatlignebudget'])->name('updatligne'); 
-        
+        Route::delete('/deleterb/{id}', [RallongebudgetController::class, 'deleterb'])->name('rallonge.delete');
+
        
     
     });
@@ -193,9 +194,15 @@ Route::middleware('auth')->group(function (){
         Route::post('/updatefeb', [FebController::class, 'update'])->name('updatefeb');
         Route::delete('/deletefeb', [FebController::class, 'delete'])->name('deletefeb');
         Route::get('/{key}/view/', [FebController::class, 'show'])->name('key.viewFeb');
+
+        Route::get('{key}/edit/', [FebController::class, 'showonefeb'])->name('showfeb');
+        Route::put('/updatallfeb/{cle}', [FebController::class, 'Updatestore'])->name('updateall'); 
+
+        
     });
 
     Route::get('/getfeb',[FebController::class, 'findfebelement'] )->name('getfeb');
+    Route::get('/getactivite',[FebController::class, 'getactivite'] )->name('getactivite');
 
     Route::prefix('bpc')->group(function () {
      

@@ -1,5 +1,9 @@
 @extends('layout/app')
 @section('page-content')
+
+@foreach ($dateinfo as $dateinfo)
+@endforeach
+
 <div class="main-content">
     <br>
     <div class="content">
@@ -8,31 +12,25 @@
                 <div class="invoice-title">
                     <center>
                         <div class="text-muted">
-                            <table style=" width:80%">
+                            <table style=" width:100%">
                                 <tr>
-                                    <td> <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="100" /> </td>
+                                    <td style=" width:10% ;"> <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="100" /> </td>
+                                  
                                     <td>
                                         <center>
                                             <p class="mb-1">
-                                            <h4> COMMUNAUTE DES EGLISES DE PENTECOTE <br>AU BURUNDI "CEPBU"</h4>
-                                            <center>Paix et Réconciliation ; Education, Santé, Eau potable, Programmes humanitaires, Environnement</center>
-                                            </p>
+                                            <h4>{{ $dateinfo->entete }}</h4>
+                                           
                                         </center>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
+                                    <td colspan="2">
+                                       <hr>
                                         <center>
-                                            <hr>
-                                        </center>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <center>
-                                            <p class="mb-1">
-                                                <center>Paix et Réconciliation ; Education, Santé, Eau potable, Programmes humanitaires, Environnement</center>
-                                            </p>
+                                           
+                                                <center>{{ $dateinfo->sousentete }}</center>
+                                           
                                         </center>
                                     </td>
                                 </tr>
@@ -51,7 +49,9 @@
                                 <td>Période: {{ $dataFeb->periode }} </td>
                             </tr>
                             <tr>
-                                <td>Activité: <br> {{ ucfirst($dataActivite->titre) }}</td>
+                                <td style="width:50%">Activité: <br> 
+                                {{ $dataFeb->descriptionf }}
+                            </td>
                                 <td>Date : {{ $dataFeb->datefeb }} </td>
                             </tr>
                             <tr>
@@ -67,7 +67,44 @@
                                 <td rowspan="3">
                                     Références : <br>
 
-                                    B.C: {{ $dataFeb->bc }} &nbsp; &nbsp;&nbsp; Facture: {{ $dataFeb->facture }} &nbsp;&nbsp;&nbsp;O.M : {{ $dataFeb->om }}
+                                        BC : <input type="checkbox"  name="bc" id="bc" class="form-check-input" readonly
+                                           @if ($dataFeb->bc==1)
+                                                 checked value="{{ $dataFeb->bc }}"
+                                           @else
+                                                value="{{ $dataFeb->bc }}" 
+                                           @endif />  &nbsp; &nbsp;&nbsp; Facture: 
+                                            
+                                            <input type="checkbox"  name="facture" id="facture" class="form-check-input" readonly
+                                           @if($dataFeb->facture==1)
+                                                 checked value="{{ $dataFeb->facture }}"
+                                           @else
+                                                value="{{ $dataFeb->facture }}" 
+                                           @endif 
+                                            
+                                            />
+
+                                           &nbsp;&nbsp;&nbsp;O.M :  <input type="checkbox"  name="om" id="om" class="form-check-input" readonly
+                                            @if($dataFeb->om==1)
+                                                checked value="{{ $dataFeb->om }}"
+                                           @else
+                                                value="{{ $dataFeb->om }}" 
+                                           @endif 
+                                            />
+                                           &nbsp;&nbsp;&nbsp;FP/Devis :  <input type="checkbox"   class="form-check-input" readonly
+                                            @if($dataFeb->fpdevis==1)
+                                                checked value="{{ $dataFeb->fpdevis }}"
+                                           @else
+                                                value="{{ $dataFeb->fpdevis }}" 
+                                           @endif 
+                                            />
+                                           &nbsp;&nbsp;&nbsp;NEC :  <input type="checkbox"  class="form-check-input" readonly
+                                            @if($dataFeb->nec==1)
+                                                checked value="{{ $dataFeb->nec }}"
+                                           @else
+                                                value="{{ $dataFeb->nec }}" 
+                                           @endif 
+                                            
+                                            />
 
                                 </td>
                             </tr>
@@ -95,6 +132,7 @@
                                 <tr>
                                     <th>N<sup>o</sup></th>
                                     <th>Designation</th>
+                                    <th>Libellé</th>
                                     <th>
                                         <center>Unité</center>
                                     </th>
@@ -119,16 +157,22 @@
                                 @foreach ($datElement as $datElements)
                                 <tr>
                                     <td>{{$n }} </td>
-                                    <td>{{ ucfirst($datElements->libellee) }}</h5>
-                                    </td>
-                                    <td align="center">{{ $datElements->unite }}</h5>
-                                    </td>
-                                    <td align="right">{{ $datElements->quantite }}</h5>
-                                    </td>
-                                    <td align="right">{{ $datElements->frequence }}</h5>
-                                    </td>
-                                    <td align="right">{{ number_format($datElements->pu,0, ',', ' ') }} {{ Session::get('devise') }}</h5>
-                                    </td>
+                                    <td style="width:40%">
+                                        @php
+                                            $activite = DB::table('activities')
+                                            ->orderby('id', 'DESC')
+                                            ->Where('id', $datElements->libellee)
+                                            ->get();
+                                            foreach($activite as $activites){}
+                                        @endphp
+                                        {{ ucfirst($activites->titre) }}
+                                    
+                                    </h5>
+                                    <td>{{ ucfirst($datElements->libelle_description) }}</h5> </td>
+                                    <td >{{ $datElements->unite }}</h5></td>
+                                    <td align="center">{{ $datElements->quantite }}</h5></td>
+                                    <td align="center">{{ $datElements->frequence }}</h5></td>
+                                    <td align="center">{{ number_format($datElements->pu,0, ',', ' ') }} {{ Session::get('devise') }}</h5></td>
                                     <td align="right"> {{ number_format($datElements->montant,0, ',', ' ') }} {{ Session::get('devise') }} </td>
                                 </tr>
                                 @php
@@ -137,7 +181,7 @@
                                 @endforeach
 
                                 <tr>
-                                    <td colspan="6">Total</td>
+                                    <td colspan="7">Total général</td>
                                     <td align="right"> {{ number_format($sommefeb,0, ',', ' ') }} {{ Session::get('devise') }}</h5>
                                     </td>
 
@@ -200,8 +244,8 @@
                             </table>
                         </table>
                         <hr>
-                        <p>
-                            <center>Adresse: Boulevard de l'UPRONA N<sup>o</sup> 38 : BP. 2915 Bujumbura-Burundi; tel (+257 22 223466 ; (+257) 22 214889 ; Email: indo@cepbu.bi</center>
+                        <p align="center">
+                        {{ $dateinfo->piedpage }} 
                         </p>
                     </div>
                     <div class="d-print-none mt-4">
@@ -211,7 +255,7 @@
                             @method('post')
                             @csrf
 
-                            <input type="hidden" name="febid" id="febid" value="{{ $dataFeb->id }}">
+                            <input type="hidden" name="febid" id="febid" value="{{ $dataFeb->id }}" >
 
                             @if(Auth::user()->personnelid == $dataFeb->acce)
                             <input type="checkbox" name="accesignature" id="accesignature" {{ $dataFeb->acce_signe=="1"? 'checked':'' }}> Poser la signature
@@ -224,6 +268,9 @@
                             @if(Auth::user()->personnelid == $dataFeb->chefcomposante)
                             <input type="checkbox" id="chefsignature" name="chefsignature" {{ $dataFeb->chef_signe=="1"? 'checked':'' }}> Poser la signature
                             @endif
+
+                            <br>
+                           
 
                             <div class="float-end">
 
@@ -238,8 +285,11 @@
                 </div>
             </div>
         </div>
+        
         <br>
         <br>
     </div>
 </div>
+
+
 @endsection
