@@ -11,7 +11,10 @@ use App\Models\Personnel;
 use App\Models\Project;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
 class ProjectController extends Controller
@@ -49,7 +52,8 @@ class ProjectController extends Controller
       session()->forget('ligneid');
       session()->forget('devise');
 
-      return redirect()->route('dashboard');
+      return redirect()->route('dashboard')->with('success', 'Très bien! le projet  est bien fermer');
+      
     }
 
       // insert a new employee ajax request
@@ -101,12 +105,13 @@ class ProjectController extends Controller
         $project->userid = Auth()->user()->id;
 
         $project->save();
+        
 
         $lastInsertedId= $project->id;
-
+        $cryptedId = Crypt::encrypt($lastInsertedId); 
         return response()->json([
          'status' => 200,
-         'lastid' =>  $lastInsertedId
+         'lastid' =>  $cryptedId
         ]);
 
         // fin du chargement
@@ -139,82 +144,94 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function show(Project $key)
+    public function show($key)
     {
+      
+
       $title="Show project";
       $active = 'Project';
-      
-      session()->put('id', $key->id);
-      session()->put('title', $key->title);
-      session()->put('numeroprojet', $key->numeroprojet);
-      session()->put('ligneid', $key->ligneid);
-      session()->put('devise', $key->devise);
-      session()->put('budget', $key->budget);
-      session()->put('periode', $key->periode);
+    
+
+      $key = Crypt::decrypt($key);
+      $check = Project::find($key);
 
      
-      $act = DB::table('activities')
-            ->orderby('id','DESC')
-            ->Where('projectid', $key->id)
-            ->get();
+      session()->put('id', $check->id);
+      session()->put('title', $check->title);
+      session()->put('numeroprojet', $check->numeroprojet);
+      session()->put('ligneid', $check->ligneid);
+      session()->put('devise', $check->devise);
+      session()->put('budget', $check->budget);
+      session()->put('periode', $check->periode);
+      
+
+    
       
       $user=  DB::table('users')
             ->join('personnels', 'users.personnelid', '=', 'personnels.id')
             ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
-            ->Where('users.id', $key->lead)
-            ->get();
-
-           
+            ->Where('users.id', $check->lead)
+            ->first();
+   
       
-            $sommerepartie= DB::table('rallongebudgets')
-            ->Where('projetid', $key->id)
-            ->SUM('budgetactuel');
+      $sommerepartie= DB::table('elementfebs')
+      ->Where('projetids', $check->id)
+      ->SUM('montant');
 
-           
-
+      $intervennant = DB::table('affectations')
+      ->join('personnels', 'affectations.memberid', '=', 'personnels.id')
+      ->join('users', 'affectations.memberid', '=', 'users.personnelid')
+      ->select('affectations.*','personnels.nom', 'personnels.prenom','users.avatar')
+      ->where('affectations.projectid',$check->id)
+      ->get();
 
       return view('project.voir', 
         [
           'title' =>$title,
           'active' => $active,
-          'dataProject' => $key,
-          'activite' => $act,
+          'dataProject' => $check,
           'responsable' => $user,
-          'sommerepartie' => $sommerepartie
-          
+          'sommerepartie' => $sommerepartie,
+          'intervennant' => $intervennant
         ]);
+      
     }
 
 
-    public function editshow(Project $key)
+    public function editshow($key)
     {
       $title="Show project";
       $active = 'Project';
-      
-      session()->put('id', $key->id);
-      session()->put('title', $key->title);
-      session()->put('numeroprojet', $key->numeroprojet);
-      session()->put('ligneid', $key->ligneid);
-      session()->put('devise', $key->devise);
-      session()->put('budget', $key->budget);
-      session()->put('periode', $key->periode);
 
-     
+      $key = Crypt::decrypt($key);
+      $check = Project::find($key);
+      
+      session()->put('id', $check->id);
+      session()->put('title', $check->title);
+      session()->put('numeroprojet', $check->numeroprojet);
+      session()->put('ligneid', $check->ligneid);
+      session()->put('devise', $check->devise);
+      session()->put('budget', $check->budget);
+      session()->put('periode', $check->periode);
+
       $act = DB::table('activities')
             ->orderby('id','DESC')
-            ->Where('projectid', $key->id)
+            ->Where('projectid', $check->id)
             ->get();
       
       $user=  DB::table('users')
             ->join('personnels', 'users.personnelid', '=', 'personnels.id')
             ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
-            ->Where('users.id', $key->lead)
+            ->Where('users.id', $check->lead)
+            ->get();
+      $alluser= DB::table('users')
+            ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+            ->whereNot('users.id', 1)
             ->get();
 
-           
-      
-            $sommerepartie= DB::table('rallongebudgets')
-            ->Where('projetid', $key->id)
+      $sommerepartie= DB::table('rallongebudgets')
+            ->Where('projetid', $check->id)
             ->SUM('budgetactuel');
 
            
@@ -224,10 +241,11 @@ class ProjectController extends Controller
         [
           'title' =>$title,
           'active' => $active,
-          'dataProject' => $key,
+          'dataProject' => $check,
           'activite' => $act,
           'responsable' => $user,
-          'sommerepartie' => $sommerepartie
+          'sommerepartie' => $sommerepartie,
+          'alluser'    => $alluser
           
         ]);
     }
@@ -238,19 +256,24 @@ class ProjectController extends Controller
     {
         $project = Project::find($request->pid);
 
+        $date_debut= date("Y-m-d", strtotime($request->datedebut));
+        $date_fin =  date("Y-m-d", strtotime($request->datefin));
+      
+
         $project->title = $request->ptitre;
         $project->lead = $request->resid;
         $project->budget= $request->montant;
         $project->numeroprojet= $request->numero;
-        $project->created_at= $request->datecreation;
-        $project->start_date= $request->datedebut;
-        $project->deadline= $request->datefin;
+       
+        $project->start_date= $date_debut;
+        $project->deadline= $date_fin;
         $project->region = $request->region;
         $project->lieuprojet = $request->lieu;
         $project->description= $request->description;
         $project->devise= $request->devise;
         $project->periode= $request->periode;
         $project->autorisation= $request->autorisation;
+        $project->statut= $request->statut;
     
         $project->update();
           
@@ -295,6 +318,28 @@ class ProjectController extends Controller
       );
     }
 
+
+    public function deleteprojet(Request $request)
+    {
+      try {
+      $emp = Project::find($request->id);
+      if ($emp->userid == Auth::id()) {
+        $id = $request->id;
+        Project::destroy($id);
+          return response()->json([
+            'status' => 200,
+          ]);
+      } else {
+        return response()->json([
+          'status' => 205,
+        ]);
+      }
+      } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+      }
+    }
 
     
     

@@ -17,7 +17,7 @@
         <div class="col-lg-6" style="margin:auto">
           <div class="card">
             <div class="table-responsive">
-              <table class="table table-bordered mb-0">
+              <table class="table table-bordered  table-sm fs--1 mb-0">
                 <thead>
                   <tr style="background-color:#82E0AA">
                     <th style="width:5%">#</th>
@@ -42,7 +42,9 @@
         </div>
       </div>
     </div> <!-- container-fluid -->
+    
   </div>
+  <br><br> <br><br> <br><br> <br><br> 
 </div>
 
 {{-- new department modal --}}

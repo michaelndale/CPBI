@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Compte;
 use App\Models\Project;
 use App\Models\Rallongebudget;
+use App\Models\typeprojet;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
 class RallongebudgetController extends Controller
@@ -20,6 +22,7 @@ class RallongebudgetController extends Controller
     
       $title = 'Budgetisation';
       $compte= Compte::where('projetid', $IDP)->where('compteid', '=', 0)->get();
+      $typebudget= typeprojet::all();
       
      
 
@@ -27,7 +30,8 @@ class RallongebudgetController extends Controller
         [
           'title' => $title,
           'compte' => $compte,
-          'periode' => $periode
+          'periode' => $periode,
+          'typebudget' => $typebudget
         ]
       );
     }
@@ -74,7 +78,7 @@ class RallongebudgetController extends Controller
           ->Where('projetids', $IDP)
           ->SUM('montant');
 
-        $pourcentagefeb = round(($datasommefeb * 100) / $budget);
+        $pourcentagefeb = round(($datasommefeb * 100) / $budget,2);
         $sommefeb = number_format($datasommefeb, 0, ',', ' ');
 
         if($pourcentagefeb == 100){
@@ -84,15 +88,16 @@ class RallongebudgetController extends Controller
         }
 
 
-        //
+        // condition proccess close
      
 
       $output = '';
       if ($data->count() > 0) {
         $nombre = 1;
+        // initier element dump process //
         $pourcatagesum=0;
 
-        $pglobale = round(($somme_budget*100)/$showData->budget);
+        $pglobale = round(($somme_budget*100)/$showData->budget,2);
 
         if($sommerepartie == $showData->budget){
           $message='<center><span class="badge rounded-pill bg-primary font-size-11">Terminer</span></center>';
@@ -100,7 +105,7 @@ class RallongebudgetController extends Controller
           $message='<center><span class="badge rounded-pill bg-success font-size-11">Encours</span></center>';
         }
 
-        $poursommerepartie = round(($sommerepartie*100)/$showData->budget);
+        $poursommerepartie = round(($sommerepartie*100)/$showData->budget,2);
         if($poursommerepartie == 100){
           $messageR='<center><span class="badge rounded-pill bg-primary font-size-11">Terminer</span></center>';
         }else{
@@ -122,21 +127,21 @@ class RallongebudgetController extends Controller
           <td style="padding:5px; width:50%">'.$showData->title.'</td>
           <td style="padding:5px">'.$showData->region.' </td>
           <td style="padding:5px">'.$showData->numeroprojet.' </td>
-          <td style="padding:5px" align="right">'.number_format($showData->budget ,0, ',', ' ').' '.$showData->devise.'   </td>
-          <td><center>'.$pglobale.' %</center></td>
+          <td style="padding:5px" align="right">'.number_format($showData->budget ,0, ',', ' ').'    </td>
+          <td><center>100%</center></td>
           <td> '.$message.'</td>
         </tr>
 
         <tr>
           <td colspan="3" >Montant total repartie </td>
-          <td style="padding:5px" align="right">'.number_format($somme_budget,0, ',', ' ').' '.$showData->devise.'  </td>
+          <td style="padding:5px" align="right">'.number_format($somme_budget,0, ',', ' ').'   </td>
           <td><center>'.$pglobale.' %</center></td>
         <td> '.$messageR.'</td>
         </tr>
 
         <tr>
         <td colspan="3" >Montant encours de consommation</td>
-        <td style="padding:5px" align="right">'.$sommefeb.' '.$showData->devise.'  </td>
+        <td style="padding:5px" align="right">'.$sommefeb.' </td>
         <td><center>'.$pourcentagefeb.' %</center></td>
         <td> '.$messageFEB.'</td>
       </tr>
@@ -151,7 +156,7 @@ class RallongebudgetController extends Controller
           <tr >
             <th ><b>#</b></th>
             <th  style="padding:5px"><b>Code</b></th>
-            <th ><b>Ligne budgétaire</b></th>
+            <th style="width:30%"><b>Descriptiom ligne budgétaire</b></th>
             <th ><center><b>Budget</b></center></th>
         ';
 
@@ -188,7 +193,7 @@ class RallongebudgetController extends Controller
             <td><b>'.$nombre.'</b></td>
             <td><b>' . ucfirst($datas->numero) . '</b></td>
             <td><b>' . ucfirst($datas->libelle) . '</b></td>
-            <td align="right"><b>'. number_format($somme_budget_ligne,0, ',', ' ').' '.$devise.'</b></td>
+            <td align="right"><b>'. number_format($somme_budget_ligne,0, ',', ' ').' </b></td>
             
 
             ';
@@ -201,7 +206,7 @@ class RallongebudgetController extends Controller
               ->Where('grandligne', $datas->id)
               ->SUM('montant');
 
-              $output .='<td align="right"><b>'. number_format($somme_TMOntant,0, ',', ' ').' '.$devise.'</b></td>';
+              $output .='<td align="right"><b>'. number_format($somme_TMOntant,0, ',', ' ').' </b></td>';
               
             }
             
@@ -221,8 +226,8 @@ class RallongebudgetController extends Controller
 
            
            
-            <td align="right"><b>'. number_format($total_TMOntant,0, ',', ' ').' '.$devise.'</b></td>
-            <td align="right">'.round($pourcentagelignetotal).'% </td>
+            <td align="right"><b>'. number_format($total_TMOntant,0, ',', ' ').' </b></td>
+            <td align="right">'.round($pourcentagelignetotal,2).'% </td>
           </tr>';
           // recuperation element de la ligne
           $sous_compte = DB::table('rallongebudgets')
@@ -235,23 +240,40 @@ class RallongebudgetController extends Controller
         if ($sous_compte->count() > 0) {
           $ndale = 1;
           foreach ($sous_compte as $sc) {
-            $ids = $sc->id;
-            $route = route('showligne', $ids);
             
-           
+             $ids = Crypt::encrypt($sc->id); 
+            $route = route('showligne', $ids);
+
+            if($showData->autorisation==1){
+                $showme='<center> 
+                <a  href="'.$route.'" class="edit-link"  title="Revision budgétaire"><i class="fa fa-edit"></i> </a> 
+              </center>';
+            }else{
+              $showme='';
+            }
+
+            if($sc->retruction==1){
+              $difference="difference";
+              $url= '<a href="'.$sc->urldoc.'" target="_blank" title="Aller voir les condictions"><i class="fas fa-external-link-alt text-success"></i></a>';
+
+          }else{
+            $difference='';
+            $url="";
+          }
+            
             
            
             // <a href="#" id="' . $sc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
             $output .= '
-                  <tr class="hoverable-tr">
+
+            
+                  <tr class="'.$difference.'">
                     <td class="align-left" style="background-color:#F5F5F5">
-                      <center> 
-                        <a  href="'.$route.'" class="edit-link" ><i class="fa fa-edit"></i> </a> 
-                      </center>
+                      '.$showme.'
                     </td>
-                    <td>' . ucfirst($sc->numero) . '</td>
-                    <td  style="width:400px"> ' . ucfirst($sc->libelle) . '</td>
-                    <td align="right">' . number_format($sc->budgetactuel,0, ',', ' ').' '.$devise.'</td>
+                    <td>' . ucfirst($sc->numero) .'</td>
+                    <td  style="width:400px"> ' . ucfirst($sc->libelle) .' '.$url.' </td>
+                    <td align="right">' . number_format($sc->budgetactuel,0, ',', ' ').' </td>
                     ';
 
                       for($i=1; $i<=$periode ; $i++){
@@ -266,7 +288,7 @@ class RallongebudgetController extends Controller
                             ->Where('eligne', $sc->souscompte)
                             ->SUM('montant');
 
-                        $output .='<td  align="right"> ' . number_format($TMOntant,0, ',', ' ').' '.$devise.' </td>
+                        $output .='<td  align="right"> ' . number_format($TMOntant,0, ',', ' ').'  </td>
                         ';
                      
                       }
@@ -284,8 +306,8 @@ class RallongebudgetController extends Controller
                       $POURCENTAGEPARLIGNE = ($montantGlobaledepense*100)/$sc->budgetactuel;
                       
         $output .='
-                  <td  align="right"> ' . number_format($montantGlobaledepense,0, ',', ' ').' '.$devise.'</td>
-                   <td align="right">'. round($POURCENTAGEPARLIGNE) .'%</td>
+                  <td  align="right"> ' . number_format($montantGlobaledepense,0, ',', ' ').' </td>
+                   <td align="right">'. round($POURCENTAGEPARLIGNE,2) .'%</td>
                   </tr>
             ';
             $ndale++;
@@ -334,7 +356,27 @@ class RallongebudgetController extends Controller
         ->Where('rallongebudgets.projetid', $IDP)
         ->SUM('budgetactuel');
 
+
+        if ($request->has('customSwitch1')) {
+              $retruction = 1;
+          } else {
+            $retruction = 0;
+          }
+  
+      // Vérification de l'existence et du remplissage de l'URL du document
+      if ($request->filled('urldoc')) {
+          $urldocValue = $request->input('urldoc');
+         
+      } else {
+        $urldocValue="";
+      }
+
         $globale = $request->budgetactuel+$somme_budget;
+
+        // condition initier proccesse bugdetisation
+        // retruction initial 1
+        // retruction d'acception 2
+        // retruction non valide 0
 
         if($budget >= $globale){
           $rallonge = new Rallongebudget;
@@ -342,6 +384,9 @@ class RallongebudgetController extends Controller
           $rallonge->compteid = $request->compteid;
           $rallonge->souscompte = $request->scomptef;
           $rallonge->budgetactuel = $request->budgetactuel; 
+          $rallonge->retruction = $retruction; 
+          $rallonge->urldoc = $urldocValue;
+          $rallonge->typeprojet = $request->typeprojet; 
           $rallonge->userid = Auth()->user()->id;
           $rallonge->save();
     
@@ -422,19 +467,19 @@ class RallongebudgetController extends Controller
 
 
      // SHOW ELEMENT
-     public function show(Rallongebudget $key)
+     public function show($key)
      {
-       
+      $key = Crypt::decrypt($key); 
+
        $dataJon =DB::table('rallongebudgets')
           ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
           ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero')
-          ->where('rallongebudgets.id', $key->id)
+          ->where('rallongebudgets.id', $key)
           ->get();
-
-       
 
           return view('rallonge.viewligne',
           [
+            'title' =>'Revision ligne budgetaire',
             'dataJon' => $dataJon
           ]
         );
@@ -484,13 +529,77 @@ class RallongebudgetController extends Controller
        
 	}
 
+  public function condictionsearch(Request $request){
+    try {
+      $ID = session()->get('id');
+      $comp= $request->id;
+      $compp=explode("-", $comp);
+     
+      $grandcompte = $compp[0];
+      $souscompte  = $compp[1];
+      
+      $data = DB::table('rallongebudgets')
+      ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
+      ->select('rallongebudgets.*', 'comptes.libelle','comptes.numero')
+      ->Where('rallongebudgets.projetid', $ID)
+      ->where('rallongebudgets.souscompte', $souscompte)
+      ->get();
+      
+   
+      $output = '';
+      if ($data->count() > 0) 
+      {
+        foreach ($data as $key => $datas) 
+        {
+          if($datas->retruction==1){
+
+            $output .= '
+            <br>
+           <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="mdi mdi-block-helper me-2"></i>
+            Attention! Cette ligne est soumise aux conditions d\'utilisation , <a href="'.$datas->urldoc.'" target="_blank"><i class="fas fa-external-link-alt text-success"></i></a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+
+          ';
+
+          }else{
+            $output .= '<i class="fa fa-info-circle" ></i>  Il n\'y a pas des condictions d\'utilisation';
+          }
+
+        } 
+        echo $output;
+
+      }
+      else{
+        echo ' <tr>
+          <td colspan="3">
+          <center>
+            <h6 style="margin-top:1% ;color:#c0c0c0"> 
+            <center><font size="50px"><i class="fa fa-info-circle"  ></i> </font><br><br>
+           Ceci est vide  !</center> </h6>
+          </center>
+          </td>
+          </tr>';
+              
+      }
+   
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
+     
+}
+
+  
+
 
   
     public function deleterb($id)
     {
         $rallonge = Rallongebudget::findOrFail($id);
         $rallonge->delete();
-
         return redirect()->route('rallongebudget')->with('success', 'Element supprimé avec succès.');
     }
 

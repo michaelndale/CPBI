@@ -1,5 +1,30 @@
-<body data-sidebar="colored">
+<body data-sidebar="colored" id="contenu">
 
+  @php
+  $avatar = Auth::user()->avatar;
+ 
+
+$documentacce= DB::table('febs')
+->Where('acce', Auth::id() )
+->Where('acce_signe',  0)
+->get()
+->count();
+
+$documentcompte = DB::table('febs')
+->Where('comptable', Auth::id() )
+->Where('comptable_signe',  0)
+->get()
+->count();
+
+$documentchefcomposent= DB::table('febs')
+->Where('chefcomposante', Auth::id() )
+->Where('chef_signe',  0)
+->get()
+->count();
+
+$documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
+
+@endphp
   <div id="layout-wrapper">
 
     <div class="pace-progress"></div>
@@ -8,24 +33,24 @@
         <div class="d-flex">
           <!-- LOGO -->
           <div class="navbar-brand-box">
-                            <a href="{{ route('dashboard') }}" class="logo logo-dark">
-                                <span class="logo-sm">
-                                    <img src="{{ asset('element/assets/images/logo-sm-dark.png') }}" alt="logo-sm-dark" height="24">
-                                </span>
-                                <span class="logo-lg">
-                                    <img src="{{ asset('element/assets/images/logo-dark.png') }}" alt="logo-dark" height="25">
-                                </span>
-                            </a>
+            <a href="{{ route('dashboard') }}" class="logo logo-dark">
+              <span class="logo-sm">
+                <img src="{{ asset('element/assets/images/logo-sm-dark.png') }}" alt="logo-sm-dark" height="24">
+              </span>
+              <span class="logo-lg">
+                <img src="{{ asset('element/assets/images/logo-dark.png') }}" alt="logo-dark" height="25">
+              </span>
+            </a>
 
-                            <a href="{{ route('dashboard') }}" class="logo logo-light">
-                                <span class="logo-sm">
-                                    <img src="{{ asset('element/assets/images/logo-sm-light.png') }}" alt="logo-sm-light" height="24">
-                                </span>
-                                <span class="logo-lg">
-                                    <img src="{{ asset('element/assets/images/logo-light.png') }}" alt="logo-light" height="25">
-                                </span>
-                            </a>
-                        </div>
+            <a href="{{ route('dashboard') }}" class="logo logo-light">
+              <span class="logo-sm">
+                <img src="{{ asset('element/assets/images/logo-sm-light.png') }}" alt="logo-sm-light" height="24">
+              </span>
+              <span class="logo-lg">
+                <img src="{{ asset('element/assets/images/logo-light.png') }}" alt="logo-light" height="25">
+              </span>
+            </a>
+          </div>
 
           <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">
             <i class="ri-menu-2-line align-middle"></i>
@@ -37,19 +62,19 @@
           <div class="callout callout-info">
             <br>
             @php
-              $titprojet = Session::get('title');
+            $titprojet = Session::get('title');
             @endphp
-            <p><b>Projet encours : </b>{{ substr($titprojet, 0, 80)  }} ... </p>
+            <p><b>Projet encours : </b>{{ strlen($titprojet) > 60 ? substr($titprojet, 0, 60) . '...' : $titprojet }} </p>
 
           </div>
           @else
 
-          <form class="app-search d-none d-lg-block">
+          <!-- <form class="app-search d-none d-lg-block">
             <div class="position-relative">
               <input type="text" class="form-control" placeholder="Search...">
               <span class="ri-search-line"></span>
             </div>
-          </form>
+          </form> -->
           @endif
         </div>
 
@@ -141,7 +166,7 @@
               <i class="ri-fullscreen-line"></i>
             </button>
           </div>
-
+          @if ( $documentNombre != 0)
           <div class="dropdown d-inline-block">
             <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="ri-notification-3-line"></i>
@@ -151,51 +176,60 @@
               <div class="p-3">
                 <div class="row align-items-center">
                   <div class="col">
-                    <h6 class="m-0"> Notifications </h6>
+                    <h6 class="m-0"> Documents en attentes </h6>
                   </div>
-                  <div class="col-auto">
-                    <a href="#!" class="small"> View All</a>
-                  </div>
+                 
                 </div>
               </div>
-              <div data-simplebar style="max-height: 230px;">
+              <div data-simplebar style="max-height: 230px;" id="navallnotification">
 
 
 
 
-                <a href="#" class="text-reset notification-item">
-                  <div class="d-flex">
-                    <div class="avatar-xs me-3">
-                      <span class="avatar-title bg-success rounded-circle font-size-16">
-                        <i class="ri-checkbox-circle-line"></i>
-                      </span>
-                    </div>
-                    <div class="flex-1">
-                      <h6 class="mb-1">Your item is shipped</h6>
-                      <div class="font-size-12 text-muted">
-                        <p class="mb-1">If several languages coalesce the grammar</p>
-                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> 3 min ago</p>
-                      </div>
-                    </div>
-                  </div>
-                </a>
+                
+
+                
 
 
               </div>
               <div class="p-2 border-top">
                 <div class="d-grid">
-                  <a class="btn btn-sm btn-link font-size-14 text-center" href="javascript:void(0)">
-                    <i class="mdi mdi-arrow-right-circle me-1"></i> View More..
+                  <a class=" waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" href="javascript:void(0)">
+                  <center> <i class="mdi mdi-arrow-right-circle me-1"></i>Voir plus..</center>
                   </a>
                 </div>
               </div>
             </div>
           </div>
+          @endif
+
+
+          @php
+                  $avatar = Auth::user()->avatar;
+                  @endphp
 
           <div class="dropdown d-none d-sm-inline-block">
             <button type="button" class="btn header-item waves-effect show" data-bs-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
 
-              <i class="ri-user-3-line"></i>
+              <a href="#" class="btn header-item" aria-haspopup="true" aria-expanded="false">
+
+              @php
+              $defaultAvatar = '../../element/profile/default.png'; // Chemin vers votre image par défaut
+                  $imagePath = public_path($avatar);
+              @endphp
+
+              @if(file_exists($imagePath))
+                  <img class="rounded-circle header-profile-user" src="../../{{ $avatar }}" alt="{{ ucfirst(Auth::user()->identifiant) }}"  style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
+                  <br> <small> {{ ucfirst(Session::get('prenomauth')) }} </small>
+                  @else
+                  <img class="rounded-circle header-profile-user" src="{{ $defaultAvatar }}" alt="{{ ucfirst(Auth::user()->identifiant) }}"  style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
+                  <br> <small> {{ ucfirst(Session::get('prenomauth')) }} </small>
+                  @endif
+
+
+
+              </a>
+
 
             </button>
             <div class="dropdown-menu dropdown-menu-end " style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 72px);" data-popper-placement="bottom-end">
@@ -213,16 +247,15 @@
                   <i class="fa fa-edit"></i> Modifier profile
               </a>
 
-              <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" 
-              data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
+              <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
                   <i class="fa fa-edit"></i> Modifier signature
               </a>
 
-             <!-- <a href="javascript:void(0);" class="dropdown-item notify-item">
+              <!-- <a href="javascript:void(0);" class="dropdown-item notify-item">
                 <i class="fa fa-edit"></i> Fermer la session
               </a> -->
 
-              <a href="javascript:void(0);" class="dropdown-item notify-item"  data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" role="button" aria-expanded="false"> <span class="me-2" data-feather="log-out" title="Déconnectez-vous en cliquant sur l'icône.">
+              <a href="javascript:void(0);" class="dropdown-item notify-item" data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" role="button" aria-expanded="false"> <span class="me-2" data-feather="log-out" title="Déconnectez-vous en cliquant sur l'icône.">
                   <i class="fas fa-sign-out-alt"></i> Déconnexion
               </a>
 
@@ -234,48 +267,48 @@
 
           </div>
 
+          <div class="dropdown d-none d-lg-inline-block ms-1">
+
+            <button type="button" class="btn header-item noti-icon waves-effect">
+              <a href="javascript:void(0);" class="dropdown-item notify-item" data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" role="button" aria-expanded="false"> <span class="me-2" data-feather="log-out" title="Déconnectez-vous en cliquant sur l'icône.">
+                  <i class="fa fa-power-off"></i>
+              </a>
+            </button>
+          </div>
+
 
 
         </div>
       </div>
     </header>
-
     <!-- ========== Left Sidebar Start ========== -->
+
     <div class="vertical-menu">
-
       <div data-simplebar class="h-100">
-
         <!--- Sidemenu -->
         <div id="sidebar-menu">
-
-
-
           <!-- Left Menu Start -->
           <ul class="metismenu list-unstyled" id="side-menu">
             <li class="menu-title">Menu</li>
 
             <li>
-              @php
-                $documentNombre= DB::table('febs')
-                ->Where('acce', Auth::id() )
-                ->Where('acce_signe', '=', 0)
-                ->Where('chef_signe', '=', 0)
-                ->Where('comptable_signe', '=', 0)
-
-                ->orWhere('comptable', Auth::id() )
-                ->orWhere('chefcomposante', Auth::id() )
-               
-                ->get()
-                ->count()
-              @endphp
+             
 
               @if ( $documentNombre != 0)
-              <a href="{{ route('dashboard') }}" class="waves-effect">
+
+              <audio autoplay>
+              <source src="{{ asset('notification/son.mp3') }}" type="audio/mpeg">
+                Votre navigateur ne supporte pas l'élément audio.
+            </audio>
+
+           
+
+              <a href="#" class="waves-effect" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
                 <i class="ri-dashboard-2-line"></i><span class="badge rounded-pill bg-danger float-end">{{ $documentNombre }}</span>
-                <span>Document</span>
+                <span>Documents</span>
               </a>
-              </li>
-              @endif
+            </li>
+            @endif
 
             <li>
               <a href="{{ route('dashboard') }}" class="waves-effect">
@@ -293,20 +326,26 @@
                 <span>Projet</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{ route('key.viewProject', Session::get('id') ) }}">Voir le projet</a></li>
+                @php
+                $IDPJ= Session::get('id');
+                $cryptedId = Crypt::encrypt($IDPJ);
+
+                @endphp
+                <li><a href="{{ route('key.viewProject', $cryptedId ) }}">Voir le projet</a></li>
                 <li><a href="{{ route('gestioncompte') }}">Ligne budgétaire</a></li>
                 <li><a href="{{ route('rallongebudget') }}">Budget</a></li>
                 <li><a href="{{ route('activity') }}">Activités</a></li>
                 <li><a href="{{ route('listfeb') }}">FEB</a></li>
                 <li><a href="{{ route('listdap') }}">DAP</a></li>
-                <li><a href="{{ route('listdja') }}">DJA</a></li>
+                <li><a href="{{ route('listdja') }}">DJA</a></li>  
+                <li><a href="{{ route('affectation') }}">Intervenants</a></li>
                 <li><a href="{{ route('rapportcumule') }}">Rapport commulatif</a></li>
                 <li><a href="{{ route('planoperationnel') }}">Plan d'action</a></li>
                 <!--<li><a href="{{ route('listbpc') }}">BPC</a></li>
                 <li><a href="{{ route('listsqr') }}">SQR</a></li>
                 <li><a href="{{ route('listftd') }}">FTD</a></li> -
                
-                <li><a href="{{ route('affectation') }}">Affectation</a></li> -->
+                -->
               </ul>
             </li>
 
@@ -318,10 +357,14 @@
                 <span>Outils projets</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-               
-                <li><a href="{{ route('folder') }}">Dossier</a></li>
-                
 
+                <li><a href="{{ route('folder') }}">Dossier</a></li>
+                <li><a href="{{ route('typebudget') }}">Type budget</a></li>
+                <li><a href="{{ route('devise') }}">Devise</a></li>
+                <li><a href="{{ route('beneficiaire') }}">Bénéficiaire</a></li>
+                <li><a href="{{ route('list_project') }}">Tout les projets</a></li>
+
+                
 
               </ul>
             </li>
@@ -337,12 +380,24 @@
               </a>
               <ul class="sub-menu" aria-expanded="false">
                 <!--<li><a href="email-inbox.html">Tableau de bord</a></li>-->
+
+                <li><a href="javascript: void(0);" class="has-arrow">Feuille de temps</a>
+                  <ul class="sub-menu" aria-expanded="true">
+                    <li><a href="{{ route('feuilletemps') }}">Mon FT</a></li>
+                    <li><a href="{{ route('personnel') }}">Feuille de temps</a></li>
+                    <!--<li><a href="javascript: void(0);">Level 2.2</a></li>  -->
+                  </ul>
+                </li>
+      
                 <li><a href="javascript: void(0);" class="has-arrow">Personnel</a>
                   <ul class="sub-menu" aria-expanded="true">
                     <li><a href="{{ route('personnel') }}">Tous les employés</a></li>
                     <!--<li><a href="javascript: void(0);">Level 2.2</a></li>  -->
                   </ul>
                 </li>
+
+              
+
               </ul>
             </li>
 
@@ -417,8 +472,8 @@
             </li>
 
             <li>
-              <a href="javascript:void(0);" class="dropdown-item notify-item"  data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" >
-                <i class="mdi mdi-logout"></i>
+              <a href="javascript:void(0);" class="dropdown-item notify-item" data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel">
+                <i class="fa fa-power-off"></i>
                 <span>Déconnexion</span>
               </a>
             </li>

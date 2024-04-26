@@ -3,6 +3,17 @@ MICHAEL NDALE
 miguel NDALE
 Passionner de la tecbhnologie
 
+
+
+$dataallfeb = DB::table('elementfebs')
+      ->orderby('id', 'DESC')
+      ->Where('projetids', $ID)
+      ->SUM('montant');
+
+   
+   $dataallfeb  = round(($data * 100) / $budget);
+    $sommefeb = number_format($data, 0, ',', ' ');
+
 <div class="col-sm-2 col-md-12">
                 <div class="form-floating">
                 <select class="form-select" id="ligne" name="ligne" required>
@@ -61,3 +72,74 @@ Passionner de la tecbhnologie
         
             $activityfeb->save();
         }
+
+
+        $idf = Crypt::decrypt($idf); // bd
+$cryptedId = Crypt::encrypt($datas->id); lien
+
+if($request->has('bc') || $request->has('om') || $request->has('facture') || $request->has('fpdevis') || $request->has('nec')){ 
+
+
+
+    try {
+
+$emp = Folder::find($request->id);
+if ($emp->userid == Auth::id()) {
+  $id = $request->id;
+  Folder::destroy($id);
+  return response()->json([
+    'status' => 200,
+  ]);
+} else {
+  return response()->json([
+    'status' => 205,
+  ]);
+}
+} catch (Exception $e) {
+return response()->json([
+  'status' => 202,
+]);
+}
+}
+
+
+
+var ur ="{{ route('closeproject') }}";
+
+window.location.href = ur;
+
+
+
+
+function chargerContenuDynamique(url) {
+    // Utiliser fetch() pour récupérer les données depuis l'URL
+    fetch(url)
+        .then(response => {
+            // Vérifier si la requête a réussi (statut HTTP 200)
+            if (!response.ok) {
+                throw new Error('La requête a échoué : ' + response.status);
+            }
+            // Récupérer le contenu de la réponse en tant que texte
+            return response.text();
+        })
+        .then(data => {
+            // Afficher le contenu dans la page
+            document.getElementById('contenu').innerHTML = data;
+        })
+        .catch(error => {
+            // Gérer les erreurs de la requête
+            console.error('Erreur de chargement du contenu :', error);
+        });
+}
+
+
+/////////////////////////
+$sommeallfeb = DB::table('elementfebs')
+    ->Where('projetids', $IDB)
+    ->SUM('montant');
+$POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget , 2);
+
+$sommelign = DB::table('elementfebs')
+      ->Where('grandligne', $idl)
+      ->SUM('montant');
+$sommelignpourcentage = round(($sommelign * 100) / $budget , 2);

@@ -28,7 +28,7 @@
                       <div class="col-lg-12">
                         <div class="mb-0">
 
-                          <select class="form-select  select2-search-disable" id="compteid" name="compteid" required>
+                          <select class="form-select  select2-search-disable condictionsearch" id="compteid" name="compteid" required>
                             <option>Ligne budgétaire</option>
                             @foreach ($compte as $comptes)
                             <optgroup label="{{ $comptes->libelle }}">
@@ -44,6 +44,10 @@
                             @endforeach
 
                           </select>
+
+                          <div id="showcondition">
+
+                          </div>
 
                         </div>
 
@@ -110,7 +114,7 @@
                     <td class="align-middle email" colspan="4">
                       <input type="hidden" class="form-control" name="aid" id="aid" />
                       <input value="{{ Session::get('id') }}" type="hidden" name="projetide" id="projetide">
-                      <input value="{{ Session::get('title') }}" class="form-control form-control-sm" disabled>
+                      <input value="{{ Session::get('title') }}" class="form-control form-control-sm" style="width: 100%; background-color:#c0c0c0" readonly>
                     </td>
                   </tr>
                   <tr>
@@ -118,23 +122,12 @@
                     <td colspan="4">
                     <div class="col-lg-12">
                         <div class="mb-0">
+                       
 
-                          <select class="form-control "  id="ligneact" name="ligneact" required>
-                            <option>Ligne budgétaire</option>
-                            @foreach ($compte as $comptes)
-                            <optgroup label="{{ $comptes->libelle }}">
-                              @php
-                              $idc = $comptes->id ;
-                              $res= DB::select("SELECT * FROM comptes WHERE compteid= $idc");
-                              @endphp
-                              @foreach($res as $re)
-                              <option value="{{ $comptes->id }}-{{ $re->id }}">{{ $re->numero }}. {{ $re->libelle }} </option>
-                              @endforeach
+                        <input type="text" class="form-control form-control-sm" id="libelle" name="libelle" style="width: 100%; background-color:#c0c0c0"  readonly/>
 
-                            </optgroup>
-                            @endforeach
-
-                          </select>
+                        
+                        
 
                         </div>
 
@@ -147,7 +140,7 @@
                   <tr>
                     <td class="align-middle ps-3 name" style="width:25%">Description detaillee des besoins </td>
                     <td class="align-middle email" colspan="6">
-                      <input type="text" class="form-control form-control-sm" name="titreact" id="titreact" style="width: 100%" />
+                      <textarea type="text" class="form-control form-control-sm" name="titreact" id="titreact" style="width: 100%;" ></textarea>
                     </td>
                   </tr>
 
@@ -262,16 +255,11 @@
         <form class="row g-3 mb-6" method="POST" id="AddCommenteForm">
           @method('post')
           @csrf
-
           <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;name&quot;,&quot;email&quot;,&quot;age&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
 
-
-            <input type="hidden" class="form-control" name="aidcom" id="aidcom" />
+            <input type="hidden" class="form-control idact" name="idact" id="idact" />
             <input value="{{ Session::get('id') }}" type="hidden" name="projetidcomment" id="projetidcommente">
-
-            <textarea type="text" class="form-control" name="titrecom" id="titrecom" style="height:150px"></textarea>
-
-
+            <textarea type="text" class="form-control" name="message" id="message" style="height:150px"></textarea>
           </div>
       </div>
       <div class="modal-footer">

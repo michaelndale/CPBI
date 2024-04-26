@@ -63,14 +63,19 @@ class AffectationController extends Controller
     public function index ()
     {
       $title='Affectation project';
-      $member = DB::table('personnels')->orWhere('fonction', '!=','Chauffeur')->get();
       $active = 'Project';
-
       $idp = session()->get('id');
 
+      $member = DB::table('personnels')
+            ->join('users', 'personnels.id', '=', 'users.personnelid')
+            ->get();
+      
+    
+
+   
       $existe = DB::table('affectations')
-      ->join('users', 'affectations.memberid', '=', 'users.id')
-      ->select('affectations.*' )
+      ->join('users', 'affectations.memberid', '=', 'users.personnelid')
+      ->select('affectations.*')
       ->where('affectations.projectid',$idp)
       ->get();
 

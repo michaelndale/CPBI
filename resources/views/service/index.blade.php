@@ -31,7 +31,7 @@
                                   
                                          
                                         <div class="table-responsive">
-                                            <table class="table table-bordered mb-0">
+                                            <table class="table table-bordered  table-sm fs--1 mb-0">
         
                                                 <thead>
                                                         <tr style="background-color:#82E0AA">

@@ -27,7 +27,7 @@
         <div class="col-lg-12" style="margin:auto">
           <div class="card">
             <div class="table-responsive">
-              <table class="table table-bordered mb-0">
+              <table class="table table-bordered  table-sm fs--1 mb-0">
                 <thead>
 
                   <tr style="background-color:#82E0AA">
@@ -58,6 +58,7 @@
         </div>
       </div>
     </div> <!-- container-fluid -->
+    <br><br> <br><br> <br><br> <br><br> 
   </div>
 </div>
 
@@ -117,24 +118,9 @@
                 <span id="email_error" name="email_error" class="text text-danger"> </span>
               </div>
             </div>
-            <div class="col-sm-6 col-md-6">
-              <div class="form-floating mb-1">
-                <input class="form-control" id="dateemboche" type="date" name="dateemboche" required="required" />
-                <label for="dateemboche">Date amboche </label>
-              </div>
-            </div>
+           
 
-            <div class="col-sm-6 col-md-6">
-              <div class="form-floating mb-1">
-                <select class="form-select" id="statut" name="statut">
-                  <option value="" selected="selected">Statut</option>
-                  @foreach ($statut as $statuts)
-                  <option value="{{ $statuts->libelle }}"> {{ $statuts->libelle }}</option>
-                  @endforeach
-                </select>
-                <label for="eventLabel">Status</label>
-              </div>
-            </div>
+         
           </div>
 
           <div class="row">

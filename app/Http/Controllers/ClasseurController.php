@@ -47,7 +47,15 @@ class ClasseurController extends Controller
      
         echo $output;
       } else {
-        echo '<h3 class="text-center text-secondery my-5" > Aucun enregistrement dans la base de données ! </h3>';
+        echo ' <tr>
+        <td colspan="3">
+        <center>
+          <h6 style="margin-top:1% ;color:#c0c0c0"> 
+          <center><font size="50px"><i class="fa fa-info-circle"  ></i> </font><br><br>
+              Ceci est vide  !</center> </h6>
+        </center>
+        </td>
+        </tr>';
       }
     }
   

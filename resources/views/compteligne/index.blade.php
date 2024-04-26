@@ -4,12 +4,12 @@
   <div class="page-content">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-8" style="margin:auto">
+        <div class="col-10" style="margin:auto">
           <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0"><i class="fa fa-list"></i> Ligne budgetaire </h4>
+            <h4 class="mb-sm-0"><i class="fa fa-list"></i> Ligne  budgétaire</h4>
 
             <div class="page-title-right">
-            <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter la ligne budgetaire </a>
+            <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter la ligne budgétaire </a>
 
             </div>
 
@@ -18,7 +18,7 @@
       </div>
      
       <div class="row">
-        <div class="col-lg-8" style="margin:auto">
+        <div class="col-lg-10" style="margin:auto">
           <div class="card">
             <div class="table-responsive">
               <table class="table table-bordered mb-0">
@@ -26,8 +26,8 @@
                   <tr style="background-color:#82E0AA">
                     <th style="width:5%">#</th>
                     <th  style="width:10%">Code</th>
-                    <th >Libellé</th>
-                    <th style="width:25%"><center>Action</center></th>
+                    <th >Description</th>
+                    <th style="width:6%"><center>Actions</center></th>
                   </tr>
                 </thead>
                 <tbody id="show_all_compte">
@@ -57,7 +57,7 @@
       @method('post')
       @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle ligne budgetaire  </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle ligne budgétaire </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
         </div>
         <div class="modal-body">
 
@@ -100,7 +100,7 @@
       @method('post')
       @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle sous ligne budgetaire    </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle sous ligne budgétaire    </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
         </div>
         <div class="modal-body">
 

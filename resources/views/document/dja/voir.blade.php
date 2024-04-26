@@ -1,0 +1,244 @@
+@extends('layout/app')
+@section('page-content')
+<div class="main-content">
+<br>
+    <div class="content">
+        <div class="card">
+            <div class="card-body">
+                <div class="invoice-title">
+                    <center>
+                        <div class="text-muted">
+                            <table style=" width:100%">
+                                <tr>
+                                    <td style=" width:10% ;"> <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="100" /> </td>
+                                  
+                                    <td>
+                                        <center>
+                                            <p class="mb-1">
+                                            <h3>{{ $dateinfo->entete }}</h3>
+                                           
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                       <hr>
+                                        <center>
+                                           
+                                                <center>{{ $dateinfo->sousentete }}</center>
+                                           
+                                        </center>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                </div>
+                <hr class="my-4">
+                <div class="row">
+                <H4>
+                        <center> DEMANDE DE JUSTIFICATION D'AVANCE  (DJA)  N° {{ $Jsondja->numerodjas }} </center>
+                    </H4>
+                    <div class="col-sm-12">
+                        <table style=" width:100%" class="table table-sm m-0" id="mytable">
+                            <tr>
+                                <td style="width:50%"> Présumé Bénéficiaire/Fournisseur/Prestataire à payer:  Commerciale <br>
+                                {{ $Jsondja->beneficiaire }}
+                            </td>
+                            <td style="width:50%" >  Les fonds devront être reçus le :{{ $Jsondja->datefondrecu }}</td>
+                                
+                            </tr>
+                            <tr>
+                            <td style="width:50%">
+                                Adresse:  {{ $Jsondja->adresse }}  <br>
+                                Téléphone1: {{ $Jsondja->tel }}   Téléphone2: {{ $Jsondja->teld }} <br>
+                                Description/Motif : {{ $Jsondja->description }}
+
+                                </td>
+                                
+                                <td style="width:50%">
+                                 Référence (s) : FEB Nº {{ $Jsondja->numerofeb }} ; DAP Nº {{ $Jsondja->numerodap }} ;  OV/CHQ Nº {{ $Jsondja->numeroov }}  <br>
+                                 Ligne budgétaire:  {{ $Jsondja->lignebdt }} <br>
+                                 Montant de l'avance  : {{ $Jsondja->montant_avance }} <br>
+
+                                 Dévise (BIF ou USD): {{ $Jsondja->devise}} <br>
+                                 Durée de l’avance:   {{ $Jsondja->duree_avence }}    jours <br>
+                                 </td>
+                            </tr>
+                        </table>
+
+                       
+
+                        <table class="table  table-sm">
+                            <tr>
+                                <td colspan="4"> Demande/Approbation</td>
+                            </tr>
+
+                            <tr>
+                                <td style="width:40%">Fonds demandes par :  <br>
+                                    Noms:
+                                </td>
+                               
+                                <td style="width:15%"><br>Signature</td>
+                                <td></td>
+                                <td style="width:15%"><br>Date</td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    Avance Approuvee par (2 personnes au moins): <br>
+                                    Noms: 
+                                
+                                </td>
+                                
+                                <td><br>Signature</td>
+                                <td>
+                                    <br>Chef Comptable(Si A< 500 000 Fbu)
+                                </td>
+                                <td><br>Date</td>
+                            </tr>
+
+                            <tr>
+                                <td> <br>
+                                Noms: </td>
+                               
+                                <td><br>Signature</td>
+                                <td><br>RAF (Si A < 1000 000Fbu)</td>
+                                <td><br>Date</td>
+                            </tr>
+
+                            <tr>
+                                <td> <br>
+                                Noms: </td>
+                                <td><br>Signature</td>
+                                <td><br>SG ou SGA (Si A > 1000 000Fbu)</td>
+                                <td><br>Date</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Fonds swbourses par <br>
+                                    Noms: 
+                                
+                                </td>
+                                
+                                <td><br>Signature</td>
+                                <td>
+                                    <br>Chef Comptable(Si A< 500 000 Fbu)
+                                </td>
+                                <td><br>Date</td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    Fonds recus par: <br>
+                                    Noms: 
+                                
+                                </td>
+                                
+                                <td><br>Signature</td>
+                                <td>
+                                    <br>
+                                </td>
+                                <td><br>Date</td>
+                            </tr>
+
+
+                        </table>
+
+                        <table class="table table-bordered  table-sm">
+                            <tr>
+                                <td colspan="2">Autorisation de Paiement</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" align="center">Autorise le ....../...../....</td>
+                            </tr>
+                            <tr>
+                                <td>Responsable Administratif et Financier</td>
+                                <td>Chef des Programmes</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" align="center">Secretaire General de la CEPBU</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" >Observation/Instructions du SG</td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2" ><small>FEB: Fiche d'Expression des Besoins , preparee par l'assistant de composante(Ac) ou charge d'execution (CE) ou Chef de Session (CS) ou assimilee      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BQ.Banque </small> </td>
+                            </tr>
+                        </table>
+
+                            <H5> Rapport d'utilisation de l' Avance </H5>
+                        <table class="table table-bordered  table-sm">
+                            <td>
+                                Fonds payés à : <br><br>
+                                Addresse: <br> <br>
+
+                                Tel1 : Tel2: <br> <br>
+
+                                DESCRIPTION/MOTIF: <br><br>
+                            </td>
+                        </table >
+                        <hr>
+                        <table class="table table-bordered  table-sm">
+                            <td>Montant de l'Avance ............. <br> <br>
+
+                            Montant utilisé* ..................... *Même Montant pour pièces justificatives <br><br>
+ 
+                            Surplus/Manque* ....................... *Si le montant n'a pas été suffisant, préparez un formulaire de demande de remboursement et le soumettre pour  approbation avec  les pièces justificatives. <br>
+
+                            Montant retourné à la caisse ou au compte(Si Surplus) ...............
+                        </td> 
+                        </table>
+
+                        <table class="table  table-sm">
+                            <tr>
+                            <td colspan="3">Réception des fonds retournés à la caisse par:                        (ou Borderau de versement nº___________________________du _______/_____/20_____) </td>
+                            </tr>
+                           <tr>
+                           <td> Noms de la Caissière :  </td>
+                            <td>Signature</td>
+                            <td>Date</td>
+                           </tr>
+                            
+                        </table>
+
+
+                        <table class="table   table-sm">
+                            <tr>
+                            <td colspan="3">Réception des pièces justificatives de l'utilisation de l'avance par: </td>
+                            </tr>
+                           <tr>
+                           <td> Noms :  </td>
+                            <td>Signature</td>
+                            <td>Date</td>
+                           </tr>
+                            
+                        </table>
+
+                        <p>
+                            <small> Pour les Limites d'approbation des Avances, les montants  repris sur cette fiche ne sont que des exemples.     
+
+                            <br>    FEB = Fiche d'Expression des Besoins                       DAP=Demande d'Autorisation de Paiement             OV/CHQ=Ordre de Virement ou Chèque       
+                            </small> 
+                        </p>
+                        
+                        
+
+
+
+                        <hr>             
+                        <center><small>{{ $dateinfo->piedpage }}</small></center>
+                          
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+        
+        <br>
+        <br>
+    </div>
+</div>
+
+
+@endsection

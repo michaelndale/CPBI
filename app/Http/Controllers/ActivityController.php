@@ -8,6 +8,7 @@ use App\Models\Compte;
 use App\Models\Folder;
 use App\Models\Historique;
 use App\Models\Notification;
+use App\Models\Observationactivite;
 use App\Models\Project;
 use App\Models\Rallongebudget;
 use App\Models\User;
@@ -26,18 +27,17 @@ class ActivityController extends Controller
    
 
       $ID = session()->get('id');
-      $compte = DB::table('comptes')
-              ->Where('comptes.projetid', $ID)
-              ->Where('compteid','=', 0)
-              ->get();
+      $compte =  DB::table('comptes')
+                ->Where('comptes.projetid', $ID)
+                ->Where('comptes.compteid','=', 0)
+                ->distinct()
+                ->get();
 
               
       return view('activite.index', 
         [
           'title' =>$title,
           'dataProject' => $dataProjet,
-         
-         
           'compte' => $compte,
       ]);
     }
@@ -46,20 +46,54 @@ class ActivityController extends Controller
     {
       $ID = session()->get('id');
       $devise =session()->get('devise');
-      $service = Compte::where('compteid', '=', 0)
-        ->where('projetid', $ID)
-        ->get();
+      $service = DB::table('comptes')
+      ->Where('comptes.projetid', $ID)
+      ->Where('comptes.compteid','=', 0)
+      ->distinct()
+      ->get();
+
+      $SommeAllActivite = DB::table('activities')
+              ->Where('projectid', $ID)
+              ->orderby('id','DESC')
+              ->SUM('montantbudget');
+
       $output = '';
+
+      $output .='
+      <thead>
+      <tr style="background-color:#82E0AA">
+        <th>N<sup>o</sup></th>
+        <th>
+          <center>Code</center>
+        </th>
+        <th >Ligne et sous ligne  budgetaire </th>
+        <th>Activité <span style="margin-left: 40%;">Montant total des activités: <b>'.number_format($SommeAllActivite,0, ',', ' ').' </b></span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+     
+   
+   ';
+
       if ($service->count() > 0) {
   
         $nombre = 1;
         foreach ($service as $rs) {
           $id = $rs->id;
-          $output .= '<tr style="background-color:#F5F5F5">
+
+          $somme_budget_ligne= DB::table('rallongebudgets')
+          ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+          ->Where('rallongebudgets.projetid', $ID)
+          ->Where('rallongebudgets.compteid', $id)
+          ->SUM('rallongebudgets.budgetactuel');
+
+          $output .= '
+          <tr style="background-color:#F5F5F5">
                 <td class="align-middle ps-3 name"><b>' . $nombre . '</td>
                 <td><b>' . ucfirst($rs->numero) . '</b></td>
-                <td colspan="5"><b>' . ucfirst($rs->libelle) . '</b></td>
-              
+                <td><b>' . ucfirst($rs->libelle) . ' </b></td>
+                <td align="right">Budget de la ligne:  <b>' .  number_format($somme_budget_ligne,0, ',', ' ')  . ' </b></td>
               </tr>
               ';
   
@@ -71,13 +105,16 @@ class ActivityController extends Controller
             $ndale = 1;
             foreach ($sous_compte as $sc) {
               $ids = $sc->id;
+
+              
+
   
               // <a href="#" id="' . $sc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
               $output .= '
                     <tr>
                       <td class="align-left" style="background-color:#F5F5F5"></td>
                       <td style="width:15px">' . ucfirst($sc->numero) . '</td>
-                      <td style="width:250px">' . ucfirst($sc->libelle) . '</td>
+                      <td style="width:250px">' . ucfirst($sc->libelle) .' </td>
                       <td> ';
 
                       $act = DB::table('activities')
@@ -85,21 +122,34 @@ class ActivityController extends Controller
                             ->Where('compteidr', $ids)
                             ->orderby('id','DESC')
                             ->get();
+                      $actsome = DB::table('activities')
+                            ->Where('projectid', $ID)
+                            ->Where('compteidr', $ids)
+                            ->orderby('id','DESC')
+                            ->SUM('montantbudget');
+
+                      
+
                       $nombre = 1;
-                      $output .= ' <table id="venteTable" class="table table-bordered table-striped mb-0 table-sm">';
-                        foreach ($act as $rs) { 
-                          if($rs->etat_activite=="Annuler"){ $color ='#F08080'; $class='danger' ;}
+                      $output .= ' <table class="table  mb-0 table-sm" style="100%">';
+                        foreach ($act as $rss) { 
+                          $idac=$rss->id;
+                          $compteobserve =DB::table('observationactivites')
+                                              ->where('activiteid',$idac)
+                                              ->count();
+                          
+                          if($rss->etat_activite=="Annuler"){ $color ='#F08080'; $class='danger' ;}
       
 
-                          elseif($rs->etat_activite=="Terminée"){
+                          elseif($rss->etat_activite=="Terminée"){
                            $color=''; $class='primary';
                           }
                  
-                          elseif($rs->etat_activite=="Contrainte"){
+                          elseif($rss->etat_activite=="Contrainte"){
                            $color=''; $class='warning';
                           }
                  
-                          elseif($rs->etat_activite=="Encours"){
+                          elseif($rss->etat_activite=="Encours"){
                            $color=''; $class='info';
                           }
                  
@@ -109,38 +159,40 @@ class ActivityController extends Controller
                           $output .= '
                           
                           <tr style="background-color:'.$color.'">
-                            <td class="align-middle ps-3 name" >' . $nombre . '</td>
-                            <td style="width:20px">
-                            <center>
-                             
-                              <div class="btn-group me-2 mb-2 mb-sm-0">
-                                <a  data-bs-toggle="dropdown" aria-expanded="false">
-                                     <i class="mdi mdi-dots-vertical ms-2"></i>
-                                </a>
-                                <div class="dropdown-menu">
-                                <a class="dropdown-item text-success mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#AddCommenteModale" title="Modifier"><i class="ri-wechat-line"></i> Ajouter un onbservation</a>
-                                    <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#EditModale" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
-                                    <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
-                                </div>
-                             </div>
+                            <td style="width:60px" >' . $nombre . '
+                            <div class="btn-group me-2 mb-2 mb-sm-0">
+                            <a  data-bs-toggle="dropdown" aria-expanded="false">
+                                 <i class="mdi mdi-dots-vertical ms-2"></i>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item text-success mx-1 ajouteroberveget" id="' . $rss->id . '"  data-bs-toggle="modal" data-bs-target="#AddCommenteModale" title="Modifier"><i class="ri-wechat-line"></i> Ajouter un onbservation</a>
+                                <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rss->id . '"  data-bs-toggle="modal" data-bs-target="#EditModale" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
+                                <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rss->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
+                            </div>
+                         </div>
                             
-              
                             </td>
                             <td style="width:60%">  
-                            ' . ucfirst($rs->titre). '
-                            <span class="badge rounded-pill bg-'.$class.' font-size-11">' . ucfirst($rs->etat_activite). '</span>
-                            <a href="#" id="' . $rs->id . '" class="text-success mx-1 observationshow" data-bs-toggle="modal" data-bs-target="#TableCommenteModale" title="Observation" ><i class="ri-wechat-line"></i> </a>
+                            ' . ucfirst($rss->titre). '
+                            <span class="badge rounded-pill bg-'.$class.' font-size-11">' . ucfirst($rss->etat_activite). '</span>
+                            <a href="#" id="' . $rss->id . '" class="text-success mx-1 observationshow" data-bs-toggle="modal" data-bs-target="#TableCommenteModale" title="Observation" ><i class="ri-wechat-line">'.$compteobserve.'</i> </a>
                             </td>
                          
-                            <td align="right">' . number_format($rs->montantbudget,0, ',', ' ').' '. $devise.'</td>
+                            <td align="right">' .number_format($rss->montantbudget,0, ',', ' ').' </td>
                            
                            
-                          </tr>';
+                          </tr>
+                          ';
                         $nombre++;
 
                         }
  
-                        $output .= '</table> ';
+                        $output .= '
+                        <tr>
+                          <td colspan="2"><b>Sous total des activités </b>  </td>
+                          <td align="right"> <b>' . number_format($actsome,0, ',', ' ').' </b></td>
+                          </tr>
+                        </table> ';
                      
                   $output .= '</td>
                     </tr>
@@ -165,6 +217,7 @@ class ActivityController extends Controller
                      
                        </td>
                   </tr>
+                  </tbody>
             ';
                 $nd++;
               }
@@ -184,7 +237,7 @@ class ActivityController extends Controller
                   <td colspan="4">
                   <center>
                     <h6 style="margin-top:1% ;color:#c0c0c0"> 
-                    <center><font size="50px"><i class="far fa-trash-alt"  ></i> </font><br><br>
+                    <center><font size="50px"><i class="fa fa-info-circle"  ></i> </font><br><br>
                   Ceci est vide  !</center> </h6>
                   </center>
                   </td>
@@ -200,8 +253,8 @@ class ActivityController extends Controller
 
   
       // insert a new ajax request
-      public function store(Request $request )
-      {
+    public function store(Request $request )
+    {
 
      
 
@@ -264,21 +317,44 @@ class ActivityController extends Controller
       }
 
 
+      // inseret observation
+
+           // insert a new ajax request
+    public function storeobeserve(Request $request )
+    {
+
+          $obser = new Observationactivite();
+          
+          $obser->projetid = $request->projetidcomment;
+          $obser->activiteid = $request->idact;
+          $obser->message =  $request->message;
+          $obser->userid= Auth::id();
+
+          $ndale= $obser->save();
+
+          if($ndale){
+            return response()->json([
+              'status' => 200,
+              
+              ]);
+          }else{
+            return response()->json([
+              'status' => 201,
+              ]);
+          }
+
+          
+      }
+
+
       // Update a new ajax request
       public function update(Request $request )
       {
         try {
               $act = Activity::find($request->aid);
 
-              $comp= $request->ligneact;
-              $compp=explode("-", $comp);
-             
-              $grandcompte = $compp[0];
-              $souscompte  = $compp[1];
-        
-
-              $act->grandcompte = $grandcompte;
-              $act->compteidr =$souscompte;
+            
+            
               $act->titre = $request->titreact;
               $act->montantbudget = $request->montantact;
               $act->etat_activite = $request->etatact;
@@ -332,8 +408,23 @@ class ActivityController extends Controller
   public function show(Request $request)
   {
     $id = $request->id;
-    $fon =Activity::find($id);
+    $fon =DB::table('activities')
+    ->join('comptes','activities.compteidr','comptes.id')
+    ->select('activities.*','comptes.id as idc', 'comptes.numero as numerocomptes','comptes.libelle as libellecompte')
+    ->Where('activities.id', $id)
+    ->first();
   
+    return response()->json($fon);
+  }
+
+  public function showactivityobserve(Request $request)
+  {
+    $id = $request->id;
+    $fon =DB::table('activities')
+    ->join('comptes','activities.compteidr','comptes.id')
+    ->select('activities.*','activities.id as idact','comptes.id as idc', 'comptes.numero as numerocomptes','comptes.libelle as libellecompte')
+    ->Where('activities.id', $id)
+    ->first();
     return response()->json($fon);
   }
 

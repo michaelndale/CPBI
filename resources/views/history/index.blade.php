@@ -32,7 +32,7 @@
                         <h4 class="card-title">Historique</h4>
                         <p class="card-title-desc">Liste des operations</p>
 
-                        <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <table id="datatable" class="table table-bordered  table-sm fs--1 mb-0" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                             <thead>
                             <tr style="background-color:#82E0AA">
                             <th >Fonction</th>

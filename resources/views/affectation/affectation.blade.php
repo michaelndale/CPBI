@@ -1,6 +1,7 @@
 @extends('layout/app')
 @section('page-content')
 
+
 <div class="main-content">
   <div class="page-content">
     <div class="container-fluid">
@@ -9,7 +10,8 @@
 
         <div class="row">
           <div class="col-xl-9" style="margin:auto">
-            <h4 class="mb-4"><i class="fa fa-users"></i> Affectation des executants du projet</h4>
+            <h4 class="mb-4"><i class="fa fa-users"></i> Les intervenants du projet</h4>
+            <p>Les membres intervenants du projet ont apporté leur expertise et leur contribution à sa réalisation</p>
 
             @if (session()->has('success'))
             <div class="alert alert-outline-success d-flex align-items-center" role="alert">
@@ -55,13 +57,20 @@
                     @foreach ($member as $members)
                     <tr>
                       <td class="align-middle ps-3">
-                        <input class="form-check-input" name="personnel[]" type="checkbox" value="{{ $members->id }}" @php foreach ($existe as $existes): $proj=$existes->projectid;
-                        $memb= $existes->memberid;
-                        $sessionprojec= Session::get('id');
-                        if($proj== $sessionprojec && $memb== $members->id):
-                        echo "checked";
-                        endif ;
-                        endforeach
+                        
+                        <input class="form-check-input" name="personnel[]" type="checkbox" value="{{ $members->id }}" 
+                        @php 
+                        if(isset($existe)){
+                          foreach ($existe as $existes): 
+                          $proj=$existes->projectid;
+                          $memb= $existes->memberid;
+                          $sessionprojec= Session::get('id');
+                          if($proj== $sessionprojec && $memb== $members->id):
+                          echo "checked";
+                          endif ;
+                          endforeach;
+                        }
+                        
                         @endphp
 
                         />
@@ -71,7 +80,19 @@
                       </td>
 
                       <td class="align-left">
-                        <input type="text" style="height:20px" name="role[]" value="{{ $existes->role }}"/>
+                        <input type="text" style="height:20px" name="role[]" 
+                        value="@php
+                          if(isset($existe)){
+                          foreach ($existe as $existes): 
+                          $proj=$existes->projectid;
+                          $memb= $existes->memberid;
+                          $sessionprojec= Session::get('id');
+                          if($proj== $sessionprojec && $memb== $members->id):
+                            echo $existes->role;
+                          endif ;
+                          endforeach;
+                        }
+                          @endphp"  placeholder="Role dans le projet" class="form-control form-control-sm"/>
                       </td>
                     </tr>
                     @endforeach

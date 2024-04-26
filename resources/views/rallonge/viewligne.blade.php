@@ -15,7 +15,7 @@
         <form action="{{ route('rallonge.delete', $dataJons->id) }}" method="POST">
             @csrf
             @method('DELETE')
-            <button   class="btn btn-danger" type="button" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet ligne ?')"> <i class="fa fa-times-circle"></i> Supprimer </button>
+            <button   class="btn btn-danger" type="submit" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet ligne ?')"> <i class="fa fa-times-circle"></i> Supprimer </button>
         </form>
     
     </div>

@@ -5,6 +5,16 @@
     .hidden-link {
         display: none;
     }
+
+    /* Style de la classe difference */
+.difference {
+    /* Ajoutez votre style pour différencier visuellement la cellule */
+    background-color: #ffcccc; /* Par exemple, couleur de fond différente */
+}
+
+/* Positionnement du drapeau à côté de la cellule différence */
+
+
 </style>
 
 <div class="main-content">
@@ -21,6 +31,15 @@
     </div>
     <div class="card-body">
       <div class="card">
+
+      <table>
+  
+    <!-- Autres lignes -->
+</table>
+
+
+
+
         <div class="float-end d-none d-md-inline-block">
           <div id="show_all_rallonge" class="scrollme">
             <center>
@@ -39,6 +58,21 @@
 
 
 <script>
+
+
+function toggleUrldocInput(checkbox) {
+    var urldocInput = document.getElementById("urldoc");
+    urldocInput.style.display = checkbox.checked ? "block" : "none";
+}
+
+// Vérifier l'état initial de la case à cocher au chargement de la page
+window.onload = function() {
+    var retructionCheckbox = document.getElementById("retruction");
+    toggleUrldocInput(retructionCheckbox);
+};
+
+
+
     // Sélection des lignes (<tr>) avec la classe "hoverable-tr"
     const hoverableTrs = document.querySelectorAll('.hoverable-tr');
 

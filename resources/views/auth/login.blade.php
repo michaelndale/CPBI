@@ -87,9 +87,8 @@
                                                   </div>
                                         
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox"  >
-                                                    <label class="form-check-label" for="auth-remember-check">Souvenez-vous de moi</label>
-                                                   
+                                                    <input type="checkbox" name="remember" id="remember" class="form-check-input" checked>
+                                                    <label for="remember" class="form-check-label" for="auth-remember-check">Se souvenir de moi</label>
                                                   </div>
                                         
                                                 <div class="mt-4">

@@ -30,7 +30,7 @@
                                   
                                          
                                         <div class="table-responsive">
-                                            <table class="table table-bordered mb-0">
+                                            <table class="table table-bordered  table-sm fs--1 mb-0">
         
                                                 <thead>
                                                 <tr style="background-color:#82E0AA">
@@ -41,7 +41,7 @@
                                                 </thead>
                                                 <tbody  id="show_all_department">
                                                   <tr>
-                                                    <td colspan="2"><h5 class="text-center text-secondery my-5">
+                                                    <td colspan="3"><h5 class="text-center text-secondery my-5">
                                                         @include('layout.partiels.load')
                                                       </td>
                                                     </tr>

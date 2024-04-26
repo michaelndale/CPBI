@@ -48,6 +48,38 @@
             <label class="text-1000 fw-bold mb-2">Budget </label>
             <input class="form-control" id="budgetactuel" name="budgetactuel"  type="number" min="1" placeholder="Budget" required/>
           </div>
+          <hr>
+
+          <div class="col-sm-6 col-lg-12 col-xl-12">
+            <center>
+              <label class="text-1000 fw-bold mb-2">Type du budgét : &nbsp; &nbsp; &nbsp; </label>
+              @foreach ($typebudget as $index => $typebudgets)
+    <input id="budgetactuel{{ $index }}" name="typeprojet" type="radio" value="{{ $typebudgets->id }}" @if($index == 0) checked @endif required/> {{ $typebudgets->titre }} &nbsp; &nbsp; 
+@endforeach
+              </center>
+          
+            
+            </div>
+            <hr>
+
+          <div id="cacheMoi">
+
+            <div class="col-sm-12 col-lg-12 col-xl-12">
+
+            <div class="form-check form-switch mb-3" dir="ltr">
+              <input type="checkbox" class="form-check-input" name="customSwitch1" id="customSwitch1" onchange="toggleUrldocInput(this)" style="color: red;">
+              <label class="form-check-label" for="customSwitch1"  style="color: red;">Condition d'utilisation de la ligne  <i class="fa fa-info-circle"></i></label>
+            </div>
+
+              <input class="form-control" id="urldoc" name="urldoc" type="url" placeholder="Lien du document" style="display: none; color:red" />
+
+
+
+            </div>
+
+           
+
+          </div>
           
         </div>
       </div>

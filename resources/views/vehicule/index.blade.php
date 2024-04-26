@@ -49,7 +49,7 @@
                 </thead>
                 <tbody id="show_all_vehicule">
                   <tr>
-                    <td colspan="8">
+                    <td colspan="11">
                       <h5 class="text-center text-secondery my-5">
                         @include('layout.partiels.load')
                     </td>

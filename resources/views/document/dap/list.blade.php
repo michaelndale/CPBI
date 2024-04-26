@@ -11,13 +11,13 @@
           </div>
           <div class="col col-md-auto">
 
-            <a href="javascript:void()" data-bs-toggle="modal" data-bs-target="#dapModale"><span class="me-2" data-feather="plus-circle"></span>Nouvel fiche DAP</a></nav>
+            <a href="javascript:void()" data-bs-toggle="modal" data-bs-target="#dapModale"><span class="me-2" data-feather="plus-circle"></span> <i class="fa fa-plus-circle"></i> Nouvel fiche DAP</a></nav>
           </div>
         </div>
       </div>
       <div class="card-body p-0">
 
-        <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;num&quot;,&quot;febnum&quot;,&quot;facture&quot;date&quot;bc&quot;periode&quot;om&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
+        <div id="tableExample2" >
           <div class="table-responsive">
             <table class="table table-striped table-sm fs--1 mb-0" style="background-color:#c0c0c0">
 
@@ -26,30 +26,28 @@
               </tbody>
 
             </table>
-            <BR>
+           
           </div>
 
         </div>
 
 
 
-        <div id="tableExample2" data-list="{&quot;valueNames&quot;:[&quot;num&quot;,&quot;febnum&quot;,&quot;facture&quot;date&quot;bc&quot;periode&quot;om&quot;],&quot;page&quot;:5,&quot;pagination&quot;:{&quot;innerWindow&quot;:2,&quot;left&quot;:1,&quot;right&quot;:1}}">
+        <div id="tableExample2">
           <div class="table-responsive">
             <table class="table table-striped table-sm fs--1 mb-0">
               <thead>
                 <tr>
                   <th class="sort border-top ">
-                    <center>Action</center>
+                    <center><b>Actions</b></center>
                   </th>
 
-                  <th class="sort border-top" data-sort="febnum">Numéro </th>
-                  <th class="sort border-top ps-3" data-sort="facture">Facture</th>
-                  <th class="sort border-top" data-sort="date">Date feb</th>
-                  <th class="sort border-top" data-sort="bc">BC</th>
-                  <th class="sort border-top" data-sort="periode">Periode</th>
-                  <th class="sort border-top" data-sort="om">OM</th>
-                  <th class="sort border-top" data-sort="om">Montant total</th>
-                  <th class="sort border-top" data-sort="om"> % </th>
+                  <th class="sort border-top "> <center><b>N<sup>o</sup>  DAP </b></center> </th>
+                  <th class="sort border-top "> <center> <b>N<sup>o</sup>  FEB </b></center> </th>
+                  <th class="sort border-top "> <b>Lieu </b></th>
+                  <th class="sort border-top "><center> <b>OV  </b></center></th>
+                  <th class="sort border-top "> <center><b>CHO </b></center></th>
+                  <th class="sort border-top "> <b>Compte bancaire </b></th>
 
                 </tr>
               </thead>
@@ -110,12 +108,14 @@
 </script>
 
 <script>
+
   $(function() {
 
     $("#adddapForm").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#adddapbtn").text('Ajouter...');
+      $("#addfebbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+        $("#loadingModal").modal('show'); // Affiche le popup de chargement
       $.ajax({
         url: "{{ route('storedap') }}",
         method: 'post',
@@ -126,12 +126,13 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
+
             fetchAlldap();
-            toastr.success("DAP ajouté avec succès !", "success");
-            $("#adddapbtn").text('Sauvegarder');
 
             $("#adddapForm")[0].reset();
             $("#dapModale").modal('hide');
+
+            toastr.success("DAP ajouté avec succès !", "success");
 
 
           }
@@ -145,7 +146,11 @@
             $("#dapModale").modal('show');
           }
 
-          $("#adddapbtn").text('Sauvegarder');
+          $("#addfebbtn").text('Sauvegarder');
+            $("#loadingModal").modal('hide'); 
+            setTimeout(function() {
+                $("#loadingModal").modal('hide');
+            }, 600); // 2000 millisecondes = 2 secondes
         }
       });
     });
@@ -168,16 +173,29 @@
       }).then((result) => {
         if (result.isConfirmed) {
           $.ajax({
-            url: "{{ route('deletefeb') }}",
+            url: "{{ route('deletedap') }}",
             method: 'delete',
             data: {
               id: id,
               _token: csrf
             },
             success: function(response) {
-              console.log(response);
-              $.notify("DAP supprimer avec succès !", "success");
+              
+
+              if (response.status == 200) {
+                toastr.success("DAP supprimer avec succès !", "Suppression");
+                fetchAlldap();
+              }
+
+              if (response.status == 205) {
+                toastr.error("Vous n'avez pas l'accreditation de supprimer ce DAP !", "Erreur");
+              }
+
+              if (response.status == 202) {
+                toastr.error("Erreur d'execution !", "Erreur");
+              }
               fetchAlldap();
+
             }
           });
         }

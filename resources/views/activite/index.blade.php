@@ -1,6 +1,5 @@
 @extends('layout/app')
 @section('page-content')
-
 <style type="text/css">
   .has-error {
     border: 1px solid red;
@@ -13,12 +12,9 @@
         <div class="col-12" style="margin:auto">
           <div class="page-title-box d-sm-flex align-items-center justify-content-between">
             <h4 class="mb-sm-0"><i class="fa fa-folder-open"></i> Activite par ligne budgetaire </h4>
-
             <div class="page-title-right">
               <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModale" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouvelle activité</a>
-
             </div>
-
           </div>
         </div>
       </div>
@@ -27,7 +23,7 @@
         <div class="col-lg-12" style="margin:auto">
           <div class="card">
             <div class="table-responsive">
-              <table class="table table-bordered mb-0">
+              <table class="table table-bordered mb-0" id="show_all_activite">
                 <thead>
 
                   <tr style="background-color:#82E0AA">
@@ -36,13 +32,16 @@
                       <center>Code</center>
                     </th>
                     <th >Ligne et sous ligne  budgetaire </th>
-                    <th>Activite</th>
+                    <th>Activité <span style="margin-left: 40%;">Montant total des activités: </span>
+                    </th>
+
+                    
                   
                     
                   </tr>
 
                 </thead>
-                <tbody id="show_all_activite">
+                <tbody>
                   <tr>
                     <td colspan="8">
                       <h5 class="text-center text-secondery my-5">
@@ -66,6 +65,29 @@
 
 <script>
   $(function() {
+
+
+    $(document).on('change', '.condictionsearch', function() {
+      var cat_id = $(this).val();
+      var div = $(this).parent();
+   
+      $.ajax({
+        type: 'get',
+        url: "{{ route ('condictionsearch') }}",
+        data: {
+          'id': cat_id
+        },
+        success: function(reponse) {
+            if(reponse.trim() !== "") {
+                // La réponse n'est pas vide, mettre à jour le contenu HTML
+                $("#showcondition").html(reponse);
+            } else {
+                // La réponse est vide ou nulle, faire quelque chose d'autre ou ne rien faire
+                console.log("La réponse est vide ou nulle.");
+            }
+        }
+      });
+    });
 
     $('#addModale').modal({
       backdrop: 'static',
@@ -116,6 +138,54 @@
       });
     });
 
+
+    // ajouter le observation 
+    $("#AddCommenteForm").submit(function(e) {
+      e.preventDefault();
+      const fd = new FormData(this);
+      $("#Addcommentebtn").text('Ajouter...');
+      $.ajax({
+        url: "{{ route('storeobeserve') }}",
+        method: 'post',
+        data: fd,
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+          if (response.status == 200) {
+            fetchActivite();
+
+            toastr.success("Observation ajouté avec succès !", "success");
+
+            $("#Addcommentebtn").text('Sauvegarder');
+            $("#AddCommenteModale").modal('hide');
+            $("#Addcommentebtn")[0].reset();
+          }
+
+        
+          if (response.status == 201) {
+            toastr.info("Erreur enregistrement observation", "Erreur");
+            
+            $("#AddCommenteModale").modal('show');
+            $("#Addcommentebtn").text('Sauvegarder');
+          }
+
+          if (response.status == 203) {
+            toastr.info("Erreur d'execution, verifier votre internet", "Erreur");
+            
+            $("#AddCommenteModale").modal('show');
+            $("#Addcommentebtn").text('Sauvegarder');
+          }
+
+          
+
+        }
+      });
+    });
+
+
+
     $(document).on('click', '.editIcon', function(e) 
     {
       e.preventDefault();
@@ -128,7 +198,8 @@
           _token: '{{ csrf_token() }}'
         },
         success: function(response) {
-          $("#ligneact").val(response.compteidr);
+          $("#libelle").val(response.libellecompte);
+         
           $("#montantact").val(response.montantbudget);
           $("#titreact").val(response.titre);
           $("#etatact").val(response.etat_activite);
@@ -220,6 +291,24 @@
         },
         success: function(reponse) {
           $("#showAllcommente").html(reponse);
+        }
+      });
+    });
+
+
+    $(document).on('click', '.ajouteroberveget', function(e) 
+    {
+      e.preventDefault();
+      let id = $(this).attr('id');
+      $.ajax({
+        url: "{{ route('showactivityobserve') }}",
+        method: 'get',
+        data: {
+          id: id,
+          _token: '{{ csrf_token() }}'
+        },
+        success: function(response) {
+          $("#idact").val(response.idact);
         }
       });
     });

@@ -92,7 +92,8 @@ class IdentificationController extends Controller
         $fileName = '';
         $emp = identification::find($request->info_id);
       
-        if ($request->hasFile('file')) {
+        if ($request->hasFile('file')) 
+        {
             $file = $request->file('file');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
             $file->storeAs('public/info', $fileName); //php artisan storage:link

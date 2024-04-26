@@ -25,26 +25,44 @@
         <div class="col-lg-11" style="margin:auto">
           <div class="card">
             <div class="table-responsive">
-              <table class="table table-bordered mb-0">
+              <table class="table table-bordered  table-sm fs--1 mb-0">
                 <thead>
                  
                   <tr style="background-color:#82E0AA">
                     <th> Nom & prénom </th>
                     <th> Identifiant </th>
                     <th>Profile</th>
-                    <th>Statut</th>
-                    <th>Date</th>
+                    <th><center>Signature</center></th>
                     <th>Action</th>
                   </tr>
              
                 </thead>
-                <tbody id="show_all">
+                <tbody >
+                  @foreach ($personnel as $personnels)
                   <tr>
-                    <td colspan="8">
-                      <h5 class="text-center text-secondery my-5">
-                        @include('layout.partiels.load')
+                    <td> {{ $personnels->nom }} {{ $personnels->prenom }}</td>
+                    <td> {{ $personnels->identifiant }} </td>
+                    <td> {{ $personnels->fonction }}</td>
+                    <td>
+                      <center>
+                    @php
+                                $signature = $personnels->signature;
+                                $imagePath = public_path($signature);
+                            @endphp
+
+                            @if(file_exists($imagePath))
+                            <i class="fa fa-check-circle text-primary"></i>  
+                            @else
+                            <i class="fa fa-times-circle text-danger"></i>
+                            @endif
+                            </center>
                     </td>
+                    <td> 
+                      <a href="{{ route('changepassword', $personnels->id)}}" title="Modification mot de passe"> <i class="fa fa-edit"></i></a> 
+                      <a href="{{ route('shomesignature', $personnels->id)}}" title="Modification signature"> <i class="fa fa-image"></i></a></td>
                   </tr>
+                  @endforeach
+                 
                 </tbody>
                 </tbody>
               </table>
@@ -72,8 +90,8 @@
           <div class="form-floating mb-1">
             <select class="form-select" id="personnelid" name="personnelid">
               <option value="" selected="selected">Nom & prenom </option>
-              @foreach ($personnel as $personnels)
-              <option value="{{ $personnels->id }}"> {{ ucfirst($personnels->nom) }} {{ ucfirst($personnels->prenom) }}</option>
+              @foreach ($users as $users)
+              <option value="{{ $users->id }}"> {{ ucfirst($users->nom) }} {{ ucfirst($users->prenom) }}</option>
               @endforeach
             </select>
             <label for="eventLabel">Nom & prenom </label>

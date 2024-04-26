@@ -72,6 +72,51 @@
             }
           }
 
+          .offline {
+              display: none;
+              color: white;
+              background-color: red;
+              text-align: center;
+            }
+
+            body {
+    font-size: 80%; /* taille de police de base */
+}
+
+h1 {
+    font-size: 1em; /* taille de la police pour les titres */
+}
+
+p {
+    font-size: 1em; /* taille de la police pour les paragraphes */
+}
+
+.small-text {
+    font-size: 0.8em; /* taille de la police pour les textes de petite taille */
+}
+/* Exemple de CSS */
+body {
+    font-family: 'Roboto', sans-serif; /* Utilisation d'une police web légère */
+}
+
+h1, h2, h3 {
+    font-family: 'Open Sans', sans-serif; /* Utilisation d'une autre police web légère pour les titres */
+}
+
+#message {
+        display: none;
+        position: fixed;
+        top: 10%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 10px;
+        border: 1px solid #ccc;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        z-index: 9999;
+        background-color: red;
+        
+    }
         </style>
 
 </head>

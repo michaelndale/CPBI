@@ -100,15 +100,17 @@ class CompteController extends Controller
               <td class="align-middle ps-3 name"><b>' . $nombre . '</td>
               <td><b>' . ucfirst($rs->numero) . '</b></td>
               <td><b>' . ucfirst($rs->libelle) . '</b></td>
-              <td align="right">
+              <td align="center">
              
               <a href="#" id="' . $rs->id . '" class="text-success mx-1 savesc" data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte" title="Ajouter sous compte"><i class="fa fa-plus-circle"></i></a>
-                <a href="#" id="' . $rs->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
+              
                 <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
                
                 </td>
             </tr>
             ';
+
+//            <a href="#" id="' . $rs->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
 
         $sous_compte = Compte::where('compteid', $id)
           ->where('souscompteid', '=', 0)
@@ -125,10 +127,10 @@ class CompteController extends Controller
                     <td class="align-left" style="background-color:#F5F5F5"></td>
                     <td>' . ucfirst($sc->numero) . '</td>
                     <td>' . ucfirst($sc->libelle) . '</td>
-                    <td align="right">
+                    <td align="center">
                    
                         
-                        <a href="#" id="' . $sc->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
+                        
                         <a href="#" id="' . $sc->id . '" class="text-danger mx-1 deleteIcon"><i class="fa fa-trash"></i>  </a>
                     
                         </td>

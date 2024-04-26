@@ -37,7 +37,7 @@
                   </tbody>
 
                 </table>
-                <BR>
+             
               </div>
              
             </div>
@@ -49,20 +49,17 @@
                 <table class="table table-striped table-sm fs--1 mb-0" >
                   <thead>
                     <tr>
-                      <th class="sort border-top "><center>Action</center></th>
-                      <th class="sort border-top" data-sort="febnum">N<sup>o</sup> FEB </th>
-                      <th class="sort border-top" data-sort="om">Montant total</th>
-                      <th class="sort border-top" data-sort="periode"><center>Période</center></th>
-                      <th class="sort border-top ps-3" data-sort="facture"><center>Facture</center></th>
-                      <th class="sort border-top" data-sort="om"><center>OM</center></th>
-                      <th class="sort border-top" data-sort="bc"><center>BC</center></th>
-                      <th class="sort border-top" data-sort="bc"><center>NEC</center></th>
-                      <th class="sort border-top" data-sort="bc"><center>FP/Devis</center></th>
-                      <th class="sort border-top" data-sort="date"><center>Date</center></th>
-                      
-                    
-                      
-                      <th class="sort border-top" data-sort="om"> % </th>
+                      <th class="sort border-top "><center> <b> Actions </b></center></th>
+                      <th class="sort border-top" data-sort="febnum"><center><b>N<sup>o</sup> FEB </b></center></th>
+                      <th class="sort border-top" data-sort="om"> <b> <center>Montant total </center></b></th>
+                      <th class="sort border-top" data-sort="periode"><center><b>Période</b></center></th>
+                      <th class="sort border-top ps-3" data-sort="facture"><center><b>Facture</b></center></th>
+                      <th class="sort border-top" data-sort="om"><center><b>OM</b></center></th>
+                      <th class="sort border-top" data-sort="bc"><center><b>BC</b></center></th>
+                      <th class="sort border-top" data-sort="bc"><center><b>NEC</b></center></th>
+                      <th class="sort border-top" data-sort="bc"><center><b>FP/Devis</b></center></th>
+                      <th class="sort border-top" data-sort="date"><center><b>Date</b></center></th>
+                      <th class="sort border-top" data-sort="om"> <b>%</b> </th>
                       
                     </tr>
                   </thead>
@@ -291,7 +288,7 @@ function calc_total() {
               toastr.success("Feb ajouté avec succès !", "Enregistrement");
             }
             if (response.status == 201) {
-              toastr.error("Attention: FEB numéro existe déjà !", "AAttention");
+              toastr.error("Attention: FEB numéro existe déjà !", "Attention");
               $("#addfebModal").modal('show');
               
               $("#numerofeb_error").text("Numéro existe");
@@ -344,10 +341,23 @@ function calc_total() {
                 _token: csrf
               },
               success: function(response) {
-                console.log(response);
+              
+                if (response.status == 200) {
                 toastr.success("FEB supprimer avec succès !", "Suppression");
                 fetchAllfeb();
                 Sommefeb();
+              }
+
+              if (response.status == 205) {
+                toastr.error("Vous n'avez pas l'accreditation de supprimer ce FEB!", "Erreur");
+              }
+
+              if (response.status == 202) {
+                toastr.error("Erreur d'execution !", "Erreur");
+              }
+                fetchAllfeb();
+                Sommefeb();
+
               }
             });
           }

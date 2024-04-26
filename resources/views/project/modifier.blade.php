@@ -34,9 +34,9 @@
                 <input name="ptitre" class="form-control form-control-sm" value="{{ $dataProject->title }}" />
               </div>
               <br>
-              <div class="row gx-0 gx-sm-5 gy-8 mb-8">
-                <div class="col-12 col-xl-6 col-xxl-4 pe-xl-0">
-                  <div class="mb-4 mb-xl-7">
+              <div class="row gx-0 gx-sm-6 gy-8 mb-8">
+                <div class="col-12 col-xl-6 col-xxl-6 pe-xl-0">
+                  <div class="mb-6 mb-xl-7">
                     <div class="row gx-0 gx-sm-7">
                       <div class="col-12 col-sm-auto">
                         <table class="lh-sm">
@@ -49,7 +49,14 @@
                               </td>
                               <td class="ps-1 py-1"><a class="fw-semi-bold d-block lh-sm" href="#!">
                                   <input type="hidden" value="{{ ucfirst($responsables->id) }}" name="resid">
-                                  <input value="{{ ucfirst($responsables->nom) }} {{ ucfirst($responsables->prenom) }}" class="form-control form-control-sm"> </a></td>
+                                  <select name="lead" class="form-control form-control-sm">
+                                    <option value="{{ ucfirst($responsables->id) }}">{{ ucfirst($responsables->nom) }} {{ ucfirst($responsables->prenom) }}</option>
+                                    @foreach ($alluser as $allusers)
+                                      <option value="{{ $allusers->id }}"> {{ ucfirst($allusers->nom) }} {{ ucfirst($allusers->prenom) }} </option>
+                                    @endforeach
+                                    
+                                  </select>
+                              </td>
                             </tr>
                             <tr>
                               <td class="align-top py-1">
@@ -58,7 +65,7 @@
                                 </div>
                               </td>
                               <td class="fw-bold ps-1 py-1 text-1000">
-                                <input name="montant" value="{{ $dataProject->budget}}" class="form-control form-control-sm">
+                                <input type="number" name="montant" value="{{ $dataProject->budget}}" class="form-control form-control-sm">
                               </td>
                             </tr>
 
@@ -92,13 +99,7 @@
                                 <input type="date" name="datefin" value="{{ $dataProject->deadline }}" class="form-control form-control-sm">
                               </td>
                             </tr>
-                            <tr>
-                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Date de creation projet :</td>
-                              <td class="fw-bold ps-1 py-1 text-1000">
-                                <input type="date" name="datecreation" value="{{  date_format($dataProject->created_at, 'Y-m-d')  }}" class="form-control form-control-sm">
-                              </td>
-                            </tr>
-
+                           
                             <tr>
                               <td class="align-top py-1 text-900 text-nowrap fw-bold">Région : </td>
                               <td class="fw-bold ps-1 py-1 text-1000">
@@ -135,6 +136,18 @@
                                 </select>
                               </td>
                             </tr>
+
+                            <tr>
+                              <td class="align-top py-1 text-900 text-nowrap fw-bold">Statut du projet</td>
+                              <td class="fw-bold ps-1 py-1 text-1000">
+                                <select name="statut"  type="text" required class="form-control form-control-sm">
+                                  <option value="{{ $dataProject->statut }}"> {{ $dataProject->statut }}</option>
+                                  <option value="En attente">En attente</option>
+                                  <option value="Activé">Activé</option>
+                                  <option value="Bloqué">Bloqué</option>
+                                </select>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -145,14 +158,18 @@
                 <div class="col-12 col-xl-6 col-xxl-8">
                   <div class="row flex-between-center mb-12 g-12">
 
-                    <h4 class="text-black">Description</h4>
+                    <label>Description</label>
                     <textarea name="description" class="form-control form-control-sm" style="width:100%; height:250px">{{ $dataProject->description }} </textarea>
                   </div>
 
                 </div>
 
-                <div class="col-12 col-xl-6 col-xxl-8">
-                  <input type="submit" class="btn btn-primary" name="save" value="Soumetre le modification">
+                <div class="col-12 col-xl-10 col-xxl-12">
+                 
+                </div>
+
+                <div class="col-12 col-xl-2 col-xxl-12">
+                  <button type="submit" class="btn btn-lg btn-primary" name="save" value="Enregistrer"> <i class="fas fa-cloud-download-alt"></i>  Enregistrer  </button>
                 </div>
                 <br><br><br>
               </div>

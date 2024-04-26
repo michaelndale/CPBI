@@ -10,8 +10,6 @@
   </div>
 </div>
 
-
-
 <div class="modal fade" id="addfebModal" tabindex="-1" aria-labelledby="addfebModal" aria-hidden="true">
     <div class="modal-dialog modal-xl  modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
@@ -19,16 +17,18 @@
                 <h5 class="modal-title"><i class="far fa-file-alt "></i> FICHE D’EXPRESSION DES BESOINS "FEB" </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
             </div>
             <div class="modal-body">
+
                 <form class="row g-3 mb-6" method="POST" id="addfebForm">
                     @method('post')
                     @csrf
+                    
                     <div id="tableExample2" >
                         <div class="table-responsive">
                             <table class="table table-striped table-sm fs--1 mb-0">
                                 <tbody class="list">
                                     <tr>
                                         <td class="align-middle ps-3 name" style="width:20%">Composante/ Projet/Section</td>
-                                        <td class="align-middle email" colspan="7">
+                                        <td class="align-middle email" colspan="8">
                                             <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
                                             <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
                                         </td>
@@ -36,7 +36,7 @@
                                     <tr>
 
                                         <td class="align-middle ps-3 name">Ligne budgétaire: </td>
-                                        <td class="align-middle email" colspan="7">
+                                        <td class="align-middle email" colspan="8">
 
 
 
@@ -69,17 +69,30 @@
 
                                     </tr>
                                     <tr>
-                                        <td class="align-middle ps-3 name" colo>Activités </td>
-                                        <td colspan="7">
+                                        <td class="align-middle ps-3 name"  >Activités </td>
+                                        <td colspan="4">
                                             <input type="text" class="form-control form-control-sm" name="descriptionf" id="descriptionf" required>
                                         </td>
 
+                                        <td class="align-middle ps-3 name" colo>Bénéficiaire </td>
+                                        <td colspan="3">
+                                            
 
+                                            <select class="form-control  form-control-sm" id="beneficiaire" name="beneficiaire" required>
+                                                <option>Sélectionner le bénéficiaire </option>
+                                                @foreach ($beneficaire as $beneficaires)
+                                                    <option value="{{ $beneficaires->id }}">{{ $beneficaires->libelle }}</option>
+                                                @endforeach
+
+                                            </select>
                                         </td>
+
+
+
                                     </tr>
                                     <tr>
                                         <td class="align-middle ps-3 name">Numéro fiche <br>
-                                            <input type="text" class="form-control form-control-sm" style="width: 100% ; background-color:#c0c0c0" value="0***" readonly>
+                                            <input type="text" name="numerofeb" id="numerofeb" class="form-control form-control-sm" style="width: 100% ;">
                                         </td>
 
                                         <td class="align-middle ps-3 name">Période: <br>
@@ -92,35 +105,39 @@
                                             </select>
                                         </td>
 
-                                        <td class="align-middle ps-3 name"> Date: <br>
-                                            <input type="date" class="form-control form-control-sm" name="datefeb" id="datefeb" style="width: 100%" value="{{ date('') }}" required>
+                                        <td class="align-middle ps-3 name"> Date du dossier FEB: <br>
+                                            <input type="date" class="form-control form-control-sm" name="datefeb" id="datefeb" style="width: 100%"  required>
                                         </td>
 
-                                        <td class="align-middle ps-3 name">
+                                        <td class="align-middle ps-3 name"> Date limite: <br>
+                                            <input type="date" class="form-control form-control-sm" name="datelimite" id="datelimite" style="width: 100%" >
+                                        </td>
+
+                                        <td class="align-middle ps-3 name" style="width:8%">
                                             <center>BC:<br>
                                                 <input type="checkbox" class="form-check-input" name="bc" id="bc">
                                             </center>
                                         </td>
 
-                                        <td class="align-middle ps-3 name">
+                                        <td class="align-middle ps-3 name" style="width:8%">
                                             <center>Facture: <br>
                                                 <input type="checkbox" class="form-check-input" name="facture" id="facture">
                                             </center>
                                         </td>
 
-                                        <td class="align-middle ps-3 name">
+                                        <td class="align-middle ps-3 name" style="width:8%">
                                             <center>O.M: <br>
                                                 <input type="checkbox" class="form-check-input" name="om" id="om">
                                             </center>
                                         </td>
 
-                                        <td class="align-middle ps-3 name">
+                                        <td class="align-middle ps-3 name" style="width:8%">
                                             <center>NEC: <br>
                                                 <input type="checkbox" class="form-check-input" name="nec" id="nec">
                                             </center>
                                         </td>
 
-                                        <td class="align-middle ps-3 name">
+                                        <td class="align-middle ps-3 name" style="width:8%">
                                             <center>FP/Devis <br>
                                                 <input type="checkbox" class="form-check-input" name="fpdevis" id="fpdevis">
                                             </center>
@@ -143,8 +160,8 @@
                                     <thead>
                                         <tr>
                                             <th style="width:80px">Num</th>
-                                            <th style="width:600px">Description</th>
-                                            <th style="width:300px">Libelle</th>
+                                            <th>Designation de la ligne</th>
+                                            <th>Description</th>
                                             <th style="width:150px">Unité</th>
                                             <th style="width:100px">Q<sup>té</sup></th>
                                             <th style="width:50px">Frequence</th>
@@ -203,22 +220,32 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <input type="hidden" class="form-control form-control-sm" name="acce" id="acce" value="{{ Auth::id() }}" />
-                                            {{ ucfirst(Session::get('nomauth')) }} {{ ucfirst(Session::get('prenomauth')) }}
+
+ 
+
+                                        <select type="text" class="form-control form-control-sm"name="acce" id="acce" required>
+                                                <option value="">--Sélectionner (AC/CE/CS)--</option>
+                                                @foreach ($personnel as $personnels)
+                                                <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                                @endforeach
+                                            </select>
+
+
+                                           
                                         </td>
                                         <td>
                                             <select type="text" class="form-control form-control-sm" name="comptable" id="comptable" required>
                                                 <option value="">--Sélectionner comptable--</option>
-                                                @foreach ($comptable as $comptables)
-                                                <option value="{{ $comptables->id }}">{{ $comptables->nom }} {{ $comptables->prenom }}</option>
+                                                @foreach ($personnel as $personnels)
+                                                <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                                 @endforeach
                                             </select>
                                         </td>
                                         <td>
                                             <select type="text" class="form-control form-control-sm" name="chefcomposante" id="chefcomposante" required>
                                                 <option value="">--Sélectionner Chef de Composante/Projet/Section--</option>
-                                                @foreach ($chefcompable as $chefcompables)
-                                                <option value="{{ $chefcompables->id }}">{{ $chefcompables->nom }} {{ $chefcompables->prenom }}</option>
+                                                @foreach ($personnel as $personnels)
+                                                <option value="{{ $personnels->userid }}"> {{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                                 @endforeach
                                             </select>
                                         </td>

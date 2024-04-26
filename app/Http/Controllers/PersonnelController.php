@@ -87,8 +87,7 @@ class PersonnelController extends Controller
           $personnel->email= $request->email;
           $personnel->phone= $request->phone;
           $personnel->fonction= $request->fonction;
-          $personnel->dateemboche= $request->dateemboche;
-          $personnel->statut= $request->statut;
+        
           $personnel->userid = Auth()->user()->id;
           $personnel->save();
     
@@ -135,39 +134,44 @@ class PersonnelController extends Controller
 
 public function updatprofile(Request $request)
 {
-  try {
+    try {
+       
+          if ($request->hasFile('file')) {
+            
 
-        if(!empty($request->image)):
-          $imageName=time().'.'.$request->image->extension();
-          $request->image->move(public_path('element/profile/'),$imageName);
-          $imageurl = ('element/profile/').$imageName;
-        else:
-          return response()->json([
-            'status' => 206,
+            $imageName=time().'.'.$request->file->extension();
+            $request->file->move(public_path('element/profile/'),$imageName);
+            $url = ('element/profile/').$imageName;
+
+            
+          } else {
+            return response()->json([
+              'status' => 206,
+              'message' => 'Aucune image sélectionnée.',
           ]);
-        endif;
+          }
 
+        
 
-        $per = User::find($request->personneidp);
-  
-        $per->avatar = $imageurl;
+        $per = User::find($request->profileuserid);
+        
+        $per->avatar = $url;
         $per->userid = Auth()->user()->id;
 
         $per->update();
+
         return response()->json([
-          'status' => 200,
+            'status' => 200,
+            'message' => 'Profil mis à jour avec succès.',
         ]);
-    
-  } 
-  catch (Exception $e) {
-    return response()->json([
-      'status' => 202,
-    ]);
-  
-
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 202,
+            'message' => 'Erreur lors de la mise à jour du profil.',
+        ]);
+    }
 }
 
-}
 
 public function updatsignature(Request $request)
 {

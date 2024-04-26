@@ -4,6 +4,9 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class Handler extends ExceptionHandler
 {
@@ -26,5 +29,15 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            if ($exception->getStatusCode() == SymfonyResponse::HTTP_METHOD_NOT_ALLOWED) { // Méthode POST non prise en charge
+                return redirect()->route('dashboard')->with('success', 'Message de succès');
+            }
+        }
+        return parent::render($request, $exception);
     }
 }

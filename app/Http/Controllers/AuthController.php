@@ -28,7 +28,12 @@ class AuthController extends Controller
   {
     $title = 'Utilisateur';
     $active = 'Parameter';
-    $personnel = Personnel::all();
+    $users = Personnel::orderBy('nom', 'ASC')->get();
+    $personnel = DB::table('users')
+                ->join('personnels', 'personnels.id', 'users.personnelid')
+                ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email','personnels.sexe','personnels.phone','personnels.fonction','personnels.prenom')
+                ->get();
+
     $profile = Fonction::all();
     $department = Departement::all();
     $statut = Status::all();
@@ -40,7 +45,8 @@ class AuthController extends Controller
         'profile'    => $profile,
         'department' => $department,
         'statut'     => $statut,
-        'personnel'  => $personnel
+        'personnel'  => $personnel,
+        'users'      =>$users
       ]
     );
   }
@@ -89,8 +95,10 @@ class AuthController extends Controller
               <td>' .  date('d.m.Y', strtotime($rs->created_at)) . ' </td>
               <td>
              
-                <a href="#" id="' . $rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-                <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
+                <a href="#" id="'.$rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+                <a href="#" id="'.$rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+                
+                <a href="#" id="'. $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
              
             </td>
             </tr>';
@@ -129,6 +137,7 @@ class AuthController extends Controller
   <td>' .  date('d.m.Y', strtotime($rs->created_at)) . ' </td>
   <td >
       <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_profileModal"><i class="bi-pencil-square h4"></i> Edit</a>
+      <a href="#" id="'.$rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
       <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i> Delete </a>
   </td>
 </tr>';
@@ -150,8 +159,6 @@ class AuthController extends Controller
 
     $username = $request->identifiant;
     $userid =   $request->personnelid;
-
-
     $chek = User::where('personnelid', $userid)->first();
     if ($chek) {
       return response()->json([
@@ -182,18 +189,6 @@ class AuthController extends Controller
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
   public function login()
   {
     if (Auth::id()) {
@@ -203,15 +198,16 @@ class AuthController extends Controller
     }
   }
 
-
-
   public function handlelogin(AuthRequest $request)
   {
     try {
 
       $username = $request->email;
       $password = $request->password;
-      if (Auth::attempt(['identifiant' => $username, 'password' => $password])) {
+
+     // $credentials = $request->only('email', 'password');
+
+      if (Auth::attempt(['identifiant' => $username, 'password' => $password] ,  $request->filled('remember')) ) {
 
         $user = Auth::User();
 
@@ -370,11 +366,101 @@ class AuthController extends Controller
     }
   }
 
+  public function restauration($id)
+  {
+    $title = 'Restauration';
+
+    $user =DB::table('users')
+    ->join('personnels', 'personnels.id', 'users.personnelid')
+    ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email','personnels.sexe','personnels.phone','personnels.fonction','personnels.prenom')
+    ->where('users.id',$id)
+    ->first();
+
+    return view(
+      'user.changepassword',
+      [
+        'title' => $title,
+        'user'  => $user
+     
+      ]
+    );
+  }
+
+
+  public function shomesignature($id)
+  {
+    $title = 'Changement de signature';
+
+    $user =DB::table('users')
+    ->join('personnels', 'personnels.id', 'users.personnelid')
+    ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email','personnels.sexe','personnels.phone','personnels.fonction','personnels.prenom')
+    ->where('personnels.id',$id)
+    ->first();
+
+    return view(
+      'user.shomesignature',
+      [
+        'title' => $title,
+        'user'  => $user
+      ]
+    );
+  }
+
+
+public function updatePasswordone($id,Request $request) {
+
+  $user =User::where('id', $request->idmdp)->first();
+
+    $user->password = Hash::make($request->password);
+    $user->update();
+
+    return redirect()->route('user')->with('success', 'Password has been updated successfully.');
+}
+
+
+public function updatsignatureuser(Request $request)
+{
+  try {
+
+        if(!empty($request->signatur)):
+          $imageName=time().'.'.$request->signatur->extension();
+          $request->signatur->move(public_path('element/signature/'),$imageName);
+          $imageurl = ('element/signature/').$imageName;
+        else:
+          return response()->json([
+            'status' => 206,
+          ]);
+        endif;
+
+
+        $per = User::find($request->pid);
+  
+        $per->signature = $imageurl;
+        $per->userid = Auth()->user()->id;
+
+        $per->update();
+        return response()->json([
+          'status' => 200,
+        ]);
+    
+  } 
+  catch (Exception $e) {
+    return response()->json([
+      'status' => 202,
+    ]);
+  
+
+}
+
+}
+
+
+
 
   public function logout()
   {
     session()->forget('id');
     Auth::logout();
-    return redirect('/');
+    return redirect('/out');
   }
 }

@@ -40,7 +40,7 @@
                                                 </thead>
                                                 <tbody  id="show_all">
                                                   <tr>
-                                                    <td colspan="2"><h5 class="text-center text-secondery my-5">
+                                                    <td colspan="3"><h5 class="text-center text-secondery my-5">
                                                         @include('layout.partiels.load')
                                                       </td>
                                                     </tr>
@@ -58,12 +58,14 @@
                      
                         
                     </div> <!-- container-fluid -->
+                  
                 </div>
                 <!-- End Page-content -->
                 
               
                 
             </div>
+         
 
 
   {{-- new profile modal --}}

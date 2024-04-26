@@ -10,6 +10,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
 class AppCOntroller extends Controller
@@ -61,28 +62,46 @@ class AppCOntroller extends Controller
 
 
 	public function findAnnee(Request $request){
-
     try {
+        $anne = $request->id;
+        $docid = $request->docid;
 
-      $anne = $request->id;
-      $docid= $request->docid;
+        
 
-  
-		    $p=DB::table('projects')
-          ->select('numeroprojet','title','start_date','deadline','annee','id','statut')
-          ->where('annee',$anne)
-          ->where('numerodossier',$docid)
-          ->orderBy('id', 'DESC')
-          ->get();
-          return response()->json($p);
+        $p = DB::table('projects')
+            ->select('numeroprojet', 'title', 'start_date', 'deadline', 'annee', 'id', 'statut')
+            ->where('annee', $anne)
+            ->where('numerodossier', $docid)
+            ->orderBy('id', 'DESC')
+            ->get();
 
-  } catch (Exception $e) {
-    return response()->json([
-      'status' => 202,
-    ]);
-  }
-   
-	}
+        $output = '';
+        if ($p->count() > 0) {
+            $nombre = 1;
+            foreach ($p as $rs) {
+              $cryptedId = Crypt::encrypt($rs->id);
+                $output .= '<tr class="hover-actions-trigger btn-reveal-trigger position-static">
+                            <td class="closed-won border-end"><b><a href="project/'.$cryptedId.'/view"># '. ucfirst($rs->numeroprojet) .' </a></b></td>
+                            <td class="closed-won border-end ">' . ucfirst($rs->title) . '</td>
+                            <td class="closed-won border-end ">' . date('d-m-Y', strtotime($rs->start_date)) . '</td>
+                            <td class="closed-won border-end ">' . date('d-m-Y', strtotime($rs->deadline))  . '</td>
+                            <td class="closed-won border-end ">' . $rs->statut . '</td>
+                            <td class="closed-won border-end ">' . $rs->annee  . '</td>
+                </tr>';
+                $nombre++;
+            }
+            return response()->json($output);
+        } else {
+            return response()->json([
+                'message' => 'Ceci est vide !',
+            ]);
+        }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
+}
 
 
 

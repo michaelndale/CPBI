@@ -254,7 +254,7 @@ class PlanoperationnelController extends Controller
         
         <center>
           <h6 style="margin-top:1% ;color:#c0c0c0"> 
-          <center><font size="50px"><i class="far fa-trash-alt"  ></i> </font><br><br>
+          <center><font size="50px"><i class="fa fa-info-circle"  ></i> </font><br><br>
           Ceci est vice !</center> </h6>
         </center>
         
