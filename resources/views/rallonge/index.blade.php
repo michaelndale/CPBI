@@ -24,9 +24,15 @@
         <div class="col-12 col-md">
           <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Budgétisation <a href=""><i class="ri-refresh-line"></i></a> </h4>
         </div>
+      
+
+        @if($projetdatat->autorisation == 1)
+       
         <div class="col col-md-auto">
           <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter le budget </a>
         </div>
+        @endif
+
       </div>
     </div>
     <div class="card-body">
@@ -41,6 +47,9 @@
 
 
         <div class="float-end d-none d-md-inline-block">
+        <div class="table-responsive">
+                                         
+
           <div id="show_all_rallonge" class="scrollme">
             <center>
               <br><br><br><br> @include('layout.partiels.load') <br><br><br><br>

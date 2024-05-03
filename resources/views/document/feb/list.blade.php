@@ -104,6 +104,28 @@
   $(document).ready(function() {
 
     $(document).on('change', '.ligneid', function() {
+      var cat_id = $(this).val();
+      var div = $(this).parent();
+   
+      $.ajax({
+        type: 'get',
+        url: "{{ route ('condictionsearch') }}",
+        data: {
+          'id': cat_id
+        },
+        success: function(reponse) {
+            if(reponse.trim() !== "") {
+                // La réponse n'est pas vide, mettre à jour le contenu HTML
+                $("#showcondition").html(reponse);
+            } else {
+                // La réponse est vide ou nulle, faire quelque chose d'autre ou ne rien faire
+                console.log("La réponse est vide ou nulle.");
+            }
+        }
+      });
+    });
+
+    $(document).on('change', '.ligneid', function() {
       var ligid = $(this).val();
       var div = $(this).parent();
       var op = " ";

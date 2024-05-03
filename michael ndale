@@ -143,3 +143,8 @@ $sommelign = DB::table('elementfebs')
       ->Where('grandligne', $idl)
       ->SUM('montant');
 $sommelignpourcentage = round(($sommelign * 100) / $budget , 2);
+
+
+
+
+ajouter dans la class du table  table-centered align-middle table-nowrap mb-0

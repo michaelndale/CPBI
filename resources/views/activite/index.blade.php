@@ -31,13 +31,13 @@
                     <th>
                       <center>Code</center>
                     </th>
-                    <th >Ligne et sous ligne  budgetaire </th>
+                    <th>Ligne et sous ligne budgetaire </th>
                     <th>Activité <span style="margin-left: 40%;">Montant total des activités: </span>
                     </th>
 
-                    
-                  
-                    
+
+
+
                   </tr>
 
                 </thead>
@@ -66,11 +66,10 @@
 <script>
   $(function() {
 
-
     $(document).on('change', '.condictionsearch', function() {
       var cat_id = $(this).val();
       var div = $(this).parent();
-   
+
       $.ajax({
         type: 'get',
         url: "{{ route ('condictionsearch') }}",
@@ -78,13 +77,13 @@
           'id': cat_id
         },
         success: function(reponse) {
-            if(reponse.trim() !== "") {
-                // La réponse n'est pas vide, mettre à jour le contenu HTML
-                $("#showcondition").html(reponse);
-            } else {
-                // La réponse est vide ou nulle, faire quelque chose d'autre ou ne rien faire
-                console.log("La réponse est vide ou nulle.");
-            }
+          if (reponse.trim() !== "") {
+            // La réponse n'est pas vide, mettre à jour le contenu HTML
+            $("#showcondition").html(reponse);
+          } else {
+            // La réponse est vide ou nulle, faire quelque chose d'autre ou ne rien faire
+            console.log("La réponse est vide ou nulle.");
+          }
         }
       });
     });
@@ -112,7 +111,8 @@
           if (response.status == 200) {
             fetchActivite();
 
-            toastr.success("Activité ajouté avec succès !", "success");
+            toastr.success("L'activité a été ajoutée avec succè", "success");
+
 
             $("#addactivitebtn").text('Sauvegarder');
             $("#addModale").modal('hide');
@@ -120,19 +120,19 @@
           }
 
           if (response.status == 201) {
-            toastr.error("Le montant est supérieur au budget du ligne de compte !", "Attention");
+            toastr.error("La somme des activités dépasse le montant disponible sur la ligne  !", "Attention");
             $("#addModale").modal('show');
             $("#addactivitebtn").text('Sauvegarder');
           }
 
-          if (response.status == 202) {
-            toastr.info("Erreur d'execution, verifier votre internet", "Erreur");
-            
+          if (response.status == 500) {
+            toastr.info("Une erreur est survenue lors de l'ajout de l'activité", "Erreur");
+
             $("#addModale").modal('show');
             $("#addactivitebtn").text('Sauvegarder');
           }
 
-          
+
 
         }
       });
@@ -156,29 +156,29 @@
           if (response.status == 200) {
             fetchActivite();
 
-            toastr.success("Observation ajouté avec succès !", "success");
+            toastr.success("Observation ajoutée avec succès !", "success");
 
             $("#Addcommentebtn").text('Sauvegarder');
-            $("#AddCommenteModale").modal('hide');
+            $("#AddObserve").modal('hide');
             $("#Addcommentebtn")[0].reset();
           }
 
-        
+
           if (response.status == 201) {
-            toastr.info("Erreur enregistrement observation", "Erreur");
-            
-            $("#AddCommenteModale").modal('show');
+            toastr.danger("Échec de l'ajout de l'observation", "Erreur");
+
+            $("#AddObserve").modal('show');
             $("#Addcommentebtn").text('Sauvegarder');
           }
 
-          if (response.status == 203) {
-            toastr.info("Erreur d'execution, verifier votre internet", "Erreur");
-            
-            $("#AddCommenteModale").modal('show');
+          if (response.status == 500) {
+            toastr.danger("Une erreur est survenue lors de l'ajout de l'observation.", "Erreur");
+
+            $("#AddObserve").modal('show');
             $("#Addcommentebtn").text('Sauvegarder');
           }
 
-          
+
 
         }
       });
@@ -186,8 +186,7 @@
 
 
 
-    $(document).on('click', '.editIcon', function(e) 
-    {
+    $(document).on('click', '.editIcon', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
       $.ajax({
@@ -198,50 +197,51 @@
           _token: '{{ csrf_token() }}'
         },
         success: function(response) {
-          $("#libelle").val(response.libellecompte);
+
          
-          $("#montantact").val(response.montantbudget);
-          $("#titreact").val(response.titre);
-          $("#etatact").val(response.etat_activite);
-          $("#aid").val(response.id);
+            $("#libelle").val(response.libellecompte);
+            $("#montantact").val(response.montantbudget);
+            $("#titreact").val(response.titre);
+            $("#etatact").val(response.etat_activite);
+            $("#aid").val(response.id);
+
+          
+
         }
       });
     });
 
-     // update activite ajax request
-     $("#editactiviteForm").submit(function(e) 
-      {
-        e.preventDefault();
-        const fd = new FormData(this);
-        $("#editactivitebtn").text('Mise à jour...');
-        $.ajax({
-          url:"{{ route('updateActivite') }}",
-          method: 'post',
-          data: fd,
-          cache: false,
-          contentType: false,
-          processData: false,
-          dataType: 'json',
-          success: function(response) 
-          {
-            if (response.status == 200) {
-              toastr.success("Mise à jour  avec succès !", "Success");
-              fetchActivite();
-              $("#editactiviteForm")[0].reset();
-              $("#EditModale").modal('hide');
-            }
-            
-           
-            if (response.status == 202) {
-              toastr.error("Erreur d'execution, verifier votre internet", "Error");
-              $("#EditModale").modal('show');
-            }
-
-            $("#editactivitebtn").text('Modifier');
-
+    // update activite ajax request
+    $("#editactiviteForm").submit(function(e) {
+      e.preventDefault();
+      const fd = new FormData(this);
+      $("#editactivitebtn").text('Mise à jour...');
+      $.ajax({
+        url: "{{ route('updateActivite') }}",
+        method: 'post',
+        data: fd,
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+          if (response.status == 200) {
+            toastr.success("Activité mise à jour avec succès !", "Success");
+            fetchActivite();
+            $("#EditModale").modal('hide');
           }
-        });
+
+
+          if (response.status == 202) {
+            toastr.error("Échec de la mise à jour de l'activité", "Error");
+            $("#EditModale").modal('show');
+          }
+
+          $("#editactivitebtn").text('Modifier');
+
+        }
       });
+    });
 
 
 
@@ -269,17 +269,31 @@
               _token: csrf
             },
             success: function(response) {
-              console.log(response);
-              toastr.error("Activité supprimer avec succès !", "success");
+
               fetchActivite();
+              if (response.status == 200) {
+                toastr.success("Activité supprimée avec succès. !", "Success");
+                fetchActivite();
+               
+              }
+
+              if (response.status == 201) {
+                toastr.error("Vous n'avez pas l'accreditation de supprimer cette activité.", "Error");
+               
+              }
+
+
+              if (response.status == 500) {
+                toastr.error("Une erreur est survenue lors de la suppression de l'activité.", "Error");
+               
+              }
             }
           });
         }
       })
     });
 
-    $(document).on('click', '.observationshow', function(e) 
-    {
+    $(document).on('click', '.observationshow', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
       $.ajax({
@@ -291,13 +305,13 @@
         },
         success: function(reponse) {
           $("#showAllcommente").html(reponse);
+
         }
       });
     });
 
 
-    $(document).on('click', '.ajouteroberveget', function(e) 
-    {
+    $(document).on('click', '.ajouteroberveget', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
       $.ajax({
@@ -316,14 +330,22 @@
     fetchActivite();
 
     function fetchActivite() {
-      $.ajax({
-        url: "{{ route('fetchActivite') }}",
-        method: 'get',
-        success: function(reponse) {
-          $("#show_all_activite").html(reponse);
-        }
-      });
+  $.ajax({
+    url: "{{ route('fetchActivite') }}",
+    method: 'get',
+    success: function(response) {
+      if (response.status == 500) {
+        toastr.error("Une erreur est survenue lors de la récupération des données.", "Erreur");
+      } else {
+        $("#show_all_activite").html(response);
+      }
+    },
+    error: function() {
+      toastr.error("Une erreur est survenue lors de la récupération des données.", "Erreur");
     }
+  });
+}
+
   });
 </script>
 

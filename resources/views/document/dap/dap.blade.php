@@ -147,62 +147,115 @@
     </footer>
 
     <div class="main-content content-after-header " id="main-content">
-        <H3>
-            <center> Demande et Autorisation de Paiement (DAP) N° {{ $datadap->numerodap }} </center>
-        </H3>
-        <table style=" width:100%" class="table table-sm m-0" id="mytable">
-            <tr>
-                <td style="width:50%">
-                    Service: {{ $datadap->titres }} <br>
-                    Composante/ Projet/Section: {{ ucfirst(Session::get('title')) }} <br>
-                    Activite: {{ $datadap->descriptionf }} <br>
-                    Etablie par : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }} <br>
-                    <!-- Ligne budgetaire <br> -->
-                    Taux d'execution globale du projet {{ $pourcentage_global_b }} % <br>
-                </td>
+    <H5>
+                        <center> Demande et d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodap }}/{{ date('Y')}} </center>
+                    </H5>
+                    <div class="col-sm-12">
+                        <table  style=" width:100%" class="table table-sm m-0" id="mytable">
+                            <tr>
+                                <td width="55%">
+                                    Service: {{ $datadap->titres }} <BR>
+                                    Composante/ Projet/Section: {{ ucfirst(Session::get('title')) }} <br><br>
 
-                <td> Reference: FEB N<sup>o</sup> {{ $datadap->numerofeb }} ; <br>
-                   
-                    Compte bancaire(BQ) : {{ $datadap->comptable }} <br>
-                    Solde comptable BQ: {{ number_format($solder_dap, 0, ',', ' ') }} {{ Session::get('devise') }} <br>
+                                    Source de creation : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }} <br>
 
+                                    Moyen de Paiement : <br>
 
+                                    OV : <input type="checkbox" class="form-check-input" readonly @if ( $datadap->ov==1)
+                                    checked value="{{ $datadap->ov }}"
+                                    @else
+                                    value="{{ $datadap->ov }}"
+                                    @endif /> &nbsp; &nbsp;&nbsp;
 
-
-                    Lieu: {{ $datadap->lieu }} <br>
-
-                    OV nº <input type="checkbox" class="form-check-input" name="ov" id="ov" @if($datadap->ov==1)
-                    checked value="{{ $datadap->ov }}"
-                    @else
-                    value="{{ $datadap->ov }}"
-                    @endif
-                    />
-
-                    CHQ nº
-                    <input type="checkbox" class="form-check-input" name="ch" id="ch" @if( $datadap->cho==1)
-                    checked value="{{ $datadap->cho }}"
-                    @else
-                    value="{{ $datadap->cho }}"
-                    @endif
-                    />
-
-                </td>
-            </tr>
-
-        </table>
+                                    OV : <input type="checkbox" class="form-check-input" readonly @if ( $datadap->cho==1)
+                                    checked value="{{ $datadap->cho }}"
+                                    @else
+                                    value="{{ $datadap->cho }}"
+                                    @endif /> &nbsp; &nbsp;&nbsp;
 
 
-        <table class="table table-sm m-0" id="mytable">
-            <tr>
-                <td colspan="3"> Ligne bugetaire : <b> {{ $datafeb->libelle }}</b> </td>
-            </tr>
-            <tr>
-                <td> Etablie par : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }}</td>
-                <td> Activité : {{ $datafeb->descriptionf }}</td>
-                <td> Montant globale feb : {{ $sommefebs }}</td>
-            </tr>
-        </table>
+                                </td>
+                                <td>
+                                    Référence: FEB n<sup>o</sup>:
+                                    @php
+                                    foreach ($datafebElement as $key => $datafebElements) {
+                                    echo '['.$datafebElements->numerofeb.']';
 
+                                    if ($key < count($datafebElement) - 1) { echo ',' ; } } @endphp <BR>
+                                        Lieu: {{ $datadap->lieu }} <br>
+
+                                        Compte bancaire(BQ) : {{ $datadap->comptabiliteb }} <br>
+                                        Taux execution precedent : {{ $taux_execution_avant }}% <br>
+                                        Taux d'execution actuel : {{ $pourcentage_encours}}% <br>
+                                        Taux execution globale : {{ $pourcetage_globale }}% <br>
+
+                                        Solde comptable BQ: {{ number_format($solde_comptable, 0, ',', ' ')  }} {{ Session::get('devise') }}
+
+                                </td>
+                            </tr>
+                        </table>
+
+
+                        <h6> <u>Synthese sur l'utilisation dea fonds demandes(Vr details sur FB en avance)</u></h6>
+                        <table  style=" width:100%" class="table table-sm m-0" id="mytable">
+                            <thead>
+                                <tr>
+                                    <th width="13%">Numéro du FEB </th>
+                                    <th width="60%">Activité </th>
+                                    <th>Montant total </th>
+                                    <th>
+                                        <center>T.E/projet</center>
+                                    </th>
+                                </tr>
+                            </thead><!-- end thead -->
+                            <tbody>
+                                @php
+                                $totoglobale = 0; // Initialiser le total global à zéro
+                                $pourcentage_total = 0; // Initialiser le pourcentage total à zéro
+
+                                @endphp
+                                @foreach ($datafebElement as $datafebElements)
+                                @php
+
+                                $totoSUM = DB::table('elementfebs')
+                                ->orderBy('id', 'DESC')
+                                ->where('febid', $datafebElements->fid)
+                                ->sum('montant');
+
+
+                                $totoglobale += $totoSUM;
+                                $pourcentage = round(($totoSUM * 100) / $budget, 2);
+                                // Ajouter le pourcentage de cette itération au pourcentage total
+                                $pourcentage_total += $pourcentage;
+
+                                @endphp
+                                <tr>
+                                    <td>{{ $datafebElements->numerofeb }}</td>
+                                    <td>{{ $datafebElements->descriptionf }}</td>
+
+                                    <td align="right">
+                                        @php
+                                        $totoSUM = DB::table('elementfebs')
+                                        ->orderBy('id', 'DESC')
+                                        ->where('febid', $datafebElements->fid)
+                                        ->sum('montant');
+                                        @endphp
+                                        {{ number_format($totoSUM, 0, ',', ' ')  }}
+
+                                    </td>
+                                    <td align="center">{{ $pourcentage }} </td>
+                                </tr>
+                                @endforeach
+                                <tr style=" background-color: #040895;">
+                                    <td style="color:white" colspan="2" align="center"> Total </td>
+                                    <td align="right" style="color:white"> {{ number_format($totoglobale, 0, ',', ' ')  }}</td>
+                                    <td style="color:white" align="center"> {{ $pourcentage_total }} %</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <br>
+        
 
         <table class="table table-sm m-0" id="mytable">
 

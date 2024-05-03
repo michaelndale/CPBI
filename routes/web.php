@@ -16,6 +16,7 @@ use App\Http\Controllers\DapController;
 use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\DeviseController;
 use App\Http\Controllers\DjaController;
+use App\Http\Controllers\ElementsfeuilletempsController;
 use App\Http\Controllers\FdtController;
 use App\Http\Controllers\FebController;
 use App\Http\Controllers\FeuilletempsController;
@@ -37,19 +38,16 @@ use App\Http\Controllers\SqrController;
 use App\Http\Controllers\TypeprojetController;
 use App\Http\Controllers\VehiculeController;
 
-
 Route::get('/', function () {
     return view('go');
 });
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'handlelogin'])->name('handlelogin');
-Route::get('/out', function () {
-    return view('auth.out');
-});
+Route::get('/out', function () { return view('auth.out'); });
+Route::get('/maintenance', function () { return view('auth.maintenance'); });
 
 Route::middleware('auth')->group(function () {
-
 
     Route::prefix('dashboard')->group(function () {
         Route::get('/', [AppCOntroller::class, 'index'])->name('dashboard');
@@ -67,7 +65,6 @@ Route::middleware('auth')->group(function () {
         Route::post('storeIdentification', [IdentificationController::class, 'store'])->name('storeIdentification');
         Route::post('EditIdentification', [IdentificationController::class, 'edit'])->name('EditIdentification');
     });
-
 
     Route::prefix('service')->group(function () {
         Route::get('/', [ServiceController::class, 'index'])->name('service');
@@ -125,12 +122,11 @@ Route::middleware('auth')->group(function () {
         Route::put('updatePasswordone/{id}', [AuthController::class, 'updatePasswordone'])->name('updatePasswordone');
         Route::get('shomesignature/{id}', [AuthController::class, 'shomesignature'])->name('shomesignature');
         Route::post('/updatsignatureuser', [AuthController::class, 'updatsignatureuser'])->name('updatsignatureuser');
+        Route::post('/verifier-identifiant', [AuthController::class, 'verifierIdentifiant'])->name('verifier.identifiant');
+
 
         //  Route::put('signature/{id}', [AuthController::class, 'updateSignature'])->name('signatureUs');
-
-
     });
-
 
     Route::prefix('conducteur')->group(function () {
         Route::get('/', [AuthController::class, 'conducteur'])->name('conducteur');
@@ -141,7 +137,6 @@ Route::middleware('auth')->group(function () {
         // Route::post('/updateUs', [AuthController::class, 'update'])->name('updateUs'); 
 
     });
-
 
     Route::prefix('gestioncompte')->group(function () {
         Route::get('/', [CompteController::class, 'index'])->name('gestioncompte');
@@ -208,9 +203,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/selectcategorie', [CategoriebeneficiaireController::class, 'selectcategorie'])->name('selectcategorie');
     });
 
-
-
-
     Route::prefix('project')->group(function () {
         Route::get('/new', [ProjectController::class, 'new'])->name('new_project');
         Route::get('/', [ProjectController::class, 'list'])->name('list_project');
@@ -243,6 +235,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/getfeb', [FebController::class, 'findfebelement'])->name('getfeb');
+
     Route::get('/getactivite', [FebController::class, 'getactivite'])->name('getactivite');
     Route::get('/fetctnotifiaction', [FebController::class, 'notificationdoc'])->name('allnotification');
     Route::get('/navfetctnotifiaction', [FebController::class, 'navnotificationdoc'])->name('navfetchnotification');
@@ -250,9 +243,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/condictionsearch', [RallongebudgetController::class, 'condictionsearch'])->name('condictionsearch');
 
     // categorie
-
-
-
 
     Route::prefix('bpc')->group(function () {
 
@@ -273,6 +263,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/update_autorisation_dap', [DapController::class, 'update_autorisation_dap'])->name('update_autorisation_dap');
         Route::get('{id}/generate-pdf-dap', [DapController::class, 'generatePDFdap'])->name('generate-pdf-dap');
         Route::get('/{key}/verification/', [DapController::class, 'show'])->name('key.verificationdap');
+        Route::post('/check-dap', [DapController::class, 'checkDap'])->name('check.dap');
     });
 
     Route::prefix('dja')->group(function () {
@@ -295,7 +286,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [FdtController::class, 'list'])->name('listftd');
         Route::post('/storeftd', [FdtController::class, 'store'])->name('storeftd');
     });
-
 
     Route::prefix('portier')->group(function () {
         Route::get('/', [PortierController::class, 'index'])->name('portier');
@@ -330,9 +320,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/fetchAllclasseur', [ArchivageController::class, 'store'])->name('fetchAllclasseur');
     });
 
-
-
-
     Route::prefix('activity')->group(function () {
         Route::get('/', [ActivityController::class, 'index'])->name('activity');
         Route::get('/new', [ActivityController::class, 'new'])->name('newactivity');
@@ -362,8 +349,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('notis');
         Route::get('/fetchAllnotis', [NotificationController::class, 'fetchAll'])->name('fetchAllnotis');
     });
-
-
     //DEBUT RH
 
     Route::prefix('personnel')->group(function () {
@@ -392,10 +377,15 @@ Route::middleware('auth')->group(function () {
         Route::delete('/deletePlan', [PlanoperationnelController::class, 'deletePlan'])->name('deletePlan');
     });
 
-
     Route::prefix('feuilletemps')->group(function () {
         Route::get('/', [FeuilletempsController::class, 'index'])->name('feuilletemps');
         Route::post('/storefeuille', [FeuilletempsController::class, 'store'])->name('storefeuille');
+        Route::get('/fetchAllfeuille', [FeuilletempsController::class, 'monfeuille'])->name('fetchAllfeuille');
+        Route::get('/elementft', [ElementsfeuilletempsController::class, 'eindex'])->name('elementft');
+        Route::get('/fetchAllft', [ElementsfeuilletempsController::class, 'fetchAllft'])->name('fetchAllft');
+        Route::post('/storeft', [ElementsfeuilletempsController::class, 'storeft'])->name('storeft');
+        Route::post('/sefl', [ElementsfeuilletempsController::class, 'sefl'])->name('sefl');
+        Route::get('/showft', [ElementsfeuilletempsController::class, 'editf'])->name('showft');
     });
 
     //FIN RH

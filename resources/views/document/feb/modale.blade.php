@@ -57,10 +57,16 @@
 
                                             </select>
 
+                                            <div id="showcondition">
+
+</div>
+
+
+
 
                                         </td>
 
-
+                                        
 
                                     </tr>
                                     <tr>
@@ -92,7 +98,7 @@
                                     </tr>
                                     <tr>
                                         <td class="align-middle ps-3 name">Numéro fiche <br>
-                                            <input type="text" name="numerofeb" id="numerofeb" class="form-control form-control-sm" style="width: 100% ;">
+                                            <input type="number" name="numerofeb" id="numerofeb" class="form-control form-control-sm" style="width: 100% ;">
                                         </td>
 
                                         <td class="align-middle ps-3 name">Période: <br>
@@ -176,7 +182,9 @@
                                             <td><input style="width:100%" type="number" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="1"></td>
                                             <td>
                                                 <div id="Showpoll" class="Showpoll">
-                                                    <input style="width:100%" type="text" class="form-control form-control-sm">
+                                                    <select style="width:100%" type="text" class="form-control form-control-sm">
+                                                        <option>Aucun</option>
+                                                    </select>
                                                 </div>
                                             </td>
                                             <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required></td>

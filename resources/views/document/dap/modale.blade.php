@@ -12,6 +12,7 @@
 
 
 
+
 <div class="modal fade" id="dapModale" tabindex="-1" aria-labelledby="dapModale" aria-hidden="true">
     <div class="modal-dialog modal-xl  modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
@@ -30,10 +31,7 @@
                                 <tbody class="list">
 
                                     <tr>
-                                        <td style="width:120px"> Numéro fiche </br>
 
-                                            <input type="text" id="numerodap" name="numerodap" class="form-control form-control-sm" required>
-                                        </td>
                                         <td style="width:300px"> Service <br>
                                             <select type="text" name="serviceid" id="serviceid" style="width: 100%" class="form-control form-control-sm" required>
                                                 <option value="">--Aucun--</option>
@@ -53,13 +51,13 @@
 
 
                                         <td class="align-middle" style="width:20% ;  background: rgba(76, 175, 80, 0.3)">
-                                            <b>FEB Nº: </b> <br>
-                                            <select type="text" class="form-control form-control-sm febid" style="width: 100%" required>
+                                            <b>NUMERO FEB: </b> <br>
+                                            <select type="text" class="form-control form-control-sm febid" style="width: 100%" required multiple>
                                                 <option value="">--Aucun--</option>
                                                 @forelse ($feb as $febs)
-                                                <option value="{{ $febs->numerofeb }}"> {{ $febs->numerofeb }} </option>
+                                                <option value="{{ $febs->id }}"> {{ $febs->numerofeb }}</option>
                                                 @empty
-                                                <option value="">--Aucun Numero FEB trouver--</option>
+                                                <option value="">--Aucun Numero FEB trouvé--</option>
                                                 @endforelse
                                             </select>
 
@@ -70,8 +68,15 @@
                             <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
                                 <tr>
 
+                                    <td> Numéro du DAP
+                                        <input type="number" name="numerodap" id="numerodap" style="width: 100%" class="form-control form-control-sm" required />
+                                        <smal id="numerodap_error" name="numerodap_error" class="text text-danger"> </smal>
+                                        <smal id="numerodap_info" class="text text-primary"> </smal>
+                                   
+                                    </td>
+
                                     <td> Lieu
-                                        <input type="text" name="lieu" id="lieu" style="width: 100%" class="form-control form-control-sm"  required/>
+                                        <input type="text" name="lieu" id="lieu" style="width: 100%" class="form-control form-control-sm" required />
                                     </td>
 
                                     <td> Compte bancaire (BQ):
@@ -83,11 +88,11 @@
                                     </td>
 
                                     <td align="center"> OV nº : <br>
-                                        <input  type="checkbox" class="form-check-input" name="ov" id="ov" >
+                                        <input type="checkbox" class="form-check-input" name="ov" id="ov">
                                     </td>
 
                                     <td align="center"> CHQ nº <br>
-                                        <input  type="checkbox" class="form-check-input" name="ch" id="ch" >
+                                        <input type="checkbox" class="form-check-input" name="ch" id="ch">
                                     </td>
                                 </tr>
 
@@ -98,8 +103,8 @@
                             <div id="Showpoll" class="Showpoll">
                                 <h6 style="margin-top:1% ;color:#c0c0c0">
                                     <center>
-                                        <font size="5px"><i class="fa fa-search"></i> </font><br><br>
-                                        En attente ... <br> Veuillez Sélectionner le FEB Nº:
+                                        <font size="5px"><i class="fa fa-search"></i> </font><br>
+                                        En attente ... <br> Veuillez Sélectionner le NUMERO FEB:
                                     </center>
                                 </h6>
                             </div>
@@ -107,139 +112,181 @@
                             <hr>
                             <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
 
-<tr>
-    <td colspan="3"><b> Vérification et Approbation de la Demande de paiement </b></td>
+                                <tr>
+                                    <td colspan="6">C'est montant est une avance ?  &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" class="form-check-input" name="justifier" id="justifier"> &nbsp; &nbsp; &nbsp;  Non <input type="checkbox" class="form-check-input" name="nonjustifier" id="nonjustifier"></td>
 
-</tr>
-<tr>
-    <td> <b> Demande établie par </b> <br>
-        <small> Chef de Composante/Projet/Section </small>  
-    </td>
-
-    <td> <b> Vérifiée par :</b> <br>
-        <small> Chef Comptable</small>
-         
-    </td>
-
-    <td> <b> Approuvée par : </b> <br>
-        <small>Chef de Service</small>
-         
-    </td>
-
-
-</tr>
-<tr>
-
-    <td>
-        <select type="text" class="form-control form-control-sm" name="demandeetablie" id="demandeetablie" required>
-            <option value="">-- Chef de Composante/Projet/Section --</option>
-            @foreach ($personnel as $personnels)
-            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-            @endforeach
-        </select>
-    </td>
-    <td>
-        <select type="text" class="form-control form-control-sm" name="verifier" id="verifier" required>
-            <option value="">--Chef Comptable--</option>
-            @foreach ($personnel as $personnels)
-            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-            @endforeach
-        </select>
-    </td>
+                                </tr>
+                            </table>
+                            <table  class="table table-striped table-sm fs--1 mb-0 table-bordered" id="facture-column" style="display: none; width:100%"> 
+                                <tr > 
+                                    <td> Dure avance &nbsp;  <input type="number" name="duree_avence" id="duree_avence" style="width: 100% ;  border:1px solid #c0c0c0"  required /></td>
+                                    <td style="width:15%"> Montant de l'Avance &nbsp;  <input type="number" name="montantavance" id="montantavance" style="width: 100%; border:1px solid #c0c0c0"  required /></td>
+                                    <td> Montant utilisé* &nbsp;  <input type="number" name="montantutiliser" id="montantutiliser" style="width: 100%  ; border:1px solid #c0c0c0"    required /></td>
+                                    <td> Surplus/Manque* &nbsp;  <input type="number" name="surplus" id="surplus" style="width: 100% ; border:1px solid #c0c0c0"     required /></td>
+                                    <td> Montant retourné &nbsp;  <input type="number" name="montantretour" id="montantretour" style="width: 100% ;  border:1px solid #c0c0c0"   required /></td>
+                                    <td> Bordereau de versement no &nbsp;  <input type="bordereau" name="bordereau" id="numerofacture" style="width: 100% ;  border:1px solid #c0c0c0" required /></td>
+                                    <td> Du &nbsp;  <input type="number" name="datedu" id="datedu" style="width: 100% ;  border:1px solid #c0c0c0"  required /></td>
+                                </tr>
+                                <tr>
+                                    <td> F acture</td>
+                                </tr>
+                            </table>
+                            <br>
 
 
-    <td>
-        <select type="text" class="form-control form-control-sm" name="approuver" id="approuver" required>
-            <option value="">--Chef de Service --</option>
-            @foreach ($personnel as $personnels)
-            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-            @endforeach
-        </select>
-    </td>
-</tr>
+                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
 
-</table>
+                                <tr>
+                                    <td colspan="3"><b> Vérification et Approbation de la Demande de paiement </b></td>
+                                </tr>
+                                <tr>
+                                    <td> <b> Demande établie par </b> <br>
+                                        <small> Chef de Composante/Projet/Section </small>  
+                                    </td>
 
-<hr>
+                                    <td> <b> Vérifiée par :</b> <br>
+                                        <small> Chef Comptable</small>
+                                         
+                                    </td>
 
-<table class="table table-striped table-sm fs--1 mb-0 table-bordered">
-
-    <tr>
-        <td colspan="4"><b> Autorisaction de paiement</b></td>
-
-    </tr>
-
-    </tr>
-
-    <tr>
-        <td aligne="center">Autorisé le <center> <input class="form-control form-control-sm" id="basic-form-dob" type="date" id="datesecretairegenerale" name="datesecretairegenerale" /></center>
-        </td>
-        <td>
-            Responsable Administratif et Financier : <br>
-            <select type="text" class="form-control form-control-sm" name="resposablefinancier" id="resposablefinancier" required>
-                <option value="">--Selectionnez personnel--</option>
-                @foreach ($personnel as $personnels)
-                <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-                @endforeach
-            </select>
-        </td>
-        <td>
-            Secrétaire Général de la CEPBU : <br>
-            <select type="text" class="form-control form-control-sm" name="secretairegenerale" id="secretairegenerale" required>
-                <option value="">--Selectionnez personnel--</option>
-                @foreach ($personnel as $personnels)
-                <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-                @endforeach
-            </select>
-        </td>
+                                    <td> <b> Approuvée par : </b> <br>
+                                        <small>Chef de Service</small>
+                                         
+                                    </td>
 
 
-        <td>
-            Chef des Programmes </br>
-            <select type="text" class="form-control form-control-sm" name="chefprogramme" id="chefprogramme" required>
-                <option value="">--Selectionnez personnel--</option>
-                @foreach ($personnel as $personnels)
-                <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-                @endforeach
-            </select>
-        </td>
-    </tr>
+                                </tr>
+                                <tr>
+
+                                    <td>
+                                        <select type="text" class="form-control form-control-sm" name="demandeetablie" id="demandeetablie" required>
+                                            <option value="">-- Chef de Composante/Projet/Section --</option>
+                                            @foreach ($personnel as $personnels)
+                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select type="text" class="form-control form-control-sm" name="verifier" id="verifier" required>
+                                            <option value="">--Chef Comptable--</option>
+                                            @foreach ($personnel as $personnels)
+                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
 
 
-    <tr>
-        <td colspan="4"><b>Observations/Instructions du SG : </b> <br>
-            <textarea class="form-control form-control-sm" name="observation" id="observation" >-</textarea>
-        </td>
-    </tr>
-</table>
+                                    <td>
+                                        <select type="text" class="form-control form-control-sm" name="approuver" id="approuver" required>
+                                            <option value="">--Chef de Service --</option>
+                                            @foreach ($personnel as $personnels)
+                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                            <hr>
+
+                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+
+                                <tr>
+                                    <td colspan="4"><b> Autorisaction de paiement</b></td>
+
+                                </tr>
+
+                                </tr>
+
+                                <tr>
+                                    <td aligne="center">Autorisé le <center> <input class="form-control form-control-sm" id="basic-form-dob" type="date" id="datesecretairegenerale" name="datesecretairegenerale" /></center>
+                                    </td>
+                                    <td>
+                                        Responsable Administratif et Financier : <br>
+                                        <select type="text" class="form-control form-control-sm" name="resposablefinancier" id="resposablefinancier" required>
+                                            <option value="">--Selectionnez personnel--</option>
+                                            @foreach ($personnel as $personnels)
+                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                    <td>
+                                        Secrétaire Général de la CEPBU : <br>
+                                        <select type="text" class="form-control form-control-sm" name="secretairegenerale" id="secretairegenerale" required>
+                                            <option value="">--Selectionnez personnel--</option>
+                                            @foreach ($personnel as $personnels)
+                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+
+
+                                    <td>
+                                        Chef des Programmes </br>
+                                        <select type="text" class="form-control form-control-sm" name="chefprogramme" id="chefprogramme" required>
+                                            <option value="">--Selectionnez personnel--</option>
+                                            @foreach ($personnel as $personnels)
+                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                </tr>
+
+
+                                <tr>
+                                    <td colspan="4"><b>Observations/Instructions du SG : </b> <br>
+                                        <textarea class="form-control form-control-sm" name="observation" id="observation">-</textarea>
+                                    </td>
+                                </tr>
+                            </table>
 
 
 
                         </div>
                     </div>
-        
+
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" id="adddapbtn" name="adddapbtn"><i class="fa fa-check-circle"></i> Sauvegarder</button>
+            </div>
+            </form>
         </div>
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-primary" id="adddapbtn" name="adddapbtn"><i class="fa fa-check-circle"></i> Sauvegarder</button>
-        </div>
-        </form>
     </div>
 </div>
-</div>
+
 
 <script>
-    const checkbox1 = document.getElementById('ch');
-    const checkbox2 = document.getElementById('ov');
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkbox1 = document.getElementById('ch');
+        const checkbox2 = document.getElementById('ov');
 
-    checkbox1.addEventListener('change', function() {
-        if (this.checked) {
-            checkbox2.checked = false;
+        function updateRequired() {
+            if (checkbox1.checked || checkbox2.checked) {
+                checkbox1.removeAttribute('required');
+                checkbox2.removeAttribute('required');
+            } else {
+                checkbox1.setAttribute('required', '');
+                checkbox2.setAttribute('required', '');
+            }
         }
-    });
 
-    checkbox2.addEventListener('change', function() {
-        if (this.checked) {
-            checkbox1.checked = false;
-        }
+        checkbox1.addEventListener('change', function() {
+            if (this.checked) {
+                checkbox2.checked = false;
+            }
+            updateRequired();
+        });
+
+        checkbox2.addEventListener('change', function() {
+            if (this.checked) {
+                checkbox1.checked = false;
+            }
+            updateRequired();
+        });
+
+        // Au chargement initial de la page, rendre une case obligatoire
+        updateRequired();
     });
 </script>
+

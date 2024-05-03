@@ -122,13 +122,7 @@
                     <td colspan="4">
                     <div class="col-lg-12">
                         <div class="mb-0">
-                       
-
                         <input type="text" class="form-control form-control-sm" id="libelle" name="libelle" style="width: 100%; background-color:#c0c0c0"  readonly/>
-
-                        
-                        
-
                         </div>
 
                       </div>
@@ -245,7 +239,7 @@
 </div>
 
 
-<div class="modal fade" id="AddCommenteModale" tabindex="-1" aria-labelledby="AddCommenteModale" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="AddObserve" tabindex="-1" aria-labelledby="AddObserve" style="display: none;" aria-hidden="true">
   <div class="modal-dialog  modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -259,7 +253,7 @@
 
             <input type="hidden" class="form-control idact" name="idact" id="idact" />
             <input value="{{ Session::get('id') }}" type="hidden" name="projetidcomment" id="projetidcommente">
-            <textarea type="text" class="form-control" name="message" id="message" style="height:150px"></textarea>
+            <textarea type="text" class="form-control" name="messageob" id="messageob" style="height:150px"></textarea>
           </div>
       </div>
       <div class="modal-footer">

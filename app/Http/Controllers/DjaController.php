@@ -35,6 +35,7 @@ class DjaController extends Controller
       $nombre = 1;
       foreach ($data as $datas) {
         $cryptedId = Crypt::encrypt($datas->id);
+        if($datas->numeroov==1){ $ov="checked" ; } else{ $ov=""; }
         $output .= '
         <tr>
           <td> 
@@ -53,10 +54,11 @@ class DjaController extends Controller
           </center>
           </td>
           <td> '.$datas->numerodjas.'  </td>
-          <td> '.$datas->numerofeb.'  </td>
+        
           <td> '.$datas->numerodap.' </td>
           <td> '.$datas->numeroov.' </td>
-          <td> '.$datas->beneficiaire.' </td>
+          <td align="center"><input type="checkbox"  '. $ov .' class="form-check-input" /> </td>
+     
           <td> '.$datas->montant_avance.' </td>
      
          

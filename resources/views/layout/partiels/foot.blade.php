@@ -600,17 +600,12 @@
         }
     }
 
- ////   Erreur dans le traitement de la requête
-//Code d'erreur : 200
-//Texte de l'erreur : OK (rejected)
-//Il semble que la connexion au serveur aie été perdue. Merci de vérifier la connectivité réseau et l'état du serveur.
-
     // Vérifier périodiquement l'état de la connexion
     var connectionCheckInterval = setInterval(checkConnection, 5000); // Vérifier toutes les 5 secondes
 </script>
 
 
-<div id="message" class="offline"><i class="fa fa-info-circle"></i> Erreur de l'Internet ! Veuillez vérifier votre connexion car vous n'êtes pas connecté à Internet</div>
+<div id="message" class="offline"><i class="fa fa-info-circle"></i> Vous êtes hors ligne ! </div>
 
 
 </body>

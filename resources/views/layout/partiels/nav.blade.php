@@ -385,6 +385,7 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
                   <ul class="sub-menu" aria-expanded="true">
                     <li><a href="{{ route('feuilletemps') }}">Mon FT</a></li>
                     <li><a href="{{ route('personnel') }}">Feuille de temps</a></li>
+                    <li><a href="{{ route('elementft') }}">Element FT</a></li>
                     <!--<li><a href="javascript: void(0);">Level 2.2</a></li>  -->
                   </ul>
                 </li>

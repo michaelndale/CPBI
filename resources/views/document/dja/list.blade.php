@@ -10,12 +10,7 @@
           <div class="col-12 col-md">
             <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Demande et Justification d'Avance "DJA" </h4>
           </div>
-          <div class="col col-md-auto">
-
-            <a href="javascript:voide(0)" data-bs-toggle="modal" data-bs-target="#djaModale" data-keyboard="false" data-backdrop="static"> <span data-feather="plus-circle"></span> <i class="fa fa-plus-circle"></i> Nouvel fiche DJA </a></nav>
-
-
-          </div>
+          
         </div>
       </div>
       <div class="card-body p-0">

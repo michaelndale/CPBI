@@ -54,8 +54,8 @@
             <center>
               <label class="text-1000 fw-bold mb-2">Type du budgét : &nbsp; &nbsp; &nbsp; </label>
               @foreach ($typebudget as $index => $typebudgets)
-    <input id="budgetactuel{{ $index }}" name="typeprojet" type="radio" value="{{ $typebudgets->id }}" @if($index == 0) checked @endif required/> {{ $typebudgets->titre }} &nbsp; &nbsp; 
-@endforeach
+                  <input id="budgetactuel{{ $index }}" name="typeprojet" type="radio" value="{{ $typebudgets->id }}" @if($index == 0) checked @endif required/> {{ $typebudgets->titre }} &nbsp; &nbsp; 
+              @endforeach
               </center>
           
             

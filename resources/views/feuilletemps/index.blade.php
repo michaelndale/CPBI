@@ -16,7 +16,7 @@
             <div class="row">
 
 
-                <div class="row">
+              <!--
 
                 <div class="col-xl-12">
                         <div class="card">
@@ -57,43 +57,34 @@
 
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
 
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-body">
-                                <div class="float-end d-none d-md-inline-block">
-                                    <div class="dropdown">
-                                        <a class="dropdown-toggle text-reset" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <span class="fw-semibold">Sort By:</span> <span class="text-muted"> Weekly <i class="mdi mdi-chevron-down ms-1"></i></span>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="#">Monthly</a>
-                                            <a class="dropdown-item" href="#">Yearly</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h4 class="card-title mb-3">Manage Orders</h4>
+                               
 
 
                                 <div class="table-responsive">
-                                    <table>
-                                        <tr>
-                                            <th>Repartition du temps</th>
-                                            <th>Nombres des heures postees </th>
-                                            <th>Total Heures </th>
-                                            <th>Pourcentage </th>
-                                        </tr>
-
-                                        <tr>
-                                            <th>Repartition du temps</th>
-                                           
-                                            <th>Distribution </th>
-                                        </tr>
-                                    </table>
-                                   
-                                </div>
+                                            <table class="table table-centered align-middle table-nowrap mb-0">
+                                                <thead>
+                                                    <tr>
+                                                       
+                                                        <th>#</th>
+                                                        <th>Date du jour</th>
+                                                        <th>Projet</th>
+                                                        <th>Temps assigner</th>
+                                                        <th>Heure</th>
+                                                        <th>Description</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="showfeuille">
+                                                   
+                                                </tbody>
+                                            </table>
+                                        </div>
 
                             </div>
                         </div>
@@ -121,9 +112,8 @@
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-sm-6 col-lg-12 col-xl-12">
-
                             <label class="text-1000 fw-bold mb-2"> Sélectionner le projet</label>
-                            <select class="form-select compteid" id="projetid" name="projetid" type="text" placeholder="Entrer projet" required>
+                            <select class="form-select" id="projetid" name="projetid" type="text" placeholder="Entrer projet" required>
                                 <option disabled="true" selected="true" value=""> -- Sélectionner le projet -- </option>
                                 @forelse ($projet as $projets)
                                 <option value="{{ $projets->id }}"> {{ ucfirst($projets->title) }}</option>
@@ -134,17 +124,35 @@
                             </select>
                         </div>
 
-                        <div class="col-sm-6 col-lg-12 col-xl-8">
-
+                        <div class="col-sm-3 col-lg-12 col-xl-3">
                             <label class="text-1000 fw-bold mb-2">Date du jour de travail </label>
                             <input class="form-control" id="datejour" name="datejour" type="date" placeholder="Date " required />
                         </div>
 
+                        <div class="col-sm-3 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Temps maximum</label>
+                            <input class="form-control" id="tampsmax" name="tampsmax" type="number" value="{{ $elf->tempstotal }}"  readonly style="background-color:#c0c0c0" />
+                        </div>
 
-                        <div class="col-sm-6 col-lg-12 col-xl-4">
-                            <label class="text-1000 fw-bold mb-2">Nombre de temps (En terme d'Heure) </label>
+                        <div class="col-sm-3 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Temps minimum </label>
+                            <input class="form-control" id="tampsmin" name="tampsmin" type="number" value="{{ $elf->tempsmoyennne }}"  readonly  style="background-color:#c0c0c0"/>
+                        </div>
+
+                        <div class="col-sm-3 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Nombre de temps (Heure) </label>
                             <input class="form-control" id="nombre" name="nombre" type="number" min="1" placeholder="Nombe" required />
                         </div>
+
+                        <div class="col-sm-6 col-lg-12 col-xl-12">
+                            <label class="text-1000 fw-bold mb-2"> Desription</label>
+                            <textarea class="form-control " id="description" name="description" type="text"  required></textarea>
+                               
+
+                           
+                        </div>
+
+
                     </div>
                 </div>
 
@@ -298,14 +306,14 @@
             })
         });
 
-        fetchAlldfolder();
+        fetchAllft();
 
-        function fetchAlldfolder() {
+        function fetchAllft() {
             $.ajax({
-                url: "{{ route('fetchAllfl') }}",
+                url: "{{ route('fetchAllfeuille') }}",
                 method: 'get',
                 success: function(reponse) {
-                    $("#show_all_folder").html(reponse);
+                    $("#showfeuille").html(reponse);
                 }
             });
         }

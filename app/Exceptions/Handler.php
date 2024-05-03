@@ -5,8 +5,10 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -33,11 +35,11 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        if ($exception instanceof MethodNotAllowedHttpException) {
-            if ($exception->getStatusCode() == SymfonyResponse::HTTP_METHOD_NOT_ALLOWED) { // Méthode POST non prise en charge
-                return redirect()->route('dashboard')->with('success', 'Message de succès');
-            }
+        if ($exception instanceof NotFoundHttpException) {
+            return response()->view('auth.maintenance', [], 404);
         }
         return parent::render($request, $exception);
     }
+
+    
 }

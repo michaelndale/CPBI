@@ -32,7 +32,7 @@ class FebController extends Controller
 
     $ID = session()->get('id');
     $data = DB::table('febs')
-      ->orderby('numerofeb', 'desc')
+      ->orderby('numerofeb', 'Asc')
       ->Where('projetid', $ID)
       ->get();
 
@@ -642,102 +642,83 @@ foreach ($dataToUpdate as $data) {
 
 
   public function findfebelement(Request $request)
-  {
-
-    $ID = session()->get('id');
-
-    $budget = session()->get('budget');
-
+{
+    $IDs = $request->ids; // Utilisez 'ids' pour obtenir tous les identifiants sélectionnés
     $devise = session()->get('devise');
+    $budget = session()->get('budget');
+    $IDP = session()->get('id');
 
+    
 
-    $data = DB::table('febs')
-      ->join('comptes', 'febs.ligne_bugdetaire', '=', 'comptes.id')
-      ->join('personnels', 'febs.acce', '=', 'personnels.id')
-      ->join('rallongebudgets', 'febs.ligne_bugdetaire', '=', 'rallongebudgets.compteid')
-      ->select('febs.*','comptes.libelle', 'personnels.nom', 'personnels.prenom', 'rallongebudgets.budgetactuel')
+    // Initialisez une variable pour stocker les sorties de tableau
+    $output = '';
+    $output .= '
+    <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+    <tr>
+      <th>Numéro du FEB</th>
+      <th>Activité</th>
+      <th>Montant total </th>
+      <th><center>Taux Execution/projet </center></th>
+      <th>Montant retourné par FEB </th>
+    </tr>';
+    
+    $totoglobale = 0; // Initialiser le total global à zéro
+    $pourcentage_total = 0; // Initialiser le pourcentage total à zéro
 
-      ->Where('numerofeb', $request->id)
-      ->Where('febs.projetid', $ID)
-      ->get();
+    foreach ($IDs as $ID) {
+        // Effectuez la recherche de données pour chaque identifiant sélectionné
+        $data = DB::table('febs')
+            ->where('febs.id', $ID)
+            ->get();
+      if ($data->count() > 0) {
 
-
-
-    if ($data->count() > 0) {
-
-      $output = '';
-      foreach ($data as $datas) {}
-        $budgetactuel =   $datas->budgetactuel;
-
-        // total consommation sur la ligne
         $totoSUM = DB::table('elementfebs')
-          ->orderby('id', 'DESC')
-          ->Where('numero', $request->id)
-          ->SUM('montant');
-        
-          $datafebs = DB::table('elementfebs')
-          ->orderby('id', 'DESC')
-          ->Where('projetids', $ID)
-          ->SUM('montant');
-          
+            ->orderBy('id', 'DESC')
+            ->where('febid', $ID)
+            ->sum('montant');
 
-        $pourcentageligne = round(($totoSUM * 100) / $budgetactuel , 2);
-        $sommefeb = number_format($totoSUM, 0, ',', ' ');
+        // Ajouter $totoSUM au total global
+        $totoglobale += $totoSUM;
 
-        $pourcentage_global_b = round(($datafebs * 100) / $budget , 2);
+        // Générer la sortie HTML pour chaque élément sélectionné
+        foreach ($data as $datas) {
+            // sommes element
+            $sommefeb = DB::table('elementfebs')
+                ->Where('febid', $datas->id)
+                ->Where('projetids', $IDP)
+                ->SUM('montant');
 
-        $output .= '
-        <input type="hidden"  name="febid" id="febid"  value="'.$datas->id.'" />
-      <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
-        <tr>
-          <td> Ligne bugetaire</td>
-          <td colspan="7"> <b> ' . $datas->libelle . '</b>  </td>
-        </tr>
-          <tr>
-          <td> Montant globale projet </td>
-            <td align="right"> <b> '  . number_format($budget, 0, ',', ' ') . ' ' .  $devise  . '</b>   </td>
-           
-            <td> Montant globale ligne </td>
-          <td>  <b> ' . number_format($budgetactuel, 0, ',', ' ') . ' ' .  $devise  . '</b>  </td>
-            <td >Taux execution projet</td>
-          <td> <b> ' . $pourcentageligne . ' %</b>  </td>
-          </tr>
-        
-        <tr>
-          
+            $pourcentage = round(($sommefeb * 100) / $budget, 2);
 
-          <td> Etablie par : </td>
-            <td> <b> ' . ucfirst($datas->nom) . ' ' . ucfirst($datas->prenom) . '</b>  </td>
-          <td> Activité : '.$datas->descriptionf.'</td>
-          <td> <b> ' . number_format($totoSUM, 0, ',', ' ') . '  ' .  $devise  . '</b>  </td>
-          <td> Taux execution ligne  </td>
-          <td> <b> ' . $pourcentage_global_b . ' %</b>  </td>
-          
-        </tr>
-      </table>
-    ';
+            // Ajouter le pourcentage de cette itération au pourcentage total
+            $pourcentage_total += $pourcentage;
 
-
-      echo $output;
-      
-    } else {
-      $output = '
-      <table class="table table-striped table-sm fs--1 mb-0" style="background-color:rgba(255, 0, 0, 0.2)"> 
-        <tr>
-          <td>
-            <center>
-              <h6 style="margin-top:1% ;color:black" > 
-              <center><font size="10px"><i class="far fa-trash-alt"  ></i> </font><br><br>
-              Attention : ceci est  est vide  !</center> </h6>
-            </center>
-          </td>
-        </tr>
-      </table>
-      ';
+            // Construire la sortie HTML pour chaque élément sélectionné
+            $output .= '<input type="hidden"  name="febid[]" id="febid[]"  value="' . $datas->id . '" />';
+            $output .= '<td width="7%"> ' . $datas->numerofeb. '</td>';
+            $output .= '<td width="40%">' . $datas->descriptionf . '</td>';
+            $output .= '<td width="10%" align="right">'.  number_format($totoSUM, 0, ',', ' ') .'</td>';
+            $output .= '<td width="10%" align="center"> '.$pourcentage.'%</td>';
+            $output .= '<td width="40%"> <input type="number" name="montantretour"> </td> </tr>';
+        }
+      }else{
+        $output = '<p style="background-color:red ; padding:4px; color:white"> <i class="fa fa-search"></i> Aucun élément trouvé, aucune valeur est en sélectionnée</p>';
+      }
     }
 
+    // Ajouter la ligne pour afficher le total global
+    $output .= '
+          <tr style=" background-color: #040895;">
+          <td style="color:white"> Montant total global</td> <td colspan="2" align="right"  style="color:white">  ' . number_format($totoglobale, 0, ',', ' ')  . '</td>
+          <td style="color:white" align="center">'.$pourcentage_total.' %</td>
+          </tr> 
+        </table>';
+    
+    // Retournez la sortie HTML complète
+    return $output;
+}
+
   
-  }
 
   public function list()
   {
@@ -827,6 +808,7 @@ if (session()->has('budget')) {
     // Debut % ligfne
     $sommelign = DB::table('elementfebs')
       ->Where('grandligne', $idl)
+      
       ->SUM('montant');
 
     $sommelignpourcentage = round(($sommelign * 100) / $budget , 2);
@@ -836,6 +818,7 @@ if (session()->has('budget')) {
 
     $sommefeb = DB::table('elementfebs')
       ->Where('febid', $idfeb)
+      ->Where('projetids', $IDB)
       ->SUM('montant');
 
     $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget , 2);
@@ -1084,9 +1067,7 @@ if (session()->has('budget')) {
       // Instancier Dompdf
       $dompdf = new Dompdf();
       $infoglo = DB::table('identifications')->first();
-    
-      
-      
+
       $datafeb = DB::table('febs')
                     ->join('comptes','febs.ligne_bugdetaire','comptes.id')
                     ->join('projects', 'febs.projetid', '=', 'projects.id')
@@ -1183,13 +1164,13 @@ if (session()->has('budget')) {
      
       // Passez les données de la facture à la vue
      
-      $pdf = FacadePdf::loadView('document.feb.invoice', compact('infoglo','datafeb','sommelignpourcentage','sommefeb','etablienom','comptable_nom','checcomposant_nom','POURCENTAGE_GLOGALE','personnel','compte','datElement','dataLigne','onebeneficaire'
+      $pdf = FacadePdf::loadView('document.feb.feb', compact('infoglo','datafeb','sommelignpourcentage','sommefeb','etablienom','comptable_nom','checcomposant_nom','POURCENTAGE_GLOGALE','personnel','compte','datElement','dataLigne','onebeneficaire'
     ));
 
      $pdf->setPaper('A4', 'landscape'); // Définit le format A4 en mode paysage
   
       // Générez le PDF et retournez-le
-      return $pdf->download('invoice.pdf');
+      return $pdf->download('feb.pdf');
   }
 
   public function delete(Request $request)

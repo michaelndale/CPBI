@@ -4,6 +4,9 @@
   .has-error {
     border: 1px solid red;
   }
+  .has-success {
+    border: 1px solid #82E0AA;
+  }
 </style>
 <div class="main-content">
   <div class="page-content">
@@ -89,12 +92,12 @@
 
           <div class="form-floating mb-1">
             <select class="form-select" id="personnelid" name="personnelid">
-              <option value="" selected="selected">Nom & prenom </option>
+              <option value="" selected="selected"> Séléctionner le personne  </option>
               @foreach ($users as $users)
               <option value="{{ $users->id }}"> {{ ucfirst($users->nom) }} {{ ucfirst($users->prenom) }}</option>
               @endforeach
             </select>
-            <label for="eventLabel">Nom & prenom </label>
+            <label for="eventLabel">Nom & prénom </label>
           </div>
 
           <div class="form-floating mb-1">
@@ -112,6 +115,7 @@
             <input class="form-control" id="identifiant" name="identifiant" type="text" required="required" placeholder="Identifiant" />
             <label for="Identifiant">Identifiant</label>
             <smal id="identifiant_error" name="identifiant_error" class="text text-danger"> </smal>
+            <smal id="identifiant_info" class="text text-primary"> </smal>
           </div>
 
           <div class="form-floating mb-1">
@@ -148,7 +152,7 @@
           if (response.status == 200) {
             fetchAllUsers();
       
-           toastr.success('Utilisateur enregitrer avec succes .', 'Enregitrement');
+           toastr.success('Utilisateur enregistré avec succès.', 'Enregitrement');
             $("#add_user_btn").text('Sauvegarder');
             $("#identifiant_error").text("");
             $('#identifiant').addClass('');
@@ -172,8 +176,16 @@
             toastr.error('Une personnel n\'est peut avoir deux compte utilisateur.', 'Erreur');
             $("#add_user_btn").text('Sauvegarder');
             $("#addUserModal").modal('show');
-            $("#identifiant_error").text("Une personnel n'est peut avoir deux compte utilisateur !");
+            $("#identifiant_error").text("Cet identifiant existe déjà.");
             $('#identifiant').addClass('has-error');
+          }
+
+          if (response.status == 500) {
+            toastr.error('Une erreur s\'est produite lors de l\'enregistrement de l\'utilisateur.', 'Erreur');
+            $("#add_user_btn").text('Sauvegarder');
+            $("#addUserModal").modal('show');
+            
+          
           }
 
         }
@@ -254,6 +266,34 @@
           });
         }
       })
+    });
+
+    $('#identifiant').blur(function() {
+        var identifiant = $(this).val();
+        // Envoi de la requête AJAX au serveur
+        $.ajax({
+            url: '{{ route("verifier.identifiant") }}',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}', // CSRF token pour Laravel
+                identifiant: identifiant
+            },
+            success: function(response) {
+                if (response.exists) {
+                    $('#identifiant_error').text('Cet identifiant existe déjà.');
+                    $('#identifiant').addClass('has-error');
+                    $('#identifiant_info').text('');
+                } else {
+                    $('#identifiant_info').text('Identifiant Disponible');
+                    $('#identifiant').addClass('has-success');
+                    $('#identifiant_error').text('');
+                   
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
     });
 
     fetchAllUsers();

@@ -121,26 +121,7 @@
                     </div>
                     <div class="card-body">
                     
-                    <table class="lh-sm mb-12 mb-sm-0 mb-xl-12">
-                      <tbody>
-                        <tr>
-                          <td class="align-top py-1">
-                            <div class="d-flex">
-                              <h5 class="text-900 mb-0 text-nowrap"><i class="fa fa-user-circle"></i> Responsable  </h5>
-                            </div>
-                          </td>
-                          <td class="ps-1 py-1"><a class="fw-semi-bold d-block lh-sm" href="#!">: {{ ucfirst($responsable->nom) }} {{ ucfirst($responsable->prenom) }}</a></td>
-                        </tr>
-                        <tr>
-                          <td class="align-top py-1">
-                            <div class="d-flex">
-                              <h5 class="text-900 mb-0 text-nowrap"> <span class="fas fa-money-check-alt"></span> Budget  </h5>
-                            </div>
-                          </td>
-                          <td class="fw-bold ps-1 py-1 text-1000"> : {{ number_format($dataProject->budget,0, ',', ' ') }} {{ $dataProject->devise }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
+                  
 
               <div class="col-12 col-xl-12 col-xxl-12 pe-xl-0">
               <div class="mb-12 mb-xl-12">
@@ -149,15 +130,26 @@
                   <div class="col-12">
                     <table class="lh-sm">
                       <tbody>
-
                       <tr>
-                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Responsable </td>
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Numéro projet </td>
                           <td class="text-600 fw-semi-bold ps-3"> : {{ $dataProject->numeroprojet }}</td>
                         </tr>
 
                         <tr>
-                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Numéro projet </td>
-                          <td class="text-600 fw-semi-bold ps-3"> : {{ $dataProject->numeroprojet }}</td>
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Titre du projet </td>
+                          <td class="text-600 fw-semi-bold ps-3"> : {{ $dataProject->title }}</td>
+                        </tr>
+
+
+
+                      <tr>
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Budget </td>
+                          <td class="text-600 fw-semi-bold ps-3"> : {{ number_format($dataProject->budget,0, ',', ' ') }} {{ $dataProject->devise }} </td>
+                        </tr>
+
+                        <tr>
+                          <td class="align-top py-1 text-900 text-nowrap fw-bold">Responsable </td>
+                          <td class="text-600 fw-semi-bold ps-3"> : {{ ucfirst($responsable->nom) }} {{ ucfirst($responsable->prenom) }}</td>
                         </tr>
 
                         <tr>

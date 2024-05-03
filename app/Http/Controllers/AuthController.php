@@ -30,9 +30,9 @@ class AuthController extends Controller
     $active = 'Parameter';
     $users = Personnel::orderBy('nom', 'ASC')->get();
     $personnel = DB::table('users')
-                ->join('personnels', 'personnels.id', 'users.personnelid')
-                ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email','personnels.sexe','personnels.phone','personnels.fonction','personnels.prenom')
-                ->get();
+      ->join('personnels', 'personnels.id', 'users.personnelid')
+      ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
+      ->get();
 
     $profile = Fonction::all();
     $department = Departement::all();
@@ -46,7 +46,7 @@ class AuthController extends Controller
         'department' => $department,
         'statut'     => $statut,
         'personnel'  => $personnel,
-        'users'      =>$users
+        'users'      => $users
       ]
     );
   }
@@ -83,23 +83,18 @@ class AuthController extends Controller
         $output .= '<tr >
               <td>
                   <a  href="">
-                      
                     <h6 class="mb-0 ms-3 fw-semi-bold">' . ucfirst($rs->nom) . ' ' . ucfirst($rs->prenom) . '</h6>
                   </a>
               </td>
-              <td> ' . $rs->identifiant . '   </td>
+              <td> ' . $rs->identifiant . '</td>
          
               <td>' . $rs->role . '  </td>
-      
               <td>' . $rs->statut . '  </td>
               <td>' .  date('d.m.Y', strtotime($rs->created_at)) . ' </td>
               <td>
-             
-                <a href="#" id="'.$rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-                <a href="#" id="'.$rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-                
-                <a href="#" id="'. $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
-             
+                <a href="#" id="' . $rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+                <a href="#" id="' . $rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+                <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
             </td>
             </tr>';
       }
@@ -137,7 +132,7 @@ class AuthController extends Controller
   <td>' .  date('d.m.Y', strtotime($rs->created_at)) . ' </td>
   <td >
       <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_profileModal"><i class="bi-pencil-square h4"></i> Edit</a>
-      <a href="#" id="'.$rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+      <a href="#" id="' . $rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
       <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i> Delete </a>
   </td>
 </tr>';
@@ -156,38 +151,58 @@ class AuthController extends Controller
   // insert a new ajax request
   public function store(Request $request)
   {
-
-    $username = $request->identifiant;
-    $userid =   $request->personnelid;
-    $chek = User::where('personnelid', $userid)->first();
-    if ($chek) {
-      return response()->json([
-        'status' => 202,
-      ]);
-    } else {
-
-      $checkidentifiant = User::where('identifiant', $username)->first();
-
-      if ($checkidentifiant) {
-        return response()->json([
-          'status' => 201,
-        ]);
-      } else {
-
-        $User =             new User;
-        $User->personnelid = $request->personnelid;
-        $User->identifiant = $request->identifiant;
-        $User->role =        $request->profileid;
-        $User->password =    Hash::make($request->password);
-        $User->userid =     Auth()->user()->id;
-        $User->save();
-
-        return response()->json([
-          'status' => 200,
-        ]);
+      DB::beginTransaction(); // Démarre la transaction
+  
+      try {
+          $username = $request->identifiant;
+          $userid = $request->personnelid;
+  
+          $chek = User::where('personnelid', $userid)->first();
+          if ($chek) {
+              return response()->json([
+                  'status' => 202,
+              ]);
+          }
+  
+          $checkidentifiant = User::where('identifiant', $username)->first();
+          if ($checkidentifiant) {
+              return response()->json([
+                  'status' => 201,
+              ]);
+          }
+  
+          $user = new User;
+          $user->personnelid = $request->personnelid;
+          $user->identifiant = $request->identifiant;
+          $user->role = $request->profileid;
+          $user->password = Hash::make($request->password);
+          $user->userid = Auth::id();
+          $user->save();
+  
+          DB::commit(); // Valide la transaction
+  
+          return response()->json([
+              'status' => 200,
+          ]);
+      } catch (Exception $e) {
+          DB::rollBack(); // Annule la transaction en cas d'erreur
+  
+          return response()->json([
+              'status' => 500
+          ]);
       }
-    }
   }
+
+  public function verifierIdentifiant(Request $request)
+{
+    $identifiant = $request->identifiant;
+
+    // Vérifier si l'identifiant existe déjà dans la base de données
+    $user = User::where('identifiant', $identifiant)->exists();
+
+    return response()->json(['exists' => $user]);
+}
+  
 
   public function login()
   {
@@ -205,9 +220,9 @@ class AuthController extends Controller
       $username = $request->email;
       $password = $request->password;
 
-     // $credentials = $request->only('email', 'password');
+      // $credentials = $request->only('email', 'password');
 
-      if (Auth::attempt(['identifiant' => $username, 'password' => $password] ,  $request->filled('remember')) ) {
+      if (Auth::attempt(['identifiant' => $username, 'password' => $password],  $request->filled('remember'))) {
 
         $user = Auth::User();
 
@@ -221,7 +236,7 @@ class AuthController extends Controller
           session()->put('fonction', $datauser->fonction);
           session()->put('avatar', $datauser->avatar);
           session()->put('signature', $datauser->signature);
-         
+
 
           return response()->json([[1]]);
         } else if ($user->statut == 'Bloqué') {
@@ -333,15 +348,19 @@ class AuthController extends Controller
   public function update(user $user,  UserupRequest $request)
   {
     try {
+      if (!empty($request->image)) {
+        $originalName = $request->image->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->image->extension();
 
-      if (!empty($request->image)) :
-        $imageName = time() . '.' . $request->image->extension();
+        $imageName = $originalName . '_goproject_' . $timestamp . '.' . $extension;
         $request->image->move(public_path('avatar/'), $imageName);
-        $imageurl = ('avatar/') . $imageName;
-
-      else :
-        $imageurl = $request->ancienimage;
-      endif;
+        $imageurl = 'avatar/' . $imageName;
+      } else {
+        return response()->json([
+          'status' => 206,
+        ]);
+      }
 
       $user->name = $request->firstname;
       $user->lastname = $request->lastname;
@@ -370,18 +389,18 @@ class AuthController extends Controller
   {
     $title = 'Restauration';
 
-    $user =DB::table('users')
-    ->join('personnels', 'personnels.id', 'users.personnelid')
-    ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email','personnels.sexe','personnels.phone','personnels.fonction','personnels.prenom')
-    ->where('users.id',$id)
-    ->first();
+    $user = DB::table('users')
+      ->join('personnels', 'personnels.id', 'users.personnelid')
+      ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
+      ->where('users.id', $id)
+      ->first();
 
     return view(
       'user.changepassword',
       [
         'title' => $title,
         'user'  => $user
-     
+
       ]
     );
   }
@@ -391,11 +410,11 @@ class AuthController extends Controller
   {
     $title = 'Changement de signature';
 
-    $user =DB::table('users')
-    ->join('personnels', 'personnels.id', 'users.personnelid')
-    ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email','personnels.sexe','personnels.phone','personnels.fonction','personnels.prenom')
-    ->where('personnels.id',$id)
-    ->first();
+    $user = DB::table('users')
+      ->join('personnels', 'personnels.id', 'users.personnelid')
+      ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
+      ->where('personnels.id', $id)
+      ->first();
 
     return view(
       'user.shomesignature',
@@ -407,52 +426,53 @@ class AuthController extends Controller
   }
 
 
-public function updatePasswordone($id,Request $request) {
+  public function updatePasswordone($id, Request $request)
+  {
 
-  $user =User::where('id', $request->idmdp)->first();
+    $user = User::where('id', $request->idmdp)->first();
 
     $user->password = Hash::make($request->password);
     $user->update();
 
     return redirect()->route('user')->with('success', 'Password has been updated successfully.');
-}
+  }
 
+  public function updatsignatureuser(Request $request)
+  {
+    DB::beginTransaction(); // Démarre la transaction
 
-public function updatsignatureuser(Request $request)
-{
-  try {
+    try {
+      if (!empty($request->signatur)) {
+        $originalName = $request->signatur->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->signatur->extension();
 
-        if(!empty($request->signatur)):
-          $imageName=time().'.'.$request->signatur->extension();
-          $request->signatur->move(public_path('element/signature/'),$imageName);
-          $imageurl = ('element/signature/').$imageName;
-        else:
-          return response()->json([
-            'status' => 206,
-          ]);
-        endif;
-
-
-        $per = User::find($request->pid);
-  
-        $per->signature = $imageurl;
-        $per->userid = Auth()->user()->id;
-
-        $per->update();
+        $imageName = $originalName . '_goproject_' . $timestamp . '.' . $extension;
+        $request->signatur->move(public_path('element/signature/'), $imageName);
+        $imageurl = 'element/signature/' . $imageName;
+      } else {
         return response()->json([
-          'status' => 200,
+          'status' => 206,
         ]);
-    
-  } 
-  catch (Exception $e) {
-    return response()->json([
-      'status' => 202,
-    ]);
-  
+      }
 
-}
+      $per = User::find($request->pid);
+      $per->signature = $imageurl;
+      $per->userid = Auth::id();
+      $per->save(); // Utilisation de save() au lieu de update()
 
-}
+      DB::commit(); // Valide la transaction
+      return response()->json([
+        'status' => 200,
+      ]);
+    } catch (Exception $e) {
+      DB::rollBack(); // Annule la transaction en cas d'erreur
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
+  }
+
 
 
 

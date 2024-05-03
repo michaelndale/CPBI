@@ -1,5 +1,14 @@
 @extends('layout/app')
 @section('page-content')
+<style type="text/css">
+  .has-error {
+    border: 1px solid red;
+  }
+  .has-success {
+    border: 1px solid #82E0AA;
+  }
+</style>
+
 <div class="main-content">
   <br>
   <div class="content">
@@ -47,7 +56,9 @@
                   <th class="sort border-top "> <b>Lieu </b></th>
                   <th class="sort border-top "><center> <b>OV  </b></center></th>
                   <th class="sort border-top "> <center><b>CHO </b></center></th>
-                  <th class="sort border-top "> <b>Compte bancaire </b></th>
+                  <th class="sort border-top "> <center><b>Compte bancaire </b></center></th>
+                  <th class="sort border-top "> <center><b>DJA (Justifier) </b></center></th>
+                  <th class="sort border-top "> <center><b> Date enr. </b></center></th>
 
                 </tr>
               </thead>
@@ -81,33 +92,117 @@
 <BR><BR>
 
 
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-<script type="text/javascript">
-  $(document).ready(function() {
-
-    $(document).on('change', '.febid', function() {
-      var febref = $(this).val();
-      var div = $(this).parent();
-      var op = " ";
-      $.ajax({
-        type: 'get',
-        url: "{{ route ('getfeb') }}",
-        data: {
-          'id': febref
-        },
-        success: function(reponse) {
-          $("#Showpoll").html(reponse);
-        },
-        error: function() {
-          alert("Attention! \n Erreur de connexion a la base de donnee ,\n verifier votre connection");
-        }
-      });
-    });
-  });
-</script>
-
 <script>
+
+$('#numerodap').blur(function() {
+        var numerodap = $(this).val();
+        // Envoi de la requête AJAX au serveur
+        $.ajax({
+            url: '{{ route("check.dap") }}',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}', // CSRF token pour Laravel
+                numerodap: numerodap
+            },
+            success: function(response) {
+                if (response.exists) {
+                    $('#numerodap_error').text('Erreur Numéro DAP existe déjà.');
+                    $('#numerodap').removeClass('has-success') // Supprime la classe de succès
+                    $('#numerodap').addClass('has-error');
+                    $('#numerodap_info').text('');
+                    $('#adddapbtn').prop('disabled', true); // Désactiver le bouton de sauvegarde
+                   
+                   
+                } else {
+                    $('#numerodap_info').text('Numéro Disponible');
+                    $('#numerodap').removeClass('has-error')  // Supprime la classe de succès
+                    $('#numerodap').addClass('has-success');
+                    $('#numerodap_error').text('');
+                    $('#adddapbtn').prop('disabled', false); // Désactiver le bouton de sauvegarde
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    var justifierCheckbox = document.getElementById('justifier');
+    var nonjustifierCheckbox = document.getElementById('nonjustifier');
+    var factureColumn = document.getElementById('facture-column');
+
+    function updateRequired() {
+        if (justifierCheckbox.checked || nonjustifierCheckbox.checked) {
+            justifierCheckbox.removeAttribute('required');
+            nonjustifierCheckbox.removeAttribute('required');
+        } else {
+            justifierCheckbox.setAttribute('required', '');
+            nonjustifierCheckbox.setAttribute('required', '');
+        }
+    }
+
+    justifierCheckbox.addEventListener('change', function() {
+        if (justifierCheckbox.checked) {
+            factureColumn.style.display = 'table-cell';
+            nonjustifierCheckbox.checked = false;
+        } else {
+            factureColumn.style.display = 'none';
+        }
+        updateRequired();
+    });
+
+    nonjustifierCheckbox.addEventListener('change', function() {
+        if (nonjustifierCheckbox.checked) {
+            factureColumn.style.display = 'none';
+            justifierCheckbox.checked = false;
+        } else {
+            factureColumn.style.display = 'table-cell';
+        }
+        updateRequired();
+    });
+
+    // Au chargement initial de la page, cacher la colonne de la facture numéro et rendre les cases obligatoires
+    factureColumn.style.display = 'none';
+    justifierCheckbox.setAttribute('required', '');
+    nonjustifierCheckbox.setAttribute('required', '');
+});
+
+function toggleInputs() {
+    var checkboxes = document.querySelectorAll('.seleckbox');
+    var inputs = document.querySelectorAll('.dapref');
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].readOnly = !checkboxes[0].checked;
+    }
+}
+
+
+  $(document).ready(function() {
+    $(document).on('change', '.febid', function() {
+        var febrefs = $(this).val(); // Utilisez val() pour obtenir toutes les valeurs sélectionnées
+        var div = $(this).parent();
+        var op = " ";
+        $.ajax({
+            type: 'get',
+            url: "{{ route ('getfeb') }}",
+            data: {
+                'ids': febrefs // Utilisez 'ids' au lieu de 'id' pour envoyer toutes les valeurs sélectionnées
+            },
+            success: function(reponse) {
+                $("#Showpoll").html(reponse);
+            },
+            error: function() {
+                alert("Attention! \n Erreur de connexion à la base de données, \n veuillez vérifier votre connexion");
+            }
+        });
+    });
+});
+
+
 
   $(function() {
 
@@ -134,6 +229,7 @@
 
             toastr.success("DAP ajouté avec succès !", "success");
 
+            window.location.href = "{{ route('listdap') }}";
 
           }
           if (response.status == 201) {
@@ -185,6 +281,7 @@
               if (response.status == 200) {
                 toastr.success("DAP supprimer avec succès !", "Suppression");
                 fetchAlldap();
+                window.location.href = "{{ route('listdap') }}";
               }
 
               if (response.status == 205) {
