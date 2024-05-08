@@ -119,7 +119,7 @@
                                 </tr>
                             </table>
                             <table  class="table table-striped table-sm fs--1 mb-0 table-bordered" id="facture-column" style="display: none; width:100%"> 
-                                <tr> 
+                               <!-- <tr> 
                                     <td> Facture  &nbsp;  <input type="number" name="facture" id="facture" style="width: 100% ;  border:1px solid #c0c0c0"   /></td>
                                     <td> Dure avance &nbsp;  <input type="number" name="duree_avence" id="duree_avence" style="width: 100% ;  border:1px solid #c0c0c0"  /></td>
                                     <td style="width:15%"> Montant de l'Avance &nbsp;  <input type="number" name="montantavance" id="montantavance" style="width: 100%; border:1px solid #c0c0c0"   /></td>
@@ -127,7 +127,7 @@
                                     <td> Surplus/Manque* &nbsp;  <input type="number" name="surplus" id="surplus" style="width: 100% ; border:1px solid #c0c0c0"     /></td>
                                     <td> Bordereau de versement &nbsp;  <input type="texte" name="bordereau" id="bordereau" style="width: 100% ;  border:1px solid #c0c0c0"  /></td>
                                     <td> Du &nbsp;  <input type="number" name="datedu" id="datedu" style="width: 100% ;  border:1px solid #c0c0c0" /></td>
-                                </tr>
+                                </tr> -->
                             </table>
 
                             <div  id="Showretour" style="display: none;" >

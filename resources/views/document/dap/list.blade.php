@@ -1,5 +1,7 @@
 @extends('layout/app')
 @section('page-content')
+
+
 <style type="text/css">
   .has-error {
     border: 1px solid red;
@@ -93,10 +95,13 @@
 
 
 
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-<script>
 
+   
+<script> 
+    
 $('#numerodap').blur(function() {
         var numerodap = $(this).val();
         // Envoi de la requête AJAX au serveur

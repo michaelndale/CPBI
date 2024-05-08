@@ -37,7 +37,7 @@
                 <hr class="my-4">
                 <div class="row">
                     <H5>
-                        <center> DEMANDE DE JUSTIFICATION D'AVANCE  (DJA)  N° {{ $datadap->numerodap }}/{{ date('Y')}} </center>
+                        <center> DEMANDE DE JUSTIFICATION D'AVANCE (DJA) N° {{ $datadap->numerodap }}/{{ date('Y')}} </center>
                     </H5>
                     <div class="col-sm-12">
                         <table class="table table-bordered  table-sm">
@@ -381,7 +381,7 @@
 
                             <br>
 
- <!--
+                            <!--
                             <a href="{{ route('generate-pdf-dap',$datadap->numerodap ) }}" class="btn btn-success"><i class="fa fa-print"> </i> Générer document PDF</a>
                             <div class="float-end">
                                 <a href="{{ route('generate-pdf-feb', $datadap->id) }}" class="btn btn-primary">Générer PDF</a> n
@@ -464,14 +464,9 @@
 
 
                         </div>
-
                     </div>
-
-
-
                 </div>
                 <div class="modal-footer">
-
                     <button type="submit" class="btn btn-primary">Sauvegarder la signature</button>
                 </div>
             </div>

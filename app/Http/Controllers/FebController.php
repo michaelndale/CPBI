@@ -12,7 +12,7 @@ use App\Models\Historique;
 use App\Models\Identification;
 use App\Models\Project;
 use App\Models\Rallongebudget;
-
+use App\Models\Vehicule;
 use Barryvdh\DomPDF\Facade as PDF;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Dompdf\Dompdf;
@@ -637,14 +637,8 @@ public function findfebelementretour(Request $request)
     // Initialisez une variable pour stocker les sorties de tableau
     $output = '';
     $output .= '
-    <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
-    <tr>
-      <th>Numéro du FEB</th>
-      <th>Ligne budgetaire</th>
-      <th>Montant retourné </th>
-      
-     
-    </tr>';
+    <table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%">
+   ';
     
     $totoglobale = 0; // Initialiser le total global à zéro
     $pourcentage_total = 0; // Initialiser le pourcentage total à zéro
@@ -654,6 +648,8 @@ public function findfebelementretour(Request $request)
         $data = DB::table('febs')
             ->where('febs.id', $ID)
             ->get();
+
+      $vehicules = Vehicule::all();
 
            
 
@@ -686,11 +682,32 @@ public function findfebelementretour(Request $request)
             $pourcentage_total += $pourcentage;
 
             // Construire la sortie HTML pour chaque élément sélectionné
-            $output .= '<input type="hidden"  name="febid[]" id="febid[]"  value="'. $datas->id .'" />';
-            $output .= '<td width="10%"> ' . $datas->numerofeb. '</td>';
-            $output .= '<td width="40%"> <input type="hidden" id="ligneid[]" name="ligneid[]"  value="'.$datas->ligne_bugdetaire.'" />' .$ligneinfo->numero.' : '. $ligneinfo->libelle . '</td>';
-            $output .= '<td><input type="number" id="montantretour[]" name="montantretour[]" style="width: 100% ;  border:1px solid #c0c0c0"  /> </td> </tr>';
-            
+            $output .= '<input type="hidden" name="febid[]" id="febid[]" value="' . $datas->id . '" /> 
+            <input type="hidden" id="ligneid[]" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
+$output .= '<tr> <td width="5%"> Numero FEB : ' . $datas->numerofeb . '</td>';
+$output .= '<td width="8%"> Facture<input type="number" name="facture[]" id="facture[]" style="width: 100%; border:1px solid #c0c0c0" /> </td>';
+$output .= '<td width="10%"> Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+$output .= '<td width="10%"> Montant utilisé* <input type="number" name="montantutiliser[]" id="montantutiliser[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+$output .= '<td width="10%">Surplus/Manque* <input type="number" name="surplus[]" id="surplus[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+$output .= '<td width="10%">Montant retourné <input type="number" id="montantretour[]" name="montantretour[]" style="width: 100%; border:1px solid #c0c0c0" /> </td><tr>';
+$output .= '<tr>';
+
+$output .= '<td></td>';
+$output .= ' <td width="10%"> Bordereau  <input type="text" name="bordereau[]" id="bordereau[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+$output .= '<td width="6%"> Dure avance  <input type="number" name="duree_avence[]" id="duree_avence[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+$output .= '<td width="10%"> Date du <input type="number" name="datedu[]" id="datedu[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+$output .= '<td width="10%">Description  <input type="text" class="description" name="descriptionel[]" id="descriptionel[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+$output .= '<td> Selectionner vehicule <select id="matriculenum"  name="matriculenum" style="width: 100%; border:1px solid #c0c0c0">';
+$output .= '<option   value="" >Selectionner vehicule</option>';
+      
+      // Utilisation de la syntaxe PHP pour générer les options
+      foreach ($vehicules as $vehicule) {
+          $output .= '<option value="' . $vehicule->id . '">' . $vehicule->matricule . '</option>';
+      }
+      
+      $output .= '</select></td></tr>';
+         
+
         }
       }
     }

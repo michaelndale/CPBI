@@ -26,6 +26,7 @@ use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ObservationactiviteController;
+use App\Http\Controllers\OptiondescriptionController;
 use App\Http\Controllers\OutilsController;
 use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PlanoperationnelController;
@@ -272,6 +273,8 @@ Route::middleware('auth')->group(function () {
         Route::get('{id}/generate-pdf-dap', [DapController::class, 'generatePDFdap'])->name('generate-pdf-dap');
         Route::get('/{key}/verification/', [DapController::class, 'show'])->name('key.verificationdap');
         Route::post('/check-dap', [DapController::class, 'checkDap'])->name('check.dap');
+        //optionsdescription
+        Route::get('/getFuelTypes', [DapController::class, 'getFuelType'])->name('getFuelTypes');
     });
 
     Route::prefix('dja')->group(function () {
