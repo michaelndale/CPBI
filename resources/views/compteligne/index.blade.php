@@ -57,7 +57,8 @@
       @method('post')
       @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle ligne budgétaire </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle ligne budgétaire </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
 
@@ -81,7 +82,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit"name="sendCompte" id="sendCompte" class="btn btn-primary" type="button">Sauvegarder</button>
+          <button type="submit"name="sendCompte" id="sendCompte" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i>  Sauvegarder</button>
         </div>
         </form>
     </div>
@@ -100,7 +101,8 @@
       @method('post')
       @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle sous ligne budgétaire    </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle sous ligne budgétaire    </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
 
@@ -121,7 +123,7 @@
             <div class="row g-2">
               <div class="col">
               <input value="{{ Session::get('id') }}" type="hidden" name="projetid" id="projetid" >  
-              <input id="code" name="code" class="form-control" type="text" placeholder="Entrer le code" required/></div>     
+              <input id="code" name="code" class="form-control" type="text" placeholder="Entrer Acc. Non" required/></div>     
               </div>
             </div>
 
@@ -133,7 +135,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit"  name="sendsousCompte" id="sendsousCompte" class="btn btn-primary" type="button">Sauvegarder</button>
+          <button type="submit"  name="sendsousCompte" id="sendsousCompte" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i>  Sauvegarder</button>
         </div>
         </form>
     </div>
@@ -236,7 +238,12 @@
       {
         e.preventDefault();
         const fd = new FormData(this);
-        $("#addcompte").text('Ajouter...');
+       
+
+        $("#sendCompte").html('<i class="fas fa-spinner fa-spin"></i>');
+        document.getElementById("sendCompte").disabled = true;
+
+
         $.ajax({
           url: "{{ route('storeGc') }}",
           method: 'post',
@@ -254,21 +261,28 @@
                 fetchAlldcompte();
                 Selectsouscompte();
 
-                $("#sendCompte").text('Sauvegarder');
-                $("#addDealModal").modal('hide');
+                $("#sendCompte").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
                 $("#addcompteform")[0].reset();
+                $("#addDealModal").modal('hide');
+                document.getElementById("sendCompte").disabled = false;
+
           }
 
           if (response.status == 201) {
             toastr.error("La ligne de compte dans ce projet existe déjà !", "Attention");
+            $("#sendCompte").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addDealModal").modal('show');
-            $("#sendCompte").text('Sauvegarder');
+            document.getElementById("sendCompte").disabled = false;
+
+            
           }
 
           if (response.status == 202) {
             toastr.info("Erreur d'execution, Vérifier l’état de votre connexion", "Erreur");
+            $("#sendCompte").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addDealModal").modal('show');
-            $("#sendCompte").text('Sauvegarder');
+            document.getElementById("sendCompte").disabled = false;
+
           }
 
           }
@@ -279,7 +293,11 @@
       {
         e.preventDefault();
         const fd = new FormData(this);
-        $("#addsouscompte").text('Adding...');
+     
+
+        $("#sendsousCompte").html('<i class="fas fa-spinner fa-spin"></i>');
+        document.getElementById("sendsousCompte").disabled = true;
+
         $.ajax({
           url: "{{ route('storeSc') }}",
           method: 'post',
@@ -295,15 +313,19 @@
                 Selectdcompte();
                 fetchAlldcompte();
                 Selectsouscompte();
-                $("#sendsousCompte").text('Add compte');
-            $("#addsouscompteform")[0].reset();
-            $("#addDealModalSousCompte").modal('hide');
+
+                $("#sendsousCompte").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                $("#addsouscompteform")[0].reset();
+                $("#addDealModalSousCompte").modal('hide');
+                document.getElementById("sendsousCompte").disabled = false;
+
             }
 
             if (response.status == 201) {
             toastr.info("Erreur , vous ne pouvez pas creer deux fois la ligne.", "Attention");
-            $("##addDealModalSousCompte").modal('show');
-            $("#sendCompte").text('Sauvegarder');
+            $("#addDealModalSousCompte").modal('show');
+            $("#sendsousCompte").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("sendsousCompte").disabled = false;
           }
         
           }
@@ -314,7 +336,9 @@
       {
         e.preventDefault();
         const fd = new FormData(this);
-        $("#addsouscompte").text('Adding...');
+        $("#addsouscompte").html('<i class="fas fa-spinner fa-spin"></i>');
+        document.getElementById("sendFolder").disabled = true;
+
         $.ajax({
           url: "{{ route('storeSSc') }}",
           method: 'post',
@@ -331,9 +355,10 @@
                 fetchAlldcompte();
                 Selectsouscompte();
             }
-            $("#sendsoussousCompte").text('Add compte');
+            $("#sendsousCompte").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addsoussouscompteform")[0].reset();
-            $("#addssousDealModal").modal('hide');
+            $("#addDealModalSousCompte").modal('hide');
+            document.getElementById("sendsousCompte").disabled = false;
           }
         });
       });
@@ -452,11 +477,22 @@
               success: function(response) {
                 console.log(response);
 
+               
+
+                if (response.status == 200) {
+                toastr.success("Ligne supprimer avec succès !", "Suppression");
                 Selectdcompte();
                 fetchAlldcompte();
                 Selectsouscompte();
+              }
 
-                toastr.success("Compte supprimer avec succes !", "Suppression");
+              if (response.status == 205) {
+                toastr.error("Vous n'avez pas l'accreditation de supprimer cette ligne!", "Erreur");
+              }
+
+              if (response.status == 202) {
+                toastr.error("Erreur d'execution !", "Erreur");
+              }
                
               }
             });

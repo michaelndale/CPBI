@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Compte;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CompteController extends Controller
 {
@@ -100,7 +101,7 @@ class CompteController extends Controller
               <td class="align-middle ps-3 name"><b>' . $nombre . '</td>
               <td><b>' . ucfirst($rs->numero) . '</b></td>
               <td><b>' . ucfirst($rs->libelle) . '</b></td>
-              <td align="center">
+              <td align="center" style="width:13%">
              
               <a href="#" id="' . $rs->id . '" class="text-success mx-1 savesc" data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte" title="Ajouter sous compte"><i class="fa fa-plus-circle"></i></a>
               
@@ -294,19 +295,54 @@ class CompteController extends Controller
   // update an service ajax request
   public function update(Request $request)
   {
-    $emp = Compte::find($request->gc_id);
+    try {
+
+      $emp = Compte::find($request->gc_id);
+      if ($emp->userid == Auth::id()) {
+
+    
     $emp->gc_title = $request->gc_title;
     $emp->update();
 
     return response()->json([
-      'status' => 200,
-    ]);
+          'status' => 200,
+        ]);
+      } else {
+        return response()->json([
+          'status' => 205,
+        ]);
+      }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
+   
+  
   }
 
   // supresseion
   public function deleteall(Request $request)
   {
-    $id = $request->id;
-    Compte::destroy($id);
+    try {
+      $id = $request->id;
+      $emp = Compte::find($id);
+      if ($emp->userid == Auth::id()) {
+
+       
+        Compte::destroy($id);
+        return response()->json([
+          'status' => 200,
+        ]);
+      } else {
+        return response()->json([
+          'status' => 205,
+        ]);
+      }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
   }
 }

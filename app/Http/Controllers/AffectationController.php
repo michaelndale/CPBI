@@ -18,44 +18,30 @@ class AffectationController extends Controller
      public function storeAffectation(Request $request)
      {
 
-        $request->validate([
-            'project_id' =>'required',
-            'personnel' =>'required'
-        ]);
+       
+    $projectId = $request->project_id;
+    $members = $request->personnel;
 
-        $prid =$request->project_id;
-        $dele=  Affectation::where('projectid',$prid)->delete();
-        if($dele){
-            for($i=0; $i < count ($request->personnel); $i++)
-            {
-                $module_affectation = [
-                    'projectid' => $request->project_id,
-                    'userid' => Auth::id(),
-                    'role' => $request->role[$i],
-                    'memberid' => $request->personnel[$i],
-                ];
-                DB::table('affectations')->insert($module_affectation);
-            }
+    // Supprimer les affectations existantes pour ce projet
+    Affectation::where('projectid', $projectId)->delete();
 
-            return redirect()->back()->with('success', 'Mise à jour réussi avec succès..');
+    // Parcourir les membres sélectionnés
+    foreach ($members as $memberId) {
+        $role = $request->role[$memberId];
 
-        }else{
-            for($i=0; $i < count ($request->personnel); $i++)
-            {
-                $module_affectation = [
-                    'projectid' => $request->project_id,
-                    'memberid' => $request->personnel[$i],
-                    'role' => $request->role[$i],
-                    'userid' => Auth::id(),
-                    
-                ];
-                DB::table('affectations')->insert($module_affectation);
-            }
-
-            return redirect()->back()->with('success', 'Mise à jour réussi avec succès..');
+        // Vérifier si l'utilisateur est sélectionné
+        if (in_array($memberId, $members)) {
+            // Créer une nouvelle affectation
+            Affectation::create([
+                'projectid' => $projectId,
+                'memberid' => $memberId,
+                'userid' => Auth::id(), // Vous devez définir l'utilisateur ici
+                'role' => $role
+            ]);
         }
+    }
 
-        
+    return redirect()->back()->with('success', 'Mise à jour réussi avec succès..');   
      }
 
 

@@ -124,7 +124,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="add_user_btn" id="add_user_btn" class="btn btn-primary"><i class="fas fa-check-circle"></i> Sauvegarder</button>
+          <button type="submit" name="add_user_btn" id="add_user_btn" class="btn btn-primary">  <i class="fa fa-cloud-upload-alt"></i>  Sauvegarder</button>
         </div>
       </div>
     </form>
@@ -139,7 +139,10 @@
     $("#addUserForm").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#add_user_btn").text('Enregistrement encour ...');
+
+      $("#add_user_btn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("add_user_btn").disabled = true;
+
       $.ajax({
         url: "{{ route('storeus') }}",
         method: 'post',
@@ -153,39 +156,45 @@
             fetchAllUsers();
       
            toastr.success('Utilisateur enregistré avec succès.', 'Enregitrement');
-            $("#add_user_btn").text('Sauvegarder');
+
             $("#identifiant_error").text("");
             $('#identifiant').addClass('');
-            $("#addUserModal").modal('hide');
+           
+            $("#add_user_btn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addUserForm")[0].reset();
+            $("#addUserModal").modal('hide');
+            document.getElementById("add_user_btn").disabled = false;
+
+
           }
 
           if (response.status == 201) {
-           // $.notify("L'indetifiant utilisateur existe déjà !", "error");
-            //Toastr::error('User add new account fail :)','Error');
+         
             toastr.info('L\'indetifiant utilisateur existe déjà .', 'Erreur');
-            $("#add_user_btn").text('Sauvegarder');
+            $("#add_user_btn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addUserModal").modal('show');
             $("#identifiant_error").text("L'indetifiant utilisateur existe déjà !");
             $('#identifiant').addClass('has-error');
+            document.getElementById("add_user_btn").disabled = false;
           }
 
           if (response.status == 202) {
             //$.notify("Une personnel n'est peut avoir deux compte utilisateur !", "error");
             //Toastr::error('User add new account fail :)','Error');
             toastr.error('Une personnel n\'est peut avoir deux compte utilisateur.', 'Erreur');
-            $("#add_user_btn").text('Sauvegarder');
+            $("#add_user_btn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addUserModal").modal('show');
             $("#identifiant_error").text("Cet identifiant existe déjà.");
             $('#identifiant').addClass('has-error');
+            document.getElementById("add_user_btn").disabled = false;
           }
 
           if (response.status == 500) {
             toastr.error('Une erreur s\'est produite lors de l\'enregistrement de l\'utilisateur.', 'Erreur');
-            $("#add_user_btn").text('Sauvegarder');
+            $("#add_user_btn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addUserModal").modal('show');
-            
-          
+            document.getElementById("add_user_btn").disabled = false;
+
           }
 
         }

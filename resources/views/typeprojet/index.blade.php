@@ -20,7 +20,7 @@
               <table class="table table-bordered  table-sm fs--1 mb-0">
                 <thead>
                   <tr style="background-color:#82E0AA">
-                    <th style="width:5%">#</th>
+                    <th style="width:5%"><center>#</center></th>
                     <th>Libellé</th>
                     <th style="width:25%">
                       <center>Action</center>
@@ -42,7 +42,7 @@
         </div>
       </div>
     </div> <!-- container-fluid -->
-    <br><br> <br><br> <br><br> <br><br> 
+    <br><br> <br><br> <br><br> <br><br> <br> <br> 
   </div>
 </div>
 
@@ -54,14 +54,15 @@
       @csrf
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Nouvelle type budget </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Nouvelle type budget </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <label class="text-1000 fw-bold mb-2">Titre</label>
           <input class="form-control" name="titre" id="titre" type="text" placeholder="Entrer le titre" required />
         </div>
         <div class="modal-footer">
-          <button type="submit" name="sendType" id="add_type" value="Sauvegarder" class="btn btn-primary">Sauvegarder</button>
+          <button type="submit" name="sendType" id="add_type" value="Sauvegarder" class="btn btn-primary">  <i class="fa fa-cloud-upload-alt"></i>  Sauvegarder</button>
         </div>
       </div>
     </form>
@@ -78,7 +79,8 @@
       @csrf
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Modification dossier</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Modification dossier</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <label class="text-1000 fw-bold mb-2">Titre</label>
@@ -87,7 +89,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="submit" name="edittypebtn" id="edittypebtn" value="Sauvegarder" class="btn btn-primary">Sauvegarder</button>
+          <button type="submit" name="edittypebtn" id="edittypebtn" value="Sauvegarder" class="btn btn-primary">  <i class="fa fa-cloud-upload-alt"></i>  Sauvegarder</button>
         </div>
       </div>
     </form>
@@ -101,6 +103,10 @@
       e.preventDefault();
       const fd = new FormData(this);
       $("#add_type").text('Adding...');
+
+      $("#add_type").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("add_type").disabled = true;
+    
       $.ajax({
         url: "{{ route('storetypebudget') }}",
         method: 'post',
@@ -111,17 +117,22 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
-            toastr.success("Type budget enregistrer avec succès!", "Enregistrement");
-            fetchAlldbudget();
-            $("#add_type").text('Sauvegarder');
-            $("#add_type_form")[0].reset();
-            $("#addDealModal").modal('hide');
+              toastr.success("Type budget enregistrer avec succès!", "Enregistrement");
+              fetchAlldbudget();
+
+              $("#add_type").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              $("#add_type_form")[0].reset();
+              $("#addDealModal").modal('hide');
+              document.getElementById("add_type").disabled = false;
+
           }
 
           if (response.status == 201) {
-            toastr.error("Le type budget  existe déjà !", "Erreur");
-            $("#add_type").text('Sauvegarder');
-            $("#addDealModal").modal('show');
+
+              toastr.error("Le type budget  existe déjà !", "Erreur");
+              $("#add_type").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              $("#addDealModal").modal('show');
+              document.getElementById("add_type").disabled = false;
           }
         }
 
@@ -150,7 +161,10 @@
     $("#edit_type_form").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#edittypebtn").text('Mises encours...');
+
+      $("#edittypebtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("edittypebtn").disabled = true;
+
       $.ajax({
         url: "{{ route('updatetypebudget') }}",
         method: 'post',
@@ -163,15 +177,19 @@
           if (response.status == 200) {
             toastr.success("Type budget modifier avec succès !", "Modification");
             fetchAlldbudget();
-            $("#edittypebtn").text('Sauvegarder');
-            $("#edittypeModal").modal('hide');
+        
+            $("#edittypebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            $("#edittypeModal").modal('show');
+            document.getElementById("edittypebtn").disabled = false;
 
           }
 
           if (response.status == 201) {
             toastr.error("Le type budget existe déjà !", "Erreur");
 
-            $("#edittypebtn").text('Sauvegarder');
+            $("#edittypebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            $("#edittypeModal").modal('show');
+            document.getElementById("edittypebtn").disabled = false;
           }
 
           if (response.status == 205) {

@@ -43,9 +43,11 @@
                   </th>
                   <th><b>N<sup>o</sup> DJA</b> </th>
                   <th><b>N<sup>o</sup> DAP</b></th>
-                  <th><b>N<sup>o</sup> FEB</b></th>
+                  <!--<th><b>N<sup>o</sup> FEB</b></th> -->
                   <th><b>OV </b></th>
-                  <th><b>Beneficiare</b></th>
+                  <th><b>Facture </b></th>
+                  <th><b>Borderau </b></th>
+                
                   <th><b>Montant avance</b></th>
                 </tr>
               </thead>

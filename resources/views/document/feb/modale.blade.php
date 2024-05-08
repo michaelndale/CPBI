@@ -1,28 +1,29 @@
 <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="loadingModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered custom-modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-      <span style="color:#3CB371">
-        <i class="fas fa-spinner fa-spin"></i> Chargement en cours...
-      </span>
-      </div>
+    <div class="modal-dialog modal-dialog-centered custom-modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <span style="color:#3CB371">
+                    <i class="fas fa-spinner fa-spin"></i> Chargement en cours...
+                </span>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <div class="modal fade" id="addfebModal" tabindex="-1" aria-labelledby="addfebModal" aria-hidden="true">
     <div class="modal-dialog modal-xl  modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="far fa-file-alt "></i> FICHE D’EXPRESSION DES BESOINS "FEB" </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+                <h5 class="modal-title"><i class="far fa-file-alt "></i> FICHE D’EXPRESSION DES BESOINS "FEB" </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 
                 <form class="row g-3 mb-6" method="POST" id="addfebForm">
                     @method('post')
                     @csrf
-                    
-                    <div id="tableExample2" >
+
+                    <div id="tableExample2">
                         <div class="table-responsive">
                             <table class="table table-striped table-sm fs--1 mb-0">
                                 <tbody class="list">
@@ -41,7 +42,7 @@
 
 
                                             <select class="form-control  form-control-sm ligneid" id="referenceid" name="referenceid" required>
-                                                <option>Sélectionner la ligne budgétaire</option>
+                                                <option value="">Sélectionner la ligne budgétaire</option>
                                                 @foreach ($compte as $comptes)
                                                 <optgroup label="{{ $comptes->libelle }}">
                                                     @php
@@ -59,14 +60,14 @@
 
                                             <div id="showcondition">
 
-</div>
+                                            </div>
 
 
 
 
                                         </td>
 
-                                        
+
 
                                     </tr>
                                     <tr>
@@ -75,19 +76,19 @@
 
                                     </tr>
                                     <tr>
-                                        <td class="align-middle ps-3 name"  >Activités </td>
+                                        <td class="align-middle ps-3 name">Activités </td>
                                         <td colspan="4">
                                             <input type="text" class="form-control form-control-sm" name="descriptionf" id="descriptionf" required>
                                         </td>
 
                                         <td class="align-middle ps-3 name" colo>Bénéficiaire </td>
                                         <td colspan="3">
-                                            
+
 
                                             <select class="form-control  form-control-sm" id="beneficiaire" name="beneficiaire" required>
                                                 <option>Sélectionner le bénéficiaire </option>
                                                 @foreach ($beneficaire as $beneficaires)
-                                                    <option value="{{ $beneficaires->id }}">{{ $beneficaires->libelle }}</option>
+                                                <option value="{{ $beneficaires->id }}">{{ $beneficaires->libelle }}</option>
                                                 @endforeach
 
                                             </select>
@@ -112,11 +113,11 @@
                                         </td>
 
                                         <td class="align-middle ps-3 name"> Date du dossier FEB: <br>
-                                            <input type="date" class="form-control form-control-sm" name="datefeb" id="datefeb" style="width: 100%"  required>
+                                            <input type="date" class="form-control form-control-sm" name="datefeb" id="datefeb" style="width: 100%" required>
                                         </td>
 
                                         <td class="align-middle ps-3 name"> Date limite: <br>
-                                            <input type="date" class="form-control form-control-sm" name="datelimite" id="datelimite" style="width: 100%" >
+                                            <input type="date" class="form-control form-control-sm" name="datelimite" id="datelimite" style="width: 100%">
                                         </td>
 
                                         <td class="align-middle ps-3 name" style="width:8%">
@@ -229,9 +230,9 @@
                                     <tr>
                                         <td>
 
- 
 
-                                        <select type="text" class="form-control form-control-sm"name="acce" id="acce" required>
+
+                                            <select type="text" class="form-control form-control-sm" name="acce" id="acce" required>
                                                 <option value="">--Sélectionner (AC/CE/CS)--</option>
                                                 @foreach ($personnel as $personnels)
                                                 <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
@@ -239,7 +240,7 @@
                                             </select>
 
 
-                                           
+
                                         </td>
                                         <td>
                                             <select type="text" class="form-control form-control-sm" name="comptable" id="comptable" required>
@@ -267,7 +268,7 @@
                     </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" id="addfebbtn" name="addfebbtn"><i class="fa fa-check-circle"></i> Sauvegarder</button>
+                <button type="submit" class="btn btn-primary" id="addfebbtn" name="addfebbtn"> <i class="fa fa-cloud-upload-alt"></i>  Sauvegarder</button>
             </div>
             </form>
         </div>

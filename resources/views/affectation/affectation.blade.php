@@ -10,9 +10,7 @@
             <h4 class="mb-4"><i class="fa fa-users"></i> Les intervenants du projet</h4>
             <p>Les membres intervenants du projet ont apporté leur expertise et leur contribution à sa réalisation</p>
 
-           
-
-
+          
             <form method="post" action="{{ route('storeAffectation') }}" enctype="multipart/form-data">
               @method('post')
               @csrf

@@ -293,309 +293,215 @@ class FebController extends Controller
 
 
   public function store(Request $request)
-  {
+{
+    DB::beginTransaction();
+
     try {
-      $IDP = session()->get('id');
+        $IDP = session()->get('id');
 
-      $comp = $request->referenceid;
-      $compp = explode("-", $comp);
+        $comp = $request->referenceid;
+        $compp = explode("-", $comp);
 
-      $grandcompte = $compp[0];
-      $souscompte  = $compp[1];
+        $grandcompte = $compp[0];
+        $souscompte  = $compp[1];
 
-      $somme_budget_ligne = DB::table('rallongebudgets')
-        ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
-        ->Where('rallongebudgets.projetid', $IDP)
-        ->Where('rallongebudgets.souscompte', $souscompte)
-        ->SUM('rallongebudgets.budgetactuel');
+        $somme_budget_ligne = DB::table('rallongebudgets')
+            ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+            ->where('rallongebudgets.projetid', $IDP)
+            ->where('rallongebudgets.souscompte', $souscompte)
+            ->sum('rallongebudgets.budgetactuel');
 
+        $somme_activite_ligne = DB::table('elementfebs')
+            ->where('projetids', $IDP)
+            ->where('eligne', $souscompte)
+            ->sum('montant');
 
-      $somme_activite_ligne = DB::table('elementfebs')
-        ->Where('projetids', $IDP)
-        ->Where('eligne', $souscompte)
-        ->SUM('montant');
+        $sum = 0;
 
-     
-
-
-      $sum = 0;
-
-      foreach ($request->numerodetail as $key => $items) {
-        $element1 = $request->pu[$key];
-        $element2 = $request->qty[$key];
-        $element3 = $request->frenquency[$key];
-        $somme = $element1 * $element2 * $element3;
-        $sum += $somme;
-      }
-
-      $montant_somme = $sum + $somme_activite_ligne;
-
-      if ($somme_budget_ligne >= $montant_somme) {
-
-        $numerofeb = $request->numerofeb;
-        $check = Feb::where('numerofeb', $numerofeb)->first();
-        if ($check) {
-          return response()->json([
-            'status' => 201
-          ]);
-        } else {
-
-          if($request->has('bc')){ $bc=1 ; } else{ $bc=0 ; }
-          if($request->has('om')){ $om=1 ; } else{ $om=0 ; }
-          if($request->has('facture')){ $facture=1 ; } else{ $facture=0 ; }
-          if($request->has('fpdevis')){ $fpdevis=1 ; } else{ $fpdevis=0 ; }
-          if($request->has('nec')){ $nec=1 ; } else{ $nec=0 ; }
-
-          $activity = new Feb();
-          $activity->numerofeb = $request->numerofeb;
-          $activity->projetid = $request->projetid;
-          $activity->periode = $request->periode;
-          $activity->datefeb = $request->datefeb;
-          $activity->datelimite = $request->datelimite;
-          $activity->ligne_bugdetaire = $grandcompte;
-          $activity->descriptionf = $request->descriptionf;
-          $activity->bc = $bc;
-          $activity->facture = $facture;
-          $activity->om = $om;
-          $activity->fpdevis = $fpdevis;
-          $activity->nec = $nec;
-          $activity->acce = $request->acce;
-          $activity->comptable = $request->comptable;
-          $activity->chefcomposante = $request->chefcomposante;
-          $activity->beneficiaire = $request->beneficiaire;
-          $activity->total = $sum;
-          $activity->userid = Auth::id();
-          $activity->save();
-
-
-          $IDf = $activity->id;
-          // insersion module elments de details
-
-          $elementsSelectionnes= $request->numerodetail;
-          foreach ($elementsSelectionnes as $key => $items) {
-        
-
+        foreach ($request->numerodetail as $key => $items) {
             $element1 = $request->pu[$key];
             $element2 = $request->qty[$key];
             $element3 = $request->frenquency[$key];
-            $somme_total = $element1 * $element2 * $element3;
-
-
-
-            $elementfeb = new Elementfeb();
-
-            $elementfeb->febid      =  $IDf;
-            $elementfeb->numero     =  $request->numerofeb;
-            $elementfeb->libellee   =  $request->description[$key];
-            $elementfeb->libelle_description   =  $request->libelle_description[$key];
-            $elementfeb->unite      =  $request->unit_cost[$key];
-            $elementfeb->quantite   =  $request->qty[$key];
-            $elementfeb->frequence  =  $request->frenquency[$key];
-            $elementfeb->pu         =  $request->pu[$key];
-            $elementfeb->montant    =  $somme_total;
-            $elementfeb->projetids  =  $request->projetid;
-            $elementfeb->tperiode   =  $request->periode;
-            $elementfeb->grandligne =  $grandcompte;
-            $elementfeb->eligne     =  $souscompte;
-            $elementfeb->userid = Auth::id();
-
-            $elementfeb->save();
-
-          }
-
-          return response()->json([
-            'status' => 200,
-
-          ]);
+            $somme = $element1 * $element2 * $element3;
+            $sum += $somme;
         }
-      } else {
 
+        $montant_somme = $sum + $somme_activite_ligne;
+
+        if ($somme_budget_ligne >= $montant_somme) {
+            $numerofeb = $request->numerofeb;
+            $check = Feb::where('numerofeb', $numerofeb)->first();
+            if ($check) {
+                return response()->json([
+                    'status' => 201
+                ]);
+            } else {
+                $bc = $request->has('bc') ? 1 : 0;
+                $om = $request->has('om') ? 1 : 0;
+                $facture = $request->has('facture') ? 1 : 0;
+                $fpdevis = $request->has('fpdevis') ? 1 : 0;
+                $nec = $request->has('nec') ? 1 : 0;
+
+                $activity = new Feb();
+                $activity->numerofeb = $request->numerofeb;
+                $activity->projetid = $request->projetid;
+                $activity->periode = $request->periode;
+                $activity->datefeb = $request->datefeb;
+                $activity->datelimite = $request->datelimite;
+                $activity->ligne_bugdetaire = $grandcompte;
+                $activity->descriptionf = $request->descriptionf;
+                $activity->bc = $bc;
+                $activity->facture = $facture;
+                $activity->om = $om;
+                $activity->fpdevis = $fpdevis;
+                $activity->nec = $nec;
+                $activity->acce = $request->acce;
+                $activity->comptable = $request->comptable;
+                $activity->chefcomposante = $request->chefcomposante;
+                $activity->beneficiaire = $request->beneficiaire;
+                $activity->total = $sum;
+                $activity->userid = Auth::id();
+                $activity->save();
+
+                $IDf = $activity->id;
+
+                foreach ($request->numerodetail as $key => $items) {
+                    $somme_total = $request->pu[$key] * $request->qty[$key] * $request->frenquency[$key];
+
+                    $elementfeb = new Elementfeb();
+                    $elementfeb->febid = $IDf;
+                    $elementfeb->numero = $request->numerofeb;
+                    $elementfeb->libellee = $request->description[$key];
+                    $elementfeb->libelle_description = $request->libelle_description[$key];
+                    $elementfeb->unite = $request->unit_cost[$key];
+                    $elementfeb->quantite = $request->qty[$key];
+                    $elementfeb->frequence = $request->frenquency[$key];
+                    $elementfeb->pu = $request->pu[$key];
+                    $elementfeb->montant = $somme_total;
+                    $elementfeb->projetids = $request->projetid;
+                    $elementfeb->tperiode = $request->periode;
+                    $elementfeb->grandligne = $grandcompte;
+                    $elementfeb->eligne = $souscompte;
+                    $elementfeb->userid = Auth::id();
+                    $elementfeb->save();
+                }
+
+                DB::commit();
+
+                return response()->json([
+                    'status' => 200,
+                ]);
+            }
+        } else {
+            return response()->json([
+                'status' => 203,
+            ]);
+        }
+    } catch (\Exception $e) {
+        DB::rollBack();
+        
         return response()->json([
-          'status' => 203,
+            'status' => 202,
+            'error' => $e->getMessage()
         ]);
-      }
-    } catch (Exception $e) {
-      return response()->json([
-        'status' => 202 + $e,
-      ]);
-    }
-  }
-
-
-  public function Updatestore(Request $request)
-  {
-
-    //try{ 
-    $IDP = session()->get('id');
-
-    
-
-   /*   $somme_budget_ligne = DB::table('rallongebudgets')
-        ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
-        ->Where('rallongebudgets.projetid', $IDP)
-        ->Where('rallongebudgets.souscompte', $souscompte)
-        ->SUM('rallongebudgets.budgetactuel');
-
-
-      $somme_activite_ligne = DB::table('elementfebs')
-        ->Where('projetids', $IDP)
-        ->Where('eligne', $souscompte)
-        ->SUM('montant');
-
-     
-
-
-      $sum = 0;
-
-      foreach ($request->numerodetail as $key => $items) {
-        $element1 = $request->pu[$key];
-        $element2 = $request->qty[$key];
-        $element3 = $request->frenquency[$key];
-        $somme = $element1 * $element2 * $element3;
-        $sum += $somme;
-      }
-
-      $montant_somme = $sum + $somme_activite_ligne;
-
-      if ($somme_budget_ligne >= $montant_somme) {
-
-        */
-  
-      $activity = Feb::find($request->febid);
-
-     
-          if($request->has('bc')){ $bc=1 ; } else{ $bc=0 ; }
-          if($request->has('om')){ $om=1 ; } else{ $om=0 ; }
-          if($request->has('facture')){ $facture=1 ; } else{ $facture=0 ; }
-          if($request->has('fpdevis')){ $fpdevis=1 ; } else{ $fpdevis=0 ; }
-          if($request->has('nec')){ $nec=1 ; } else{ $nec=0 ; }
-
-
-          $activity->numerofeb = $request->numerofeb;
-          $activity->periode = $request->periode;
-          $activity->datefeb = $request->datefeb;
-          $activity->datelimite = $request->datelimite;
-          $activity->bc = $bc;
-          $activity->facture = $facture;
-          $activity->om = $om;
-          $activity->fpdevis = $fpdevis;
-          $activity->nec = $nec;
-          $activity->comptable = $request->comptable; 
-          $activity->acce = $request->acce;
-          $activity->chefcomposante = $request->chefcomposante;
-          $activity->descriptionf = $request->descriptionf;
-          $activity->beneficiaire = $request->beneficiaire;
-         
-          $do = $activity->update();
-
-  
-         
-         // Créer un tableau pour stocker les données à mettre à jour
-$dataToUpdate = [];
-
-foreach ($request->numerodetail as $key => $itemID) {
-
-  if (isset($request->idelements[$key]) && !empty($request->idelements[$key])) {
-
-    $idelements = $request->idelements[$key];
-
-    // Vérifier si l'élément existe déjà dans la base de données
-    $elementfeb = Elementfeb::find($idelements);
-
-    if ($elementfeb) {
-        // Si l'élément existe, ajouter ses données à $dataToUpdate
-        $dataToUpdate[] = [
-            'id'                   => $idelements,
-            'libelle_description'  => $request->libelle_description[$key],
-            'unite'                => $request->unit_cost[$key],
-            'quantite'             => $request->qty[$key],
-            'frequence'            => $request->frenquency[$key],
-            'pu'                   => $request->pu[$key],
-            'montant'              => $request->amount[$key],
-            'libellee'             => $request->libelleid[$key]
-        ];
-
-        //return redirect()->back()->with('success', 'FEB mises ajours avec  succès');
-
-    } else{
-      // return redirect()->back()->with('info', 'Aucun  mises ajours apporter');
-    }
-  }else {
-
-   
-
-      $newfeb = new Elementfeb();
-
-      $newfeb->febid      =  $request->febid;
-      $newfeb->libelle_description   =  $request->libelle_description[$key];
-      $newfeb->unite      =  $request->unit_cost[$key];
-      $newfeb->quantite   =  $request->qty[$key];
-      $newfeb->frequence  =  $request->frenquency[$key];
-      $newfeb->pu         =  $request->pu[$key];
-      $newfeb->montant    =  $request->amount[$key];
-      $newfeb->projetids  =  $request->projetid;
-      $newfeb->tperiode   =  $request->periode;
-      $newfeb->grandligne =  $request->grandligne;
-      $newfeb->eligne     =  $request->eligne;
-      $newfeb->numero     =  $request->numerofeb;
-      $newfeb->libellee   = $request->libelleid[$key];
-      $newfeb->userid     = Auth::id();
-
-     $doThis= $newfeb->save();
-
-     if($doThis){ 
-      return redirect()->back()->with('success', 'FEB mises ajours avec  succès');
-      } else {
-        return redirect()->back()->with('failed', 'FEB erreur des mises ajours');
-      }
-       
     }
 }
 
-// Mettre à jour tous les élémentsfeb en une seule requête
-foreach ($dataToUpdate as $data) {
-    Elementfeb::where('id', $data['id'])->update($data);
+
+
+public function Updatestore(Request $request)
+{
+    DB::beginTransaction();
+
+    try {
+        $IDP = session()->get('id');
+
+        $activity = Feb::find($request->febid);
+
+        $bc = $request->has('bc') ? 1 : 0;
+        $om = $request->has('om') ? 1 : 0;
+        $facture = $request->has('facture') ? 1 : 0;
+        $fpdevis = $request->has('fpdevis') ? 1 : 0;
+        $nec = $request->has('nec') ? 1 : 0;
+
+        $activity->numerofeb = $request->numerofeb;
+        $activity->periode = $request->periode;
+        $activity->datefeb = $request->datefeb;
+        $activity->datelimite = $request->datelimite;
+        $activity->bc = $bc;
+        $activity->facture = $facture;
+        $activity->om = $om;
+        $activity->fpdevis = $fpdevis;
+        $activity->nec = $nec;
+        $activity->comptable = $request->comptable; 
+        $activity->acce = $request->acce;
+        $activity->chefcomposante = $request->chefcomposante;
+        $activity->descriptionf = $request->descriptionf;
+        $activity->beneficiaire = $request->beneficiaire;
+        $activity->update();
+
+        $dataToUpdate = [];
+
+        foreach ($request->numerodetail as $key => $itemID) {
+            if (isset($request->idelements[$key]) && !empty($request->idelements[$key])) {
+                $idelements = $request->idelements[$key];
+                $elementfeb = Elementfeb::find($idelements);
+                if ($elementfeb) {
+                    $dataToUpdate[] = [
+                        'id' => $idelements,
+                        'libelle_description' => $request->libelle_description[$key],
+                        'unite' => $request->unit_cost[$key],
+                        'quantite' => $request->qty[$key],
+                        'frequence' => $request->frenquency[$key],
+                        'pu' => $request->pu[$key],
+                        'montant' => $request->amount[$key],
+                        'libellee' => $request->libelleid[$key]
+                    ];
+                }
+            } else {
+                $newfeb = new Elementfeb();
+                $newfeb->febid = $request->febid;
+                $newfeb->libelle_description = $request->libelle_description[$key];
+                $newfeb->unite = $request->unit_cost[$key];
+                $newfeb->quantite = $request->qty[$key];
+                $newfeb->frequence = $request->frenquency[$key];
+                $newfeb->pu = $request->pu[$key];
+                $newfeb->montant = $request->amount[$key];
+                $newfeb->projetids = $request->projetid;
+                $newfeb->tperiode = $request->periode;
+                $newfeb->grandligne = $request->grandligne;
+                $newfeb->eligne = $request->eligne;
+                $newfeb->numero = $request->numerofeb;
+                $newfeb->libellee = $request->libelleid[$key];
+                $newfeb->userid = Auth::id();
+                $newfeb->save();
+            }
+        }
+
+        foreach ($dataToUpdate as $data) {
+            Elementfeb::where('id', $data['id'])->update($data);
+        }
+
+        DB::commit();
+
+        return redirect()->back()->with('success', 'FEB mises à jour avec succès');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        
+        return redirect()->back()->with('failed', 'FEB erreur des mises à jour: ' . $e->getMessage());
+    }
 }
 
 
-          if($do){
-            return redirect()->back()->with('success', 'FEB mises ajours avec  succès');
-          } else {
-            return redirect()->back()->with('failed', 'FEB erreur des mises ajours');
-          }
-          
-
-        //  if($do){
-        //    return redirect('feb')->with('success', 'Mises ajours reussi avec succès.');
-//}else{
-        //    return redirect('feb')->with('faided', 'Erreur de mises ajours.');
-        //  }
-
-    /*  } else {
-
-          return response()->json([
-            'status' => 203,
-          ]);
-        }
-      } catch (Exception $e) {
-        return response()->json([
-          'status' => 202 + $e,
-        ]);
-      }
-        */  
-       
-  }
-  
 
   public function findligne(Request $request)
   {
     try {
       $ID = session()->get('id');
       $data = DB::table('elementfebs')
-        ->join('febs', 'elementfebs.febid', '=', 'febs.id')
-        ->select('elementfebs.*', 'febs.projetid', 'febs.ligne_bugdetaire')
-        ->Where('febs.ligne_bugdetaire', $request->id)
-        //   ->orWhere('febs.projetid', $ID)
+      ->join('febs', 'elementfebs.febid', '=', 'febs.id')
+      ->select('elementfebs.*', 'febs.projetid', 'febs.ligne_bugdetaire')
+      ->Where('febs.ligne_bugdetaire', $request->id)
         ->get();
 
       return response()->json($data);
@@ -611,33 +517,31 @@ foreach ($dataToUpdate as $data) {
     $output = '';
 
     $comp = str_replace(' ', '', $request->id);
-      $compp = explode("-",$comp);
+    $compp = explode("-", $comp);
 
-      $grandcompte = $compp[0];
-      $souscompte  = $compp[1];
-   
-    $activiteligne = Activity::where('compteidr', $souscompte) ->get();
+    $grandcompte = $compp[0];
+    $souscompte  = $compp[1];
 
-   // dd($souscompte);
+    $activiteligne = Activity::where('compteidr', $souscompte)->get();
+
+    // dd($souscompte);
     if ($activiteligne->count() > 0) {
 
-     
+
       $output .= '
         <select type="text" class="form-control form-control-sm"   name="description[]" id="description" required>
         <option disabled="true" selected="true">--Aucun--</option>';
       foreach ($activiteligne as $datas) {
         $output .= '
-          <option value="'.$datas->id.'">'.$datas->titre.'</option>
+          <option value="' . $datas->id . '">' . $datas->titre . '</option>
         ';
       }
       $output .= '</select>';
-    }
-    else{
+    } else {
       $output .= 'Aucune element trouver ';
     }
 
     echo $output;
-    
   }
 
 
@@ -659,7 +563,7 @@ foreach ($dataToUpdate as $data) {
       <th>Activité</th>
       <th>Montant total </th>
       <th><center>Taux Execution/projet </center></th>
-      <th>Montant retourné par FEB </th>
+     
     </tr>';
     
     $totoglobale = 0; // Initialiser le total global à zéro
@@ -670,6 +574,9 @@ foreach ($dataToUpdate as $data) {
         $data = DB::table('febs')
             ->where('febs.id', $ID)
             ->get();
+
+            
+
       if ($data->count() > 0) {
 
         $totoSUM = DB::table('elementfebs')
@@ -698,8 +605,8 @@ foreach ($dataToUpdate as $data) {
             $output .= '<td width="7%"> ' . $datas->numerofeb. '</td>';
             $output .= '<td width="40%">' . $datas->descriptionf . '</td>';
             $output .= '<td width="10%" align="right">'.  number_format($totoSUM, 0, ',', ' ') .'</td>';
-            $output .= '<td width="10%" align="center"> '.$pourcentage.'%</td>';
-            $output .= '<td width="40%"> <input type="number" name="montantretour"> </td> </tr>';
+            $output .= '<td width="10%" align="center"> '.$pourcentage.'%</td></tr>';
+           
         }
       }else{
         $output = '<p style="background-color:red ; padding:4px; color:white"> <i class="fa fa-search"></i> Aucun élément trouvé, aucune valeur est en sélectionnée</p>';
@@ -715,6 +622,80 @@ foreach ($dataToUpdate as $data) {
         </table>';
     
     // Retournez la sortie HTML complète
+    return $output;
+}
+
+public function findfebelementretour(Request $request)
+{
+    $IDs = $request->ids; // Utilisez 'ids' pour obtenir tous les identifiants sélectionnés
+    $devise = session()->get('devise');
+    $budget = session()->get('budget');
+    $IDP = session()->get('id');
+
+    
+
+    // Initialisez une variable pour stocker les sorties de tableau
+    $output = '';
+    $output .= '
+    <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+    <tr>
+      <th>Numéro du FEB</th>
+      <th>Ligne budgetaire</th>
+      <th>Montant retourné </th>
+      
+     
+    </tr>';
+    
+    $totoglobale = 0; // Initialiser le total global à zéro
+    $pourcentage_total = 0; // Initialiser le pourcentage total à zéro
+
+    foreach ($IDs as $ID) {
+        // Effectuez la recherche de données pour chaque identifiant sélectionné
+        $data = DB::table('febs')
+            ->where('febs.id', $ID)
+            ->get();
+
+           
+
+      if ($data->count() > 0) {
+
+        $totoSUM = DB::table('elementfebs')
+            ->orderBy('id', 'DESC')
+            ->where('febid', $ID)
+            ->sum('montant');
+
+        // Ajouter $totoSUM au total global
+        $totoglobale += $totoSUM;
+
+        // Générer la sortie HTML pour chaque élément sélectionné
+        foreach ($data as $datas) {
+            // sommes element
+            $sommefeb = DB::table('elementfebs')
+                ->Where('febid', $datas->id)
+                ->Where('projetids', $IDP)
+                ->SUM('montant');
+
+            $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)
+                ->first();
+
+                
+
+            $pourcentage = round(($sommefeb * 100) / $budget, 2);
+
+            // Ajouter le pourcentage de cette itération au pourcentage total
+            $pourcentage_total += $pourcentage;
+
+            // Construire la sortie HTML pour chaque élément sélectionné
+            $output .= '<input type="hidden"  name="febid[]" id="febid[]"  value="'. $datas->id .'" />';
+            $output .= '<td width="10%"> ' . $datas->numerofeb. '</td>';
+            $output .= '<td width="40%"> <input type="hidden" id="ligneid[]" name="ligneid[]"  value="'.$datas->ligne_bugdetaire.'" />' .$ligneinfo->numero.' : '. $ligneinfo->libelle . '</td>';
+            $output .= '<td><input type="number" id="montantretour[]" name="montantretour[]" style="width: 100% ;  border:1px solid #c0c0c0"  /> </td> </tr>';
+            
+        }
+      }
+    }
+    $output .= '</table>';
+  
     return $output;
 }
 

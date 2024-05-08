@@ -17,11 +17,12 @@
     <div class="modal-dialog modal-xl  modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="far fa-file-alt "></i> Demande et Autorisation de Paiement (DAP) </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+                <h5 class="modal-title"><i class="far fa-file-alt "></i> Demande et Autorisation de Paiement (DAP) </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 
-                <form class="row g-3 mb-6" method="POST" id="adddapForm">
+                <form class="row g-3 mb-6" method="POST" id="adddapForm" >
                     @method('post')
                     @csrf
 
@@ -118,19 +119,23 @@
                                 </tr>
                             </table>
                             <table  class="table table-striped table-sm fs--1 mb-0 table-bordered" id="facture-column" style="display: none; width:100%"> 
-                                <tr > 
-                                    <td> Dure avance &nbsp;  <input type="number" name="duree_avence" id="duree_avence" style="width: 100% ;  border:1px solid #c0c0c0"  required /></td>
-                                    <td style="width:15%"> Montant de l'Avance &nbsp;  <input type="number" name="montantavance" id="montantavance" style="width: 100%; border:1px solid #c0c0c0"  required /></td>
-                                    <td> Montant utilisé* &nbsp;  <input type="number" name="montantutiliser" id="montantutiliser" style="width: 100%  ; border:1px solid #c0c0c0"    required /></td>
-                                    <td> Surplus/Manque* &nbsp;  <input type="number" name="surplus" id="surplus" style="width: 100% ; border:1px solid #c0c0c0"     required /></td>
-                                    <td> Montant retourné &nbsp;  <input type="number" name="montantretour" id="montantretour" style="width: 100% ;  border:1px solid #c0c0c0"   required /></td>
-                                    <td> Bordereau de versement no &nbsp;  <input type="bordereau" name="bordereau" id="numerofacture" style="width: 100% ;  border:1px solid #c0c0c0" required /></td>
-                                    <td> Du &nbsp;  <input type="number" name="datedu" id="datedu" style="width: 100% ;  border:1px solid #c0c0c0"  required /></td>
-                                </tr>
-                                <tr>
-                                    <td> F acture</td>
+                                <tr> 
+                                    <td> Facture  &nbsp;  <input type="number" name="facture" id="facture" style="width: 100% ;  border:1px solid #c0c0c0"   /></td>
+                                    <td> Dure avance &nbsp;  <input type="number" name="duree_avence" id="duree_avence" style="width: 100% ;  border:1px solid #c0c0c0"  /></td>
+                                    <td style="width:15%"> Montant de l'Avance &nbsp;  <input type="number" name="montantavance" id="montantavance" style="width: 100%; border:1px solid #c0c0c0"   /></td>
+                                    <td> Montant utilisé* &nbsp;  <input type="number" name="montantutiliser" id="montantutiliser" style="width: 100%  ; border:1px solid #c0c0c0"    /></td>
+                                    <td> Surplus/Manque* &nbsp;  <input type="number" name="surplus" id="surplus" style="width: 100% ; border:1px solid #c0c0c0"     /></td>
+                                    <td> Bordereau de versement &nbsp;  <input type="texte" name="bordereau" id="bordereau" style="width: 100% ;  border:1px solid #c0c0c0"  /></td>
+                                    <td> Du &nbsp;  <input type="number" name="datedu" id="datedu" style="width: 100% ;  border:1px solid #c0c0c0" /></td>
                                 </tr>
                             </table>
+
+                            <div  id="Showretour" style="display: none;" >
+
+                            </div>
+
+
+                          
                             <br>
 
 
@@ -248,7 +253,7 @@
 
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" id="adddapbtn" name="adddapbtn"><i class="fa fa-check-circle"></i> Sauvegarder</button>
+                <button type="submit" class="btn btn-primary" id="adddapbtn" name="adddapbtn"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
             </div>
             </form>
         </div>

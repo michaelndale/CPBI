@@ -29,8 +29,8 @@ class CategoriebeneficiaireController extends Controller
                          <i class="mdi mdi-dots-vertical ms-2"></i>
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#edittypeModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
-                        <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
+                        <a class="dropdown-item text-primary mx-1 editCategorie" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#editcatModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
+                        <a class="dropdown-item text-danger mx-1 deletecategorie"  id="' . $rs->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
                     </div>
                  </div>
                 
@@ -58,7 +58,7 @@ class CategoriebeneficiaireController extends Controller
     {
       $categorie = categoriebeneficiaire::orderBy('titre', 'ASC')->get();
       $output = '';
-      $output.='<option> Select categorie </option>';
+      $output.='<option> Séléctionner catégorie </option>';
       if ($categorie->count() > 0) {
   
         $nombre = 1;
@@ -113,12 +113,12 @@ class CategoriebeneficiaireController extends Controller
     }
   
     // update an categorie ajax request
-    public function update(Request $request)
+    public function updatecate(Request $request)
     {
       try {
   
   
-        $title = $request->titretype;
+        $title = $request->ctitre;
         $check = categoriebeneficiaire::where('titre', $title)->first();
         if ($check) {
           return response()->json([
@@ -126,9 +126,9 @@ class CategoriebeneficiaireController extends Controller
           ]);
         } else {
   
-          $emp = categoriebeneficiaire::find($request->typeid);
+          $emp = categoriebeneficiaire::find($request->catid);
           if ($emp->userid == Auth::id()) {
-            $emp->titre = $request->titrecategorie;
+            $emp->titre = $request->ctitre;
             $emp->update();
             return response()->json([
               'status' => 200,
@@ -147,7 +147,7 @@ class CategoriebeneficiaireController extends Controller
     }
   
     // supresseion
-    public function deleteall(Request $request)
+    public function deletecategorie(Request $request)
     {
       try {
   

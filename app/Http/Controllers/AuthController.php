@@ -55,7 +55,7 @@ class AuthController extends Controller
   {
     $title = 'Conducteur';
     $active = 'Parc';
-    $profile = profile::all();
+    $profile = Fonction::all();
     $statut = Status::all();
     return view(
       'conducteur.index',

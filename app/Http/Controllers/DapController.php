@@ -143,24 +143,14 @@ class DapController extends Controller
       try {
           // Commencer une transaction de base de données
           DB::beginTransaction();
-  
-          if ($request->has('ov')) {
-              $ov = 1;
-          } else {
-              $ov = 0;
-          }
-          if ($request->has('ch')) {
-              $ch = 1;
-          } else {
-              $ch = 0;
-          }
-  
-          if ($request->has('justifier')) {
-              $justifier = 1;
-          } else {
-              $justifier = 0;
-          }
-  
+    
+          // Détermination des valeurs pour les champs ov, ch, justifier et nonjustifier
+          $ov = $request->has('ov') ? 1 : 0;
+          $ch = $request->has('ch') ? 1 : 0;
+          $justifier = $request->has('justifier') ? 1 : 0;
+          $nonjustifier = $request->has('nonjustifier') ? 1 : 0;
+    
+          // Création d'une nouvelle instance de modèle Dap et attribution des valeurs
           $dap = new dap();
           $dap->numerodp      = $request->numerodap;
           $dap->serviceid      = $request->serviceid;
@@ -177,68 +167,87 @@ class DapController extends Controller
           $dap->chefprogramme  = $request->chefprogramme;
           $dap->observation    = $request->observation;
           $dap->justifier      = $justifier;
+          $dap->nonjustifier   = $nonjustifier;
           $dap->userid         = Auth::id();
-  
+    
+          // Sauvegarde du modèle Dap
           $do= $dap->save();  
           $IDdap = $dap->id;
-  
+    
           if($do){
               // Récupérer les valeurs de febid
               $febidArray = $request->febid;
-              $numerofebArray = $request->numerofeb;
-  
+    
               // Itérer sur chaque febid et enregistrer les données
               foreach ($febidArray as $key => $febid) {
-                  $dapE = new Elementdap();
-                  $dapE->dapid          =  $IDdap; 
-                  $dapE->numerodap      =  $request->numerodap; // Utiliser la valeur de numerofeb correspondante
-                  $dapE->referencefeb   =  $febid; // Utiliser la valeur de febid actuelle
-                  $dapE->projetidda     =  $request->projetid;
-                  $dapE->save();
-  
-                  $element = Feb::where('id', $febid)->first();
-                  $element->statut = 1;
-                  $element->update();
-              }
+                // Vérifier si un enregistrement avec la même référencefeb existe déjà
+                $existingDapE = Elementdap::where('referencefeb', $febid)->first();
+            
+                // Si aucun enregistrement existant n'est trouvé, procéder à la sauvegarde
+                if (!$existingDapE) {
+
+                    $dapE = new Elementdap();
+
+                    $dapE->dapid = $IDdap; 
+                    $dapE->numerodap = $request->numerodap; 
+                    $dapE->referencefeb = $febid; 
+                    $dapE->projetidda = $request->projetid;
+                    $dapE->ligneided = $request->ligneid[$key]; 
+                    $dapE->montantretour = $request->montantretour[$key]; 
+
+                    $dapE->save();
+                
+                    // Mettre à jour le statut de l'élément Feb correspondant
+                    $element = Feb::where('id', $febid)->first();
+                    if ($element) {
+                        $element->statut = 1;
+                        $element->save();
+                    }
+                }
+            }
+
+            if($justifier == 1){
+              // Exécutez les nouvelles informations
+          
+              $justification = new Dja();
+          
+              $justification->numerodjas = $request->numerodap;
+              $justification->projetiddja = $request->projetid;
+              $justification->numerodap = $request->numerodap;
+              $justification->montant_avance = $request->montantavance;
+              $justification->duree_avence = $request->duree_avance;
+              $justification->numeroov = $ov;
+              $justification->montantutiliser = $request->montantutiliser;
+              $justification->surplus = $request->surplus;
+              $justification->numfacture = $request->facture;
+              $justification->bordereau = $request->bordereau; 
+              $justification->date_fondrecu = $request->datedu;
+              $justification->userid = Auth::id();
+          
+              $justification->save();
           }
-
-          if($justifier==1){
-            // Execute new information 
-
-            $justication = new Dja();
-
-            $justication->numerodjas = $request->numerodap;
-            $justication->projetiddja =  $request->projetid;
-            //$justication->datefondrecu =  $request->projetid;
-            $justication->numerodap =  $request->numerodap;
-            $justication->montant_avance =  $request->montantavance;
-            $justication->duree_avence =  $request->duree_avence;
-            $justication->numeroov =  $ov;
-            $justication->montantutiliser =  $request->montantutiliser;
-            $justication->surplus =  $request->surplus;
-            $justication->montantretour =  $request->montantretour;
-            $justication->date_fondrecu =  $request->datedu;
-            $justication->userid         = Auth::id();
-
-            $justication->save();
+          
             
           }
-  
+    
           // Confirmer la transaction
           DB::commit();
-  
+    
           return response()->json([
               'status' => 200,
           ]);
       } catch (Exception $e) {
           // En cas d'erreur, annuler la transaction
           DB::rollback();
-  
+    
           return response()->json([
               'status' => 203,
+              'error' => $e->getMessage()
           ]);
       }
   }
+  
+  
   
   
 

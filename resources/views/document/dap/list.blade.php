@@ -113,7 +113,7 @@ $('#numerodap').blur(function() {
                     $('#numerodap').removeClass('has-success') // Supprime la classe de succès
                     $('#numerodap').addClass('has-error');
                     $('#numerodap_info').text('');
-                    $('#adddapbtn').prop('disabled', true); // Désactiver le bouton de sauvegarde
+                  
                    
                    
                 } else {
@@ -121,7 +121,7 @@ $('#numerodap').blur(function() {
                     $('#numerodap').removeClass('has-error')  // Supprime la classe de succès
                     $('#numerodap').addClass('has-success');
                     $('#numerodap_error').text('');
-                    $('#adddapbtn').prop('disabled', false); // Désactiver le bouton de sauvegarde
+                  
                 }
             },
             error: function(xhr, status, error) {
@@ -130,47 +130,38 @@ $('#numerodap').blur(function() {
         });
     });
 
-
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
     var justifierCheckbox = document.getElementById('justifier');
     var nonjustifierCheckbox = document.getElementById('nonjustifier');
     var factureColumn = document.getElementById('facture-column');
+    var showRetourDiv = document.getElementById('Showretour');
 
-    function updateRequired() {
-        if (justifierCheckbox.checked || nonjustifierCheckbox.checked) {
-            justifierCheckbox.removeAttribute('required');
-            nonjustifierCheckbox.removeAttribute('required');
+    function updateDisplay() {
+        if (justifierCheckbox.checked) {
+            factureColumn.style.display = 'table';
+            showRetourDiv.style.display = 'block';
+            nonjustifierCheckbox.checked = false;
         } else {
-            justifierCheckbox.setAttribute('required', '');
-            nonjustifierCheckbox.setAttribute('required', '');
+            factureColumn.style.display = 'none';
+            showRetourDiv.style.display = 'none';
         }
     }
 
     justifierCheckbox.addEventListener('change', function() {
-        if (justifierCheckbox.checked) {
-            factureColumn.style.display = 'table-cell';
-            nonjustifierCheckbox.checked = false;
-        } else {
-            factureColumn.style.display = 'none';
-        }
-        updateRequired();
+        updateDisplay();
     });
 
     nonjustifierCheckbox.addEventListener('change', function() {
         if (nonjustifierCheckbox.checked) {
             factureColumn.style.display = 'none';
-            justifierCheckbox.checked = false;
-        } else {
-            factureColumn.style.display = 'table-cell';
+            showRetourDiv.style.display = 'none';
         }
-        updateRequired();
     });
 
-    // Au chargement initial de la page, cacher la colonne de la facture numéro et rendre les cases obligatoires
-    factureColumn.style.display = 'none';
-    justifierCheckbox.setAttribute('required', '');
-    nonjustifierCheckbox.setAttribute('required', '');
+    // Au chargement initial, assurez-vous que les éléments restent masqués
+    updateDisplay();
 });
+
 
 function toggleInputs() {
     var checkboxes = document.querySelectorAll('.seleckbox');
@@ -203,13 +194,37 @@ function toggleInputs() {
 });
 
 
+$(document).ready(function() {
+    $(document).on('change', '.febid', function() {
+        var febrefs = $(this).val(); // Utilisez val() pour obtenir toutes les valeurs sélectionnées
+        var div = $(this).parent();
+        var op = " ";
+        $.ajax({
+            type: 'get',
+            url: "{{ route ('getfebretour') }}",
+            data: {
+                'ids': febrefs // Utilisez 'ids' au lieu de 'id' pour envoyer toutes les valeurs sélectionnées
+            },
+            success: function(reponse) {
+                $("#Showretour").html(reponse);
+            },
+            error: function() {
+                alert("Attention! \n Erreur de connexion à la base de données, \n veuillez vérifier votre connexion");
+            }
+        });
+    });
+});
+
+
+
 
   $(function() {
 
     $("#adddapForm").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#addfebbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      $("#adddapbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("adddapbtn").disabled = false;
         $("#loadingModal").modal('show'); // Affiche le popup de chargement
       $.ajax({
         url: "{{ route('storedap') }}",
@@ -235,18 +250,24 @@ function toggleInputs() {
           if (response.status == 201) {
             toastr.error("Attention: DAP fonction existe déjà !", "info");
             $("#dapModale").modal('show');
+            $("#adddapbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              document.getElementById("adddapbtn").disabled = false;
           }
 
           if (response.status == 202) {
             toastr.error("Erreur d'execution, verifier votre internet", "error");
             $("#dapModale").modal('show');
+            $("#adddapbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              document.getElementById("adddapbtn").disabled = false;
+          }
+          if (response.status == 203) {
+            toastr.error("Erreur d'exécution: " + response.error, "Erreur");
+            $("#dapModale").modal('show');
+            $("#adddapbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("adddapbtn").disabled = false;
           }
 
-          $("#addfebbtn").text('Sauvegarder');
-            $("#loadingModal").modal('hide'); 
-            setTimeout(function() {
-                $("#loadingModal").modal('hide');
-            }, 600); // 2000 millisecondes = 2 secondes
+        
         }
       });
     });

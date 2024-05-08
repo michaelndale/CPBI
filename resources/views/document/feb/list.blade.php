@@ -281,7 +281,11 @@ function calc_total() {
         e.preventDefault();
         const fd = new FormData(this);
         $("#addfebbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+        document.getElementById("addfebbtn").disabled = true;
         $("#loadingModal").modal('show'); // Affiche le popup de chargement
+
+        
+
         $.ajax({
           url: "{{ route('storefeb') }}",
           method: 'post',
@@ -296,7 +300,8 @@ function calc_total() {
               fetchAllfeb();
               Sommefeb();
 
-              $("#addfebbtn").text('Sauvegarder');
+             
+              $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
               $("#numerofeb_error").text("");
               $('#numerofeb').addClass('');
 
@@ -304,28 +309,32 @@ function calc_total() {
                
               $("#addfebModal").modal('hide');
 
-              
-             
+              document.getElementById("addfebbtn").disabled = false;
 
               toastr.success("Feb ajouté avec succès !", "Enregistrement");
             }
             if (response.status == 201) {
               toastr.error("Attention: FEB numéro existe déjà !", "Attention");
               $("#addfebModal").modal('show');
-              
               $("#numerofeb_error").text("Numéro existe");
               $('#numerofeb').addClass('has-error');
+              document.getElementById("addfebbtn").disabled = false;
+              $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             }
 
             if (response.status == 202) {
-              toastr.error("Erreur d'execution, verifier votre internet", "Attention");
+              toastr.error("Erreur d'exécution: " + response.error, "Erreur");
               $("#addfebModal").modal('show');
+              document.getElementById("addfebbtn").disabled = false;
+              $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
              
             }
 
             if (response.status == 203) {
               toastr.error("Le montant global du feb depasse le budget de la ligne encours", "Attention");
               $("#addfebModal").modal('show');
+              document.getElementById("addfebbtn").disabled = false;
+              $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
              
             }
 

@@ -438,8 +438,10 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
                 <li><a href="#">Reparation</a></li>
                 <li><a href="#">Carburent</a></li>
                 <li><a href="#">Piece</a></li>
+                <li><a href="{{ route('outilspa') }}">Outils gestions</a></li>
               </ul>
             </li>
+            
 
 
 

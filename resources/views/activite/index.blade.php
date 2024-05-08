@@ -98,7 +98,11 @@
     $("#addactiviteForm").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#addactivitebtn").text('Ajouter...');
+
+      $("#addactivitebtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("addactivitebtn").disabled = true;
+
+
       $.ajax({
         url: "{{ route('storeact') }}",
         method: 'post',
@@ -113,23 +117,25 @@
 
             toastr.success("L'activité a été ajoutée avec succè", "success");
 
-
-            $("#addactivitebtn").text('Sauvegarder');
-            $("#addModale").modal('hide');
+            $("#addactivitebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addactiviteForm")[0].reset();
+            $("#addModale").modal('hide');
+            document.getElementById("addactivitebtn").disabled = false;
           }
 
           if (response.status == 201) {
             toastr.error("La somme des activités dépasse le montant disponible sur la ligne  !", "Attention");
+            $("#addactivitebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("addactivitebtn").disabled = false;
             $("#addModale").modal('show');
-            $("#addactivitebtn").text('Sauvegarder');
+           
           }
 
           if (response.status == 500) {
             toastr.info("Une erreur est survenue lors de l'ajout de l'activité", "Erreur");
-
+            $("#addactivitebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("addactivitebtn").disabled = false;
             $("#addModale").modal('show');
-            $("#addactivitebtn").text('Sauvegarder');
           }
 
 
@@ -143,7 +149,10 @@
     $("#AddCommenteForm").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#Addcommentebtn").text('Ajouter...');
+     
+      $("#Addcommentebtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("Addcommentebtn").disabled = true;
+
       $.ajax({
         url: "{{ route('storeobeserve') }}",
         method: 'post',
@@ -158,9 +167,12 @@
 
             toastr.success("Observation ajoutée avec succès !", "success");
 
-            $("#Addcommentebtn").text('Sauvegarder');
+            
             $("#AddObserve").modal('hide');
             $("#Addcommentebtn")[0].reset();
+
+            $("#Addcommentebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("editfolderbtn").disabled = false;
           }
 
 
@@ -168,14 +180,17 @@
             toastr.danger("Échec de l'ajout de l'observation", "Erreur");
 
             $("#AddObserve").modal('show');
-            $("#Addcommentebtn").text('Sauvegarder');
+            $("#Addcommentebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("editfolderbtn").disabled = false;
           }
 
           if (response.status == 500) {
             toastr.danger("Une erreur est survenue lors de l'ajout de l'observation.", "Erreur");
 
             $("#AddObserve").modal('show');
-            $("#Addcommentebtn").text('Sauvegarder');
+            $("#Addcommentebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("editfolderbtn").disabled = false;
+            
           }
 
 

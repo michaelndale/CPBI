@@ -57,9 +57,9 @@
           </div>
         </div>
       </div>
-      <br>  <br>
+      <br>  <br>  <br>
     </div>
-  </div>
+  </div>  <br> <br> <br> <br> <br> <br>
 </div>
 
 
@@ -166,7 +166,10 @@ window.onload = function() {
     $("#addFOrm").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#addcompte").text('Enregistrement encours...');
+
+      $("#savebtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("savebtn").disabled = true;
+
       $.ajax({
         url: "{{ route('storerallonge') }}",
         method: 'post',
@@ -179,29 +182,45 @@ window.onload = function() {
           if (response.status == 200) {
             toastr.success("Budget reussi avec succès !", "Enregistrement");
             fetchAllrallonge();
+
+            $("#savebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addFOrm")[0].reset();
             $("#addDealModal").modal('hide');
+            document.getElementById("savebtn").disabled = false;
+
           }
 
           if (response.status == 201) {
             toastr.error("Le montant est supérieur au montant globale du budget !", "Attention");
+            $("#savebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+          
+          
+            document.getElementById("savebtn").disabled = false;
 
             $("#addDealModal").modal('show');
           }
 
           if (response.status == 202) {
             toastr.error("Erreur d'execution  !", "Erreur");
+            $("#savebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+          
+         
+          document.getElementById("savebtn").disabled = false;
 
             $("#addDealModal").modal('show');
           }
 
           if (response.status == 203) {
             toastr.error("Une ligne de compte n'est peut recevoir de fois le montant !", "Erreur");
+            $("#savebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+          
+        
+          document.getElementById("savebtn").disabled = false;
 
             $("#addDealModal").modal('show');
           }
 
-          $("#savebtn").text('Sauvegarder');
+          
 
         }
       });

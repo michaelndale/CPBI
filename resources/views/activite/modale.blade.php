@@ -2,7 +2,8 @@
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Nouvelle activité </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
+        <h5 class="modal-title">Nouvelle activité </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form class="row g-3 mb-6" method="POST" id="addactiviteForm">
@@ -29,7 +30,7 @@
                         <div class="mb-0">
 
                           <select class="form-select  select2-search-disable condictionsearch" id="compteid" name="compteid" required>
-                            <option>Ligne budgétaire</option>
+                            <option value="">Ligne budgétaire</option>
                             @foreach ($compte as $comptes)
                             <optgroup label="{{ $comptes->libelle }}">
                               @php
@@ -59,7 +60,7 @@
             </tr>
 
             <tr>
-              <td class="align-middle ps-3 name" style="width:25%">Description detaillee des besoins </td>
+              <td class="align-middle ps-3 name" style="width:25%; height:70%">Description detaillee des besoins </td>
               <td class="align-middle email" colspan="6">
                 <textarea type="text" class="form-control form-control-sm" name="titre" id="titre" required></textarea>
               </td>
@@ -83,7 +84,7 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="submit" name="addactivitebtn" id="addactivitebtn" class="btn btn-primary px-5 px-sm-15 addactivitebtn"><i class="fa fa-check-circle" ></i> Sauvegarder </button>
+      <button type="submit" name="addactivitebtn" id="addactivitebtn" class="btn btn-primary px-5 px-sm-15 addactivitebtn"><i class="fa fa-cloud-upload-alt"></i>  Sauvegarder </button>
     </div>
   </div>
   </form>
@@ -97,7 +98,8 @@
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Modifier l'activité </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
+        <h5 class="modal-title">Modifier l'activité </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form class="row g-3 mb-6" method="POST" id="editactiviteForm">

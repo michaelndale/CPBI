@@ -26,6 +26,7 @@ use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ObservationactiviteController;
+use App\Http\Controllers\OutilsController;
 use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PlanoperationnelController;
 use App\Http\Controllers\PortierController;
@@ -138,6 +139,7 @@ Route::middleware('auth')->group(function () {
 
     });
 
+
     Route::prefix('gestioncompte')->group(function () {
         Route::get('/', [CompteController::class, 'index'])->name('gestioncompte');
         Route::get('/fetchAllGc', [CompteController::class, 'fetchAll'])->name('fetchAllGc');
@@ -201,6 +203,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/categoriebeneficiaire', [CategoriebeneficiaireController::class, 'allcategoriebeneficiaire'])->name('categoriebeneficiaire');
         Route::post('/storecategoriebeneficiaire', [CategoriebeneficiaireController::class, 'storecategorie'])->name('storecategoriebeneficiaire');
         Route::get('/selectcategorie', [CategoriebeneficiaireController::class, 'selectcategorie'])->name('selectcategorie');
+       
+        Route::get('/editcategorie', [CategoriebeneficiaireController::class, 'edit'])->name('editcategorie');
+        Route::post('/updatecategorie', [CategoriebeneficiaireController::class, 'updatecate'])->name('updatecategorie');
+
+        Route::delete('/deletecategorie', [CategoriebeneficiaireController::class, 'deletecategorie'])->name('deletecategorie');
     });
 
     Route::prefix('project')->group(function () {
@@ -235,6 +242,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/getfeb', [FebController::class, 'findfebelement'])->name('getfeb');
+    Route::get('/getfebretour', [FebController::class, 'findfebelementretour'])->name('getfebretour');
 
     Route::get('/getactivite', [FebController::class, 'getactivite'])->name('getactivite');
     Route::get('/fetctnotifiaction', [FebController::class, 'notificationdoc'])->name('allnotification');
@@ -304,6 +312,18 @@ Route::middleware('auth')->group(function () {
         //Route::get('/editfl', [FolderController::class, 'edit'])->name('editfl');
         //Route::post('/updatefl', [FolderController::class, 'update'])->name('updatefl'); 
     });
+
+
+    Route::prefix('outilspa')->group(function () {
+        Route::get('/', [OutilsController::class, 'index'])->name('outilspa');
+        Route::get('/alltype', [OutilsController::class, 'alltype'])->name('alltype');
+        Route::post('/storetype', [OutilsController::class, 'storetype'])->name('storetype');
+        //  Route::delete('/deletevl', [VehiculeController::class, 'deleteall'])->name('deletevl');
+        //Route::get('/editfl', [FolderController::class, 'edit'])->name('editfl');
+        //Route::post('/updatefl', [FolderController::class, 'update'])->name('updatefl'); 
+    });
+
+   
 
     Route::prefix('archivage')->group(function () {
         Route::get('/', [ArchivageController::class, 'index'])->name('archivage');

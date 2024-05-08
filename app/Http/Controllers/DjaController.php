@@ -36,6 +36,7 @@ class DjaController extends Controller
       foreach ($data as $datas) {
         $cryptedId = Crypt::encrypt($datas->id);
         if($datas->numeroov==1){ $ov="checked" ; } else{ $ov=""; }
+       
         $output .= '
         <tr>
           <td> 
@@ -45,9 +46,8 @@ class DjaController extends Controller
                 <i class="mdi mdi-dots-vertical ms-2"></i> Action
             </button>
             <div class="dropdown-menu">
+               
                 <a href="dja/'.$cryptedId.'/view" class="dropdown-item text-success mx-1 voirIcon"  ><i class="far fa-edit"></i> Voir dja</a>
-                <a href="dja/'.$cryptedId.'/edit" class="dropdown-item text-primary mx-1 editIcon " title="Modifier"><i class="far fa-edit"></i> Modifier dja</a>
-                <a href="dja/'.$cryptedId. '/generate-pdf-dja" class="dropdown-item  mx-1"><i class="fa fa-print"> </i> Générer document PDF</a>
                 <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer dja</a>
             </div>
           </div>
@@ -56,9 +56,9 @@ class DjaController extends Controller
           <td> '.$datas->numerodjas.'  </td>
         
           <td> '.$datas->numerodap.' </td>
-          <td> '.$datas->numeroov.' </td>
-          <td align="center"><input type="checkbox"  '. $ov .' class="form-check-input" /> </td>
-     
+          <td> <input type="checkbox"  '. $ov .' class="form-check-input" />  </td>
+          <td>'.$datas->numfacture.'</td>
+          <td>'.$datas->bordereau.'</td>
           <td> '.$datas->montant_avance.' </td>
      
          
@@ -83,54 +83,7 @@ class DjaController extends Controller
   }
 
       // insert a new employee ajax request
-      public function store(Request $request)
-      {
-        
-        $djaData= new Dja();
-
-        $djaData->numerodjas = $request->numerodja;
-        $djaData->projetiddja = $request->projetid;
-        $djaData->beneficiaire = $request->benef;
-        $djaData->adresse = $request->adresse;
-        $djaData->tel = $request->tel;
-        $djaData->teld = $request->tel2;
-        $djaData->datefondrecu= $request->daterecufond;
-        $djaData->numerofeb= $request->numfeb;
-        $djaData->numerodap= $request->dapnumero;
-        $djaData->numeroov= $request->ov;
-        $djaData->lignebdt= $request->lignebudget;
-        $djaData->montant_avance= $request->montantavence;
-        $djaData->devise= $request->devise;
-        $djaData->duree_avence= $request->dureavence;
-        $djaData->description= $request->description;
-        $djaData->fonddemandepar= $request->fonddemandepar;
-        $djaData->chefcomptable= $request->chefcomptable;
-        $djaData->raf= $request->raf;
-        $djaData->sg= $request->sga;
-        $djaData->fondboursser= $request->fonddebourser;
-        $djaData->fondresu= $request->fondresu;
-        $djaData->fondpaye= $request->fondpaye;
-        $djaData->utiadresse= $request->utiadresse;
-        $djaData->utitelephone= $request->utitelephone;
-        $djaData->utitelephoned= $request->utitelephone2;
-        $djaData->userid = Auth::id();
-
-        $djaData->save();
-
-      
-        if($djaData){
-          return response()->json([
-            'status' => 200,
-            
-           ]);
-        }else{
-          return response()->json([
-            'status' => 202,
-            
-           ]);
-        }
-       
-      }
+     
 
     public function list()
     {
@@ -160,24 +113,157 @@ class DjaController extends Controller
 
     public function show($idd){
 
-      $title="Voir DJA";
+      $ID = session()->get('id');
+
+      $budget = session()->get('budget');
+  
+      $devise = session()->get('devise');
+  
+      $title = "Voir DAP";
       $ID = session()->get('id');
       $dateinfo = Identification::all()->first();
+  
+      $idd = Crypt::decrypt($idd);
+  
+      $datadap = DB::table('djas')
+        ->join('daps', 'djas.numerodap','daps.numerodp' )
+        ->join('services', 'daps.serviceid', 'services.id')
+        ->select('djas.*', 'djas.id as idjas','daps.*' ,'daps.id as iddap','services.title as titres')
+        ->Where('djas.projetiddja', $ID)
+        ->Where('djas.id', $idd)
+        ->first();
 
-      $idd = Crypt::decrypt($idd); // bd
+        //dd($datadap);
+        //dd($idd);
 
-      $Jsondja = DB::table('djas')
-                ->orderby('id','DESC')
-                ->Where('projetiddja', $ID)
-                ->Where('djas.id', $idd)
-                ->first();
+       
       
-      return view('document.dja.voir', 
+
+        $ID_DAP= $datadap->iddap ;
+        
+
+        //dd($ID_DAP);
+  
+        $elementfeb = DB::table('febs')
+        ->join('elementdaps','febs.id' , 'elementdaps.referencefeb')
+        ->select('elementdaps.*','febs.id as fid','febs.numerofeb','febs.descriptionf')
+        ->where('elementdaps.dapid', $ID_DAP)
+        ->get();
+  
+        $somme_gloable = DB::table('elementfebs')
+        ->Where('projetids', $ID)
+        ->SUM('montant');
+        $pourcetage_globale =round(($somme_gloable* 100) / $budget,2);
+  
+        $solde_comptable = $budget-$somme_gloable;
+
+        //beneficaire commce
+  
+  
+     
+        $elementfebencours = DB::table('febs')
+        ->join('elementdaps','febs.id' , 'elementdaps.referencefeb')
+        ->select('elementdaps.*','febs.id as fid','febs.numerofeb','febs.descriptionf')
+        ->where('elementdaps.numerodap', $ID_DAP)
+        ->get();
+  
+        $somme_element_encours= 0;
+        foreach ($elementfebencours as $key => $elementfebencourss) {
+          $totoSUM = DB::table('elementfebs')
+          ->orderBy('id', 'DESC')
+          ->where('febid', $elementfebencourss->fid)
+          ->sum('montant');
+          $somme_element_encours += $totoSUM;
+        }
+  
+  
+       $pourcentage_encours=  round(($somme_element_encours* 100) / $budget,2);
+  
+       $taux_execution_avant = $pourcetage_globale-$pourcentage_encours;
+  
+   
+  
+      $allmontant = DB::table('elementfebs')
+        ->Where('projetids', $ID)
+        ->SUM('montant');
+      $solder_dap = $budget - $allmontant;
+  
+      $pourcentage_global_b = round(($allmontant * 100) / $budget,2);
+  
+      //etablie par 
+      $etablienom =  DB::table('users')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
+        ->Where('users.id', $datadap->userid)
+        ->first();
+  
+      $Demandeetablie =  DB::table('users')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
+        ->Where('users.id', $datadap->demandeetablie)
+        ->first();
+  
+      $verifierpar =  DB::table('users')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
+        ->Where('users.id', $datadap->verifierpar)
+        ->first();
+  
+      $approuverpar =  DB::table('users')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
+        ->Where('users.id', $datadap->approuverpar)
+        ->first();
+  
+      $responsable =  DB::table('users')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
+        ->Where('users.id', $datadap->responsable)
+        ->first();
+  
+  
+  
+      $secretaire =  DB::table('users')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id as idp', 'users.signature', 'users.id as usersid')
+        ->Where('users.id', $datadap->secretaire)
+        ->first();
+  
+      $chefprogramme =  DB::table('users')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id as idp', 'users.signature', 'users.id as usersid')
+        ->Where('users.id', $datadap->chefprogramme)
+        ->first();
+  
+      return view(
+        'document.dja.voir',
+        
         [
           'title'     => $title,
           'dateinfo'  => $dateinfo,
-          'Jsondja'   => $Jsondja
-        ]);
+          'datadap'   => $datadap,
+        
+          'pourcentage_global_b' => $pourcentage_global_b,
+          'solder_dap' => $solder_dap,
+          'etablienom' => $etablienom,
+          'Demandeetablie' => $Demandeetablie,
+          'verifierpar' => $verifierpar,
+          'approuverpar' => $approuverpar,
+          'responsable'  => $responsable,
+          'secretaire'   => $secretaire,
+          'chefprogramme' => $chefprogramme,
+          'datafebElement' => $elementfeb,
+          'budget'=>$budget,
+          'pourcetage_globale' => $pourcetage_globale,
+          'solde_comptable' => $solde_comptable,
+          'taux_execution_avant' => $taux_execution_avant,
+          'pourcentage_encours' => $pourcentage_encours
+  
+        
+        ]
+      );
+
+    
 
     }
 
@@ -257,3 +343,8 @@ class DjaController extends Controller
       Dja::destroy($id);
     }
 }
+
+
+// <a href="dja/'.$cryptedId.'/view" class="dropdown-item text-success mx-1 voirIcon"  ><i class="far fa-edit"></i> Voir dja</a>
+//<a href="dja/'.$cryptedId.'/edit" class="dropdown-item text-primary mx-1 editIcon " title="Modifier"><i class="far fa-edit"></i> Modifier dja</a>
+//<a href="dja/'.$cryptedId. '/generate-pdf-dja" class="dropdown-item  mx-1"><i class="fa fa-print"> </i> Générer document PDF</a>

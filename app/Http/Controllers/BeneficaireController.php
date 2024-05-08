@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Beneficaire;
+use App\Models\categoriebeneficiaire;
 use App\Models\Historique;
 use Exception;
 use Illuminate\Http\Request;
@@ -11,10 +12,17 @@ use Illuminate\Support\Facades\DB;
 
 class BeneficaireController extends Controller
 {
+    
+
     public function index()
     {
       $title = 'Bénéficiaire';
-      return view('beneficiaire.index', ['title' => $title]);
+      $caregories = categoriebeneficiaire::all();
+      return view('beneficiaire.index', 
+        [
+          'title' => $title ,
+          'caregorie' => $caregories
+        ]);
     }
   
     public function fetchAll()
@@ -106,7 +114,13 @@ class BeneficaireController extends Controller
     public function edit(Request $request)
     {
       $id = $request->id;
-      $fon = Beneficaire::find($id);
+
+      $fon = DB::table('beneficaires')
+          ->join('categoriebeneficiaires', 'beneficaires.categorieid', 'categoriebeneficiaires.id')   
+          ->Select('beneficaires.*','beneficaires.id as idb','categoriebeneficiaires.titre','categoriebeneficiaires.id as idc')
+          ->Where('beneficaires.id', $id)
+          ->first();
+
       return response()->json($fon);
     }
   
@@ -119,7 +133,7 @@ class BeneficaireController extends Controller
 
           if ($emp->userid == Auth::id()) 
           {
-            $emp->categorieid = $request->bcid;
+            $emp->categorieid = $request->cids;
             $emp->libelle = $request->bnom;
             $emp->adresse = $request->badresse;
             $emp->telephoneone = $request->btelephoneun;

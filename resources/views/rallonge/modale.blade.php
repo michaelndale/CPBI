@@ -7,19 +7,23 @@
     @method('post')
     @csrf
       <div class="modal-header">
-        <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouveau budgétisation  </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+        <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouveau budgétisation  </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        
       </div>
       <div class="modal-body">
       <div class="row g-3">
-        <div class="col-sm-6 col-lg-12 col-xl-12">
+      <!--  <div class="col-sm-6 col-lg-12 col-xl-12">
           <label class="text-1000 fw-bold mb-2">Rubrique du projet</label>
           <div class="row g-2">
             <div class="col">
-              <input id="projetid" name="projetid" type="hidden" value="{{ Session::get('id') }}" />
+              
               <input  class="form-control" type="text" placeholder="Enter code" value="{{ Session::get('title') }}" readonly disabled  style="background-color:#F5F5F5" />
             </div>     
             </div>
-        </div>
+        </div>  -->
+
+        <input id="projetid" name="projetid" type="hidden" value="{{ Session::get('id') }}" />
 
           <div class="col-sm-6 col-lg-12 col-xl-12">
           
@@ -84,7 +88,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" name="savebtn" id="savebtn" class="btn btn-primary" type="button"> Sauvegarder</button>
+        <button type="submit" name="savebtn" id="savebtn" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i>  Sauvegarder</button>
       </div>
       </form>
   </div>
@@ -99,7 +103,8 @@
     @method('post')
     @csrf
       <div class="modal-header">
-        <h5 class="modal-title" id="verticallyCenteredModalLabel"> <i class="fa fa-edit"></i> Modifier la ligne budgetaire  </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+        <h5 class="modal-title" id="verticallyCenteredModalLabel"> <i class="fa fa-edit"></i> Modifier la ligne budgetaire  </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
       <div class="row g-3">

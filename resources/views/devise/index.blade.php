@@ -44,7 +44,7 @@
         </div>
       </div>
     </div> <!-- container-fluid -->
-    <br><br> <br><br> <br><br> <br><br> 
+    <br><br> <br><br> <br><br> <br><br>  <br><br>  <br><br>  <br><br> 
   </div>
 </div>
 
@@ -56,7 +56,8 @@
       @csrf
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Nouvelle devise</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Nouvelle devise</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
 
@@ -80,7 +81,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="add_devise" id="add_devise" value="Sauvegarder" class="btn btn-primary">Sauvegarder</button>
+          <button type="submit" name="add_devise" id="add_devise" value="Sauvegarder" class="btn btn-primary">  <i class="fa fa-cloud-upload-alt"></i>  Sauvegarder</button>
         </div>
       </div>
     </form>
@@ -97,7 +98,8 @@
       @csrf
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Modification devise</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Modification devise</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           
@@ -123,7 +125,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="editdevisebtn" id="editdevisebtn" value="Sauvegarder" class="btn btn-primary">Sauvegarder</button>
+          <button type="submit" name="editdevisebtn" id="editdevisebtn" value="Sauvegarder" class="btn btn-primary"> <i class="fa fa-cloud-upload-alt"></i>  Sauvegarder</button>
         </div>
       </div>
     </form>
@@ -136,7 +138,10 @@
     $("#add_devise_form").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#add_devise").text('Adding...');
+
+      $("#add_devise").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("add_devise").disabled = true;
+
       $.ajax({
         url: "{{ route('storedevise') }}",
         method: 'post',
@@ -149,15 +154,18 @@
           if (response.status == 200) {
             toastr.success("Devise enregistrer avec succès !", "Enregistrement");
             fetchAllddevise();
-            $("#add_devise").text('Sauvegarder');
-            $("#add_devise_form")[0].reset();
-            $("#addDealModal").modal('hide');
+
+              $("#add_devise").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              $("#add_devise_form")[0].reset();
+              $("#addDealModal").modal('hide');
+              document.getElementById("add_devise").disabled = false;
           }
 
           if (response.status == 201) {
             toastr.error("Le devise existe déjà !", "Erreur");
-            $("#add_devise").text('Sauvegarder');
+            $("#add_devise").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addDealModal").modal('show');
+            document.getElementById("add_devise").disabled = false;
           }
         }
 
@@ -190,7 +198,10 @@
     $("#edit_devise_form").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#editdevisebtn").text('Mises encours...');
+
+      $("#editdevisebtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("editdevisebtn").disabled = true;
+
       $.ajax({
         url: "{{ route('updatedevise') }}",
         method: 'post',
@@ -203,19 +214,24 @@
           if (response.status == 200) {
             toastr.success("Devise modifier avec succès !", "Modification");
             fetchAllddevise();
-            $("#editdevisebtn").text('Sauvegarder');
+
+            $("#editdevisebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            $("#edit_devise_form")[0].reset();
             $("#editdeviseModal").modal('hide');
+            document.getElementById("editdevisebtn").disabled = false;
 
           }
 
           if (response.status == 201) {
             toastr.error("Le devise existe déjà !", "Erreur");
-            $("#editdevisebtn").text('Sauvegarder');
+            $("#editdevisebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("editdevisebtn").disabled = false;
           }
 
           if (response.status == 205) {
             toastr.error("Vous n'avez pas l'accreditation de Modifier ce devise !", "Erreur");
-            $("#editdevisebtn").text('Sauvegarder');
+            $("#editdevisebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("editdevisebtn").disabled = false;
           }
 
         }

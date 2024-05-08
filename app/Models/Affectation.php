@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Affectation extends Model
 {
     use HasFactory;
+    protected $fillable = ['projectid', 'memberid', 'userid', 'role'];
 }

@@ -55,14 +55,15 @@
       @csrf
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Nouvelle dossier</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Nouvelle dossier</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <label class="text-1000 fw-bold mb-2">Titre</label>
           <input class="form-control" name="ftitle" id="ftitle" type="text" placeholder="Entrer le titre" required />
         </div>
         <div class="modal-footer">
-          <button type="submit" name="sendFolder" id="add_service" value="Sauvegarder" class="btn btn-primary">Sauvegarder</button>
+          <button type="submit" name="sendFolder" id="sendFolder" value="Sauvegarder" class="btn btn-primary"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
         </div>
       </div>
     </form>
@@ -79,7 +80,8 @@
       @csrf
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Modification dossier</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+          <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-folder-plus"></i> Modification dossier</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <label class="text-1000 fw-bold mb-2">Titre</label>
@@ -88,7 +90,7 @@
 
         </div>
         <div class="modal-footer">
-          <button type="submit" name="editfolderbtn" id="editfolderbtn" value="Sauvegarder" class="btn btn-primary">Sauvegarder</button>
+          <button type="submit" name="editfolderbtn" id="editfolderbtn" value="Sauvegarder" class="btn btn-primary">  <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
         </div>
       </div>
     </form>
@@ -101,7 +103,10 @@
     $("#add_folder_form").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#add_folder").text('Adding...');
+   
+      $("#sendFolder").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("sendFolder").disabled = true;
+    
       $.ajax({
         url: "{{ route('storefl') }}",
         method: 'post',
@@ -112,19 +117,24 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
-            toastr.success("Dossier enregistrer avec succès!", "Enregistrement");
-            fetchAlldfolder();
-            $("#add_folder").text('Sauvegarder');
-            $("#add_folder_form")[0].reset();
-            $("#addDealModal").modal('hide');
+              toastr.success("Dossier enregistrer avec succès!", "Enregistrement");
+              fetchAlldfolder();
+            
+              $("#sendFolder").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              $("#add_folder_form")[0].reset();
+              $("#addDealModal").modal('hide');
+              document.getElementById("sendFolder").disabled = false;
           }
 
           if (response.status == 201) {
-            toastr.error("Le titre du dossier existe déjà !", "Erreur");
-            $("#add_folder").text('Sauvegarder');
-            $("#addDealModal").modal('show');
+              toastr.error("Le titre du dossier existe déjà !", "Erreur");
+              $("#add_folder").text('Sauvegarder');
+              $("#addDealModal").modal('show');
+              document.getElementById("sendFolder").disabled = false;
           }
         }
+
+        
 
       });
     });
@@ -151,7 +161,10 @@
     $("#edit_folder_form").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#editfolderbtn").text('Mises encours...');
+    
+      $("#editfolderbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("editfolderbtn").disabled = true;
+
       $.ajax({
         url: "{{ route('updatefl') }}",
         method: 'post',
@@ -162,23 +175,26 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
-            toastr.success("Dossier modifier avec succès !", "Modification");
-            fetchAlldfolder();
-            $("#editfolderbtn").text('Sauvegarder');
-            $("#editFolderModal").modal('hide');
-
+              toastr.success("Dossier modifier avec succès !", "Modification");
+              fetchAlldfolder();
+           
+              $("#editfolderbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              $("#edit_folder_form")[0].reset();
+              $("#editFolderModal").modal('hide');
+              document.getElementById("editfolderbtn").disabled = false;
           }
 
           if (response.status == 201) {
-            toastr.error("Le titre du dossier existe déjà !", "Erreur");
-
-            $("#editfolderbtn").text('Sauvegarder');
+              toastr.error("Le titre du dossier existe déjà !", "Erreur");
+              $("#editfolderbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              document.getElementById("editfolderbtn").disabled = false;
           }
 
           if (response.status == 205) {
             toastr.error("Vous n'avez pas l'accreditation de Modifier ce dossier!", "Erreur");
 
-            $("#editfolderbtn").text('Sauvegarder');
+            $("#editfolderbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("editfolderbtn").disabled = false;
           }
 
         }

@@ -56,7 +56,7 @@
                                     value="{{ $datadap->ov }}"
                                     @endif /> &nbsp; &nbsp;&nbsp;
 
-                                    OV : <input type="checkbox" class="form-check-input" readonly @if ( $datadap->cho==1)
+                                    Cheque : <input type="checkbox" class="form-check-input" readonly @if ( $datadap->cho==1)
                                     checked value="{{ $datadap->cho }}"
                                     @else
                                     value="{{ $datadap->cho }}"
@@ -320,7 +320,7 @@
                                             @if ($datadap->chefprogramme_signe==1)
                                             <br>
 
-                                            <img src="{{ asset($responsable->signature) }}" width="120px" />
+                                            <img src="{{ asset($chefprogramme->signature) }}" width="120px" />
                                         </center>
                                         @endif
 
