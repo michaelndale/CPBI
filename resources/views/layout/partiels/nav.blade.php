@@ -384,8 +384,7 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
                 <li><a href="javascript: void(0);" class="has-arrow">Feuille de temps</a>
                   <ul class="sub-menu" aria-expanded="true">
                     <li><a href="{{ route('feuilletemps') }}">Mon FT</a></li>
-                    <li><a href="{{ route('personnel') }}">Feuille de temps</a></li>
-                    <li><a href="{{ route('elementft') }}">Element FT</a></li>
+                   
                     <!--<li><a href="javascript: void(0);">Level 2.2</a></li>  -->
                   </ul>
                 </li>
@@ -425,19 +424,13 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
                 <span>Parc automobile</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-                <li><a href="email-inbox.html">Tableau de bord</a></li>
-                <li><a href="javascript: void(0);" class="has-arrow">Vehicule</a>
-                  <ul class="sub-menu" aria-expanded="true">
-                    <li><a href="{{ route('vehicule') }}">Vehicule</a></li>
-                    <li><a href="javascript: void(0);">A.L</a></li>
-                    <li><a href="javascript: void(0);">A.T.V</a></li>
-                  </ul>
-                </li>
-                <li><a href="{{ route('conducteur') }}">Conducteurs</a></li>
+                <li><a href="{{ route('parc') }}">Accueil</a></li>
+              
+                <li><a href="{{ route('vehicule') }}">Véhicule</a></li>
+                <li><a href="#">Carburents</a></li>
                 <li><a href="#">Entretiens</a></li>
-                <li><a href="#">Reparation</a></li>
-                <li><a href="#">Carburent</a></li>
-                <li><a href="#">Piece</a></li>
+                <li><a href="#">Réparations</a></li>
+                <li><a href="#">Editions</a></li>
                 <li><a href="{{ route('outilspa') }}">Outils gestions</a></li>
               </ul>
             </li>

@@ -72,7 +72,6 @@
 
 
 {{-- Edit dossier modal --}}
-
 <div class="modal fade" id="editFolderModal" tabindex="-1" aria-labelledby="editFolderModal" aria-hidden="true">
   <div class="modal-dialog">
     <form autocomplete="off" id="edit_folder_form">

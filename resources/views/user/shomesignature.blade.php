@@ -30,7 +30,7 @@
                         @csrf
 
                         <div class="modal-body">
-                            <input type="hidden" value="{{ $user->personnelid }}" name="pid" id="pidp" readonly>
+                            <input type="hidden" value="{{ $user->idu }}" name="pid" id="pidp" readonly>
                             <input type="" value="{{ $user->nom }} {{ $user->prenom }}" class="form-control form-control-sm" readonly style="background-color:#c0c0c0"> <br>
                             @php
                                 $signature = $user->signature;

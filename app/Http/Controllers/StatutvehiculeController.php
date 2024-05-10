@@ -2,35 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Typevehicule;
+use App\Models\Carburant;
+use App\Models\Statutvehicule;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class OutilsController extends Controller
+class StatutvehiculeController extends Controller
 {
-    public function index()
+    public function allstatut()
     {
-        $title = 'Outils PA';
-        return view(
-            'outilspa.index',
-            [
-              'title' => $title,
-            ]
-          );
-    }
-
-    public function alltype()
-    {
-      $folder = Typevehicule::orderBy('libelle', 'ASC')->get();
+      $folder = Statutvehicule::orderBy('titre', 'ASC')->get();
       $output = '';
       if ($folder->count() > 0) {
-  
         $nombre = 1;
         foreach ($folder as $rs) {
           $output .= '<tr>
                 <td class="align-middle ps-3 name">' . $nombre . '</td>
-                <td>' . ucfirst($rs->libelle) . '</td>
+                <td>' . ucfirst($rs->titre) . '</td>
                 <td>
                 <center>
                   <div class="btn-group me-2 mb-2 mb-sm-0">
@@ -38,8 +27,8 @@ class OutilsController extends Controller
                          <i class="mdi mdi-dots-vertical ms-2"></i>
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item text-primary mx-1 editType" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#editTypeModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
-                        <a class="dropdown-item text-danger mx-1 deleteType"  id="' . $rs->id . '"  title="Supprimer"><i class="far fa-trash-alt"></i> Supprimer</a>
+                        <a class="dropdown-item text-primary mx-1 editStatut" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#editStatutModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
+                        <a class="dropdown-item text-danger mx-1 deleteStatut"  id="' . $rs->id . '"  title="Supprimer"><i class="far fa-trash-alt"></i> Supprimer</a>
                     </div>
                  </div>
                   </center>
@@ -62,20 +51,20 @@ class OutilsController extends Controller
       }
     }
 
-    public function storetype(Request $request)
+    public function storestatut(Request $request)
     {
       try {
-        $title = $request->titre;
-        $check = Typevehicule::where('libelle', $title)->first();
+        $title = $request->s_titre;
+        $check = Statutvehicule::where('titre', $title)->first();
         if ($check) {
           return response()->json([
             'status' => 201,
           ]);
         } else {
 
-          $type = new Typevehicule();
+          $type = new Statutvehicule();
           
-          $type->libelle = $request->titre;
+          $type->titre = $request->s_titre;
           $type->userid = Auth::id();
           $type->save();
 
@@ -93,28 +82,28 @@ class OutilsController extends Controller
 
 
   // edit an folder ajax request
-  public function edittype(Request $request)
-  {
+  public function editstatut(Request $request)
+  { 
     $id = $request->id;
-    $type = Typevehicule::find($id);
+    $type = Statutvehicule::find($id);
     return response()->json($type);
   }
 
   // update an folder ajax request
-  public function updatetype(Request $request)
+  public function updatestatut(Request $request)
   {
     try {
-      $titre = $request->ttitre;
-      $check = Typevehicule::where('libelle', $titre)->first();
+      $titre = $request->titre_s;
+      $check = Statutvehicule::where('titre', $titre)->first();
       if ($check) {
         return response()->json([
           'status' => 201,
         ]);
       } else {
 
-        $type = Typevehicule::find($request->tid);
+        $type = Statutvehicule::find($request->id_s);
         if ($type->userid == Auth::id()) {
-          $type->libelle = $request->ttitre;
+          $type->titre = $request->titre_s;
           $type->update();
           return response()->json([
             'status' => 200,
@@ -134,14 +123,13 @@ class OutilsController extends Controller
   }
 
   // supresseion
-  public function deletetype(Request $request)
+  public function deletestatut(Request $request)
   {
     try {
-
-      $emp = Typevehicule::find($request->id);
+      $emp = Statutvehicule::find($request->id);
       if ($emp->userid == Auth::id()) {
         $id = $request->id;
-        Typevehicule::destroy($id);
+        Statutvehicule::destroy($id);
         return response()->json([
           'status' => 200,
         ]);

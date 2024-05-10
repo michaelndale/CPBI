@@ -16,7 +16,7 @@
             <div class="row">
 
 
-              <!--
+                <!--
 
                 <div class="col-xl-12">
                         <div class="card">
@@ -60,61 +60,69 @@
                     </div> -->
 
 
-                    <div class="col-xl-12">
-                        <div class="card">
-                            <div class="card-body">
-                               
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
 
 
-                                <div class="table-responsive">
-                                            <table class="table table-centered align-middle table-nowrap mb-0">
-                                                <thead>
-                                                    <tr>
-                                                       
-                                                        <th>#</th>
-                                                        <th>Date du jour</th>
-                                                        <th>Projet</th>
-                                                        <th>Temps assigner</th>
-                                                        <th>Heure</th>
-                                                        <th>Description</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="showfeuille">
-                                                   
-                                                </tbody>
-                                            </table>
-                                        </div>
 
+                            <div class="table-responsive">
+                                <table class="table table-centered align-middle table-nowrap mb-0">
+                                    <thead>
+                                        <tr>
+
+                                            <th>#</th>
+                                            <th>Date du jour</th>
+                                            <th>Projet</th>
+                                            <th>Description / Activités réalisées"</th>
+                                            <th>Durée en minnutes</th>
+                                            <th>Comment l'activité a-t-elle été réalisée ?</th>
+                                            <th>Indicateurs Objectivement verifiable (IOV)</th>
+                                            <th>Resultats obtenus (Quantitatifs)</th>
+                                            <th>Observation plan redressement</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="showfeuille">
+
+                                    </tbody>
+                                </table>
                             </div>
+
                         </div>
                     </div>
                 </div>
-
             </div>
-        </div> <!-- container-fluid -->
 
-    </div>
-    <br><br> <br><br> <br><br> <br><br>
+        </div>
+    </div> <!-- container-fluid -->
+
+</div>
+<br><br> <br><br> <br><br> <br><br>
 </div>
 
 {{-- new department modal --}}
-<div class="modal fade bs-example-modal-lg" id="myFeuilleModalLabel" tabindex="-1" role="dialog" aria-labelledby="myFeuilleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg ">
+
+
+
+<div class="modal fade" id="myFeuilleModalLabel" tabindex="-1" role="dialog" aria-labelledby="myFeuilleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
+
+        <form id="addFeuilleform" autocomplete="off">
+                    @method('post')
+                    @csrf
             <div class="modal-header">
-                <h5 class="modal-title" id="myLargeModalLabel"> Nouvelle feuille de temps.</h5>
+                <h5 class="modal-title" id="exampleModalScrollableTitle"> Nouvelle feuille de temps.</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="addFeuilleform" autocomplete="off">
-                @method('post')
-                @csrf
-                <div class="modal-body">
-                    <div class="row g-3">
+            <div class="modal-body">
+
+            <div class="row">
                         <div class="col-sm-6 col-lg-12 col-xl-12">
-                            <label class="text-1000 fw-bold mb-2"> Sélectionner le projet</label>
+                            <label class="text-1000 fw-bold mb-2"> Programme, Projet ou Unité</label>
                             <select class="form-select" id="projetid" name="projetid" type="text" placeholder="Entrer projet" required>
-                                <option disabled="true" selected="true" value=""> -- Sélectionner le projet -- </option>
+                                <option disabled="true" selected="true" value=""> -- Sélectionner l'option -- </option>
                                 @forelse ($projet as $projets)
                                 <option value="{{ $projets->id }}"> {{ ucfirst($projets->title) }}</option>
                                 @empty
@@ -124,48 +132,66 @@
                             </select>
                         </div>
 
-                        <div class="col-sm-3 col-lg-12 col-xl-3">
+                        <div class="col-sm-6 col-lg-12 col-xl-12">
+                            <label class="text-1000 fw-bold mb-2"> Description/Activités réalisées</label>
+                            <textarea class="form-control " id="description" name="description" type="text" required></textarea>
+
+
+
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 col-xl-4">
                             <label class="text-1000 fw-bold mb-2">Date du jour de travail </label>
                             <input class="form-control" id="datejour" name="datejour" type="date" placeholder="Date " required />
                         </div>
 
-                        <div class="col-sm-3 col-lg-12 col-xl-3">
-                            <label class="text-1000 fw-bold mb-2">Temps maximum</label>
-                            <input class="form-control" id="tampsmax" name="tampsmax" type="number" value="{{ $elf->tempstotal }}"  readonly style="background-color:#c0c0c0" />
+                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                            <label class="text-1000 fw-bold mb-2">Durée en minutes</label>
+                            <input class="form-control" id="nombre" name="nombre" type="number" min="1" placeholder="Durée" required />
                         </div>
 
-                        <div class="col-sm-3 col-lg-12 col-xl-3">
-                            <label class="text-1000 fw-bold mb-2">Temps minimum </label>
-                            <input class="form-control" id="tampsmin" name="tampsmin" type="number" value="{{ $elf->tempsmoyennne }}"  readonly  style="background-color:#c0c0c0"/>
+                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                            <label class="text-1000 fw-bold mb-2">Réalisation(x) </label>
+                            <select class="form-control" id="realisation" name="realisation" type="number" min="1" placeholder="Réalisation" required />
+                            <option>Séléctionner l'option</option>
+                            <option value="E">Entièrement </option>
+                            <option value="P">Partiellement </option>
+                            </select>
                         </div>
 
-                        <div class="col-sm-3 col-lg-12 col-xl-3">
-                            <label class="text-1000 fw-bold mb-2">Nombre de temps (Heure) </label>
-                            <input class="form-control" id="nombre" name="nombre" type="number" min="1" placeholder="Nombe" required />
+                        <div class="col-sm-4 col-lg-12 col-xl-6">
+                            <label class="text-1000 fw-bold mb-2">Indicateurs Objectivement Vérifiable (IOV)</label>
+                            <input class="form-control" id="iov" name="iov" type="number" min="1" placeholder="Nombe" required />
                         </div>
+
+
+                        <div class="col-sm-4 col-lg-12 col-xl-6">
+                            <label class="text-1000 fw-bold mb-2">Résultats obtenus (Qte)</label>
+                            <input class="form-control" id="resultat" name="resultat" type="number" min="1" placeholder="Nombe" required />
+                        </div>
+
+
 
                         <div class="col-sm-6 col-lg-12 col-xl-12">
-                            <label class="text-1000 fw-bold mb-2"> Desription</label>
-                            <textarea class="form-control " id="description" name="description" type="text"  required></textarea>
-                               
-
-                           
+                            <label class="text-1000 fw-bold mb-2"> Observation plan de redressement</label>
+                            <textarea class="form-control " id="observation" name="observation" type="text" required></textarea>
                         </div>
-
-
                     </div>
-                </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger waves-effect" data-bs-dismiss="modal"><i class="fa fa-times-circle"></i> Fermer </button>
-                    <button type="submit" id="btnsavefeuille" name="btnsavefeuille" class="btn btn-primary waves-effect waves-light"> <i class="fa fa-check-circle"></i> Save changes</button>
-                </div>
+               
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-danger waves-effect" data-bs-dismiss="modal"><i class="fa fa-times-circle"></i> Fermer </button>
+                        <button type="submit" id="btnsavefeuille" name="btnsavefeuille" class="btn btn-primary waves-effect waves-light"> <i class="fa fa-check-circle"></i> Save changes</button>
+            </div>
 
-            </form>
+        </form>
+
+
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
+</div>
 
 
 

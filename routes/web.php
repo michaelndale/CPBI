@@ -8,6 +8,7 @@ use App\Http\Controllers\ArchivageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BeneficaireController;
 use App\Http\Controllers\BpcController;
+use App\Http\Controllers\CarburantController;
 use App\Http\Controllers\CatactivityController;
 use App\Http\Controllers\CategoriebeneficiaireController;
 use App\Http\Controllers\ClasseurController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\FebController;
 use App\Http\Controllers\FeuilletempsController;
 use App\Http\Controllers\FolderController;
 use App\Http\Controllers\FonctionController;
+use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\IdentificationController;
 use App\Http\Controllers\NotificationController;
@@ -37,8 +39,11 @@ use App\Http\Controllers\RallongebudgetController;
 use App\Http\Controllers\RapportcummuleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SqrController;
+use App\Http\Controllers\StatusController;
+use App\Http\Controllers\StatutvehiculeController;
 use App\Http\Controllers\TypeprojetController;
 use App\Http\Controllers\VehiculeController;
+
 
 Route::get('/', function () {
     return view('go');
@@ -130,6 +135,8 @@ Route::middleware('auth')->group(function () {
         //  Route::put('signature/{id}', [AuthController::class, 'updateSignature'])->name('signatureUs');
     });
 
+    // Parc automobile
+
     Route::prefix('conducteur')->group(function () {
         Route::get('/', [AuthController::class, 'conducteur'])->name('conducteur');
         Route::get('/fetchAllcond', [AuthController::class, 'fetchAllcond'])->name('fetchAllcond');
@@ -139,6 +146,14 @@ Route::middleware('auth')->group(function () {
         // Route::post('/updateUs', [AuthController::class, 'update'])->name('updateUs'); 
 
     });
+
+ 
+      
+      
+
+   
+
+    Route::get('parc', [AppCOntroller::class, 'parc'])->name('parc');
 
 
     Route::prefix('gestioncompte')->group(function () {
@@ -312,8 +327,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/fetchAllvl', [VehiculeController::class, 'fetchAll'])->name('fetchAllvl');
         Route::post('/storevl', [VehiculeController::class, 'store'])->name('storevl');
         Route::delete('/deletevl', [VehiculeController::class, 'deleteall'])->name('deletevl');
-        //Route::get('/editfl', [FolderController::class, 'edit'])->name('editfl');
-        //Route::post('/updatefl', [FolderController::class, 'update'])->name('updatefl'); 
+        Route::get('/editveh', [VehiculeController::class, 'edit'])->name('editveh');
+        Route::post('/updatefl', [VehiculeController::class, 'update'])->name('updatefl'); 
     });
 
 
@@ -321,9 +336,26 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [OutilsController::class, 'index'])->name('outilspa');
         Route::get('/alltype', [OutilsController::class, 'alltype'])->name('alltype');
         Route::post('/storetype', [OutilsController::class, 'storetype'])->name('storetype');
-        //  Route::delete('/deletevl', [VehiculeController::class, 'deleteall'])->name('deletevl');
-        //Route::get('/editfl', [FolderController::class, 'edit'])->name('editfl');
-        //Route::post('/updatefl', [FolderController::class, 'update'])->name('updatefl'); 
+        Route::get('/edittype', [OutilsController::class, 'edittype'])->name('edittype');
+        Route::post('/updatetype', [OutilsController::class, 'updatetype'])->name('updatetype'); 
+        Route::delete('/deletetype', [OutilsController::class, 'deletetype'])->name('deletetype');
+        
+        Route::get('/allcarburent', [CarburantController::class, 'allcaburent'])->name('allcarburent');
+        Route::post('/storecarburent', [CarburantController::class, 'storecarburent'])->name('storecarburent'); 
+        Route::get('/editcarburent', [CarburantController::class, 'editcarburent'])->name('editcarburent');
+        Route::post('/updatecarburent', [CarburantController::class, 'updatecarburent'])->name('updatecarburent'); 
+        Route::delete('/deletecartburent', [CarburantController::class, 'deletecarburent'])->name('deletecartburent');
+
+        Route::get('/allstatut', [StatutvehiculeController::class, 'allstatut'])->name('allstatut');
+        Route::post('/storestatut', [StatutvehiculeController::class, 'storestatut'])->name('storestatut'); 
+        Route::get('/editstatutvehicule', [StatutvehiculeController::class, 'editstatut'])->name('editstatut');
+        Route::post('/updatestatutvehicule', [StatutvehiculeController::class, 'updatestatut'])->name('updatestatut'); 
+        Route::delete('/deletestatut', [StatutvehiculeController::class, 'deletestatut'])->name('deletestatut');
+
+
+        Route::get('/allfournisseur', [FournisseurController::class, 'fetchfournisseur'])->name('allfournisseur');
+
+        
     });
 
    

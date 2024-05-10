@@ -330,7 +330,7 @@
         },
         success: function(response) {
 
-          $("#per_id").val(response.id);
+          $("#per_id").val(response.idp);
           $("#per_nom").val(response.nom);
           $("#per_prenom").val(response.prenom);
           $("#per_sexe").val(response.sexe);

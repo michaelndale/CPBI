@@ -48,12 +48,13 @@ class FeuilletempsController extends Controller
               $feuille = new Feuilletemps();
               $feuille->userid = Auth::id();
               $feuille->projetid= $request->projetid;
+              $feuille->description= $request->description;
               $feuille->datepresence= $request->datejour;
               $feuille->nombre= $request->nombre;
-              $feuille->tempsmax= $request->tampsmax;
-              $feuille->tempsmin= $request->tampsmin;
-              $feuille->description= $request->description;
-              
+              $feuille->realisation= $request->realisation;
+              $feuille->iov= $request->iov;
+              $feuille->resultat= $request->resultat;
+              $feuille->observation= $request->observation;
 
               $feuille->save();
 
@@ -88,9 +89,12 @@ class FeuilletempsController extends Controller
             <td> '.$nombre.'  </td>
             <td> '.date("d-m-Y", strtotime($datas->datepresence)).'  </td>
             <td> '.$datas->title.'  </td>
-            <td> '.$datas->tempsmax.' </td>
-            <td> '.$datas->nombre.' </td>
             <td> '.$datas->description.' </td>
+            <td> '.$datas->nombre.' </td>
+            <td> '.$datas->realisation.' </td>
+            <td> '.$datas->iov.' </td>
+            <td> '.$datas->resultat.' </td>
+            <td> '.$datas->observation.' </td>
            
             <td> 
             <center>

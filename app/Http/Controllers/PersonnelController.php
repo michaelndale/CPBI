@@ -9,6 +9,7 @@ use App\Models\Status;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class PersonnelController extends Controller
@@ -101,8 +102,15 @@ class PersonnelController extends Controller
 
   public function edit(Request $request)
   {
+ 
     $id = $request->id;
-    $fon = Personnel::find($id);
+   
+    $fon = DB::table('users')
+    ->join('personnels', 'users.personnelid', 'personnels.id')
+    ->select('personnels.*', 'personnels.id as idp')
+    ->Where('users.id', $id)
+    ->first();
+   
     return response()->json($fon);
   }
 

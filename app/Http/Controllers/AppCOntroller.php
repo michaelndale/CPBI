@@ -103,6 +103,18 @@ class AppCOntroller extends Controller
     }
 }
 
+public function parc()
+    {
+      $title="Accueil";
+      $user = User::all();
+      return view('dashboard.parc', 
+      [
+        'title' =>$title,
+        'user' => $user
+      ]);
+    }
+
+
 
 
 

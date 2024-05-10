@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Carburant;
 use App\Models\Historique;
 use App\Models\Status;
+use App\Models\Statutvehicule;
 use App\Models\Typevehicule;
 use App\Models\Vehicule;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class VehiculeController extends Controller
 {
@@ -20,7 +22,7 @@ class VehiculeController extends Controller
 
       $carburent = Carburant::all();
       $type = Typevehicule::all();
-      $statut = Status::all();
+      $statut = Statutvehicule::all();
 
       return view(
         'vehicule.index',
@@ -52,7 +54,7 @@ class VehiculeController extends Controller
               <td>' . ucfirst($rs->couleur). '</td>
               <td>' . ucfirst($rs->type). '</td>
               <td>' . ucfirst($rs->carburent). '</td>
-              <td>' . ucfirst($rs->active). '</td>
+              <td>' . ucfirst($rs->statut). '</td>
               <td>' . date('d.m.Y', strtotime($rs->created_at)) . '</td>
               <td>
               <center>
@@ -102,7 +104,7 @@ class VehiculeController extends Controller
         $vehicule->numeroserie= $request->numserie;
         $vehicule->type= $request->type;
         $vehicule->carburent= $request->carburent;
-        $vehicule->active= $request->statut;
+        $vehicule->statut= $request->statut;
         $vehicule->userid = Auth()->user()->id;
         $vehicule->save();
 
@@ -190,19 +192,27 @@ class VehiculeController extends Controller
     }
   
     // supresseion
-    public function deleteall(Request $request, Historique $his)
-    {
-      
-      $function ="Suppression";
-      $operation ="Supprission vehicule";
-      $link ='vehicule';
-      $his->fonction = $function;
-      $his->operation = $operation;
-      $his->link = $link;
-      $his->userid = Auth()->user()->id;
-      $his->save();
-
-      $id = $request->id;
-      Vehicule::destroy($id);
+    public function deleteall(Request $request)
+  {
+    try {
+      $emp = Vehicule::find($request->id);
+      if ($emp->userid == Auth::id()) {
+        $id = $request->id;
+        Vehicule::destroy($id);
+        return response()->json([
+          'status' => 200,
+        ]);
+      } else {
+        return response()->json([
+          'status' => 205,
+        ]);
+      }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
     }
+  }
+
+
 }

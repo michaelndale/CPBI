@@ -129,20 +129,19 @@ class AuthController extends Controller
   <td>' . $rs->role . '  </td>
   <td>' . $rs->fonction . '  </td>
   <td>' . $rs->statut . '  </td>
-  <td>' .  date('d.m.Y', strtotime($rs->created_at)) . ' </td>
-  <td >
-      <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_profileModal"><i class="bi-pencil-square h4"></i> Edit</a>
-      <a href="#" id="' . $rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-      <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon"><i class="bi-trash h4"></i> Delete </a>
-  </td>
+
 </tr>';
       }
       echo $output;
     } else {
       echo '
       <tr>
-        <td  rowspan="5">
-          <h4 class="text-center text-secondery my-3" >No record in the database ! </h4>
+        <td  colspan="7">
+        <center>
+        <h6 style="margin-top:1% ;color:#c0c0c0"> 
+        <center><font size="50px"><i class="fa fa-info-circle"  ></i> </font><br><br>
+            Ceci est vide  !</center> </h6>
+      </center>
         </td>
       </tr>';
     }
@@ -412,7 +411,7 @@ class AuthController extends Controller
 
     $user = DB::table('users')
       ->join('personnels', 'personnels.id', 'users.personnelid')
-      ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
+      ->select('users.*', 'personnels.nom', 'users.id as idu', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
       ->where('personnels.id', $id)
       ->first();
 

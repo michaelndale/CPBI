@@ -684,7 +684,7 @@ public function findfebelementretour(Request $request)
             // Construire la sortie HTML pour chaque élément sélectionné
             $output .= '<input type="hidden" name="febid[]" id="febid[]" value="' . $datas->id . '" /> 
             <input type="hidden" id="ligneid[]" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
-$output .= '<tr> <td width="5%"> Numero FEB : ' . $datas->numerofeb . '</td>';
+$output .= '<tr> <td width="5%" rowspan="3"> Numero FEB : ' . $datas->numerofeb . '</td>';
 $output .= '<td width="8%"> Facture<input type="number" name="facture[]" id="facture[]" style="width: 100%; border:1px solid #c0c0c0" /> </td>';
 $output .= '<td width="10%"> Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
 $output .= '<td width="10%"> Montant utilisé* <input type="number" name="montantutiliser[]" id="montantutiliser[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
@@ -692,7 +692,7 @@ $output .= '<td width="10%">Surplus/Manque* <input type="number" name="surplus[]
 $output .= '<td width="10%">Montant retourné <input type="number" id="montantretour[]" name="montantretour[]" style="width: 100%; border:1px solid #c0c0c0" /> </td><tr>';
 $output .= '<tr>';
 
-$output .= '<td></td>';
+
 $output .= ' <td width="10%"> Bordereau  <input type="text" name="bordereau[]" id="bordereau[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
 $output .= '<td width="6%"> Dure avance  <input type="number" name="duree_avence[]" id="duree_avence[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
 $output .= '<td width="10%"> Date du <input type="number" name="datedu[]" id="datedu[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
