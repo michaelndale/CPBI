@@ -1,0 +1,23 @@
+$("#sendFolder").html('<i class="fas fa-spinner fa-spin"></i>');
+document.getElementById("sendFolder").disabled = true;
+
+
+if (response.status == 200) {
+toastr.success("Dossier modifier avec succès !", "Modification");
+fetchAlldfolder();
+
+$("#editfolderbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+$("#edit_folder_form")[0].reset();
+$("#editFolderModal").modal('hide');
+document.getElementById("editfolderbtn").disabled = false;
+}
+
+if (response.status == 201) {
+toastr.error("Le titre du dossier existe déjà !", "Erreur");
+$("#editfolderbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+document.getElementById("editfolderbtn").disabled = false;
+}
+
+<i class="fa fa-cloud-upload-alt"></i>
+
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Fournisseur;
 use App\Models\Typevehicule;
 use Exception;
 use Illuminate\Http\Request;
@@ -9,26 +10,28 @@ use Illuminate\Support\Facades\Auth;
 
 class OutilsController extends Controller
 {
-    public function index()
-    {
-        $title = 'Outils PA';
-        return view(
-            'outilspa.index',
-            [
-              'title' => $title,
-            ]
-          );
-    }
+  public function index()
+  {
+    $title = 'Outils PA';
 
-    public function alltype()
-    {
-      $folder = Typevehicule::orderBy('libelle', 'ASC')->get();
-      $output = '';
-      if ($folder->count() > 0) {
-  
-        $nombre = 1;
-        foreach ($folder as $rs) {
-          $output .= '<tr>
+    return view(
+      'outilspa.index',
+      [
+        'title' => $title,
+
+      ]
+    );
+  }
+
+  public function alltype()
+  {
+    $folder = Typevehicule::orderBy('libelle', 'ASC')->get();
+    $output = '';
+    if ($folder->count() > 0) {
+
+      $nombre = 1;
+      foreach ($folder as $rs) {
+        $output .= '<tr>
                 <td class="align-middle ps-3 name">' . $nombre . '</td>
                 <td>' . ucfirst($rs->libelle) . '</td>
                 <td>
@@ -45,12 +48,12 @@ class OutilsController extends Controller
                   </center>
                 </td>
               </tr>';
-          $nombre++;
-        }
-  
-        echo $output;
-      } else {
-        echo ' <tr>
+        $nombre++;
+      }
+
+      echo $output;
+    } else {
+      echo ' <tr>
           <td colspan="3">
           <center>
             <h6 style="margin-top:1% ;color:#c0c0c0"> 
@@ -59,39 +62,37 @@ class OutilsController extends Controller
           </center>
           </td>
           </tr>';
-      }
     }
+  }
 
-    public function storetype(Request $request)
-    {
-      try {
-        $title = $request->titre;
-        $check = Typevehicule::where('libelle', $title)->first();
-        if ($check) {
-          return response()->json([
-            'status' => 201,
-          ]);
-        } else {
-
-          $type = new Typevehicule();
-          
-          $type->libelle = $request->titre;
-          $type->userid = Auth::id();
-          $type->save();
-
-          return response()->json([
-            'status' => 200,
-          ]);
-
-        }
-      } catch (Exception $e) {
+  public function storetype(Request $request)
+  {
+    try {
+      $title = $request->titre;
+      $check = Typevehicule::where('libelle', $title)->first();
+      if ($check) {
         return response()->json([
-          'status' => 202,
+          'status' => 201,
+        ]);
+      } else {
+
+        $type = new Typevehicule();
+
+        $type->libelle = $request->titre;
+        $type->userid = Auth::id();
+        $type->save();
+
+        return response()->json([
+          'status' => 200,
         ]);
       }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
     }
-
-
+  }
+  
   // edit an folder ajax request
   public function edittype(Request $request)
   {

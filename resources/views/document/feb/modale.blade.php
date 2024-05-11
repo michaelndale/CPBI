@@ -149,11 +149,6 @@
                                                 <input type="checkbox" class="form-check-input" name="fpdevis" id="fpdevis">
                                             </center>
                                         </td>
-
-                                    </tr>
-
-                                    <tr>
-
                                     </tr>
                                 </tbody>
                             </table>

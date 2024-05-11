@@ -54,12 +54,13 @@
 
                 <div class="col-12" style="margin:auto">
                   <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h6><i class="fa fa-car"></i> Gestions des vehicules </h6>
+                    <h6><i class="fa fa-car"></i> Gestions des véhicules </h6>
                     <div class="page-title-right">
                       <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addVehiculeModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouveau véhicule</a>
                     </div>
                   </div>
                 </div>
+
                 <div class="table-responsive">
                   <table class="table table-bordered table-sm fs--1 mb-0">
                     <thead>
@@ -91,55 +92,90 @@
                   </table>
                 </div>
               </div>
+
+
               <div class="tab-pane" id="profile1" role="tabpanel">
-              <div class="table-responsive">
-              <table class="table table-bordered  table-sm fs--1 mb-0">
-                <thead>
-                 
-                  <tr style="background-color:#82E0AA">
-                  <th> Nom & prenom </th>
-              <th>Telephone</th>
-              <th >Fonction</th>
-              <th>Permis de conduire</th>
-              <th>Statut</th>
-            
-                  </tr>
-             
-                </thead>
-                <tbody class="list" id="show_all">
-                  <tr>
-                    <td colspan="8">
-                      <h5 class="text-center text-secondery my-5">
-                        @include('layout.partiels.load')
-                    </td>
-                  </tr>
-                </tbody>
-               
-              </table>
-              </div>
-               
+                <div class="table-responsive">
+                  <table class="table table-bordered  table-sm fs--1 mb-0">
+                    <thead>
+
+                      <tr style="background-color:#82E0AA">
+                        <th> Nom & prénom </th>
+                        <th>Téléphone</th>
+                        <th>Fonction</th>
+                        <th>Permis de conduire</th>
+                        <th>Statut</th>
+
+                      </tr>
+
+                    </thead>
+                    <tbody class="list" id="show_all">
+                      <tr>
+                        <td colspan="8">
+                          <h5 class="text-center text-secondery my-5">
+                            @include('layout.partiels.load')
+                        </td>
+                      </tr>
+                    </tbody>
+
+                  </table>
+                </div>
+
               </div>
               <div class="tab-pane" id="messages1" role="tabpanel">
-                <p class="mb-0">
-                  Etsy mixtape wayfarers, ethical wes anderson tofu before they
-                  sold out mcsweeney's organic lomo retro fanny pack lo-fi
-                  farm-to-table readymade. Messenger bag gentrify pitchfork
-                  tattooed craft beer, iphone skateboard locavore carles etsy
-                  salvia banksy hoodie helvetica. DIY synth PBR banksy irony.
-                  Leggings gentrify squid 8-bit cred pitchfork. Williamsburg banh
-                  mi whatever gluten-free carles.
-                </p>
+
+                <div class="col-12" style="margin:auto">
+                  <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h6><i class="fa fa-car"></i> Achats / Location</h6>
+                    <div class="page-title-right">
+                      <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addAchatModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouveau Achats / Location</a>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table table-bordered table-sm fs--1 mb-0">
+                    <thead>
+                      <tr style="background-color:#82E0AA">
+                        <th class="align-middle ps-3 name">#</th>
+                        <th>Location/Achat</th>
+                        <th>Date</th>
+                        <th>Kilomètrage</th>
+                        <th>Prix</th>
+                        <th>Expiration</th>
+                        <th>Prix vente</th>
+                        <th>Note</th>
+                        <th>Véhicule</th>
+                        <th>Fournisseur</th>
+                        <th>
+                          <center>Action</center>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody id="show_location">
+                      <tr>
+                        <td colspan="11">
+                          <h5 class="text-center text-secondery my-5">
+                            @include('layout.partiels.load')
+                        </td>
+                      </tr>
+                    </tbody>
+                    </tbody>
+                  </table>
+                </div>
+
               </div>
+
+
               <div class="tab-pane" id="settings1" role="tabpanel">
-                <p class="mb-0">
-                  Trust fund seitan letterpress, keytar raw denim keffiyeh etsy
-                  art party before they sold out master cleanse gluten-free squid
-                  scenester freegan cosby sweater. Fanny pack portland seitan DIY,
-                  art party locavore wolf cliche high life echo park Austin. Cred
-                  vinyl keffiyeh DIY salvia PBR, banh mi before they sold out
-                  farm-to-table VHS viral locavore cosby sweater. Lomo wolf viral,
-                  mustache readymade keffiyeh craft.
-                </p>
+              <div class="col-12" style="margin:auto">
+                  <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h6><i class="fa fa-car"></i> Assurances/Taxes/Visites</h6>
+                    <div class="page-title-right">
+                      <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addassurenceModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouveau Assurances/Taxes/Visites</a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -162,6 +198,7 @@
 </div>
 
 @include('vehicule.modale')
+@include('vehicule.achat_modale')
 
 <script>
   $(function() {
@@ -171,8 +208,7 @@
       keyboard: false
     });
 
-
-    // Add user ajax 
+    // Add vehicule ajax 
     $("#addform").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
@@ -198,13 +234,9 @@
             $("#addVehiculeModal").modal('hide');
             $("#addform")[0].reset();
             document.getElementById("addbtn").disabled = false;
-
-
-
           }
 
           if (response.status == 201) {
-
             toastr.error("Le véhicule avec cette matricule existe déjà !", "error");
             $("#addbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addVehiculeModal").modal('show');
@@ -224,8 +256,51 @@
       });
     });
 
-    // Edit user ajax request
-    $(document).on('click', '.editIcon', function(e) {
+    // Add Achat/Location ajax 
+    $("#addaform").submit(function(e) {
+      e.preventDefault();
+      const fd = new FormData(this);
+
+      $("#addabtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("addabtn").disabled = true;
+
+      $.ajax({
+        url: "{{ route('storeachat') }}",
+        method: 'post',
+        data: fd,
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+          if (response.status == 200) {
+            fetchlocation();
+            toastr.success("Enregistrement reussi avec succès !", "Enregistrement");
+            $("#addabtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            $("#addAchatModal").modal('hide');
+            $("#addaform")[0].reset();
+            document.getElementById("addabtn").disabled = false;
+          }
+
+          if (response.status == 201) {
+            $("#addabtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            $("#addAchatModal").modal('show');
+            document.getElementById("addabtn").disabled = false;
+          }
+
+          if (response.status == 202) {
+            toastr.error("Erreur d'exécution: " + response.message, "Erreur");
+            $("#addAchatModal").modal('show');
+            $("#addabtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("addabtn").disabled = false;
+          }
+
+        }
+      });
+    });
+
+    // Get vehicule  request
+    $(document).on('click', '.editvehicule', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
       $.ajax({
@@ -236,19 +311,30 @@
           _token: '{{ csrf_token() }}'
         },
         success: function(response) {
-          $("#fun_title").val(response.title);
-          $("#fun_id").val(response.id);
+          $("#idv").val(response.id);
+          $("#matriculev").val(response.matricule);
+          $("#marquev").val(response.marque);
+          $("#modelev").val(response.modele);
+          $("#couleurv").val(response.couleur);
+          $("#numseriev").val(response.numeroserie);
+          $("#typev").val(response.type);
+          $("#carburentv").val(response.carburent);
+          $("#statutv").val(response.statut);
         }
       });
     });
 
     // update user ajax request
-    $("#edit_function_form").submit(function(e) {
+    $("#editform").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#edit_function_btn").text('Mises ajours...');
+
+    
+      $("#editbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("editbtn").disabled = true;
+
       $.ajax({
-        url: "{{ route('updateUs') }}",
+        url: "{{ route('updateveh') }}",
         method: 'post',
         data: fd,
         cache: false,
@@ -257,13 +343,30 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
-            $.notify("Function update Successfully !", "success");
+            toastr.success("Mises ajours reussi  avec succès !", "Suppression");
+            $("#edit_vehiculeModal").modal('hide');
+            $("#editbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("editbtn").disabled = false;
+
             fetchAllvehicule();
 
           }
-          $("#edit_function_btn").text('Update function');
-          $("#edit_function_form")[0].reset();
-          $("#edit_functionModal").modal('hide');
+
+          if (response.status == 201) {
+            toastr.error("Le véhicule avec cette matricule existe déjà !", "error");
+            $("#editbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            $("#edit_vehiculeModal").modal('show');
+            document.getElementById("editbtn").disabled = false;
+          }
+
+          if (response.status == 202) {
+            toastr.error("Erreur d'execution, verifier votre internet", "error");
+            $("#edit_vehiculeModal").modal('show');
+            $("#editbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("editbtn").disabled = false;
+          }
+
+          
         }
       });
     });
@@ -311,6 +414,52 @@
       })
     });
 
+    // Delete Achat location ajax request
+    $(document).on('click', '.deleteachat', function(e) {
+      e.preventDefault();
+      let id = $(this).attr('id');
+      let csrf = '{{ csrf_token() }}';
+      Swal.fire({
+        title: 'Êtes-vous sûr ?',
+        text: "Vous ne pourrez pas revenir en arrière !",
+
+        showCancelButton: true,
+        confirmButtonColor: 'green',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui , Supprimer !'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: "{{ route('deleteachat') }}",
+            method: 'delete',
+            data: {
+              id: id,
+              _token: csrf
+            },
+            success: function(response) {
+
+              if (response.status == 200) {
+                toastr.success("Suppression  avec succès !", "Suppression");
+
+                fetchlocation();
+              }
+
+              if (response.status == 205) {
+                toastr.error("Vous n'avez pas l'accreditation de supprimer ce type de véhicule!", "Erreur");
+              }
+
+              if (response.status == 202) {
+                toastr.error("Erreur d'execution !", "Erreur");
+              }
+            }
+          });
+        }
+      })
+    });
+
+
+    
+
     fetchAllvehicule();
 
     function fetchAllvehicule() {
@@ -324,12 +473,25 @@
     }
 
     fetchAllUsers();
+
     function fetchAllUsers() {
       $.ajax({
         url: "{{ route('fetchAllcond') }}",
         method: 'get',
         success: function(reponse) {
           $("#show_all").html(reponse);
+        }
+      });
+    }
+
+    fetchlocation();
+
+    function fetchlocation() {
+      $.ajax({
+        url: "{{ route('fetchachat') }}",
+        method: 'get',
+        success: function(reponse) {
+          $("#show_location").html(reponse);
         }
       });
     }

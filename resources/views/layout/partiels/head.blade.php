@@ -12,6 +12,9 @@
 
   <link rel="shortcut icon" href="{{ asset('element/assets/images/logo.png') }}">
 
+  <link href="{{ asset('element/assets/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css">
+
+
   <!-- plugin css -->
   <link href="{{ asset('element/assets/libs/jsvectormap/css/jsvectormap.min.css') }}" rel="stylesheet" type="text/css" />
 
@@ -35,7 +38,11 @@
   <link href="{{ asset('element/assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
   <!-- Sweet Alert-->
   <link href="{{ asset('element/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
-    
+   
+  
+        
+ 
+
   <script
   src="https://code.jquery.com/jquery-3.7.1.min.js"
   integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="

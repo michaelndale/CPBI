@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AchatLocationController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AffectationController;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,7 @@ use App\Http\Controllers\ObservationactiviteController;
 use App\Http\Controllers\OptiondescriptionController;
 use App\Http\Controllers\OutilsController;
 use App\Http\Controllers\PersonnelController;
+use App\Http\Controllers\PieceController;
 use App\Http\Controllers\PlanoperationnelController;
 use App\Http\Controllers\PortierController;
 use App\Http\Controllers\ProfileController;
@@ -328,7 +330,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/storevl', [VehiculeController::class, 'store'])->name('storevl');
         Route::delete('/deletevl', [VehiculeController::class, 'deleteall'])->name('deletevl');
         Route::get('/editveh', [VehiculeController::class, 'edit'])->name('editveh');
-        Route::post('/updatefl', [VehiculeController::class, 'update'])->name('updatefl'); 
+        Route::post('/updateveh', [VehiculeController::class, 'update'])->name('updateveh'); 
+
+        // Achat location
+        Route::get('/fetchachat', [AchatLocationController::class, 'fetchachat'])->name('fetchachat');
+        Route::post('/storeachat', [AchatLocationController::class, 'storeachat'])->name('storeachat');
+        Route::delete('/deleteachat', [AchatLocationController::class, 'deleteachat'])->name('deleteachat');
+
+        
     });
 
 
@@ -346,6 +355,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/updatecarburent', [CarburantController::class, 'updatecarburent'])->name('updatecarburent'); 
         Route::delete('/deletecartburent', [CarburantController::class, 'deletecarburent'])->name('deletecartburent');
 
+        // Statut
         Route::get('/allstatut', [StatutvehiculeController::class, 'allstatut'])->name('allstatut');
         Route::post('/storestatut', [StatutvehiculeController::class, 'storestatut'])->name('storestatut'); 
         Route::get('/editstatutvehicule', [StatutvehiculeController::class, 'editstatut'])->name('editstatut');
@@ -353,7 +363,25 @@ Route::middleware('auth')->group(function () {
         Route::delete('/deletestatut', [StatutvehiculeController::class, 'deletestatut'])->name('deletestatut');
 
 
+        // Fournissseur
         Route::get('/allfournisseur', [FournisseurController::class, 'fetchfournisseur'])->name('allfournisseur');
+        Route::post('/storefournisseur', [FournisseurController::class, 'storefournisseur'])->name('storefournisseur'); 
+        Route::get('/selectfournisseur', [FournisseurController::class, 'Selectfournisseur'])->name('selectfournisseur'); 
+        Route::delete('/deletefournisseur', [FournisseurController::class, 'deletefournisseur'])->name('deletefournisseur');
+        Route::get('/editfournisseur', [FournisseurController::class, 'editfournisseur'])->name('editfournisseur');
+        Route::post('/updatefournisseur', [FournisseurController::class, 'updatefournisseur'])->name('updatefournisseur'); 
+        
+//
+        
+        Route::get('/allpiece', [PieceController::class, 'allpiece'])->name('allpiece');
+        Route::post('/storepiece', [PieceController::class, 'storepiece'])->name('storepiece'); 
+        Route::delete('/deletepiece', [PieceController::class, 'deletepiece'])->name('deletepiece');
+        Route::get('/editpiece', [PieceController::class, 'editpiece'])->name('editpiece');
+        Route::post('/updatepieceedit', [PieceController::class, 'updatepiece'])->name('updatepieceedit'); 
+
+
+        
+        
 
         
     });
@@ -362,6 +390,7 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('archivage')->group(function () {
         Route::get('/', [ArchivageController::class, 'index'])->name('archivage');
+       
         // Route::get('/fetchAllvl', [VehiculeController::class, 'fetchAll'])->name('fetchAllvl');
         // 
         // Route::delete('/deletevl', [VehiculeController::class, 'deleteall'])->name('deletevl');
