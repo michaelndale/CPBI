@@ -34,6 +34,7 @@ use App\Http\Controllers\OutilsController;
 use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PieceController;
 use App\Http\Controllers\PlanoperationnelController;
+use App\Http\Controllers\PleincarburantController;
 use App\Http\Controllers\PortierController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
@@ -146,7 +147,11 @@ Route::middleware('auth')->group(function () {
         // Route::delete('/deleteUs', [AuthController::class, 'deleteall'])->name('deleteUs');
         // Route::get('/editUs', [AuthController::class, 'edit'])->name('editUs');
         // Route::post('/updateUs', [AuthController::class, 'update'])->name('updateUs'); 
+    });
 
+    Route::prefix('carburents')->group(function () {
+        Route::get('/', [PleincarburantController::class, 'index'])->name('carburents');
+        Route::get('/allcarburents', [PleincarburantController::class, 'allcarburents'])->name('allcarburents'); 
     });
 
  

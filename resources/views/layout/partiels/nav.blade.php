@@ -427,7 +427,7 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
                 <li><a href="{{ route('parc') }}">Accueil</a></li>
               
                 <li><a href="{{ route('vehicule') }}">Véhicule</a></li>
-                <li><a href="#">Carburents</a></li>
+                <li><a href="{{ route('carburents') }}">Carburents</a></li>
                 <li><a href="#">Entretiens</a></li>
                 <li><a href="#">Réparations</a></li>
                 <li><a href="#">Editions</a></li>

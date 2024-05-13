@@ -167,7 +167,7 @@
                                     value="{{ $datadap->ov }}"
                                     @endif /> &nbsp; &nbsp;&nbsp;
 
-                                    OV : <input type="checkbox" class="form-check-input" readonly @if ( $datadap->cho==1)
+                                    Cheque : <input type="checkbox" class="form-check-input" readonly @if ( $datadap->cho==1)
                                     checked value="{{ $datadap->cho }}"
                                     @else
                                     value="{{ $datadap->cho }}"
@@ -329,9 +329,11 @@
                 </td>
                 <td>
                     Secrétaire Général de la CEPBU : {{ ucfirst($secretaire->nom) }} {{ ucfirst($secretaire->prenom) }} <br>
+                    @if ($datadap->secretaure_general_signe==1)
                     <center>
                     <img src="{{ $secretaire->signature }}" width="120px" />
                     </center>
+                    @endif
 
 
                 </td>

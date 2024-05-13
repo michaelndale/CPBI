@@ -38,15 +38,17 @@
 
                            
                             <div class="col-lg-4">
-                                <div class="card bg-warning text-white-50">
-                                    <div class="card-body">
-                                    <center>
-                                        <font size="20px"> <i class="fa fa-gas-pump""></i></font>
-                                        <h5 class="mb-4 text-white"> CARBURENTS</h5>
+                                <a href="{{ route('carburents') }}">
+                                    <div class="card bg-warning text-white-50">
+                                        <div class="card-body">
+                                        <center>
+                                            <font size="20px"> <i class="fa fa-gas-pump""></i></font>
+                                            <h5 class="mb-4 text-white"> CARBURENTS</h5>
 
-                                        </center>
+                                            </center>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
         
         

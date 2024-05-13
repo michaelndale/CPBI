@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('pleincarburants', function (Blueprint $table) {
             $table->id();
+            $table->string('referenceblaque', 35)->nullable();
+            $table->string('fournisseurid', 35)->nullable();
+            $table->string('carburent', 225)->nullable();
+            $table->double('quantite', 25)->nullable();
+            $table->double('prixunite', 25)->nullable();
+            $table->double('kilometragedebut', 25)->nullable();
+            $table->double('kilometragefin', 25)->nullable();
+            $table->longText('note')->nullable();
+            $table->integer('userid')->nullable();
             $table->timestamps();
         });
     }
