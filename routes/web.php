@@ -470,11 +470,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [FeuilletempsController::class, 'index'])->name('feuilletemps');
         Route::post('/storefeuille', [FeuilletempsController::class, 'store'])->name('storefeuille');
         Route::get('/fetchAllfeuille', [FeuilletempsController::class, 'monfeuille'])->name('fetchAllfeuille');
-        Route::get('/elementft', [ElementsfeuilletempsController::class, 'eindex'])->name('elementft');
-        Route::get('/fetchAllft', [ElementsfeuilletempsController::class, 'fetchAllft'])->name('fetchAllft');
-        Route::post('/storeft', [ElementsfeuilletempsController::class, 'storeft'])->name('storeft');
-        Route::post('/sefl', [ElementsfeuilletempsController::class, 'sefl'])->name('sefl');
-        Route::get('/showft', [ElementsfeuilletempsController::class, 'editf'])->name('showft');
+        //Route::get('/elementft', [ElementsfeuilletempsController::class, 'index'])->name('elementft');
+        //Route::get('/fetchAllft', [ElementsfeuilletempsController::class, 'fetchAllft'])->name('fetchAllft');
+        //Route::post('/storeft', [ElementsfeuilletempsController::class, 'storeft'])->name('storeft');
+        //Route::post('/sefl', [ElementsfeuilletempsController::class, 'sefl'])->name('sefl');
+        Route::get('/showft', [FeuilletempsController::class, 'editf'])->name('showft');
+        Route::delete('/deleteftemps', [FeuilletempsController::class, 'deleteftemps'])->name('deleteftemps');
+
+       
     });
 
     //FIN RH

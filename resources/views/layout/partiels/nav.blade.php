@@ -381,9 +381,10 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
               <ul class="sub-menu" aria-expanded="false">
                 <!--<li><a href="email-inbox.html">Tableau de bord</a></li>-->
 
-                <li><a href="javascript: void(0);" class="has-arrow">Feuille de temps</a>
+                <li><a href="javascript: void(0);" class="has-arrow">Emploi du temps</a>
                   <ul class="sub-menu" aria-expanded="true">
                     <li><a href="{{ route('feuilletemps') }}">Mon FT</a></li>
+                    <li><a href=" route('rft') ">RFT</a></li> 
                    
                     <!--<li><a href="javascript: void(0);">Level 2.2</a></li>  -->
                   </ul>
@@ -434,11 +435,6 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
                 <li><a href="{{ route('outilspa') }}">Outils gestions</a></li>
               </ul>
             </li>
-            
-
-
-
-
 
             <li class="menu-title">Pages</li>
 

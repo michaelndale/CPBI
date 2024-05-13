@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\elementsfeuilletemps;
+use App\Models\Feuilletemps;
+use App\Models\Historique;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ElementsfeuilletempsController extends Controller
 {
@@ -77,8 +80,8 @@ class ElementsfeuilletempsController extends Controller
   public function editf(Request $request)
   {
     $id = $request->id;
-    $fon = elementsfeuilletemps::find($id);
-    return response()->json($fon);
+    $ft = Feuilletemps::find($id);
+    return response()->json($ft);
   }
 
   // update an eft ajax request
@@ -109,5 +112,6 @@ class ElementsfeuilletempsController extends Controller
     }
   }
 
+  
 
 }

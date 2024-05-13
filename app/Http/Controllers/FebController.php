@@ -562,7 +562,7 @@ public function Updatestore(Request $request)
       <th>Numéro du FEB</th>
       <th>Activité</th>
       <th>Montant total </th>
-      <th><center>Taux Execution/projet </center></th>
+      <th><center>Taux Exécution/projet </center></th>
      
     </tr>';
     
@@ -684,7 +684,7 @@ public function findfebelementretour(Request $request)
             // Construire la sortie HTML pour chaque élément sélectionné
             $output .= '<input type="hidden" name="febid[]" id="febid[]" value="' . $datas->id . '" /> 
             <input type="hidden" id="ligneid[]" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
-$output .= '<tr> <td width="5%" rowspan="3"> Numero FEB : ' . $datas->numerofeb . '</td>';
+$output .= '<tr> <td width="5%" rowspan="3"> Numéro FEB : ' . $datas->numerofeb . '</td>';
 $output .= '<td width="8%"> Facture<input type="number" name="facture[]" id="facture[]" style="width: 100%; border:1px solid #c0c0c0" /> </td>';
 $output .= '<td width="10%"> Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
 $output .= '<td width="10%"> Montant utilisé* <input type="number" name="montantutiliser[]" id="montantutiliser[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
@@ -694,11 +694,11 @@ $output .= '<tr>';
 
 
 $output .= ' <td width="10%"> Bordereau  <input type="text" name="bordereau[]" id="bordereau[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-$output .= '<td width="6%"> Dure avance  <input type="number" name="duree_avence[]" id="duree_avence[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+$output .= '<td width="6%"> Duré avance  <input type="number" name="duree_avence[]" id="duree_avence[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
 $output .= '<td width="10%"> Date du <input type="number" name="datedu[]" id="datedu[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
 $output .= '<td width="10%">Description  <input type="text" class="description" name="descriptionel[]" id="descriptionel[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-$output .= '<td> Selectionner vehicule <select id="matriculenum"  name="matriculenum" style="width: 100%; border:1px solid #c0c0c0">';
-$output .= '<option   value="" >Selectionner vehicule</option>';
+$output .= '<td> Séléctionner véhicule <select id="matriculenum"  name="matriculenum" style="width: 100%; border:1px solid #c0c0c0">';
+$output .= '<option   value="" >Séléctionner vehicule</option>';
       
       // Utilisation de la syntaxe PHP pour générer les options
       foreach ($vehicules as $vehicule) {

@@ -102,40 +102,44 @@
    
 <script> 
     
-$('#numerodap').blur(function() {
-        var numerodap = $(this).val();
-        // Envoi de la requête AJAX au serveur
-        $.ajax({
-            url: '{{ route("check.dap") }}',
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}', // CSRF token pour Laravel
-                numerodap: numerodap
-            },
-            success: function(response) {
-                if (response.exists) {
-                    $('#numerodap_error').text('Erreur Numéro DAP existe déjà.');
-                    $('#numerodap').removeClass('has-success') // Supprime la classe de succès
-                    $('#numerodap').addClass('has-error');
-                    $('#numerodap_info').text('');
-                  
-                   
-                   
-                } else {
-                    $('#numerodap_info').text('Numéro Disponible');
-                    $('#numerodap').removeClass('has-error')  // Supprime la classe de succès
-                    $('#numerodap').addClass('has-success');
-                    $('#numerodap_error').text('');
-                  
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
+    $('#numerodap').blur(function() {
+    var numerodap = $(this).val();
+    
+    // Vérification si le champ est vide
+    if (numerodap.trim() === '') {
+        $('#numerodap_error').text('Veuillez renseigner le champ numéro DAP.');
+        $('#numerodap').removeClass('has-success has-error'); // Supprime toutes les classes de succès ou d'erreur
+        $('#numerodap_info').text('');
+        return; // Sortir de la fonction si le champ est vide
+    }
+    
+    // Envoi de la requête AJAX au serveur
+    $.ajax({
+        url: '{{ route("check.dap") }}',
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}', // CSRF token pour Laravel
+            numerodap: numerodap
+        },
+        success: function(response) {
+            if (response.exists) {
+                $('#numerodap_error').text('Erreur : Numéro DAP existe déjà.');
+                $('#numerodap').removeClass('has-success') // Supprime la classe de succès
+                $('#numerodap').addClass('has-error');
+                $('#numerodap_info').text('');
+            } else {
+                $('#numerodap_info').text('Numéro Disponible');
+                $('#numerodap').removeClass('has-error')  // Supprime la classe de succès
+                $('#numerodap').addClass('has-success');
+                $('#numerodap_error').text('');
             }
-        });
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
     });
-
-    document.addEventListener('DOMContentLoaded', function() {
+});
+document.addEventListener('DOMContentLoaded', function() {
     var justifierCheckbox = document.getElementById('justifier');
     var nonjustifierCheckbox = document.getElementById('nonjustifier');
     var factureColumn = document.getElementById('facture-column');
@@ -146,6 +150,10 @@ $('#numerodap').blur(function() {
             factureColumn.style.display = 'table';
             showRetourDiv.style.display = 'block';
             nonjustifierCheckbox.checked = false;
+        } else if (nonjustifierCheckbox.checked) {
+            factureColumn.style.display = 'none';
+            showRetourDiv.style.display = 'none';
+            justifierCheckbox.checked = false;
         } else {
             factureColumn.style.display = 'none';
             showRetourDiv.style.display = 'none';
@@ -160,13 +168,13 @@ $('#numerodap').blur(function() {
         if (nonjustifierCheckbox.checked) {
             factureColumn.style.display = 'none';
             showRetourDiv.style.display = 'none';
+            justifierCheckbox.checked = false;
         }
     });
 
     // Au chargement initial, assurez-vous que les éléments restent masqués
     updateDisplay();
 });
-
 
 function toggleInputs() {
     var checkboxes = document.querySelectorAll('.seleckbox');

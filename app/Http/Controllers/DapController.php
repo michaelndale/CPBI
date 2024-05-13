@@ -64,7 +64,7 @@ class DapController extends Controller
                 ->where('elementdaps.numerodap', $datas->numerodap)
                 ->get();
       
-
+//   <a href="dap/' . $cryptedId . '/edit" class="dropdown-item text-primary mx-1 editIcon " title="Modifier"><i class="far fa-edit"></i> Modifier</a>
 
         $cryptedId = Crypt::encrypt($datas->numerodap);
         $output .= '
@@ -75,7 +75,7 @@ class DapController extends Controller
             <button class="btn btn-primary btn-sm dropdown-toggle"  data-bs-toggle="dropdown" aria-expanded="false"> <i class="mdi mdi-dots-vertical ms-2"></i> Actions </button>
             <div class="dropdown-menu">
                 <a href="dap/' . $cryptedId . '/view" class="dropdown-item text-success mx-1 voirIcon" ><i class="far fa-edit"></i> Voir dap</a>
-                <a href="dap/' . $cryptedId . '/edit" class="dropdown-item text-primary mx-1 editIcon " title="Modifier"><i class="far fa-edit"></i> Modifier</a>
+             
                 <a href="dap/' . $datas->id . '/generate-pdf-dap" class="dropdown-item  mx-1"><i class="fa fa-print"> </i> Générer document PDF</a>
                 <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
             </div>
