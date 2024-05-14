@@ -119,7 +119,7 @@ class DjaController extends Controller
   
       $devise = session()->get('devise');
   
-      $title = "Voir DAP";
+      $title = "Voir DJA";
       $ID = session()->get('id');
       $dateinfo = Identification::all()->first();
   
@@ -132,6 +132,15 @@ class DjaController extends Controller
         ->Where('djas.projetiddja', $ID)
         ->Where('djas.id', $idd)
         ->first();
+
+        $datadapid = $datadap->iddap;
+
+        $liste_justification = DB::table('elementdaps')
+        ->Where('projetidda', $ID)
+        ->Where('dapid', $datadapid)
+        ->get();
+
+
 
         //dd($datadap);
         //dd($idd);
@@ -257,7 +266,8 @@ class DjaController extends Controller
           'pourcetage_globale' => $pourcetage_globale,
           'solde_comptable' => $solde_comptable,
           'taux_execution_avant' => $taux_execution_avant,
-          'pourcentage_encours' => $pourcentage_encours
+          'pourcentage_encours' => $pourcentage_encours,
+          'liste_justification' =>$liste_justification
   
         
         ]

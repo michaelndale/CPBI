@@ -161,7 +161,7 @@
                     <div class="row">
                         <div class="col-sm-6 col-lg-12 col-xl-12">
                             <label class="text-1000 fw-bold mb-2"> Programme, Projet ou Unité</label>
-                            <input class="form-control" id="idf" name="idf" type=""  />
+                            <input class="form-control" id="idf" name="idf" type="hidden"  />
                             <select class="form-select" id="eprojetid" name="eprojetid" type="text" placeholder="Entrer projet" required>
                                 <option disabled="true" selected="true" value=""> -- Sélectionner l'option -- </option>
                                 @forelse ($projet as $projets)
@@ -300,12 +300,15 @@
         });
 
         // update function ajax request
-        $("#edit_folder_form").submit(function(e) {
+        $("#editFeuilleform").submit(function(e) {
             e.preventDefault();
             const fd = new FormData(this);
-            $("#editfolderbtn").text('Mises encours...');
+            
+            $("#btneditfeuille").html('<i class="fas fa-spinner fa-spin"></i>');
+            document.getElementById("btneditfeuille").disabled = true;
+
             $.ajax({
-                url: "{{ route('updatefl') }}",
+                url: "{{ route('updatefeuille') }}",
                 method: 'post',
                 data: fd,
                 cache: false,
@@ -314,23 +317,26 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.status == 200) {
-                        toastr.success("Dossier modifier avec succès !", "Modification");
-                        fetchAlldfolder();
-                        $("#editfolderbtn").text('Sauvegarder');
-                        $("#editFolderModal").modal('hide');
+                        toastr.success("Emploi du temps modifier avec succès !", "Modification");
+                        fetchAllft();
+                        $("#btneditfeuille").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                        $("#EditFeuilleModalLabel").modal('hide');
+                        document.getElementById("btneditfeuille").disabled = false;
 
                     }
 
                     if (response.status == 201) {
+                        $("#EditFeuilleModalLabel").modal('show');
                         toastr.error("Le titre du dossier existe déjà !", "Erreur");
-
-                        $("#editfolderbtn").text('Sauvegarder');
+                        document.getElementById("btneditfeuille").disabled = false;
+                        $("#btneditfeuille").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
                     }
 
                     if (response.status == 205) {
-                        toastr.error("Vous n'avez pas l'accreditation de Modifier ce dossier!", "Erreur");
-
-                        $("#editfolderbtn").text('Sauvegarder');
+                        $("#EditFeuilleModalLabel").modal('show');
+                        toastr.error("Vous n'avez pas l'accreditation de Modifier!", "Erreur");
+                        document.getElementById("btneditfeuille").disabled = false;
+                        $("#btneditfeuille").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
                     }
 
                 }

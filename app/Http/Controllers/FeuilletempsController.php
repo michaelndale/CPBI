@@ -106,7 +106,7 @@ class FeuilletempsController extends Controller
                     <i class="mdi mdi-dots-vertical ms-2"></i> Action
                 </button>
               <div class="dropdown-menu">
-                  <a href="#" class="dropdown-item text-primary mx-1 editIcon" title="Modifier"  data-bs-toggle="modal" data-bs-target="#EditFeuilleModalLabel" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent" ><i class="far fa-edit"></i> Modifier </a>
+                  <a href="#" class="dropdown-item text-primary mx-1 editIcon"  id="' . $datas->id . '" title="Modifier"  data-bs-toggle="modal" data-bs-target="#EditFeuilleModalLabel" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent" ><i class="far fa-edit"></i> Modifier </a>
                   <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer </a>
               </div>
             </div>
@@ -143,19 +143,38 @@ class FeuilletempsController extends Controller
     return response()->json($ft);
   }
   /**
-   * Show the form for editing the specified resource.
-   */
-  public function edit(Feuilletemps $feuilletemps)
-  {
-    //
-  }
+ 
 
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, Feuilletemps $feuilletemps)
+  public function updatefeuille(Request $request)
   {
-    //
+    try {
+      $title = $request->id;
+     
+        $feuille=  Feuilletemps::find($request->idf);
+        $feuille->projetid = $request->eprojetid;
+        $feuille->description = $request->edescription;
+        $feuille->datepresence = $request->edatejour;
+        $feuille->nombre = $request->enombre;
+        $feuille->realisation = $request->erealisation;
+        $feuille->iov = $request->eiov;
+        $feuille->resultat = $request->eresultat;
+        $feuille->observation = $request->eobservation;
+
+        $feuille->update();
+
+        return response()->json([
+          'status' => 200,
+        ]);
+      
+    } catch (Exception $e) {
+
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
   }
 
   /**

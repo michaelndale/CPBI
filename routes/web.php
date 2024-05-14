@@ -470,10 +470,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [FeuilletempsController::class, 'index'])->name('feuilletemps');
         Route::post('/storefeuille', [FeuilletempsController::class, 'store'])->name('storefeuille');
         Route::get('/fetchAllfeuille', [FeuilletempsController::class, 'monfeuille'])->name('fetchAllfeuille');
-        //Route::get('/elementft', [ElementsfeuilletempsController::class, 'index'])->name('elementft');
-        //Route::get('/fetchAllft', [ElementsfeuilletempsController::class, 'fetchAllft'])->name('fetchAllft');
-        //Route::post('/storeft', [ElementsfeuilletempsController::class, 'storeft'])->name('storeft');
-        //Route::post('/sefl', [ElementsfeuilletempsController::class, 'sefl'])->name('sefl');
+        
+        Route::post('/updatefeuille', [FeuilletempsController::class, 'updatefeuille'])->name('updatefeuille');
         Route::get('/showft', [FeuilletempsController::class, 'editf'])->name('showft');
         Route::delete('/deleteftemps', [FeuilletempsController::class, 'deleteftemps'])->name('deleteftemps');
 
