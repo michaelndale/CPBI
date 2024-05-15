@@ -10,6 +10,9 @@
           <div class="col-12 col-md">
             <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Demande et Justification d'Avance "DJA" </h4>
           </div>
+          <div class="col col-md-auto">
+            <a href="javascript:void()" ><span class="me-2" data-feather="plus-circle"></span> <i class="fa fa-plus-circle"></i> Nouvel justification</a></nav>
+            </div>
           
         </div>
       </div>
@@ -18,20 +21,11 @@
         <div id="tableExample2" >
           <div class="table-responsive">
             <table class="table table-striped table-sm fs--1 mb-0 table-bordere" style="background-color:#c0c0c0">
-
-
-
               <tbody id="showSommefeb">
-
               </tbody>
-
             </table>
-          
           </div>
-
         </div>
-
-
 
         <div id="tableExample2" >
           <div class="table-responsive">
@@ -45,10 +39,7 @@
                   <th><b>N<sup>o</sup> DAP</b></th>
                   <!--<th><b>N<sup>o</sup> FEB</b></th> -->
                   <th><b>OV </b></th>
-                  <th><b>Facture </b></th>
-                  <th><b>Borderau </b></th>
-                
-                  <th><b>Montant avance</b></th>
+                 
                 </tr>
               </thead>
 
@@ -82,16 +73,58 @@
 
 
 <script>
+
+$(document).on('input', 'input[name="montant_utiliser[]"]', function() {
+    var montantAvance = $(this).closest('tr').find('input[name="montantavance[]"]').val();
+    var montantUtilise = $(this).val();
+    var surplusManque = parseFloat(montantAvance) - parseFloat(montantUtilise);
+    $(this).closest('tr').find('input[name="surplus[]"]').val(surplusManque);
+});
+
+$(document).on('input', 'input[name="montant_retourne[]"]', function() {
+    var surplusManque = parseFloat($(this).closest('tr').find('input[name="surplus[]"]').val());
+    var montantRetourne = parseFloat($(this).val());
+    var errorMessage = $(this).closest('tr').find('.error-message');
+    var addjustifierbtn = $('#addjustifierbtn');
+
+    if (montantRetourne !== surplusManque) {
+        errorMessage.text("Le Montant Retourné doit être égal au Surplus/Manque.");
+        $(this).addClass('is-invalid');
+        addjustifierbtn.prop('disabled', true);
+    } else {
+        errorMessage.text("");
+        $(this).removeClass('is-invalid');
+        addjustifierbtn.prop('disabled', false);
+    }
+});
+
+$(document).on('input', '.description-input', function() {
+    var descriptionValue = $(this).val().toLowerCase();
+    var relatedPlaqueTd = $(this).closest('tr').find('.plaque-input').parent();
+    if (descriptionValue.includes('carburant')) {
+        relatedPlaqueTd.show();
+    } else {
+        relatedPlaqueTd.hide();
+    }
+});
+
+
+
+
+
   $(function() {
 
     // Add  ajax 
     $("#addjdaForm").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#addfebbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+
+        $("#addjustifierbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+        document.getElementById("adddapbtn").disabled = false;
         $("#loadingModal").modal('show'); // Affiche le popup de chargement
+
       $.ajax({
-        url: "{{ route('storedja') }}",
+        url: "{{ route('storejustification') }}",
         method: 'post',
         data: fd,
         cache: false,
@@ -100,10 +133,6 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
-
-           
-            
-
             
             fetchAlldja();
             toastr.success("DJA ajouté avec succès !", "success");
@@ -161,6 +190,29 @@
           }
         })
       });
+      $(document).on('click', '.voirdja', function(e) {
+    e.preventDefault(); // Empêcher le comportement par défaut du lien
+    var febrefs = $(this).attr('id'); // Utilisez attr() pour obtenir l'ID du lien
+    $.ajax({
+        type: 'get',
+        url: "{{ route('getdjas') }}",
+        data: {
+            'id': febrefs
+        },
+        success: function(response) {
+            $("#show_justificatif").html(response);
+        },
+        error: function(xhr, status, error) {
+            var errorMessage = "Attention! \n Erreur de connexion à la base de données, \n veuillez vérifier votre connexion";
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                errorMessage = xhr.responseJSON.error;
+            }
+            toastr.error(errorMessage, "Erreur");
+        }
+    });
+});
+
+
 
 
 fetchAlldja();

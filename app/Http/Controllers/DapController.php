@@ -172,6 +172,7 @@ class DapController extends Controller
           $dap->secretaire     = $request->secretairegenerale;
           $dap->chefprogramme  = $request->chefprogramme;
           $dap->observation    = $request->observation;
+          $dap->beneficiaire    = $request->beneficiaire;
           $dap->justifier      = $justifier;
           $dap->nonjustifier   = $nonjustifier;
           $dap->userid         = Auth::id();
@@ -193,24 +194,16 @@ class DapController extends Controller
                       // Si aucun enregistrement existant n'est trouvé, procéder à la sauvegarde
                       if (!$existingDapE) {
                           $dapE = new Elementdap();
-
                       
                           $dapE->dapid = $IDdap;
                           $dapE->numerodap = $request->numerodap;
                           $dapE->referencefeb = $febid;
                           $dapE->projetidda = $request->projetid;
                           if ($justifier == 1) {
-                          $dapE->ligneided = $request->ligneid[$key] ?? null;
-                          $dapE->montantavance = $request->montantavance[$key] ?? null;
-                          $dapE->duree_avance = $request->duree_avance[$key] ?? null;
-                          $dapE->montantutiliser = $request->montantutiliser[$key] ?? null;
-                          $dapE->surplus = $request->surplus[$key] ?? null;
-                          $dapE->matriculenum = $request->matriculenum[$key] ?? null;
-                          $dapE->numfacture = $request->facture[$key] ?? null;
-                          $dapE->montantretour = $request->montantretour[$key] ?? null;
-                          $dapE->descriptionn = $request->descriptionel[$key] ?? null;
-                          $dapE->bordereau = $request->bordereau[$key] ?? null;
-                          $dapE->datedu = $request->datedu[$key] ?? null;
+                              $dapE->ligneided = $request->ligneid[$key] ?? null;
+                              $dapE->montantavance = $request->montantavance[$key] ?? null;
+                              $dapE->duree_avance = $request->duree_avance[$key] ?? null;
+                              $dapE->descriptionn = $request->descriptionel[$key] ?? null;
                           }
   
                           $dapE->save();
@@ -687,7 +680,7 @@ class DapController extends Controller
 
   public function edit($idd)
   {
-$ID = session()->get('id');
+    $ID = session()->get('id');
     $budget = session()->get('budget');
     $devise = session()->get('devise');
 

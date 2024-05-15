@@ -10,9 +10,6 @@
     </div>
 </div>
 
-
-
-
 <div class="modal fade" id="dapModale" tabindex="-1" aria-labelledby="dapModale" aria-hidden="true">
     <div class="modal-dialog modal-xl  modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
@@ -22,7 +19,7 @@
             </div>
             <div class="modal-body">
 
-                <form class="row g-3 mb-6" method="POST" id="adddapForm" >
+                <form class="row g-3 mb-6" method="POST" id="adddapForm">
                     @method('post')
                     @csrf
 
@@ -30,9 +27,7 @@
                         <div class="table-responsive">
                             <table class="table table-striped table-sm fs--1 mb-0">
                                 <tbody class="list">
-
                                     <tr>
-
                                         <td style="width:300px"> Service <br>
                                             <select type="text" name="serviceid" id="serviceid" style="width: 100%" class="form-control form-control-sm" required>
                                                 <option value="">--Aucun--</option>
@@ -61,7 +56,6 @@
                                                 <option value="">--Aucun Numero FEB trouvé--</option>
                                                 @endforelse
                                             </select>
-
                                         </td>
 
                             </table>
@@ -73,7 +67,6 @@
                                         <input type="number" name="numerodap" id="numerodap" style="width: 100%" class="form-control form-control-sm" required />
                                         <smal id="numerodap_error" name="numerodap_error" class="text text-danger"> </smal>
                                         <smal id="numerodap_info" class="text text-primary"> </smal>
-                                   
                                     </td>
 
                                     <td> Lieu
@@ -114,12 +107,12 @@
                             <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
 
                                 <tr>
-                                    <td colspan="6">C'est montant est une avance ?  &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" class="form-check-input" name="justifier" id="justifier"> &nbsp; &nbsp; &nbsp;  Non <input type="checkbox" class="form-check-input" name="nonjustifier" id="nonjustifier"></td>
+                                    <td colspan="5">C'est montant est une avance ? &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" class="form-check-input" name="justifier" id="justifier"> &nbsp; &nbsp; &nbsp; Non <input type="checkbox" class="form-check-input" name="nonjustifier" id="nonjustifier"></td>
 
                                 </tr>
                             </table>
-                            <table  class="table table-striped table-sm fs--1 mb-0 table-bordered" id="facture-column" style="display: none; width:100%"> 
-                               <!-- <tr> 
+                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered" id="facture-column" style="display: none; width:100%">
+                                <!-- <tr> 
                                     <td> Facture  &nbsp;  <input type="number" name="facture" id="facture" style="width: 100% ;  border:1px solid #c0c0c0"   /></td>
                                     <td> Dure avance &nbsp;  <input type="number" name="duree_avence" id="duree_avence" style="width: 100% ;  border:1px solid #c0c0c0"  /></td>
                                     <td style="width:15%"> Montant de l'Avance &nbsp;  <input type="number" name="montantavance" id="montantavance" style="width: 100%; border:1px solid #c0c0c0"   /></td>
@@ -130,12 +123,42 @@
                                 </tr> -->
                             </table>
 
-                            <div  id="Showretour" style="display: none;" >
+                            <div id="Showretour" style="display: none;">
 
                             </div>
 
+                            <div id="Shownonretour" style="display: none;">
+                                <input type="text" class="form-control form-control-sm" name="">
+                            </div>
 
-                          
+
+
+                            <br>
+
+
+                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+
+                                <tr>
+                                    <td><b> Fonds recus par</b></td>
+
+                                </tr>
+
+                                <tr>
+
+                                    <td>
+                                        <select type="text" class="form-control form-control-sm" name="beneficiaire" id="beneficiaire" required>
+                                            <option value="">-- Fonds recus par --</option>
+                                            @foreach ($personnel as $personnels)
+                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                            @endforeach
+
+                                        </select>
+                                    </td>
+                                    <!--  <td>
+                                        <input type="text" name="nomb" id=""> <input type="prenomb">
+                                    </td> -->
+                                </tr>
+                            </table>
                             <br>
 
 
@@ -294,4 +317,3 @@
         updateRequired();
     });
 </script>
-

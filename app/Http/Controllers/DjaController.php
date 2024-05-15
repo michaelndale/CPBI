@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Beneficaire;
 use App\Models\Compte;
 use App\Models\Dja;
-use App\Models\Folder;
 use App\Models\Historique;
 use App\Models\Identification;
 use App\Models\Notification;
 use App\Models\User;
+use App\Models\Vehicule;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,22 +46,18 @@ class DjaController extends Controller
                 <i class="mdi mdi-dots-vertical ms-2"></i> Action
             </button>
             <div class="dropdown-menu">
-               
-                <a href="dja/'.$cryptedId.'/view" class="dropdown-item text-success mx-1 voirIcon"  ><i class="far fa-edit"></i> Voir dja</a>
-                <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer dja</a>
+                <a href="#" class="dropdown-item text-success mx-1 voirdja" id="'.$datas->numerodap.'"  data-bs-toggle="modal" data-bs-target="#djaModale" ><i class="far fa-edit"></i>Justificatif</a>
+                <a class="dropdown-item text-danger mx-1 deleteIcon"  id="'.$datas->id.'"  href="#"><i class="far fa-trash-alt"></i> Supprimer dja</a>
             </div>
           </div>
           </center>
           </td>
           <td> '.$datas->numerodjas.'  </td>
-        
           <td> '.$datas->numerodap.' </td>
-          <td> <input type="checkbox"  '. $ov .' class="form-check-input" />  </td>
+          <td> <input type="checkbox" '.$ov.' class="form-check-input" />  </td>
           <td>'.$datas->numfacture.'</td>
           <td>'.$datas->bordereau.'</td>
-          <td> '.$datas->montant_avance.' </td>
-     
-         
+          <td> '.$datas->montant_avance.'</td>
         </tr>
       '
           ;
@@ -352,6 +348,74 @@ class DjaController extends Controller
       $id = $request->id;
       Dja::destroy($id);
     }
+
+    public function getdjas(Request $request)
+    {
+        try {
+            $IDn = $request->id;
+            $budget = session()->get('budget');
+            $IDP = session()->get('id');
+            $output = '';
+            // Initialisez une variable pour stocker les sorties de tableau
+            $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
+            // Effectuez la recherche de données pour chaque identifiant sélectionné
+            $data = DB::table('elementdaps')
+                ->join('febs','elementdaps.referencefeb','febs.id')
+                ->select('elementdaps.*' , 'elementdaps.id as idedaps' , 'febs.ligne_bugdetaire','febs.numerofeb')
+                ->where('numerodap', $IDn)
+                ->get();
+    
+            $vehicules = Vehicule::all();
+    
+            if ($data->count() > 0) {
+                // Générer la sortie HTML pour chaque élément sélectionné
+                foreach ($data as $datas) {
+                    // sommes element
+                    $sommefeb = DB::table('elementfebs')
+                        ->Where('febid', $datas->referencefeb)
+                        ->Where('projetids', $IDP)
+                        ->SUM('montant');
+    
+                    $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)->first();
+                    // Construire la sortie HTML pour chaque élément sélectionné
+                    $output .= '<input type="hidden" name="febid[]" id="febid[]" value="' . $datas->id . '" />';
+                    $output .= '<input type="hidden" id="ligneid[]" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
+                    $output .= '<tr>';
+                    $output .= '<td width="10%">Numéro FEB : ' . $datas->numerofeb . '</td>';
+                    $output .= '<td width="13%">Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" value="'.$sommefeb.'" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                    $output .= '<td width="13%">Montant utilise      <input type="number" name="montant_utiliser[]" id="montant_utiliser[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                    $output .= '<td width="13%">Surplus/Manque       <input type="text" name="surplus[]" id="surplus[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                    $output .= '<td width="13%">Montant Retourne     <input type="text" name="montant_retourne[]" id="montant_retourne[]" style="width: 100%; border:1px solid #c0c0c0" />   <div class="error-message" style="color: red;"></div></td>';
+                    $output .= '<td width="13%">Bordereau            <input type="text"  name="bordereau[]" id="bordereau[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                    $output .= '<td width="13%">Description         <input type="text" name="description[]" class="description-input" style="width: 100%; border:1px solid #c0c0c0" /></td>                    ';
+                    $output .= '<td width="13%" style="display: none;">
+                    Plaque  
+                    <select type="text" name="plaque[]" class="plaque-input" style="width: 100%; border:1px solid #c0c0c0"> <option value="">Aucun</option>';
+                    foreach($vehicules as $vehicule) {
+                        $output .= '<option value="' . $vehicule->matricule . '">' . $vehicule->matricule . '</option>';
+                    }
+                    $output .= '</select> </td>';
+                    $output .= '</tr>';
+                }
+
+
+              
+            } else {
+                // Si aucune donnée n'est trouvée, retournez un message d'erreur avec une classe "danger"
+                $output .= '<tr class="table-danger"><td colspan="7">Aucune donnée trouvée sur la justification. ceci est une DJA non justifier</td></tr>';
+            }
+        
+            $output .= '</table>';
+    
+            return $output;
+            
+        } catch (\Exception $e) {
+            // Retourner un message d'erreur en cas d'exception
+            return response()->json(['error' => 'Une erreur est survenue : ' . $e->getMessage()], 500);
+        }
+    }
+    
+    
 }
 
 

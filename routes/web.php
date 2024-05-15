@@ -266,6 +266,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/getfeb', [FebController::class, 'findfebelement'])->name('getfeb');
     Route::get('/getfebretour', [FebController::class, 'findfebelementretour'])->name('getfebretour');
+    Route::get('/getdjas', [DjaController::class, 'getdjas'])->name('getdjas');
+   
+   
 
     Route::get('/getactivite', [FebController::class, 'getactivite'])->name('getactivite');
     Route::get('/fetctnotifiaction', [FebController::class, 'notificationdoc'])->name('allnotification');
@@ -302,6 +305,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('dja')->group(function () {
         Route::get('/', [DjaController::class, 'list'])->name('listdja');
         Route::post('/storedja', [DjaController::class, 'store'])->name('storedja');
+        Route::post('/storejustification', [DjaController::class, 'store'])->name('storejustification');
+        
         Route::get('/fetchdja', [DjaController::class, 'fetchAll'])->name('fetchdja');
         Route::delete('/deletedja', [DjaController::class, 'delete'])->name('deletedja');
         Route::get('/{id}/view/', [DjaController::class, 'show'])->name('viewdja');
