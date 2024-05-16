@@ -414,6 +414,46 @@ class DjaController extends Controller
             return response()->json(['error' => 'Une erreur est survenue : ' . $e->getMessage()], 500);
         }
     }
+
+
+    public function saveDjas(Request $request)
+{
+    try {
+        // Récupérer les données du formulaire
+        $febidArray = $request->febid;
+        $ligneidArray = $request->ligneid;
+        $montantAvanceArray = $request->montantavance;
+        $montantUtiliserArray = $request->montant_utiliser;
+        $surplusArray = $request->surplus;
+        $montantRetourneArray = $request->montant_retourne;
+        $bordereauArray = $request->bordereau;
+        $descriptionArray = $request->description;
+        $plaqueArray = $request->plaque;
+
+        // Parcourir les données et les enregistrer dans la base de données
+        foreach ($febidArray as $key => $febid) {
+            $dja = new ElementDja(); // Remplacez Dja par le nom de votre modèle
+            $dja->febid = $febid;
+            $dja->ligneid = $ligneidArray[$key];
+            $dja->montant_avance = $montantAvanceArray[$key];
+            $dja->montant_utiliser = $montantUtiliserArray[$key];
+            $dja->surplus = $surplusArray[$key];
+            $dja->montant_retourne = $montantRetourneArray[$key];
+            $dja->bordereau = $bordereauArray[$key];
+            $dja->description = $descriptionArray[$key];
+            $dja->plaque = $plaqueArray[$key];
+            $dja->receptionpar = $request->receptionpar;
+            // Enregistrer l'objet dans la base de données
+            $dja->save();
+        }
+
+        return response()->json(['success' => 'Les données ont été enregistrées avec succès.']);
+    } catch (\Exception $e) {
+        // Retourner un message d'erreur en cas d'exception
+        return response()->json(['error' => 'Une erreur est survenue : ' . $e->getMessage()], 500);
+    }
+}
+
     
     
 }

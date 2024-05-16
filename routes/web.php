@@ -304,7 +304,7 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('dja')->group(function () {
         Route::get('/', [DjaController::class, 'list'])->name('listdja');
-        Route::post('/storedja', [DjaController::class, 'store'])->name('storedja');
+       // Route::post('/storedja', [DjaController::class, 'store'])->name('storedja');
         Route::post('/storejustification', [DjaController::class, 'store'])->name('storejustification');
         
         Route::get('/fetchdja', [DjaController::class, 'fetchAll'])->name('fetchdja');
