@@ -121,40 +121,34 @@ window.onload = function() {
   $(document).ready(function() {
 
     $(document).on('change', '.compteid', function() {
-      var cat_id = $(this).val();
-      var div = $(this).parent();
-      var op = " ";
-      $.ajax({
+    var cat_id = $(this).val();
+    var op = "";
+
+    $.ajax({
         type: 'get',
         url: "{{ route ('findSousCompte') }}",
         data: {
-          'id': cat_id
+            'id': cat_id
         },
         success: function(data) {
-          console.log(data);
-          if (data.length == 0) {
-            op += '<option value="0" selected disabled>--Ligne compte--</option>';
-            op += '<option value="0" selected disabled>Aucun </option>';
-            document.getElementById("scomptef").innerHTML = op
-            toastr.error("Attention!!\n la ligne  n'a pas de sous ligne", "Information");
-          } else {
-
-            for (var i = 0; i < data.length; i++) {
-              op += '<option value="' + data[i].id + '">' + data[i].numero + '.' + data[i].libelle + '</option>';
-              document.getElementById("scomptef").innerHTML = op
+            console.log(data);
+            if (data.length == 0) {
+                op += '<option value="0" selected disabled>-- Ligne compte --</option>';
+                op += '<option value="0" selected disabled>Aucun</option>';
+                toastr.error("Attention !! La ligne n'a pas de sous-ligne", "Information");
+            } else {
+                $.each(data, function(index, item) {
+                    op += '<option value="' + item.id + '">' + item.numero + '.' + item.libelle + '</option>';
+                });
             }
-          }
-
+            // Mettre à jour le menu déroulant une seule fois après la boucle
+            $("#scomptef").html(op);
         },
         error: function() {
-
-          toastr.error("Erreur de connexion a la base de donnee ,\n verifier votre connection", "Attention");
+            toastr.error("Erreur de connexion à la base de données, vérifiez votre connexion", "Attention");
         }
-      });
     });
-
-
-
+});
   });
 </script>
 
@@ -164,67 +158,53 @@ window.onload = function() {
   $(function() {
     // Add rallonge budgetaire ajax 
     $("#addFOrm").submit(function(e) {
-      e.preventDefault();
-      const fd = new FormData(this);
+    e.preventDefault();
+    const fd = new FormData(this);
 
-      $("#savebtn").html('<i class="fas fa-spinner fa-spin"></i>');
-      document.getElementById("savebtn").disabled = true;
+    const saveButton = $("#savebtn");
+    saveButton.html('<i class="fas fa-spinner fa-spin"></i>');
+    saveButton.prop("disabled", true);
 
-      $.ajax({
+    $.ajax({
         url: "{{ route('storerallonge') }}",
-        method: 'post',
+        method: 'POST',
         data: fd,
         cache: false,
         contentType: false,
         processData: false,
         dataType: 'json',
         success: function(response) {
-          if (response.status == 200) {
-            toastr.success("Budget reussi avec succès !", "Enregistrement");
-            fetchAllrallonge();
-
-            $("#savebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            $("#addFOrm")[0].reset();
-            $("#addDealModal").modal('hide');
-            document.getElementById("savebtn").disabled = false;
-
-          }
-
-          if (response.status == 201) {
-            toastr.error("Le montant est supérieur au montant globale du budget !", "Attention");
-            $("#savebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-          
-          
-            document.getElementById("savebtn").disabled = false;
-
+            switch(response.status) {
+                case 200:
+                    toastr.success("Budget enregistré avec succès !", "Enregistrement");
+                    fetchAllrallonge();
+                    $("#addFOrm")[0].reset();
+                    $("#addDealModal").modal('hide');
+                    break;
+                case 201:
+                    toastr.error("Le montant est supérieur au montant global du budget !", "Attention");
+                    break;
+                case 202:
+                    toastr.error("Erreur d'exécution !", "Erreur");
+                    break;
+                case 203:
+                    toastr.error("Une ligne de compte ne peut recevoir le montant plusieurs fois !", "Erreur");
+                    break;
+                default:
+                    toastr.error("Erreur inconnue !", "Erreur");
+            }
+            saveButton.html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            saveButton.prop("disabled", false);
             $("#addDealModal").modal('show');
-          }
-
-          if (response.status == 202) {
-            toastr.error("Erreur d'execution  !", "Erreur");
-            $("#savebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-          
-         
-          document.getElementById("savebtn").disabled = false;
-
-            $("#addDealModal").modal('show');
-          }
-
-          if (response.status == 203) {
-            toastr.error("Une ligne de compte n'est peut recevoir de fois le montant !", "Erreur");
-            $("#savebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-          
-        
-          document.getElementById("savebtn").disabled = false;
-
-            $("#addDealModal").modal('show');
-          }
-
-          
-
+        },
+        error: function() {
+            toastr.error("Erreur de communication avec le serveur !", "Erreur");
+            saveButton.html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            saveButton.prop("disabled", false);
         }
-      });
     });
+});
+
 
 
     // Edit fonction ajax request

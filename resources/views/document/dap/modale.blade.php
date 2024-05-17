@@ -139,32 +139,6 @@
                             <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
 
                                 <tr>
-                                    <td><b> Fonds recus par</b></td>
-
-                                </tr>
-
-                                <tr>
-
-                                    <td>
-                                        <select type="text" class="form-control form-control-sm" name="beneficiaire" id="beneficiaire" required>
-                                            <option value="">-- Fonds recus par --</option>
-                                            @foreach ($personnel as $personnels)
-                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-                                            @endforeach
-
-                                        </select>
-                                    </td>
-                                    <!--  <td>
-                                        <input type="text" name="nomb" id=""> <input type="prenomb">
-                                    </td> -->
-                                </tr>
-                            </table>
-                            <br>
-
-
-                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
-
-                                <tr>
                                     <td colspan="3"><b> Vérification et Approbation de la Demande de paiement </b></td>
                                 </tr>
                                 <tr>
@@ -266,6 +240,31 @@
                                     <td colspan="4"><b>Observations/Instructions du SG : </b> <br>
                                         <textarea class="form-control form-control-sm" name="observation" id="observation">-</textarea>
                                     </td>
+                                </tr>
+                            </table>
+
+
+                            <br>
+
+
+                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+
+                                <tr>
+                                    <td><b> Fonds recus par</b></td>
+                                </tr>
+                                <tr>
+                               <td>
+                                        <select type="text" class="form-control form-control-sm" name="beneficiaire" id="beneficiaire" required>
+                                            <option value="">-- Fonds recus par --</option>
+                                            @foreach ($personnel as $personnels)
+                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                            @endforeach
+
+                                        </select>
+                                    </td>
+                                    <!--  <td>
+                                        <input type="text" name="nomb" id=""> <input type="prenomb">
+                                    </td> -->
                                 </tr>
                             </table>
 

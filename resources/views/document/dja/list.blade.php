@@ -37,8 +37,9 @@
                   </th>
                   <th><b>N<sup>o</sup> DJA</b> </th>
                   <th><b>N<sup>o</sup> DAP</b></th>
-                  <!--<th><b>N<sup>o</sup> FEB</b></th> -->
                   <th><b>OV </b></th>
+                  <th><b>  Justifier ?</b></th>
+                  <th><b> Date enr. </b></th>
                  
                 </tr>
               </thead>
@@ -116,48 +117,57 @@ $(document).on('input', '.description-input', function() {
 
     // Add  ajax 
     $("#addjdaForm").submit(function(e) {
-      e.preventDefault();
-      const fd = new FormData(this);
+  e.preventDefault();
+  const fd = new FormData(this);
 
-        $("#addjustifierbtn").html('<i class="fas fa-spinner fa-spin"></i>');
-        document.getElementById("adddapbtn").disabled = false;
-        $("#loadingModal").modal('show'); // Affiche le popup de chargement
+  $("#addjustifierbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+  document.getElementById("addjustifierbtn").disabled = true; // Désactivez le bouton pour éviter les doubles soumissions
+  $("#loadingModal").modal('show'); // Affiche le popup de chargement
 
-      $.ajax({
-        url: "{{ route('storejustification') }}",
-        method: 'post',
-        data: fd,
-        cache: false,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-          if (response.status == 200) {
-            
-            fetchAlldja();
-            toastr.success("DJA ajouté avec succès !", "success");
-            
-            //$("#adddjaForm")[0].reset();
-            $("#djaModale").modal('hide');
-          }
-          if (response.status == 201) {
-            toastr.error("Attention: DJA fonction existe déjà !", "info");
-            $("#djaModale").modal('show');
-          }
+  $.ajax({
+    url: "{{ route('storejustification') }}",
+    method: 'post',
+    data: fd,
+    cache: false,
+    contentType: false,
+    processData: false,
+    dataType: 'json',
+    success: function(response) {
+      if (response.status == 200) {
+        fetchAlldja();
+        toastr.success("DJA ajouté avec succès !", "success");
+        $("#djaModale").modal('hide');
+      } else if (response.status == 201) {
+        toastr.error("Attention: DJA fonction existe déjà !", "info");
+        $("#djaModale").modal('show');
+        document.getElementById("addjustifierbtn").disabled = false; // Réactive le bouton
+      } else if (response.status == 202) {
+        toastr.error("Erreur d'execution, verifier votre internet", "error");
+        $("#djaModale").modal('show');
+        
+        document.getElementById("addjustifierbtn").disabled = false; // Réactive le bouton
+      } else if (response.status == 203) {
+        toastr.error("Erreur d'exécution : " + response.error, "error");
+        $("#djaModale").modal('show');
+        document.getElementById("addjustifierbtn").disabled = false; // Réactive le bouton
+      }
 
-          if (response.status == 202) {
-            toastr.error("Erreur d'execution, verifier votre internet", "error");
-            $("#djaModale").modal('show');
-          }
+      $("#addjustifierbtn").html('Sauvegarder'); // Réinitialise le texte du bouton
+      document.getElementById("djaModale").disabled = false; // Réactive le bouton
+      $("#loadingModal").modal('hide');
+      setTimeout(function() {
+        $("#loadingModal").modal('hide');
+      }, 600); // 600 millisecondes = 0.6 secondes
+    },
+    error: function(xhr, status, error) {
+      toastr.error("Une erreur s'est produite : " + error, "error");
+      $("#addjustifierbtn").html('Sauvegarder'); // Réinitialise le texte du bouton
+      document.getElementById("addjustifierbtn").disabled = false; // Réactive le bouton
+      $("#loadingModal").modal('hide');
+    }
+  });
+});
 
-          $("#addjabtn").text('Sauvegarder');
-          $("#loadingModal").modal('hide');
-          setTimeout(function() {
-            $("#loadingModal").modal('hide');
-          }, 600); // 2000 millisecondes = 2 secondes
-        }
-      });
-    });
 
     $(document).on('click', '.deleteIcon', function(e) {
         e.preventDefault();

@@ -226,6 +226,7 @@ class DapController extends Controller
                   $justification->projetiddja = $request->projetid;
                   $justification->numerodap = $request->numerodap;
                   $justification->numeroov = $ov;
+                  $justification->justifie      = $justifier;
                   $justification->userid = Auth::id();
   
                   $justification->save();

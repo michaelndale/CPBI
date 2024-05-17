@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('elementdja', function (Blueprint $table) {
+        Schema::create('elementdjas', function (Blueprint $table) {
             $table->id();
             $table->string('febid')->nullable();
+            $table->string('iddjas')->nullable();
+            $table->string('idddap')->nullable();
             $table->string('ligneid')->nullable();
             $table->double('montant_avance')->nullable();
             $table->double('montant_utiliser')->nullable();
@@ -23,8 +25,6 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('plaque')->nullable(); // Peut-être nullable si ce champ n'est pas toujours rempli
             $table->string('receptionpar');
-            $table->timestamps();
-
             $table->timestamps();
         });
     }

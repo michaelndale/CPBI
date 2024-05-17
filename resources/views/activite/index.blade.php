@@ -99,9 +99,7 @@
       e.preventDefault();
       const fd = new FormData(this);
 
-      $("#addactivitebtn").html('<i class="fas fa-spinner fa-spin"></i>');
-      document.getElementById("addactivitebtn").disabled = true;
-
+      $("#addactivitebtn").html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
 
       $.ajax({
         url: "{{ route('storeact') }}",
@@ -114,44 +112,33 @@
         success: function(response) {
           if (response.status == 200) {
             fetchActivite();
-
-            toastr.success("L'activité a été ajoutée avec succè", "success");
-
-            $("#addactivitebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            toastr.success("L'activité a été ajoutée avec succès", "Succès");
             $("#addactiviteForm")[0].reset();
             $("#addModale").modal('hide');
-            document.getElementById("addactivitebtn").disabled = false;
+          } else if (response.status == 201) {
+            toastr.error("La somme des activités dépasse le montant disponible sur la ligne !", "Attention");
+          } else {
+            toastr.error("Une erreur est survenue lors de l'ajout de l'activité", "Erreur");
           }
-
-          if (response.status == 201) {
-            toastr.error("La somme des activités dépasse le montant disponible sur la ligne  !", "Attention");
-            $("#addactivitebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            document.getElementById("addactivitebtn").disabled = false;
-            $("#addModale").modal('show');
-           
-          }
-
-          if (response.status == 500) {
-            toastr.info("Une erreur est survenue lors de l'ajout de l'activité", "Erreur");
-            $("#addactivitebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            document.getElementById("addactivitebtn").disabled = false;
-            $("#addModale").modal('show');
-          }
-
-
-
+        },
+        error: function(xhr, status, error) {
+          toastr.error("Une erreur est survenue lors de l'envoi de la requête au serveur", "Erreur");
+          console.error(xhr.responseText);
+        },
+        complete: function() {
+          $("#addactivitebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder').prop('disabled', false);
         }
       });
     });
+
 
 
     // ajouter le observation 
     $("#AddCommenteForm").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-     
-      $("#Addcommentebtn").html('<i class="fas fa-spinner fa-spin"></i>');
-      document.getElementById("Addcommentebtn").disabled = true;
+
+      $("#Addcommentebtn").html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
 
       $.ajax({
         url: "{{ route('storeobeserve') }}",
@@ -164,40 +151,25 @@
         success: function(response) {
           if (response.status == 200) {
             fetchActivite();
-
-            toastr.success("Observation ajoutée avec succès !", "success");
-
-            
+            toastr.success("Observation ajoutée avec succès !", "Succès");
             $("#AddObserve").modal('hide');
-            $("#Addcommentebtn")[0].reset();
-
-            $("#Addcommentebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            document.getElementById("editfolderbtn").disabled = false;
-          }
-
-
-          if (response.status == 201) {
-            toastr.danger("Échec de l'ajout de l'observation", "Erreur");
-
+            $("#AddCommenteForm")[0].reset();
+          } else {
+            toastr.error("Échec de l'ajout de l'observation", "Erreur");
             $("#AddObserve").modal('show');
-            $("#Addcommentebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            document.getElementById("editfolderbtn").disabled = false;
           }
-
-          if (response.status == 500) {
-            toastr.danger("Une erreur est survenue lors de l'ajout de l'observation.", "Erreur");
-
-            $("#AddObserve").modal('show');
-            $("#Addcommentebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            document.getElementById("editfolderbtn").disabled = false;
-            
-          }
-
-
-
+        },
+        error: function(xhr, status, error) {
+          toastr.error("Une erreur est survenue lors de l'envoi de la requête au serveur", "Erreur");
+          console.error(xhr.responseText);
+          $("#AddObserve").modal('show');
+        },
+        complete: function() {
+          $("#Addcommentebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder').prop('disabled', false);
         }
       });
     });
+
 
 
 
@@ -212,25 +184,24 @@
           _token: '{{ csrf_token() }}'
         },
         success: function(response) {
-
-         
-            $("#libelle").val(response.libellecompte);
-            $("#montantact").val(response.montantbudget);
-            $("#titreact").val(response.titre);
-            $("#etatact").val(response.etat_activite);
-            $("#aid").val(response.id);
-
-          
-
+          $("#libelle").val(response.libellecompte);
+          $("#montantact").val(response.montantbudget);
+          $("#titreact").val(response.titre);
+          $("#etatact").val(response.etat_activite);
+          $("#aid").val(response.id);
+        },
+        error: function(xhr, status, error) {
+          toastr.error("Une erreur est survenue lors de la récupération des détails de l'activité", "Erreur");
         }
       });
     });
+
 
     // update activite ajax request
     $("#editactiviteForm").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#editactivitebtn").text('Mise à jour...');
+      $("#editactivitebtn").text('Mise à jour...').prop('disabled', true);
       $.ajax({
         url: "{{ route('updateActivite') }}",
         method: 'post',
@@ -241,22 +212,25 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
-            toastr.success("Activité mise à jour avec succès !", "Success");
+            toastr.success("Activité mise à jour avec succès !", "Succès");
             fetchActivite();
             $("#EditModale").modal('hide');
-          }
-
-
-          if (response.status == 202) {
-            toastr.error("Échec de la mise à jour de l'activité", "Error");
+          } else {
+            toastr.error("Échec de la mise à jour de l'activité", "Erreur");
             $("#EditModale").modal('show');
           }
-
-          $("#editactivitebtn").text('Modifier');
-
+        },
+        error: function(xhr, status, error) {
+          toastr.error("Une erreur est survenue lors de la mise à jour de l'activité", "Erreur");
+          console.error(xhr.responseText);
+          $("#EditModale").modal('show');
+        },
+        complete: function() {
+          $("#editactivitebtn").text('Modifier').prop('disabled', false);
         }
       });
     });
+
 
 
 
@@ -268,12 +242,11 @@
       let csrf = '{{ csrf_token() }}';
       Swal.fire({
         title: 'Êtes-vous sûr ?',
-        text: "Une activité est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ? !",
-
+        text: "Une activité est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ? ",
         showCancelButton: true,
         confirmButtonColor: 'green',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Oui , Supprimer !'
+        confirmButtonText: 'Oui, Supprimer !'
       }).then((result) => {
         if (result.isConfirmed) {
           $.ajax({
@@ -284,33 +257,31 @@
               _token: csrf
             },
             success: function(response) {
-
-              fetchActivite();
               if (response.status == 200) {
-                toastr.success("Activité supprimée avec succès. !", "Success");
+                toastr.success("Activité supprimée avec succès.", "Succès");
                 fetchActivite();
-               
+              } else if (response.status == 201) {
+                toastr.error("Vous n'avez pas l'autorisation de supprimer cette activité.", "Erreur");
+              } else {
+                toastr.error("Une erreur est survenue lors de la suppression de l'activité.", "Erreur");
               }
-
-              if (response.status == 201) {
-                toastr.error("Vous n'avez pas l'accreditation de supprimer cette activité.", "Error");
-               
-              }
-
-
-              if (response.status == 500) {
-                toastr.error("Une erreur est survenue lors de la suppression de l'activité.", "Error");
-               
-              }
+            },
+            error: function(xhr, status, error) {
+              toastr.error("Une erreur est survenue lors de la suppression de l'activité.", "Erreur");
+              console.error(xhr.responseText);
             }
           });
         }
-      })
+      });
     });
 
     $(document).on('click', '.observationshow', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
+
+      // Ajout d'un indicateur de chargement
+      $("#showAllcommente").html('<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Chargement des commentaires...</div>');
+
       $.ajax({
         url: "{{ route('showcommente') }}",
         method: 'get',
@@ -319,16 +290,25 @@
           _token: '{{ csrf_token() }}'
         },
         success: function(reponse) {
+          // Affichage des commentaires
           $("#showAllcommente").html(reponse);
-
+        },
+        error: function(xhr, status, error) {
+          // Gestion des erreurs
+          $("#showAllcommente").html('<div class="alert alert-danger">Une erreur s\'est produite lors du chargement des commentaires.</div>');
+          console.error(xhr.responseText);
         }
       });
     });
 
 
+
     $(document).on('click', '.ajouteroberveget', function(e) {
-      e.preventDefault();
-      let id = $(this).attr('id');
+      e.preventDefault(); // Empêche le comportement par défaut du lien
+
+      let id = $(this).attr('id'); // Récupère l'ID de l'élément cliqué
+
+      // Envoie une requête AJAX pour récupérer les détails de l'activité associée à cet ID
       $.ajax({
         url: "{{ route('showactivityobserve') }}",
         method: 'get',
@@ -337,29 +317,32 @@
           _token: '{{ csrf_token() }}'
         },
         success: function(response) {
+          // Met à jour le champ de formulaire avec l'ID de l'activité
           $("#idact").val(response.idact);
         }
       });
     });
 
+
     fetchActivite();
 
     function fetchActivite() {
-  $.ajax({
-    url: "{{ route('fetchActivite') }}",
-    method: 'get',
-    success: function(response) {
-      if (response.status == 500) {
-        toastr.error("Une erreur est survenue lors de la récupération des données.", "Erreur");
-      } else {
-        $("#show_all_activite").html(response);
-      }
-    },
-    error: function() {
-      toastr.error("Une erreur est survenue lors de la récupération des données.", "Erreur");
+      $.ajax({
+        url: "{{ route('fetchActivite') }}", // URL de la route à interroger
+        method: 'get', // Méthode de la requête HTTP
+        success: function(response) { // Fonction à exécuter en cas de succès de la requête
+          if (response.status == 500) { // Vérifie le statut de la réponse
+            toastr.error("Une erreur est survenue lors de la récupération des données.", "Erreur"); // Affiche un message d'erreur
+          } else {
+            $("#show_all_activite").html(response); // Met à jour le contenu de l'élément avec l'ID 'show_all_activite' avec la réponse
+          }
+        },
+        error: function() { // Fonction à exécuter en cas d'erreur de la requête
+          toastr.error("Une erreur est survenue lors de la récupération des données.", "Erreur"); // Affiche un message d'erreur
+        }
+      });
+
     }
-  });
-}
 
   });
 </script>
