@@ -8,6 +8,7 @@ use App\Models\Rallongebudget;
 use App\Models\typeprojet;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
@@ -205,17 +206,26 @@ class RallongebudgetController extends Controller
           // Récupération des sous-comptes
           $sous_compte = DB::table('rallongebudgets')
             ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
-            ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero')
+            ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero', 'rallongebudgets.id as id')
             ->where('rallongebudgets.projetid', $IDP)
             ->where('rallongebudgets.compteid', $datas->id)
             ->get();
 
           foreach ($sous_compte as $sc) {
             $ids = Crypt::encrypt($sc->id);
-            $route = route('showligne', $ids);
-
+         
             $showme = $showData->autorisation == 1
-              ? '<center><a href="' . $route . '" class="edit-link" title="Revision budgétaire"><i class="fa fa-edit"></i></a></center>'
+              ? '
+              <div class="btn-group me-2 mb-2 mb-sm-0">
+                    <a  data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="mdi mdi-dots-vertical ms-2"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item text-primary mx-1 showrevision" id="'.$sc->id .'"  data-bs-toggle="modal" data-bs-target="#revisionModal" title="Revision budgétaire"><i class="far fa-edit"></i> Execute la revision budgétaire </a>
+                        <a class="dropdown-item text-danger mx-1 deleterevision"  id="'.$sc->id.'"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
+                    </div>
+                  </div>
+              '
               : '';
 
             $difference = $sc->retruction == 1 ? "difference" : '';
@@ -341,61 +351,78 @@ class RallongebudgetController extends Controller
 
   public function updatlignebudget(Request $request)
   {
-    $IDP = session()->get('id');
-    $budget = session()->get('budget');
-
-    // TOTAL Budget 
-    $somme_budget = DB::table('rallongebudgets')
-      ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
-      ->Where('rallongebudgets.projetid', $IDP)
-      ->SUM('budgetactuel');
-
-    $globale = $somme_budget - $request->ancienmontantligne;
-
-    $globale = $request->montantligne + $globale;
-
-    if ($budget >= $globale) {
-      $MisesA = Rallongebudget::find($request->id);
-      $MisesA->budgetactuel  = $request->montantligne;
-      $MisesA->update();
-
-      if ($MisesA) {
-
-        $updateligne = Compte::find($request->souscompteid);
-        $updateligne->numero  = $request->code;
-        $updateligne->libelle  = $request->titreligne;
-        $updateligne->update();
-
-
-        return redirect()->route('rallongebudget')->with('success', 'Très bien! le budgetaire  est bien modifier');
+      
+      $IDP = session()->get('id');
+      $budget = session()->get('budget');
+  
+      // Calcul du budget total
+      $somme_budget = DB::table('rallongebudgets')
+          ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
+          ->where('rallongebudgets.projetid', $IDP)
+          ->sum('budgetactuel');
+  
+      $globale = $somme_budget - $request->ancienmontantligne;
+      $globale += $request->r_budgetactuel;
+  
+      if ($budget >= $globale) {
+          $MisesA = Rallongebudget::find($request->r_idligne);
+          $MisesA->budgetactuel = $request->r_budgetactuel;
+          $MisesA->update();
+  
+          if ($MisesA) {
+              $updateligne = Compte::find($request->r_souscompte);
+              $updateligne->numero = $request->r_code;
+              $updateligne->libelle = $request->r_libelle;
+              $updateligne->update();
+  
+              return response()->json(['status' => 200, 'message' => 'Très bien! Le budget a été bien modifié.']);
+          } else {
+              return response()->json(['status' => 202, 'message' => 'Échec ! Le budget n\'a pas été modifié.']);
+          }
       } else {
-        return back()->with('failed', 'Echec ! lle budgetaire  n\'est pas creer ');
+          return response()->json(['status' => 205, 'message' => 'Attention ! Vous ne devez pas dépasser le montant du budget global.']);
       }
-    } else {
-      return back()->with('failed', 'Attention ! Vous ne devez pas depasser le montant du budget  global ');
-    }
   }
+  
+
 
   // SHOW ELEMENT
-  public function show($key)
+  public function showrallonge(Request $request)
   {
-    $key = Crypt::decrypt($key);
-
-    $dataJon = DB::table('rallongebudgets')
-      ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
-      ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero')
-      ->where('rallongebudgets.id', $key)
-      ->get();
-
-    return view(
-      'rallonge.viewligne',
-      [
-        'title' => 'Revision ligne budgetaire',
-        'dataJon' => $dataJon
-      ]
-    );
-    // return response()->json($datar);
+      // Valider la requête pour s'assurer que 'id' est présent
+      $validated = $request->validate([
+          'id' => 'required|integer' // Supposons que l'ID est un entier
+      ]);
+  
+      try {
+          $key = $validated['id'];
+  
+          // Récupérer les données
+          $dataJon = DB::table('rallongebudgets')
+              ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
+              ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero', 'rallongebudgets.id as idr')
+              ->where('rallongebudgets.id', $key)
+              ->get();
+  
+          // Vérifier si des données ont été trouvées
+          if ($dataJon->isEmpty()) {
+              return response()->json([
+                  'status' => 404,
+                  'message' => 'Aucune rallonge budgétaire trouvée pour cet ID.'
+              ], 404);
+          }
+  
+          // Retourner les données en format JSON
+          return response()->json($dataJon, 200);
+      } catch (Exception $e) {
+          // Gérer les exceptions
+          return response()->json([
+              'status' => 500,
+              'message' => 'Erreur lors de la récupération des données : ' . $e->getMessage()
+          ], 500);
+      }
   }
+  
 
   // edit an service ajax request
   public function addsc(Request $request)
@@ -490,10 +517,28 @@ class RallongebudgetController extends Controller
     }
   }
 
-  public function deleterb($id)
+
+  public function deleteall(Request $request)
   {
-    $rallonge = Rallongebudget::findOrFail($id);
-    $rallonge->delete();
-    return redirect()->route('rallongebudget')->with('success', 'Element supprimé avec succès.');
+    try {
+
+      $emp = Rallongebudget::find($request->id);
+      if ($emp->userid == Auth::id()) {
+        $id = $request->id;
+        Rallongebudget::destroy($id);
+        return response()->json([
+          'status' => 200,
+        ]);
+      } else {
+        return response()->json([
+          'status' => 205,
+        ]);
+      }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
   }
+
 }

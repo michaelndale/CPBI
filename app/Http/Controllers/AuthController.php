@@ -214,42 +214,38 @@ class AuthController extends Controller
 
   public function handlelogin(AuthRequest $request)
   {
-    try {
-
-      $username = $request->email;
-      $password = $request->password;
-
-      // $credentials = $request->only('email', 'password');
-
-      if (Auth::attempt(['identifiant' => $username, 'password' => $password],  $request->filled('remember'))) {
-
-        $user = Auth::User();
-
-
-        if ($user->statut == 'Activé') {
-
-
-          $datauser = Personnel::find($user->personnelid);
-          session()->put('nomauth', $datauser->nom);
-          session()->put('prenomauth', $datauser->prenom);
-          session()->put('fonction', $datauser->fonction);
-          session()->put('avatar', $datauser->avatar);
-          session()->put('signature', $datauser->signature);
-
-
-          return response()->json([[1]]);
-        } else if ($user->statut == 'Bloqué') {
-          return response()->json([[2]]);
-        } else if ($user->statut == 'Desactivé') {
-          return response()->json([[3]]);
-        }
-      } else {
-        return response()->json([[4]]);
+      try {
+          $username = $request->email;
+          $password = $request->password;
+  
+          if (Auth::attempt(['identifiant' => $username, 'password' => $password], $request->filled('remember'))) {
+              $user = Auth::user();
+  
+              switch ($user->statut) {
+                  case 'Activé':
+                      $datauser = Personnel::find($user->personnelid);
+                      session()->put('nomauth', $datauser->nom);
+                      session()->put('prenomauth', $datauser->prenom);
+                      session()->put('fonction', $datauser->fonction);
+                      session()->put('avatar', $datauser->avatar);
+                      session()->put('signature', $datauser->signature);
+  
+                      return response()->json([1]);
+                  case 'Bloqué':
+                      return response()->json([2]);
+                  case 'Desactivé':
+                      return response()->json([3]);
+                  default:
+                      return response()->json([4]); // In case the statut is something unexpected
+              }
+          } else {
+              return response()->json([4]);
+          }
+      } catch (Exception $e) {
+          return response()->json([5]);
       }
-    } catch (Exception $e) {
-      return response()->json([[5]]);
-    }
   }
+  
 
   public function create()
   {

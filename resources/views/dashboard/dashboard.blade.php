@@ -325,69 +325,56 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
+    $(document).ready(function() {
 
-            $(document).on('change', '.classcategory', function() {
-                var cat_id = $(this).val();
-                var div = $(this).parent();
-                var op = " ";
-                $.ajax({
-                    type: 'get',
-                    url: "{{ route ('findClaseur') }}",
-                    data: {
-                        'id': cat_id
-                    },
-                    success: function(data) {
-                        console.log(data);
-                        if (data.length == 0) {
-                            op += '<option value="0" selected disabled>--Année--</option>';
-                            op += '<option value="0" selected disabled>Aucun </option>';
-                            document.getElementById("annee").innerHTML = op
+        $(document).on('change', '.classcategory', function() {
+            var cat_id = $(this).val();
+            var op = '<option value="0" selected disabled>--Année--</option>';
 
-
-
-                            toastr.error("Attention!!\n le dossier n'a pas de projet", "Information");
-
-
-                        } else {
-                            op += '<option value="0" selected disabled>--Année--</option>';
-                            for (var i = 0; i < data.length; i++) {
-                                op += '<option value="' + data[i].annee + '">' + data[i].annee + '</option>';
-                                document.getElementById("annee").innerHTML = op
-                            }
+            $.ajax({
+                type: 'get',
+                url: "{{ route('findClaseur') }}",
+                data: { 'id': cat_id },
+                success: function(data) {
+                    console.log(data);
+                    if (data.length == 0) {
+                        op += '<option value="0" disabled>Aucun</option>';
+                        toastr.error("Attention!!\n Le dossier n'a pas de projet", "Information");
+                    } else {
+                        for (var i = 0; i < data.length; i++) {
+                            op += '<option value="' + data[i].annee + '">' + data[i].annee + '</option>';
                         }
-
-                    },
-                    error: function() {
-
-                        toastr.error("Erreur de connexion a la base de donnee ,\n verifier votre connection", "Attention");
                     }
-                });
-            });
-
-            $(document).on('change', '.annee', function() {
-                var ann_id = $(this).val();
-                var classcategory = document.getElementById('classcategory').value;
-                var a = $(this).parent();
-                var op = "";
-                $.ajax({
-                    type: 'get',
-                    url: "{{ route ('findAnnee') }}",
-                    data: {
-                        'id': ann_id,
-                        'docid': classcategory
-                    },
-                    dataType: 'json',
-                    success: function(data) 
-                    {
-                        $("#show_all_projet").html(data);
-                        
-                    },
-                    error: function() {
-                    }
-                });
+                    $("#annee").html(op);
+                },
+                error: function() {
+                    toastr.error("Erreur de connexion à la base de données,\n Vérifiez votre connexion", "Attention");
+                }
             });
         });
-    </script>
+
+        $(document).on('change', '.annee', function() {
+            var ann_id = $(this).val();
+            var classcategory = $('#classcategory').val();
+
+            $.ajax({
+                type: 'get',
+                url: "{{ route('findAnnee') }}",
+                data: {
+                    'id': ann_id,
+                    'docid': classcategory
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $("#show_all_projet").html(data);
+                },
+                error: function() {
+                    toastr.error("Erreur lors de la récupération des données du projet.", "Attention");
+                }
+            });
+        });
+    });
+</script>
+
 
     @endsection

@@ -11,21 +11,32 @@ class CompteController extends Controller
 {
   public function index()
   {
+    // Vérifie si l'ID de projet existe dans la session
+    if (!session()->has('id')) {
+      // Redirige vers le tableau de bord si l'ID de projet n'existe pas dans la session
+      return redirect()->route('dashboard')->with('error', 'ID de projet non trouvé dans la session.');
+    }
+
+    // Récupère l'ID de projet depuis la session
     $ID = session()->get('id');
+
+    // Définit les variables pour le titre de la page et l'onglet actif
     $active = 'Project';
     $title = 'Compte & Ligne';
-    $compte = Compte::where('compteid', '=', 0)
+
+    // Récupère tous les comptes dont le compteid est 0 et le projetid est égal à l'ID de session
+    $compte = Compte::where('compteid', 0)
       ->where('projetid', $ID)
       ->get();
-    return view(
-      'compteligne.index',
-      [
-        'title' => $title,
-        'active' => $active,
-        'compte' => $compte
-      ]
-    );
+
+    // Retourne la vue avec les données nécessaires
+    return view('compteligne.index', [
+      'title' => $title,
+      'active' => $active,
+      'compte' => $compte,
+    ]);
   }
+
 
   public function selectcompte()
   {
@@ -88,104 +99,96 @@ class CompteController extends Controller
   public function fetchAll()
   {
     $ID = session()->get('id');
-    $service = Compte::where('compteid', '=', 0)
+    $services = Compte::where('compteid', 0)
       ->where('projetid', $ID)
       ->get();
+
     $output = '';
-    if ($service->count() > 0) {
+    $nombre = 1;
 
-      $nombre = 1;
-      foreach ($service as $rs) {
-        $id = $rs->id;
+    if ($services->count() > 0) {
+      foreach ($services as $rs) {
         $output .= '<tr style="background-color:#F5F5F5">
-              <td class="align-middle ps-3 name"><b>' . $nombre . '</td>
-              <td><b>' . ucfirst($rs->numero) . '</b></td>
-              <td><b>' . ucfirst($rs->libelle) . '</b></td>
-              <td align="center" style="width:13%">
-             
-              <a href="#" id="' . $rs->id . '" class="text-success mx-1 savesc" data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte" title="Ajouter sous compte"><i class="fa fa-plus-circle"></i></a>
-              
-                <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer le compte"><i class="fa fa-trash"></i>  </a>
-               
-                </td>
-            </tr>
-            ';
+                  <td class="align-middle ps-3 name"><b>' . $nombre . '</b></td>
+                  <td><b>' . ucfirst($rs->numero) . '</b></td>
+                  <td><b>' . ucfirst($rs->libelle) . '</b></td>
+                  <td align="center" style="width:13%">
+                  <div class="btn-group me-2 mb-2 mb-sm-0">
+                      <a  data-bs-toggle="dropdown" aria-expanded="false">
+                          <i class="mdi mdi-dots-vertical ms-2"></i>
+                      </a>
+                      <div class="dropdown-menu">
+                          <a class="dropdown-item text-primary mx-1 savesc" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte" title="Modifier le compte"><i class="fa fa-plus-circle"></i> Ajouter une sous ligne</a>
+                          <a class="dropdown-item text-primary mx-1 editsc" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#EditModalSousCompte" title="Ajouter sous compte"><i class="far fa-edit"></i> Modifier la ligne</a>
+                          <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
+                      </div>
+                  </div>
+                  </td>
+              </tr>';
 
-//            <a href="#" id="' . $rs->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal" title="modifier le compte"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
-
-        $sous_compte = Compte::where('compteid', $id)
-          ->where('souscompteid', '=', 0)
+        $sous_comptes = Compte::where('compteid', $rs->id)
+          ->where('souscompteid', 0)
           ->where('projetid', $ID)
           ->get();
-        if ($sous_compte->count() > 0) {
-          $ndale = 1;
-          foreach ($sous_compte as $sc) {
-            $ids = $sc->id;
 
-            // <a href="#" id="' . $sc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
-            $output .= '
-                  <tr>
-                    <td class="align-left" style="background-color:#F5F5F5"></td>
-                    <td>' . ucfirst($sc->numero) . '</td>
-                    <td>' . ucfirst($sc->libelle) . '</td>
-                    <td align="center">
-                   
-                        
-                        
-                        <a href="#" id="' . $sc->id . '" class="text-danger mx-1 deleteIcon"><i class="fa fa-trash"></i>  </a>
-                    
-                        </td>
-                  </tr>
-            ';
-            $ndale++;
-          }
+        $ndale = 1;
+        foreach ($sous_comptes as $sc) {
+          $output .= '<tr>
+                      <td class="align-left" style="background-color:#F5F5F5"></td>
+                      <td>' . ucfirst($sc->numero) . '</td>
+                      <td>' . ucfirst($sc->libelle) . '</td>
+                      <td align="center">
+                      <div class="btn-group me-2 mb-2 mb-sm-0">
+                          <a  data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="mdi mdi-dots-vertical ms-2"></i>
+                          </a>
+                          <div class="dropdown-menu">
+                              <a class="dropdown-item text-primary mx-1 editsc" id="' . $sc->id . '"  data-bs-toggle="modal" data-bs-target="#EditModalSousCompte" title="Ajouter sous compte"><i class="far fa-edit"></i> Modifier la ligne</a>
+                              <a class="dropdown-item text-danger mx-1 deleteIcon"  id="'.$sc->id.'"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
+                          </div>
+                      </div>
+                      </td>
+                  </tr>';
 
-
-          $sous_sous_compte = Compte::where('souscompteid', $ids)
+          $sous_sous_comptes = Compte::where('souscompteid', $sc->id)
             ->where('projetid', $ID)
             ->get();
-          if ($sous_sous_compte->count() > 0) {
-            $nd = 1;
-            foreach ($sous_sous_compte as $ssc) {
-              $output .= '
-                <tr>
-                  <td class="align-middle ps-3 name">' . $nombre . '.' . $ndale . '.' . $nd . '</td>
-                  <td>' . ucfirst($ssc->numero) . '</td>
-                  <td>' . ucfirst($ssc->libelle) . '</td>
-                  <td>
-                    <center>
-                    <a href="#" id="' . $ssc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i> </a>
-                    <a href="#" id="' . $ssc->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal"><i class="bi-pencil-square h4"></i><i class="fa fa-edit"></i>  </a>
-                    <a href="#" id="' . $ssc->id . '" class="text-danger mx-1 deleteIcon"><i class="fa fa-trash"></i> </a>
-                    </center>
-                     </td>
-                </tr>
-          ';
-              $nd++;
-            }
+
+          $nd = 1;
+          foreach ($sous_sous_comptes as $ssc) {
+            $output .= '<tr>
+                          <td class="align-middle ps-3 name">' . $nombre . '.' . $ndale . '.' . $nd . '</td>
+                          <td>' . ucfirst($ssc->numero) . '</td>
+                          <td>' . ucfirst($ssc->libelle) . '</td>
+                          <td>
+                              <center>
+                                  <a href="#" id="' . $ssc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i></a>
+                                  <a href="#" id="' . $ssc->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal"><i class="fa fa-edit"></i></a>
+                                  <a href="#" id="' . $ssc->id . '" class="text-danger mx-1 deleteIcon"><i class="fa fa-trash"></i></a>
+                              </center>
+                          </td>
+                      </tr>';
+            $nd++;
           }
+          $ndale++;
         }
-
-
-
-
-
         $nombre++;
       }
-
-      echo $output;
     } else {
-      echo ' <tr>
-                <td colspan="4">
-                <center>
-                  <h6 style="margin-top:1% ;color:#c0c0c0"> 
-                  <center><font size="50px"><i class="far fa-trash-alt"  ></i> </font><br><br>
-                Ceci est vide  !</center> </h6>
-                </center>
-                </td>
-                </tr>
-             ';
+      $output .= '<tr>
+              <td colspan="4">
+                  <center>
+                      <h6 style="margin-top:1%; color:#c0c0c0"> 
+                          <center><font size="50px"><i class="far fa-trash-alt"></i></font><br><br>
+                          Ceci est vide !
+                      </center>
+                  </h6>
+              </center>
+              </td>
+          </tr>';
     }
+
+    echo $output;
   }
 
   // Insert a new ligne budgetaire ajax request
@@ -194,7 +197,7 @@ class CompteController extends Controller
     try {
       $ID = session()->get('id');
       $title = $request->libelle;
-      $code= $request->code;
+      $code = $request->code;
       $check = Compte::where('libelle', $title)
         ->where('numero', $code)
         ->where('projetid', $ID)
@@ -229,7 +232,7 @@ class CompteController extends Controller
     try {
       $ID = session()->get('id');
       $title = $request->libelle;
-      $code= $request->code;
+      $code = $request->code;
       $check = Compte::where('libelle', $title)
         ->where('numero', $code)
         ->where('projetid', $ID)
@@ -300,11 +303,11 @@ class CompteController extends Controller
       $emp = Compte::find($request->gc_id);
       if ($emp->userid == Auth::id()) {
 
-    
-    $emp->gc_title = $request->gc_title;
-    $emp->update();
 
-    return response()->json([
+        $emp->gc_title = $request->gc_title;
+        $emp->update();
+
+        return response()->json([
           'status' => 200,
         ]);
       } else {
@@ -317,8 +320,33 @@ class CompteController extends Controller
         'status' => 202,
       ]);
     }
-   
-  
+  }
+
+  public function updatecompte(Request $request)
+  {
+    try {
+
+      $emp = Compte::find($request->cidedit);
+      if ($emp->userid == Auth::id()) {
+
+        $emp->libelle = $request->ctitleedit;
+        $emp->numero = $request->ccodeedit;
+
+        $emp->update();
+
+        return response()->json([
+          'status' => 200,
+        ]);
+      } else {
+        return response()->json([
+          'status' => 205,
+        ]);
+      }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
   }
 
   // supresseion
@@ -329,7 +357,7 @@ class CompteController extends Controller
       $emp = Compte::find($id);
       if ($emp->userid == Auth::id()) {
 
-       
+
         Compte::destroy($id);
         return response()->json([
           'status' => 200,

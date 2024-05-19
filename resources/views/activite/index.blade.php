@@ -171,8 +171,6 @@
     });
 
 
-
-
     $(document).on('click', '.editIcon', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
@@ -230,9 +228,6 @@
         }
       });
     });
-
-
-
 
 
     // Delete user ajax request

@@ -1,20 +1,17 @@
 @extends('layout/app')
 @section('page-content')
 <style>
-    /* Style pour le texte caché */
-    .hidden-link {
-        display: none;
-    }
-
-    /* Style de la classe difference */
-.difference {
+  /* Style pour le texte caché */
+  .hidden-link {
+    display: none;
+  }
+  /* Style de la classe difference */
+  .difference {
     /* Ajoutez votre style pour différencier visuellement la cellule */
-    background-color: #ffcccc; /* Par exemple, couleur de fond différente */
-}
-
-/* Positionnement du drapeau à côté de la cellule différence */
-
-
+    background-color: #ffcccc;
+    /* Par exemple, couleur de fond différente */
+  }
+  /* Positionnement du drapeau à côté de la cellule différence */
 </style>
 
 <div class="main-content">
@@ -24,10 +21,9 @@
         <div class="col-12 col-md">
           <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Budgétisation <a href=""><i class="ri-refresh-line"></i></a> </h4>
         </div>
-      
 
         @if($projetdatat->autorisation == 1)
-       
+
         <div class="col col-md-auto">
           <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter le budget </a>
         </div>
@@ -38,238 +34,211 @@
     <div class="card-body">
       <div class="card">
 
-      <table>
-  
-    <!-- Autres lignes -->
-</table>
-
-
-
-
         <div class="float-end d-none d-md-inline-block">
-        <div class="table-responsive">
-                                         
+          <div class="table-responsive">
 
-          <div id="show_all_rallonge" class="scrollme">
-            <center>
-              <br><br><br><br> @include('layout.partiels.load') <br><br><br><br>
-            </center>
+
+            <div id="show_all_rallonge" class="scrollme">
+              <center>
+                <br><br><br><br> @include('layout.partiels.load') <br><br><br><br>
+              </center>
+            </div>
           </div>
         </div>
+        <br> <br> <br>
       </div>
-      <br>  <br>  <br>
-    </div>
-  </div>  <br> <br> <br> <br> <br> <br>
-</div>
+    </div> <br> <br> <br> <br> <br> <br>
+  </div>
 
 
-@include('rallonge.modale')
+  @include('rallonge.modale')
 
 
-<script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
+  <script>
+    function toggleUrldocInput(checkbox) {
+      var urldocInput = document.getElementById("urldoc");
+      urldocInput.style.display = checkbox.checked ? "block" : "none";
+    }
 
-function toggleUrldocInput(checkbox) {
-    var urldocInput = document.getElementById("urldoc");
-    urldocInput.style.display = checkbox.checked ? "block" : "none";
-}
-
-// Vérifier l'état initial de la case à cocher au chargement de la page
-window.onload = function() {
-    var retructionCheckbox = document.getElementById("retruction");
-    toggleUrldocInput(retructionCheckbox);
-};
-
-
+    // Vérifier l'état initial de la case à cocher au chargement de la page
+    window.onload = function() {
+      var retructionCheckbox = document.getElementById("retruction");
+      toggleUrldocInput(retructionCheckbox);
+    };
 
     // Sélection des lignes (<tr>) avec la classe "hoverable-tr"
     const hoverableTrs = document.querySelectorAll('.hoverable-tr');
 
     // Écoute des événements de survol pour chaque ligne
     hoverableTrs.forEach(tr => {
-        tr.addEventListener('mouseover', () => {
-            // Sélection de l'élément <a> à l'intérieur de la ligne
-            const editLink = tr.querySelector('.edit-link');
-            // Ajout de la classe pour afficher le lien
-            editLink.classList.remove('hidden-link');
-        });
-        // Événement pour cacher le lien lorsque la souris quitte la ligne
-        tr.addEventListener('mouseleave', () => {
-            // Sélection de l'élément <a> à l'intérieur de la ligne
-            const editLink = tr.querySelector('.edit-link');
-            // Suppression de la classe pour cacher le lien
-            editLink.classList.add('hidden-link');
-        });
+      tr.addEventListener('mouseover', () => {
+        // Sélection de l'élément <a> à l'intérieur de la ligne
+        const editLink = tr.querySelector('.edit-link');
+        // Ajout de la classe pour afficher le lien
+        editLink.classList.remove('hidden-link');
+      });
+      // Événement pour cacher le lien lorsque la souris quitte la ligne
+      tr.addEventListener('mouseleave', () => {
+        // Sélection de l'élément <a> à l'intérieur de la ligne
+        const editLink = tr.querySelector('.edit-link');
+        // Suppression de la classe pour cacher le lien
+        editLink.classList.add('hidden-link');
+      });
     });
-</script>
+  </script>
 
-<script>
-  $(document).ready(function() {
-    $('#dtHorizontalVerticalExample').DataTable({
-      "scrollX": true,
-      "scrollY": 200,
+  <script>
+    $(document).ready(function() {
+      $('#dtHorizontalVerticalExample').DataTable({
+        "scrollX": true,
+        "scrollY": 200,
+      });
+      $('.dataTables_length').addClass('bs-select');
     });
-    $('.dataTables_length').addClass('bs-select');
-  });
-</script>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  </script>
 
 
+  <script type="text/javascript">
+    $(document).ready(function() {
 
-<script type="text/javascript">
-  $(document).ready(function() {
+      $(document).on('change', '.compteid', function() {
+        var cat_id = $(this).val();
+        var op = "";
 
-    $(document).on('change', '.compteid', function() {
-    var cat_id = $(this).val();
-    var op = "";
-
-    $.ajax({
-        type: 'get',
-        url: "{{ route ('findSousCompte') }}",
-        data: {
+        $.ajax({
+          type: 'get',
+          url: "{{ route ('findSousCompte') }}",
+          data: {
             'id': cat_id
-        },
-        success: function(data) {
+          },
+          success: function(data) {
             console.log(data);
             if (data.length == 0) {
-                op += '<option value="0" selected disabled>-- Ligne compte --</option>';
-                op += '<option value="0" selected disabled>Aucun</option>';
-                toastr.error("Attention !! La ligne n'a pas de sous-ligne", "Information");
+              op += '<option value="0" selected disabled>-- Ligne compte --</option>';
+              op += '<option value="0" selected disabled>Aucun</option>';
+              toastr.error("Attention !! La ligne n'a pas de sous-ligne", "Information");
             } else {
-                $.each(data, function(index, item) {
-                    op += '<option value="' + item.id + '">' + item.numero + '.' + item.libelle + '</option>';
-                });
+              $.each(data, function(index, item) {
+                op += '<option value="' + item.id + '">' + item.numero + '.' + item.libelle + '</option>';
+              });
             }
             // Mettre à jour le menu déroulant une seule fois après la boucle
             $("#scomptef").html(op);
-        },
-        error: function() {
+          },
+          error: function() {
             toastr.error("Erreur de connexion à la base de données, vérifiez votre connexion", "Attention");
-        }
+          }
+        });
+      });
     });
-});
-  });
-</script>
+  </script>
 
 
 
-<script>
-  $(function() {
-    // Add rallonge budgetaire ajax 
-    $("#addFOrm").submit(function(e) {
-    e.preventDefault();
-    const fd = new FormData(this);
+  <script>
+    $(function() {
+      // Add rallonge budgetaire ajax 
+      $("#addFOrm").submit(function(e) {
+        e.preventDefault();
+        const fd = new FormData(this);
 
-    const saveButton = $("#savebtn");
-    saveButton.html('<i class="fas fa-spinner fa-spin"></i>');
-    saveButton.prop("disabled", true);
+        const saveButton = $("#savebtn");
+        saveButton.html('<i class="fas fa-spinner fa-spin"></i>');
+        saveButton.prop("disabled", true);
 
-    $.ajax({
-        url: "{{ route('storerallonge') }}",
-        method: 'POST',
-        data: fd,
-        cache: false,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-            switch(response.status) {
-                case 200:
-                    toastr.success("Budget enregistré avec succès !", "Enregistrement");
-                    fetchAllrallonge();
-                    $("#addFOrm")[0].reset();
-                    $("#addDealModal").modal('hide');
-                    break;
-                case 201:
-                    toastr.error("Le montant est supérieur au montant global du budget !", "Attention");
-                    break;
-                case 202:
-                    toastr.error("Erreur d'exécution !", "Erreur");
-                    break;
-                case 203:
-                    toastr.error("Une ligne de compte ne peut recevoir le montant plusieurs fois !", "Erreur");
-                    break;
-                default:
-                    toastr.error("Erreur inconnue !", "Erreur");
+        $.ajax({
+          url: "{{ route('storerallonge') }}",
+          method: 'POST',
+          data: fd,
+          cache: false,
+          contentType: false,
+          processData: false,
+          dataType: 'json',
+          success: function(response) {
+            switch (response.status) {
+              case 200:
+                toastr.success("Budget enregistré avec succès !", "Enregistrement");
+                fetchAllrallonge();
+                $("#addFOrm")[0].reset();
+                $("#addDealModal").modal('hide');
+                break;
+              case 201:
+                toastr.error("Le montant est supérieur au montant global du budget !", "Attention");
+                break;
+              case 202:
+                toastr.error("Erreur d'exécution !", "Erreur");
+                break;
+              case 203:
+                toastr.error("Une ligne de compte ne peut recevoir le montant plusieurs fois !", "Erreur");
+                break;
+              default:
+                toastr.error("Erreur inconnue !", "Erreur");
             }
             saveButton.html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             saveButton.prop("disabled", false);
             $("#addDealModal").modal('show');
-        },
-        error: function() {
+          },
+          error: function() {
             toastr.error("Erreur de communication avec le serveur !", "Erreur");
             saveButton.html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             saveButton.prop("disabled", false);
-        }
-    });
-});
-
-
-
-    // Edit fonction ajax request
-    $(document).on('click', '.editIcon', function(e) {
-      e.preventDefault();
-      let id = $(this).attr('id');
-      $.ajax({
-        url: "{{ route('editGc') }}",
-        method: 'get',
-        data: {
-          id: id,
-          _token: '{{ csrf_token() }}'
-        },
-        success: function(response) {
-          $("#gc_title").val(response.title);
-          $("#gc_id").val(response.id);
-        }
+          }
+        });
       });
-    });
 
-
-    // Edit fonction ajax request
-    $(document).on('click', '.savesc', function(e) {
-      e.preventDefault();
-      let id = $(this).attr('id');
-      $.ajax({
-        url: "{{ route('ShowCompte') }}",
-        method: 'get',
-        data: {
-          id: id,
-          _token: '{{ csrf_token() }}'
-        },
-        success: function(response) {
-          $("#ctitle").val(response.libelle);
-          $("#cid").val(response.id);
-        }
+      // Edit fonction ajax request
+      $(document).on('click', '.showrevision', function(e) {
+        e.preventDefault();
+        let id = $(this).attr('id');
+        $.ajax({
+          url: "{{ route('showrallonge') }}",
+          method: 'get',
+          data: {
+            id: id,
+            _token: '{{ csrf_token() }}'
+          },
+          success: function(response) {
+            if (response.length > 0) {
+              let data = response[0]; // Supposons que la réponse est un tableau et que nous avons besoin du premier élément
+              $("#r_libelle").val(data.libelle);
+              $("#r_code").val(data.numero);
+              $("#r_budgetactuel").val(data.budgetactuel);
+              $("#ancienmontantligne").val(data.budgetactuel);
+              $("#r_souscompte").val(data.souscompte);
+              $("#r_idligne").val(data.idr);
+            } else {
+              // Affichez un message d'alerte si aucune donnée n'est trouvée
+              toastr.error('Aucune donnée trouvée pour cet ID.');
+            }
+          },
+          error: function(xhr, status, error) {
+            // Gérez les erreurs de la requête AJAX
+            console.error('Erreur:', error);
+            toastr.error('Erreur lors de la récupération des données.');
+          },
+          statusCode: {
+            404: function() {
+              toastr.error('Ressource non trouvée (404).');
+            },
+            500: function() {
+              toastr.error('Erreur interne du serveur (500).');
+            }
+          }
+        });
       });
-    });
 
-    // Edit fonction ajax request
-    $(document).on('click', '.ssavesc', function(e) {
-      e.preventDefault();
-      let id = $(this).attr('id');
-      $.ajax({
-        url: "{{ route('ShowCompte') }}",
-        method: 'get',
-        data: {
-          id: id,
-          _token: '{{ csrf_token() }}'
-        },
-        success: function(response) {
-          $("#sctitle").val(response.libelle);
-          $("#scid").val(response.compteid);
-          $("#sscid").val(response.id);
-        }
-      });
-    });
-
-    // update function ajax request
-    $("#editcompteform").submit(function(e) {
+      // Revision ajax request
+      $("#editrevisionform").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#editcomptebtn").text('Updating...');
+      
+      $("#revisionbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("revisionbtn").disabled = true;
+
       $.ajax({
-        url: "{{ route('updateGc') }}",
+        url: "{{ route('updaterallonge') }}",
         method: 'post',
         data: fd,
         cache: false,
@@ -278,78 +247,98 @@ window.onload = function() {
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
-            toastr.info("Compte update Successfully !", "success");
-            Selectdcompte();
-            fetchAlldcompte();
-            Selectsouscompte();
+
+            toastr.success("Très bien! Le budget a été bien modifié.", "Modification");
+            fetchAllrallonge();
+            $("#revisionbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            $("#editrevisionform")[0].reset();
+            $("#revisionModal").modal('hide');
+            document.getElementById("revisionbtn").disabled = false;
+
           }
-          $("#editcomptebtn").text('Update compte');
-          $("#editcompteModal").modal('hide');
+
+          if (response.status == 202) {
+            toastr.error("Échec ! Le budget n'a pas été modifié.", "Erreur");
+            $("#revisionbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            $("#revisionModal").modal('show');
+            document.getElementById("revisionbtn").disabled = false;
+          }
+
+          if (response.status == 205) {
+            toastr.error("Attention ! Vous ne devez pas dépasser le montant du budget global.", "Erreur");
+            $("#revisionbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            $("#revisionModal").modal('show');
+            document.getElementById("revisionbtn").disabled = false;
+          }
+
         }
       });
     });
 
-    // Delete compte ajax request
-    $(document).on('click', '.deleteIcon', function(e) {
+    $(document).on('click', '.deleterevision', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
       let csrf = '{{ csrf_token() }}';
       Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
+        title: 'Êtes-vous sûr ?',
+        text: "Une ligne budgétaire est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ? ",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
+        confirmButtonColor: 'green',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
+        confirmButtonText: 'Oui, Supprimer !'
       }).then((result) => {
         if (result.isConfirmed) {
           $.ajax({
-            url: "{{ route('deleteGc') }}",
+            url: "{{ route('deleteligne') }}",
             method: 'delete',
             data: {
               id: id,
               _token: csrf
             },
             success: function(response) {
-              console.log(response);
-              toastr.success("Compte deleted Successfully !", "success");
-              fetchAllrallonge();
+              if (response.status == 200) {
+                toastr.success("Ligne budgétaire supprimée avec succès.", "Succès");
+                fetchAllrallonge();
+              } else if (response.status == 201) {
+                toastr.error("Vous n'avez pas l'autorisation de supprimer cette ligne budgétaire.", "Erreur");
+              } else {
+                toastr.error("Une erreur est survenue lors de la suppression du ligne budgétaaire.", "Erreur");
+              }
+            },
+            error: function(xhr, status, error) {
+              toastr.error("Une erreur est survenue lors de la suppression de la ligne budgétaire.", "Erreur");
+              console.error(xhr.responseText);
             }
           });
         }
-      })
+      });
     });
 
+      fetchAllrallonge();
 
+      function fetchAllrallonge(){
+        $.ajax({
+          url: "{{ route('fetchRallonge') }}",
+          method: 'get',
+          success: function(reponse) {
+            $("#show_all_rallonge").html(reponse);
+          }
+        });
+      }
 
-    fetchAllrallonge();
+      fetchAllrallonge();
 
-    function fetchAllrallonge() {
-      $.ajax({
-        url: "{{ route('fetchRallonge') }}",
-        method: 'get',
-        success: function(reponse) {
-          $("#show_all_rallonge").html(reponse);
-        }
-      });
-    }
+      function fetchAllrallonge() {
+        $.ajax({
+          url: "{{ route('fetchRallonge') }}",
+          method: 'get',
+          success: function(reponse) {
+            $("#show_all_rallonge").html(reponse);
+          }
+        });
+      }
 
-    fetchAllrallonge();
+    });
+  </script>
 
-    function fetchAllrallonge() {
-      $.ajax({
-        url: "{{ route('fetchRallonge') }}",
-        method: 'get',
-        success: function(reponse) {
-          $("#show_all_rallonge").html(reponse);
-        }
-      });
-    }
-
-
-
-  });
-</script>
-
-@endsection
+  @endsection

@@ -176,6 +176,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/ShowCompte', [CompteController::class, 'addsc'])->name('ShowCompte');
         Route::get('/editGc', [CompteController::class, 'edit'])->name('editGc');
         Route::post('/updateGc', [CompteController::class, 'update'])->name('updateGc');
+        Route::post('/updatecompte', [CompteController::class, 'updatecompte'])->name('updatecompte');
+        
     });
 
     Route::prefix('rallongebudget')->group(function () {
@@ -183,9 +185,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/storerallonge', [RallongebudgetController::class, 'store'])->name('storerallonge');
         Route::get('/fetchRallonge', [RallongebudgetController::class, 'fetchAll'])->name('fetchRallonge');
         Route::get('/findSousCompte', [RallongebudgetController::class, 'findSousCompte'])->name('findSousCompte');
-        Route::get('{key}/showligne/', [RallongebudgetController::class, 'show'])->name('showligne');
-        Route::put('/updatligne/{cle}', [RallongebudgetController::class, 'updatlignebudget'])->name('updatligne');
-        Route::delete('/deleterb/{id}', [RallongebudgetController::class, 'deleterb'])->name('rallonge.delete');
+        
+        Route::get('/showrallonge', [RallongebudgetController::class, 'showrallonge'])->name('showrallonge');
+        Route::post('/updaterallonge', [RallongebudgetController::class, 'updatlignebudget'])->name('updaterallonge');
+        Route::delete('/deleteligne', [RallongebudgetController::class, 'deleteall'])->name('deleteligne');
     });
 
     Route::prefix('folder')->group(function () {

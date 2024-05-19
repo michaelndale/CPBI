@@ -95,6 +95,55 @@
 </div>
 </div>
 
+<!-- Revision budgetaire -->
+<div class="modal fade" id="revisionModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="revisionModal" aria-hidden="true">
+  <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-content">
+      <form method="POST" id="editrevisionform">
+        @method('post')
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title" id="verticallyCenteredModalLabel"><i class="fa fa-edit"></i> Revision de la ligne budgétaire </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+          <div class="row g-3">
+
+            <div class="col-sm-12 col-lg-12 col-xl-12">
+              Description
+              <textarea type="text" name="r_libelle" id="r_libelle" class="form-control" style="height:100px"></textarea>
+              
+            </div>
+            
+            <div class="col-sm-6 col-lg-12 col-xl-6">
+              Code
+              <input type="text" name="r_code" id="r_code" class="form-control" />
+            </div>
+
+            <div class="col-sm-6 col-lg-12 col-xl-6">
+              Budget
+              <input type="number"   name="r_budgetactuel" id="r_budgetactuel" class="form-control" />
+              <input type="hidden" name="ancienmontantligne" id="ancienmontantligne" class="form-control" />
+              <input type="hidden" name="r_souscompte" id="r_souscompte" class="form-control" />
+              <input type="hidden" name="r_idligne" id="r_idligne" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" name="revisionbtn" id="revisionbtn" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- fin -->
+
+
+
+
+
+
 <!-- modif -->
 <div class="modal fade" id="EditDealModal"  data-bs-keyboard="false" tabindex="-1" aria-labelledby="EditDealModal" aria-hidden="true">
 <div class="modal-dialog modal-lg  modal-dialog-centered">
@@ -119,7 +168,7 @@
           
           <div class="col-sm-6 col-lg-12 col-xl-12">
             <label class="text-1000 fw-bold mb-2">Budget </label>
-            <input class="form-control" id="montantligne" name="montantligne"  type="text"  placeholder="Budget" required/>
+            <input class="form-control"  id="montantligne" name="montantligne"  type="number"  placeholder="Budget" required/>
           </div>
           
         </div>

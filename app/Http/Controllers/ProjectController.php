@@ -146,56 +146,57 @@ class ProjectController extends Controller
 
     public function show($key)
     {
-      
-
-      $title="Show project";
-      $active = 'Project';
+        // Décryptage de la clé de projet
+        $key = Crypt::decrypt($key);
+        
+        // Recherche du projet correspondant
+        $check = Project::find($key);
     
-
-      $key = Crypt::decrypt($key);
-      $check = Project::find($key);
-
-     
-      session()->put('id', $check->id);
-      session()->put('title', $check->title);
-      session()->put('numeroprojet', $check->numeroprojet);
-      session()->put('ligneid', $check->ligneid);
-      session()->put('devise', $check->devise);
-      session()->put('budget', $check->budget);
-      session()->put('periode', $check->periode);
-      
-
+        // Si le projet n'existe pas, redirection avec un message d'erreur
+        if (!$check) {
+            return redirect()->back()->withErrors(['message' => 'Projet non trouvé.']);
+        }
     
-      
-      $user=  DB::table('users')
+        // Mise à jour de la session avec les informations du projet
+        session()->put('id', $check->id);
+        session()->put('title', $check->title);
+        session()->put('numeroprojet', $check->numeroprojet);
+        session()->put('ligneid', $check->ligneid);
+        session()->put('devise', $check->devise);
+        session()->put('budget', $check->budget);
+        session()->put('periode', $check->periode);
+    
+        // Récupération des informations de l'utilisateur responsable du projet
+        $user = DB::table('users')
             ->join('personnels', 'users.personnelid', '=', 'personnels.id')
             ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
-            ->Where('users.id', $check->lead)
+            ->where('users.id', $check->lead)
             ->first();
-   
-      
-      $sommerepartie= DB::table('elementfebs')
-      ->Where('projetids', $check->id)
-      ->SUM('montant');
-
-      $intervennant = DB::table('affectations')
-      ->join('personnels', 'affectations.memberid', '=', 'personnels.id')
-      ->join('users', 'affectations.memberid', '=', 'users.personnelid')
-      ->select('affectations.*','personnels.nom', 'personnels.prenom','users.avatar')
-      ->where('affectations.projectid',$check->id)
-      ->get();
-
-      return view('project.voir', 
-        [
-          'title' =>$title,
-          'active' => $active,
-          'dataProject' => $check,
-          'responsable' => $user,
-          'sommerepartie' => $sommerepartie,
-          'intervennant' => $intervennant
+    
+        // Calcul de la somme des montants des éléments FEB
+        $sommerepartie = DB::table('elementfebs')
+            ->where('projetids', $check->id)
+            ->sum('montant');
+    
+        // Récupération des intervenants du projet
+        $intervennant = DB::table('affectations')
+            ->join('personnels', 'affectations.memberid', '=', 'personnels.id')
+            ->join('users', 'affectations.memberid', '=', 'users.personnelid')
+            ->select('affectations.*', 'personnels.nom', 'personnels.prenom', 'users.avatar')
+            ->where('affectations.projectid', $check->id)
+            ->get();
+    
+        // Retourne la vue avec les données du projet
+        return view('project.voir', [
+            'title' => 'Voir le projet',
+            'active' => 'Project',
+            'dataProject' => $check,
+            'responsable' => $user,
+            'sommerepartie' => $sommerepartie,
+            'intervennant' => $intervennant
         ]);
-      
     }
+    
 
 
     public function editshow($key)
