@@ -148,3 +148,6 @@ $sommelignpourcentage = round(($sommelign * 100) / $budget , 2);
 
 
 ajouter dans la class du table  table-centered align-middle table-nowrap mb-0
+
+
+<option disabled="true" selected="true">--Aucun--</option>';

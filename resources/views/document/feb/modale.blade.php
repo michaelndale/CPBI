@@ -85,12 +85,11 @@
                                         <td colspan="3">
 
 
-                                            <select class="form-control  form-control-sm" id="beneficiaire" name="beneficiaire" required>
-                                                <option>Sélectionner le bénéficiaire </option>
+                                            <select class="form-control  form-control-sm" id="beneficiaire" name="beneficiaire" >
+                                                <option disabled="true" selected="true">--Sélectionner bénéficiaire--</option>';
                                                 @foreach ($beneficaire as $beneficaires)
                                                 <option value="{{ $beneficaires->id }}">{{ $beneficaires->libelle }}</option>
                                                 @endforeach
-
                                             </select>
                                         </td>
 
@@ -100,6 +99,8 @@
                                     <tr>
                                         <td class="align-middle ps-3 name">Numéro fiche <br>
                                             <input type="number" name="numerofeb" id="numerofeb" class="form-control form-control-sm" style="width: 100% ;">
+                                            <smal id="numerofeb_error" name="numerofeb_error" class="text text-danger"> </smal>
+                                            <smal id="numerofeb_info" class="text text-primary"> </smal>
                                         </td>
 
                                         <td class="align-middle ps-3 name">Période: <br>
@@ -167,8 +168,8 @@
                                             <th style="width:150px">Unité</th>
                                             <th style="width:100px">Q<sup>té</sup></th>
                                             <th style="width:50px">Frequence</th>
-                                            <th style="width:150px">P.U</th>
-                                            <th style="width:200px">P.T</th>
+                                            <th style="width:130px">P.U</th>
+                                            <th style="width:150px">P.T</th>
 
                                             <th> </th>
                                         </tr>
@@ -201,7 +202,7 @@
                                 <table class="table table-striped table-sm fs--1 mb-0">
                                     <tfoot style="background-color:#c0c0c0">
                                         <tr>
-                                            <td colspan="8">Total global : 0 ({{ Session::get('devise') }} )</td>
+                                            <td colspan="8">Total global </td>
                                             <td align="right"><span class="total-global">0.00 {{ Session::get('devise') }} </span></td>
                                             <td></td>
                                         </tr>

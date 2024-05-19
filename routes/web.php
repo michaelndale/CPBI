@@ -265,6 +265,9 @@ Route::middleware('auth')->group(function () {
         Route::put('/updatallfeb/{cle}', [FebController::class, 'Updatestore'])->name('updateallfeb');
         Route::get('{id}/generate-pdf-feb', [FebController::class, 'generatePDFfeb'])->name('generate-pdf-feb');
         Route::delete('deleteelementsfeb', [FebController::class, 'deleteelementsfeb'])->name('deleteelementsfeb');
+        Route::post('/check-feb', [FebController::class, 'checkfeb'])->name('check.feb');
+        Route::get('/generate-word-feb/{id}', [FebController::class, 'generateWordFeb'])->name('generate.word.feb');
+
     });
 
     Route::get('/getfeb', [FebController::class, 'findfebelement'])->name('getfeb');
@@ -301,7 +304,6 @@ Route::middleware('auth')->group(function () {
         Route::get('{id}/generate-pdf-dap', [DapController::class, 'generatePDFdap'])->name('generate-pdf-dap');
         Route::get('/{key}/verification/', [DapController::class, 'show'])->name('key.verificationdap');
         Route::post('/check-dap', [DapController::class, 'checkDap'])->name('check.dap');
-        //optionsdescription
         Route::get('/getFuelTypes', [DapController::class, 'getFuelType'])->name('getFuelTypes');
     });
 

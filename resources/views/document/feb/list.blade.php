@@ -95,12 +95,52 @@
 
   <BR><BR>
 
- 
-
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script type="text/javascript">
+
+$('#numerofeb').blur(function() {
+    var numerofeb = $(this).val();
+    // Vérification si le champ est vide
+    if (numerofeb.trim() === '') {
+        $('#numerofeb_error').text('Renseigner le champ numéro F.E.B');
+        $('#numerofeb').removeClass('has-success has-error'); // Supprime toutes les classes de succès ou d'erreur
+        $('#numerofeb_info').text('');
+        return; // Sortir de la fonction si le champ est vide
+    }
+    
+    // Envoi de la requête AJAX au serveur
+    $.ajax({
+        url: '{{ route("check.feb") }}',
+        method: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}', // CSRF token pour Laravel
+            numerofeb: numerofeb
+        },
+        success: function(response) {
+            if (response.exists) {
+              
+                $("#numerofeb_error").html('<i class="fa fa-times-circle"></i> Numéro FEB existe déjà');
+                $('#numerofeb').removeClass('has-success') // Supprime la classe de succès
+                $('#numerofeb').addClass('has-error');
+                $('#numerofeb_info').text('');
+                document.getElementById("addfebbtn").disabled = true;
+            } else {
+                
+                $("#numerofeb_info").html('<i class="fa fa-check-circle"></i> Numéro Disponible');
+                $('#numerofeb').removeClass('has-error')  // Supprime la classe de succès
+                $('#numerofeb').addClass('has-success');
+                $('#numerofeb_error').text('');
+                document.getElementById("addfebbtn").disabled = false;
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+});
+
+
   $(document).ready(function() {
 
     $(document).on('change', '.ligneid', function() {
@@ -158,16 +198,12 @@ $("#addBtn").on("click", function() {
     $("#tableEstimate tbody").append(`
         <tr id="R${rowIdx}">
             <td><input style="width:100%" type="number" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="${rowIdx}" ></td>
-            <td> 
-                <div id="Showpoll${rowIdx}" class="Showpoll">
-                  
-                </div>
-            </td>
-            <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm"></td>
-            <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm" ></td>
-            <td><input style="width:100%" type="number" id="qty" name="qty[]" class="form-control form-control-sm qty" ></td>
-            <td><input style="width:100%" type="number" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency" ></td>
-            <td><input style="width:100%" type="number" id="pu" name="pu[]" class="form-control form-control-sm pu" ></td>
+            <td><div id="Showpoll${rowIdx}" class="Showpoll"> </div> </td>
+            <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required></td>
+            <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm" required></td>
+            <td><input style="width:100%" type="number" id="qty" name="qty[]" class="form-control form-control-sm qty" required ></td>
+            <td><input style="width:100%" type="number" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency"  required ></td>
+            <td><input style="width:100%" type="number" id="pu" name="pu[]" class="form-control form-control-sm pu"  required></td>
             <td><input style="width:100%" type="text" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
             <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
         </tr>
@@ -319,7 +355,7 @@ function calc_total() {
               $("#numerofeb_error").text("Numéro existe");
               $('#numerofeb').addClass('has-error');
               document.getElementById("addfebbtn").disabled = false;
-              $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i>  Sauvegarder');
             }
 
             if (response.status == 202) {

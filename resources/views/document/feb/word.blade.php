@@ -9,11 +9,14 @@
         /* Styles pour l'en-tête de la première page */
         header.first-page-header {
             background-color: white;
+            /* Couleur d'arrière-plan */
             padding: 10px;
+            /* Espacement intérieur */
             text-align: center;
             position: absolute;
             width: 100%;
             top: 100px;
+            /* Ajustez la position en haut de la page selon vos besoins */
         }
 
         /* Styles pour l'en-tête à partir de la deuxième page */
@@ -24,7 +27,9 @@
         /* Styles pour le pied de page */
         footer {
             background-color: white;
+            /* Couleur d'arrière-plan */
             padding: 0px;
+            /* Espacement intérieur */
             text-align: center;
             position: fixed;
             bottom: 0;
@@ -34,13 +39,17 @@
         /* Styles pour le contenu */
         .main-content {
             margin-top: -70px;
+            /* Réduisez la marge supérieure selon vos besoins */
             margin-bottom: 20px;
+            /* Réduisez la marge inférieure selon vos besoins */
         }
 
+        /* ici c'est bon Ajout de marge en haut pour compenser la hauteur de l'en-tête */
         .content-after-header {
             padding-top: 50px;
         }
 
+        /* Ajout de marge en bas pour compenser la hauteur du pied de page */
         .content-before-footer {
             padding-bottom: 0;
         }
@@ -69,28 +78,28 @@
             background-color: #ddd;
         }
         body {
-            font-size: 80%;
-        }
+    font-size: 80%; /* taille de police de base */
+}
 
-        h1 {
-            font-size: 2em;
-        }
+h1 {
+    font-size: 2em; /* taille de la police pour les titres */
+}
 
-        p {
-            font-size: 1em;
-        }
+p {
+    font-size: 1em; /* taille de la police pour les paragraphes */
+}
 
-        .small-text {
-            font-size: 0.8em;
-        }
+.small-text {
+    font-size: 0.8em; /* taille de la police pour les textes de petite taille */
+}
+/* Exemple de CSS */
+body {
+    font-family: 'Roboto', sans-serif; /* Utilisation d'une police web légère */
+}
 
-        body {
-            font-family: 'Roboto', sans-serif;
-        }
-
-        h1, h2, h3 {
-            font-family: 'Open Sans', sans-serif;
-        }
+h1, h2, h3 {
+    font-family: 'Open Sans', sans-serif; /* Utilisation d'une autre police web légère pour les titres */
+}
     </style>
 </head>
 
@@ -103,6 +112,7 @@
                     <center>
                         <img src="element/logo/logo.png" alt="logo" height="80px" />
                     </center>
+
                 </td>
                 <td>
                     <h1>
@@ -110,8 +120,10 @@
                     </h1>
                 </td>
             </tr>
+
             <tr>
                 <td colspan="2">
+
                     <center>
                         <hr style="border-width: 1px;">
                         {{ $infoglo->sousentete }}
@@ -195,6 +207,8 @@
                 </td>
             </tr>
 
+
+
         </table>
      <br>
         <font size="15px">Détails sur l’utilisation des fonds demandés :</font>
@@ -211,8 +225,7 @@
                     </th>
                     <th>
                         <center>Quantité </center>
-                   
-                        </th>
+                    </th>
                     <th>
                         <center>Frequence </center>
                     </th>
@@ -223,10 +236,11 @@
                         <center>Prix total </center>
                     </th>
                 </tr>
-            </thead>
+            </thead><!-- end thead -->
             <tbody>
                 @php
                 $n=1;
+               
                 @endphp
 
                 @foreach ($datElement as $datelementfebs)
@@ -269,47 +283,55 @@
                     <td><center> <font color="white"><b> {{ number_format($sommefeb,0, ',', ' ') }} {{ Session::get('devise') }} </b></font></center> </h5>
                 </td>
               </tr>
+
         </table>
-        <table style="width:100%; margin:auto">
-            <tr>
-                <td>
-                    <center>
-                        <u>Etablie par (AC/CE/CS)</u> :
-                        <br>
-                            {{ $etablienom->nom }} {{ $etablienom->prenom }} 
+                                    
+                                <table style="width:100%; margin:auto">
+                                    <tr>
+                                        <td>
+                                            <center>
+                                                <u>Etablie par (AC/CE/CS)</u> :
+                                                <br>
+                                                    {{ $etablienom->nom }} {{ $etablienom->prenom }} 
+                                              
+                                                    @if ($datafeb->acce_signe==1)
+                                                     <br>
+                                                    <img src="{{ $etablienom->signature }}" width="200px" />
+                                                    @endif
+                                            </center>
+                                            
+                                        </td>
+                                        <td>
+                                        <center>
+                                            <u>Vérifiée par (Comptable)</u> : <br>
+                                                {{ $comptable_nom->nom }} {{ $comptable_nom->prenom }} <br>
+                                            @if ($datafeb->comptable_signe==1)
+                                                <img src="{{ $comptable_nom->signature }}" width="200px" />
+                                            @endif
+                                        </center>
+                                       
+                                        </td>
+                                   
+                                        <td colspan="2">
+                                            <center>
+                                                <u>Approuvée par (Chef de Composante/Projet/Section)</u>:
+                                                
+                                                <br>  {{ $checcomposant_nom->nom }} {{ $checcomposant_nom->prenom }}<br>
 
-                            @if ($datafeb->acce_signe==1)
-                             <br>
-                            <img src="{{ $etablienom->signature }}" width="200px" />
-                            @endif
-                    </center>
+                                                @if ($datafeb->chef_signe==1)
+                                                <img src="{{ $checcomposant_nom->signature }}" width="200px" />
+                                                @endif
 
-                </td>
-                <td>
-                <center>
-                    <u>Vérifiée par (Comptable)</u> : <br>
-                        {{ $comptable_nom->nom }} {{ $comptable_nom->prenom }} <br>
-                    @if ($datafeb->comptable_signe==1)
-                        <img src="{{ $comptable_nom->signature }}" width="200px" />
-                    @endif
-                </center>
+                                            
+                                                
+                                            </center>
 
-                </td>
+                                        </td>
+                                    </tr>
+                                </table>
+                          
+                            
 
-                <td colspan="2">
-                    <center>
-                        <u>Approuvée par (Chef de Composante/Projet/Section)</u>:
-                        
-                        <br>  {{ $checcomposant_nom->nom }} {{ $checcomposant_nom->prenom }}<br>
-
-                        @if ($datafeb->chef_signe==1)
-                        <img src="{{ $checcomposant_nom->signature }}" width="200px" />
-                        @endif
-                    </center>
-
-                </td>
-            </tr>
-        </table>
     </div>
 
     <script>
@@ -318,18 +340,28 @@
             var headerHeight = document.getElementById('page-header').offsetHeight;
             document.getElementById('main-content').style.marginTop = headerHeight + 'px';
         }
+
+        // Appeler la fonction lors du chargement de la page
         window.onload = adjustContentMargin;
+
+        // Appeler la fonction lors du redimensionnement de la fenêtre
         window.onresize = adjustContentMargin;
 
         // Fonction pour masquer l'en-tête sur les pages suivantes lors de l'impression
         function hideHeaderOnSubsequentPages() {
             var header = document.getElementById('page-header');
             var originalDisplayStyle = header.style.display;
+
+            // Masquer l'en-tête pour l'impression
             header.style.display = 'none';
+
+            // Réafficher l'en-tête après l'impression
             setTimeout(function() {
                 header.style.display = originalDisplayStyle;
             }, 1000);
         }
+
+        // Écouter l'événement avant l'impression
         window.onbeforeprint = hideHeaderOnSubsequentPages;
     </script>
 

@@ -21,112 +21,105 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Shared\Html;
+use Carbon\Carbon;
+
 
 
 class FebController extends Controller
 {
   public function fetchAll()
-  {
+{
     $devise = session()->get('devise');
     $budget = session()->get('budget');
-
     $ID = session()->get('id');
+    
     $data = DB::table('febs')
-      ->orderby('numerofeb', 'Asc')
-      ->Where('projetid', $ID)
-      ->get();
+        ->orderBy('numerofeb', 'Asc')
+        ->where('projetid', $ID)
+        ->get();
 
     $output = '';
-    if ($data->count() > 0) {
-      $nombre = 1;
-      foreach ($data as $datas) {
+    
+    if ($data->isNotEmpty()) {
+        foreach ($data as $datas) {
+            $sommefeb = DB::table('elementfebs')
+                ->where('febid', $datas->id)
+                ->sum('montant');
 
-        $sommefeb = DB::table('elementfebs')
-          ->Where('febid', $datas->id)
-          ->SUM('montant');
+            $pourcentage = round(($sommefeb * 100) / $budget, 2);
+            $sommefeb = number_format($sommefeb, 0, ',', ' ');
 
-        $pourcentage = round(($sommefeb * 100) / $budget, 2);
+            $facture = $datas->facture ? "checked" : "";
+            $om = $datas->om ? "checked" : "";
+            $bc = $datas->bc ? "checked" : "";
+            $nec = $datas->nec ? "checked" : "";
+            $fpdevis = $datas->fpdevis ? "checked" : "";
 
-        $sommefeb = number_format($sommefeb, 0, ',', ' ');
+            $cryptedId = Crypt::encrypt($datas->id);
 
-        if ($datas->facture == 1) {
-          $facture = "checked";
-        } else {
-          $facture = "";
+            $output .= '
+            <tr>
+                <td>
+                    <center>
+                        <div class="btn-group me-2 mb-2 mb-sm-0">
+                            <button class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="mdi mdi-dots-vertical ms-2"></i> Actions
+                            </button>
+                            <div class="dropdown-menu">
+                                <a href="feb/' . $cryptedId . '/view" class="dropdown-item text-success mx-1 voirIcon" id="' . $datas->id . '">
+                                    <i class="fas fa-eye"></i> Voir feb
+                                </a>
+                                <a href="feb/' . $cryptedId . '/edit" class="dropdown-item text-primary mx-1 editIcon" id="' . $datas->id . '" title="Modifier">
+                                    <i class="far fa-edit"></i> Modifier
+                                </a>
+                                <a href="feb/' . $datas->id . '/generate-pdf-feb" class="dropdown-item mx-1">
+                                    <i class="fa fa-print"></i> Générer document PDF
+                                </a>
+                                <a class="dropdown-item text-danger mx-1 deleteIcon" id="' . $datas->id . '" href="#">
+                                    <i class="far fa-trash-alt"></i> Supprimer
+                                </a>
+                            </div>
+                        </div>
+                    </center>
+                </td>
+                <td align="center">' . $datas->numerofeb . '</td>
+                <td align="center">' . $sommefeb . ' ' . $devise . '</td>
+                <td align="center">' . $datas->periode . '</td>
+                <td align="center"><input type="checkbox" ' . $facture . ' class="form-check-input" /></td>
+                <td align="center"><input type="checkbox" ' . $om . ' class="form-check-input" /></td>
+                <td align="center"><input type="checkbox" ' . $bc . ' class="form-check-input" /></td>
+                <td align="center"><input type="checkbox" ' . $nec . ' class="form-check-input" /></td>
+                <td align="center"><input type="checkbox" ' . $fpdevis . ' class="form-check-input" /></td>
+                <td align="center">' . date('d-m-Y', strtotime($datas->datefeb)) . '</td>
+                <td align="center">' . $pourcentage . '%</td>
+            </tr>';
         }
-
-        if ($datas->om == 1) {
-          $om = "checked";
-        } else {
-          $om = "";
-        }
-        if ($datas->bc == 1) {
-          $bc = "checked";
-        } else {
-          $bc = "";
-        }
-        if ($datas->nec == 1) {
-          $nec = "checked";
-        } else {
-          $nec = "";
-        }
-        if ($datas->fpdevis == 1) {
-          $fpdevis = "checked";
-        } else {
-          $fpdevis = "";
-        }
-        $cryptedId = Crypt::encrypt($datas->id);
-
+    } else {
         $output .= '
         <tr>
-        <td>
-          <center>
-              <div class="btn-group me-2 mb-2 mb-sm-0">
-                <button class="btn btn-primary btn-sm dropdown-toggle"  data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="mdi mdi-dots-vertical ms-2"></i> Actions
-                </button>
-                <div class="dropdown-menu">
-                    <a href="feb/' . $cryptedId . '/view" class="dropdown-item text-success mx-1 voirIcon" id="' . $datas->id . '"  ><i class="far fa-edit"></i> Voir feb</a>
-                    <a href="feb/' . $cryptedId . '/edit" class="dropdown-item text-primary mx-1 editIcon " id="' . $datas->id . '"  title="Modifier"><i class="far fa-edit"></i> Modifier</a>
-                    <a href="feb/' . $datas->id . '/generate-pdf-feb" class="dropdown-item  mx-1"><i class="fa fa-print"> </i> Générer document PDF</a>
-                    <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
-                </div>
-            </div>
-          </center>
-
-          </td>
-          <td align="center"> ' . $datas->numerofeb . '  </td>
-          <td align="center">  ' . $sommefeb . ' ' . $devise . ' </td>
-          <td align="center"> ' . $datas->periode . ' </td>
-          <td align="center"> <input type="checkbox"  ' . $facture . ' class="form-check-input" />  </td>
-          <td align="center"> <input type="checkbox"  ' . $om . ' class="form-check-input" />  </td>
-          <td align="center"> <input type="checkbox"  ' . $bc . ' class="form-check-input" />  </td>
-          <td align="center"> <input type="checkbox"  ' . $nec . ' class="form-check-input" />  </td>
-          <td align="center"> <input type="checkbox"  ' . $fpdevis . ' class="form-check-input" />  </td>
-          <td align="center"> ' . date('d-m-Y', strtotime($datas->datefeb)) . '  </td>
-          <td align="center"> ' . $pourcentage . '%</td>
-          
-        </tr>
-      ';
-        $nombre++;
-      }
-      echo $output;
-    } else {
-      echo
-      '
-      <tr>
-      <td colspan="11">
-      <center>
-        <h6 style="margin-top:1% ;color:#c0c0c0"> 
-        <center><font size="50px"><i class="fas fa-info-circle"  ></i> </font><br><br>
-        Ceci est vide !</center> </h6>
-      </center>
-      </td>
-      </tr>
-      
-      ';
+            <td colspan="11">
+                <center>
+                    <h6 style="margin-top:1%; color:#c0c0c0">
+                        <center>
+                            <font size="50px">
+                                <i class="fas fa-info-circle"></i>
+                            </font>
+                            <br><br>
+                            Ceci est vide !
+                        </center>
+                    </h6>
+                </center>
+            </td>
+        </tr>';
     }
-  }
+
+    echo $output;
+}
+
 
 
   public function notificationdoc()
@@ -349,7 +342,10 @@ class FebController extends Controller
 
       if ($somme_budget_ligne >= $montant_somme) {
         $numerofeb = $request->numerofeb;
-        $check = Feb::where('numerofeb', $numerofeb)->first();
+        $check =   Feb::where('numerofeb',$numerofeb)
+        ->where('projetid', $IDP )
+        ->first();
+       
         if ($check) {
           return response()->json([
             'status' => 201
@@ -546,15 +542,13 @@ class FebController extends Controller
     // dd($souscompte);
     if ($activiteligne->count() > 0) {
 
-
       $output .= '
         <select type="text" class="form-control form-control-sm"   name="description[]" id="description" required>
         <option disabled="true" selected="true">--Aucun--</option>';
-      foreach ($activiteligne as $datas) {
-        $output .= '
-          <option value="' . $datas->id . '">' . $datas->titre . '</option>
-        ';
-      }
+      foreach ($activiteligne as $datas) 
+        {
+          $output .= ' <option value="' . $datas->id . '">' . $datas->titre . '</option>';
+        }
       $output .= '</select>';
     } else {
       $output .= 'Aucune element trouver ';
@@ -700,7 +694,8 @@ class FebController extends Controller
           $pourcentage_total += $pourcentage;
 
           // Construire la sortie HTML pour chaque élément sélectionné
-          $output .= '<input type="hidden" name="febid[]" id="febid[]" value="' . $datas->id . '" /><input type="hidden" id="ligneid[]" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
+          $output .= '<input type="hidden" name="febid[]" id="febid[]" value="' . $datas->id . '" />
+                      <input type="hidden" id="ligneid[]" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
           $output .= '<tr>';
           $output .= '<td width="10%" > Numéro FEB : ' . $datas->numerofeb . '</td>';
           $output .= '<td width="20%"> Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
@@ -757,254 +752,221 @@ class FebController extends Controller
 
   public function show($key)
   {
-    $key = Crypt::decrypt($key);
-    $check = Feb::find($key);
-
-    if (session()->has('budget')) {
-
+      // Check if the session variable 'id' exists
+      if (!session()->has('id')) {
+          return redirect()->route('dashboard');
+      }
+  
+      $key = Crypt::decrypt($key);
+      $check = Feb::findOrFail($key);
+  
+      if (!session()->has('budget')) {
+          $idprojetcrispte = Crypt::encrypt($check->projetid);
+          $ke = Crypt::decrypt($idprojetcrispte);
+          $chec = Project::findOrFail($ke);
+  
+          session()->put('id', $chec->id);
+          session()->put('title', $chec->title);
+          session()->put('numeroprojet', $chec->numeroprojet);
+          session()->put('ligneid', $chec->ligneid);
+          session()->put('devise', $chec->devise);
+          session()->put('budget', $chec->budget);
+          session()->put('periode', $chec->periode);
+      }
+  
       $budget = session()->get('budget');
       $IDB = session()->get('id');
-    } else {
-      $idprojetcrispte = Crypt::encrypt($check->projetid);
-      $ke = Crypt::decrypt($idprojetcrispte);
-      $chec = Project::find($ke);
-
-
-
-      session()->put('id', $chec->id);
-      session()->put('title', $chec->title);
-      session()->put('numeroprojet', $chec->numeroprojet);
-      session()->put('ligneid', $chec->ligneid);
-      session()->put('devise', $chec->devise);
-      session()->put('budget', $chec->budget);
-      session()->put('periode', $chec->periode);
-
-
-
-      $budget = session()->get('budget');
-      $IDB = session()->get('id');
-    }
-
-
-
-
-
-    $title = 'FEB';
-    $idl = $check->ligne_bugdetaire;
-    $idfeb = $check->id;
-
-    $onebeneficaire = Beneficaire::where('id', $check->beneficiaire)->first();
-
-    $sommeallfeb = DB::table('elementfebs')
-      ->Where('projetids', $IDB)
-      ->SUM('montant');
-
-    $dataLigne = Compte::where('id', $idl)->first();
-
-    // Debut % ligfne
-    $sommelign = DB::table('elementfebs')
-      ->Where('grandligne', $idl)
-
-      ->SUM('montant');
-
-    $sommelignpourcentage = round(($sommelign * 100) / $budget, 2);
-    // fin
-
-    // sommes element
-
-    $sommefeb = DB::table('elementfebs')
-      ->Where('febid', $idfeb)
-      ->Where('projetids', $IDB)
-      ->SUM('montant');
-
-    $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
-    // FIN TAUX EXECUTION 
-
-    $createur =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('personnels.nom', 'personnels.prenom')
-      ->Where('users.id', $check->userid)
-      ->first();
-
-
-    //etablie par 
-    $etablienom =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
-      ->Where('users.id', $check->acce)
-      ->first();
-
-    //comptable
-    $comptable_nom =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
-      ->Where('users.id', $check->comptable)
-      ->first();
-
-
-    //chef composant
-    $checcomposant_nom =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
-      ->Where('users.id', $check->chefcomposante)
-      ->first();
-
-
-
-    $datElement = Elementfeb::where('febid', $idfeb)->get();
-
-    $dateinfo = Identification::all();
-
-    return view(
-      'document.feb.voir',
-      [
-        'title' => $title,
-        'dataFeb' => $check,
-        'dataLigne' => $dataLigne,
-        'sommelignpourcentage' => $sommelignpourcentage,
-        'datElement' => $datElement,
-        'sommefeb' => $sommefeb,
-        'etablienom' => $etablienom,
-        'comptable_nom' => $comptable_nom,
-        'checcomposant_nom' => $checcomposant_nom,
-        'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE,
-        'dateinfo' => $dateinfo,
-        'createur' => $createur,
-        'onebeneficaire' => $onebeneficaire
-
-      ]
-    );
+  
+      $title = 'FEB';
+      $idl = $check->ligne_bugdetaire;
+      $idfeb = $check->id;
+  
+      $onebeneficaire = Beneficaire::find($check->beneficiaire);
+  
+      $sommeallfeb = DB::table('elementfebs')
+          ->where('projetids', $IDB)
+          ->sum('montant');
+  
+      $dataLigne = Compte::find($idl);
+  
+      $sommelign = DB::table('elementfebs')
+          ->where('grandligne', $idl)
+          ->sum('montant');
+  
+      $sommelignpourcentage = round(($sommelign * 100) / $budget, 2);
+  
+      $sommefeb = DB::table('elementfebs')
+          ->where('febid', $idfeb)
+          ->where('projetids', $IDB)
+          ->sum('montant');
+  
+      $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
+  
+      $createur = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom')
+          ->where('users.id', $check->userid)
+          ->first();
+  
+      $etablienom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
+          ->where('users.id', $check->acce)
+          ->first();
+  
+      $comptable_nom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+          ->where('users.id', $check->comptable)
+          ->first();
+  
+      $checcomposant_nom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+          ->where('users.id', $check->chefcomposante)
+          ->first();
+  
+      $datElement = Elementfeb::where('febid', $idfeb)->get();
+  
+      $dateinfo = Identification::all();
+  
+      return view('document.feb.voir', [
+          'title' => $title,
+          'dataFeb' => $check,
+          'dataLigne' => $dataLigne,
+          'sommelignpourcentage' => $sommelignpourcentage,
+          'datElement' => $datElement,
+          'sommefeb' => $sommefeb,
+          'etablienom' => $etablienom,
+          'comptable_nom' => $comptable_nom,
+          'checcomposant_nom' => $checcomposant_nom,
+          'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE,
+          'dateinfo' => $dateinfo,
+          'createur' => $createur,
+          'onebeneficaire' => $onebeneficaire,
+      ]);
   }
-
+  
   public function showonefeb($idf)
   {
-    $budget = session()->get('budget');
-    $IDB = session()->get('id');
-
-    $idf = Crypt::decrypt($idf);
-
-    $dataJosonfeb = DB::table('febs')
-      ->join('comptes', 'febs.ligne_bugdetaire', 'comptes.id')
-
-      ->select('febs.*', 'febs.id as idfb', 'comptes.id as idc', 'comptes.numero as numeroc', 'comptes.libelle as libellec')
-      ->Where('febs.id', $idf)
-      ->first();
-
-
-    $title = 'FEB';
-
-    $idl = $dataJosonfeb->ligne_bugdetaire;
-    $idfeb =  $dataJosonfeb->id;
-
-    $ID = session()->get('id');
-    $compte =  DB::table('comptes')
-      ->Where('comptes.projetid', $ID)
-      ->Where('compteid', '=', 0)
-      ->get();
-
-
-
-
-    $personnel = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-      ->Where('fonction', '!=', 'Chauffeur')
-      ->orderBy('nom', 'ASC')
-      ->get();
-
-
-
-    $dataLigne = Compte::where('id', $idl)->first();
-
-    // Debut % ligfne
-    $sommelign = DB::table('elementfebs')
-      ->Where('grandligne', $idl)
-      ->SUM('montant');
-    $sommelignpourcentage = round(($sommelign * 100) / $budget);
-    // fin
-
-    // sommes element
-
-    $sommefeb = DB::table('elementfebs')
-      ->Where('febid', $idfeb)
-      ->SUM('montant');
-
-    //
-
-    // DEBUT DE TAUX EXECUTION DU PROJET
-    $datafebs = DB::table('elementfebs')
-      ->orderby('id', 'DESC')
-      ->Where('projetids', $ID)
-      ->SUM('montant');
-
-    $POURCENTAGE_GLOGALE = round(($datafebs * 100) / $budget);
-    // FIN TAUX EXECUTION 
-
-
-    //etablie par 
-    $etablienom =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-      ->Where('users.id', $dataJosonfeb->acce)
-      ->first();
-
-    //comptable
-    $comptable_nom =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id', 'users.id as userid')
-      ->Where('users.id', $dataJosonfeb->comptable)
-      ->first();
-
-
-    //chef composant
-    $checcomposant_nom =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-      ->Where('users.id', $dataJosonfeb->chefcomposante)
-      ->first();
-
-    $datElement = DB::table('elementfebs')
-      ->join('activities', 'elementfebs.libellee', 'activities.id')
-      ->select('elementfebs.*', 'elementfebs.id as idef', 'activities.id as ida', 'activities.titre as titrea')
-      ->Where('febid', $idfeb)
-      ->get();
-
-    $datElementgene = DB::table('elementfebs')
-      ->join('activities', 'elementfebs.libellee', 'activities.id')
-      ->select('elementfebs.*', 'elementfebs.id as idef', 'activities.id as ida', 'activities.titre as titrea')
-      ->Where('febid', $idfeb)
-      ->first();
-    $activiteligne = Activity::where('compteidr', $datElementgene->eligne)->get();
-
-    $beneficaire = Beneficaire::orderBy('libelle')->get();
-    $onebeneficaire = Beneficaire::where('id', $dataJosonfeb->beneficiaire)->first();
-
-
-
-
-    return view(
-      'document.feb.edit',
-      [
-        'title' => $title,
-        'dataFe' => $dataJosonfeb,
-        'dataLigne' => $dataLigne,
-        'sommelignpourcentage' => $sommelignpourcentage,
-        'datElement' => $datElement,
-        'sommefeb' => $sommefeb,
-        'etablienom' => $etablienom,
-        'comptable_nom' => $comptable_nom,
-        'checcomposant_nom' => $checcomposant_nom,
-        'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE,
-        'personnel' => $personnel,
-        'compte' => $compte,
-        'datElementgene' => $datElementgene,
-        'activiteligne' => $activiteligne,
-        'beneficaire'  => $beneficaire,
-        'onebeneficaire' => $onebeneficaire
-
-      ]
-    );
+      // Check if the session variable 'id' exists
+      if (!session()->has('id')) {
+          return redirect()->route('dashboard');
+      }
+  
+      $budget = session()->get('budget');
+      $IDB = session()->get('id');
+  
+      $idf = Crypt::decrypt($idf);
+  
+      $dataJosonfeb = DB::table('febs')
+          ->join('comptes', 'febs.ligne_bugdetaire', 'comptes.id')
+          ->select('febs.*', 'febs.id as idfb', 'comptes.id as idc', 'comptes.numero as numeroc', 'comptes.libelle as libellec')
+          ->where('febs.id', $idf)
+          ->first();
+  
+      $title = 'FEB';
+  
+      $idl = $dataJosonfeb->ligne_bugdetaire;
+      $idfeb = $dataJosonfeb->id;
+  
+      $ID = session()->get('id');
+      $compte = DB::table('comptes')
+          ->where('comptes.projetid', $ID)
+          ->where('compteid', '=', 0)
+          ->get();
+  
+      $personnel = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+          ->where('fonction', '!=', 'Chauffeur')
+          ->orderBy('nom', 'ASC')
+          ->get();
+  
+      $dataLigne = Compte::where('id', $idl)->first();
+  
+      // Debut % ligne
+      $sommelign = DB::table('elementfebs')
+          ->where('grandligne', $idl)
+          ->sum('montant');
+      $sommelignpourcentage = round(($sommelign * 100) / $budget);
+      // fin
+  
+      // sommes element
+      $sommefeb = DB::table('elementfebs')
+          ->where('febid', $idfeb)
+          ->sum('montant');
+      // fin
+  
+      // DEBUT DE TAUX EXECUTION DU PROJET
+      $datafebs = DB::table('elementfebs')
+          ->orderBy('id', 'DESC')
+          ->where('projetids', $ID)
+          ->sum('montant');
+  
+      $POURCENTAGE_GLOGALE = round(($datafebs * 100) / $budget);
+      // FIN TAUX EXECUTION
+  
+      // Etablie par
+      $etablienom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+          ->where('users.id', $dataJosonfeb->acce)
+          ->first();
+  
+      // Comptable
+      $comptable_nom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id', 'users.id as userid')
+          ->where('users.id', $dataJosonfeb->comptable)
+          ->first();
+  
+      // Chef composant
+      $checcomposant_nom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+          ->where('users.id', $dataJosonfeb->chefcomposante)
+          ->first();
+  
+      $datElement = DB::table('elementfebs')
+          ->join('activities', 'elementfebs.libellee', 'activities.id')
+          ->select('elementfebs.*', 'elementfebs.id as idef', 'activities.id as ida', 'activities.titre as titrea')
+          ->where('febid', $idfeb)
+          ->get();
+  
+      $datElementgene = DB::table('elementfebs')
+          ->join('activities', 'elementfebs.libellee', 'activities.id')
+          ->select('elementfebs.*', 'elementfebs.id as idef', 'activities.id as ida', 'activities.titre as titrea')
+          ->where('febid', $idfeb)
+          ->first();
+      $activiteligne = Activity::where('compteidr', $datElementgene->eligne)->get();
+  
+      $beneficaire = Beneficaire::orderBy('libelle')->get();
+      $onebeneficaire = Beneficaire::where('id', $dataJosonfeb->beneficiaire)->first();
+  
+      return view(
+          'document.feb.edit',
+          [
+              'title' => $title,
+              'dataFe' => $dataJosonfeb,
+              'dataLigne' => $dataLigne,
+              'sommelignpourcentage' => $sommelignpourcentage,
+              'datElement' => $datElement,
+              'sommefeb' => $sommefeb,
+              'etablienom' => $etablienom,
+              'comptable_nom' => $comptable_nom,
+              'checcomposant_nom' => $checcomposant_nom,
+              'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE,
+              'personnel' => $personnel,
+              'compte' => $compte,
+              'datElementgene' => $datElementgene,
+              'activiteligne' => $activiteligne,
+              'beneficaire' => $beneficaire,
+              'onebeneficaire' => $onebeneficaire,
+          ]
+      );
   }
+  
 
 
   public function update(Request $request)
@@ -1049,133 +1011,235 @@ class FebController extends Controller
 
 
 
-
   public function generatePDFfeb($id)
   {
-    $budget = session()->get('budget');
-    $IDB = session()->get('id');
+      // Vérifie si la variable de session 'id' existe
+      if (!session()->has('id')) {
+          return redirect()->route('dashboard');
+      }
+  
+      $budget = session()->get('budget');
+      $IDB = session()->get('id');
+  
+      // Instancie Dompdf
+      $dompdf = new Dompdf();
+      $infoglo = DB::table('identifications')->first();
+  
+      $datafeb = DB::table('febs')
+          ->join('comptes', 'febs.ligne_bugdetaire', 'comptes.id')
+          ->join('projects', 'febs.projetid', '=', 'projects.id')
+          ->select('febs.*', 'comptes.id as idc', 'projects.title as libelleA', 'comptes.numero as numeroc', 'comptes.libelle as libellec')
+          ->where('febs.id', $id)
+          ->first();
+  
+      $onebeneficaire = Beneficaire::where('id', $datafeb->beneficiaire)->first();
+  
+      $idl = $datafeb->ligne_bugdetaire;
+      $idfeb = $datafeb->id;
+  
+      $ID = session()->get('id');
+  
+      $compte = DB::table('comptes')
+          ->where('comptes.projetid', $ID)
+          ->where('compteid', '=', 0)
+          ->get();
+  
+      $personnel = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+          ->where('fonction', '!=', 'Chauffeur')
+          ->orderBy('nom', 'ASC')
+          ->get();
+  
+      $dataLigne = Compte::where('id', $idl)->first();
+  
+      $sommeallfeb = DB::table('elementfebs')
+          ->where('projetids', $IDB)
+          ->sum('montant');
+      $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
+  
+      $sommelign = DB::table('elementfebs')
+          ->where('grandligne', $idl)
+          ->sum('montant');
+      $sommelignpourcentage = round(($sommelign * 100) / $budget, 2);
+  
+      $sommefeb = DB::table('elementfebs')
+          ->where('febid', $idfeb)
+          ->sum('montant');
+  
+      // Calcul du taux d'exécution du projet
+      $sommerepartie = DB::table('rallongebudgets')
+          ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+          ->where('rallongebudgets.projetid', $IDB)
+          ->sum('budgetactuel');
+  
+      // Etablie par
+      $etablienom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
+          ->where('users.id', $datafeb->acce)
+          ->first();
+  
+      // Comptable
+      $comptable_nom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
+          ->where('users.id', $datafeb->comptable)
+          ->first();
+  
+      // Chef composant
+      $checcomposant_nom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+          ->where('users.id', $datafeb->chefcomposante)
+          ->first();
+  
+      $datElement = Elementfeb::where('febid', $idfeb)->get();
+  
+      // Génère le fichier PDF
+      $pdf = FacadePdf::loadView('document.feb.feb', compact(
+          'infoglo',
+          'datafeb',
+          'sommelignpourcentage',
+          'sommefeb',
+          'etablienom',
+          'comptable_nom',
+          'checcomposant_nom',
+          'POURCENTAGE_GLOGALE',
+          'personnel',
+          'compte',
+          'datElement',
+          'dataLigne',
+          'onebeneficaire'
+      ));
+  
+      $pdf->setPaper('A4', 'landscape'); // Format A4 en mode paysage
+     
+      // Nom du fichier PDF téléchargé avec numéro FEB et date actuelle
+      $fileName = 'FEB_NUM' . $datafeb->numerofeb . '_' . Carbon::now()->format('iHs_dmY') . '.pdf';
 
-    // Instancier Dompdf
-    $dompdf = new Dompdf();
-    $infoglo = DB::table('identifications')->first();
-
-    $datafeb = DB::table('febs')
-      ->join('comptes', 'febs.ligne_bugdetaire', 'comptes.id')
-      ->join('projects', 'febs.projetid', '=', 'projects.id')
-      ->select('febs.*', 'comptes.id as idc', 'projects.title as libelleA', 'comptes.numero as numeroc', 'comptes.libelle as libellec')
-      ->Where('febs.id', $id)
-      ->first();
-
-    $onebeneficaire = Beneficaire::where('id', $datafeb->beneficiaire)->first();
-
-
-    $idl = $datafeb->ligne_bugdetaire;
-    $idfeb =  $datafeb->id;
-
-    $ID = session()->get('id');
-
-    $compte =  DB::table('comptes')
-      ->Where('comptes.projetid', $ID)
-      ->Where('compteid', '=', 0)
-      ->get();
-
-    $ID = session()->get('id');
-    $compte =  DB::table('comptes')
-      ->Where('comptes.projetid', $ID)
-      ->Where('compteid', '=', 0)
-      ->get();
-
-    $personnel = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
-      ->Where('fonction', '!=', 'Chauffeur')
-      ->orderBy('nom', 'ASC')
-      ->get();
-
-    $dataLigne = Compte::where('id', $idl)->first();
-
-
-
-    $sommeallfeb = DB::table('elementfebs')
-      ->Where('projetids', $IDB)
-      ->SUM('montant');
-    $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
-
-    $sommelign = DB::table('elementfebs')
-      ->Where('grandligne', $idl)
-      ->SUM('montant');
-    $sommelignpourcentage = round(($sommelign * 100) / $budget, 2);
-
-
-    $personnel = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-      ->Where('fonction', '!=', 'Chauffeur')
-      ->orderBy('nom', 'ASC')
-      ->get();
-
-
-
-
-    $sommefeb = DB::table('elementfebs')
-      ->Where('febid', $idfeb)
-      ->SUM('montant');
-
-    // DEBUT DE TAUX EXECUTION DU PROJET
-    $sommerepartie = DB::table('rallongebudgets')
-      ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
-      ->Where('rallongebudgets.projetid', $IDB)
-      ->SUM('budgetactuel');
-
-
-
-    //etablie par 
-    $etablienom =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
-      ->Where('users.id', $datafeb->acce)
-      ->first();
-
-    //comptable
-    $comptable_nom =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
-      ->Where('users.id', $datafeb->comptable)
-      ->first();
-
-
-    //chef composant
-    $checcomposant_nom =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
-      ->Where('users.id', $datafeb->chefcomposante)
-      ->first();
-
-    $datElement = Elementfeb::where('febid', $idfeb)->get();
-
-    // Passez les données de la facture à la vue
-
-    $pdf = FacadePdf::loadView('document.feb.feb', compact(
-      'infoglo',
-      'datafeb',
-      'sommelignpourcentage',
-      'sommefeb',
-      'etablienom',
-      'comptable_nom',
-      'checcomposant_nom',
-      'POURCENTAGE_GLOGALE',
-      'personnel',
-      'compte',
-      'datElement',
-      'dataLigne',
-      'onebeneficaire'
-    ));
-
-    $pdf->setPaper('A4', 'landscape'); // Définit le format A4 en mode paysage
-
-    // Générez le PDF et retournez-le
-    return $pdf->download('feb.pdf');
+      // Télécharge le PDF
+      return $pdf->download($fileName);
   }
+  
+
+  
+  public function generateWordFeb($id)
+  {
+      // Check if the session variable 'id' exists
+      if (!session()->has('id')) {
+          return redirect()->route('dashboard');
+      }
+  
+      $budget = session()->get('budget');
+      $IDB = session()->get('id');
+  
+      // Retrieve necessary data from the database
+      $infoglo = DB::table('identifications')->first();
+  
+      $datafeb = DB::table('febs')
+          ->join('comptes', 'febs.ligne_bugdetaire', 'comptes.id')
+          ->join('projects', 'febs.projetid', '=', 'projects.id')
+          ->select('febs.*', 'comptes.id as idc', 'projects.title as libelleA', 'comptes.numero as numeroc', 'comptes.libelle as libellec')
+          ->where('febs.id', $id)
+          ->first();
+  
+      $onebeneficaire = Beneficaire::where('id', $datafeb->beneficiaire)->first();
+  
+      $idl = $datafeb->ligne_bugdetaire;
+      $idfeb = $datafeb->id;
+  
+      $compte = DB::table('comptes')
+          ->where('comptes.projetid', $IDB)
+          ->where('compteid', '=', 0)
+          ->get();
+  
+      $personnel = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+          ->where('fonction', '!=', 'Chauffeur')
+          ->orderBy('nom', 'ASC')
+          ->get();
+  
+      $dataLigne = Compte::where('id', $idl)->first();
+  
+      $sommeallfeb = DB::table('elementfebs')
+          ->where('projetids', $IDB)
+          ->sum('montant');
+      $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
+  
+      $sommelign = DB::table('elementfebs')
+          ->where('grandligne', $idl)
+          ->sum('montant');
+      $sommelignpourcentage = round(($sommelign * 100) / $budget, 2);
+  
+      $sommefeb = DB::table('elementfebs')
+          ->where('febid', $idfeb)
+          ->sum('montant');
+  
+      $sommerepartie = DB::table('rallongebudgets')
+          ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+          ->where('rallongebudgets.projetid', $IDB)
+          ->sum('budgetactuel');
+  
+      $etablienom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
+          ->where('users.id', $datafeb->acce)
+          ->first();
+  
+      $comptable_nom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
+          ->where('users.id', $datafeb->comptable)
+          ->first();
+  
+      $checcomposant_nom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+          ->where('users.id', $datafeb->chefcomposante)
+          ->first();
+  
+      $datElement = Elementfeb::where('febid', $idfeb)->get();
+  
+      // Render the Blade view to HTML
+      $htmlContent = View::make('document.feb.feb', compact(
+          'infoglo',
+          'datafeb',
+          'sommelignpourcentage',
+          'sommefeb',
+          'etablienom',
+          'comptable_nom',
+          'checcomposant_nom',
+          'POURCENTAGE_GLOGALE',
+          'personnel',
+          'compte',
+          'datElement',
+          'dataLigne',
+          'onebeneficaire'
+      ))->render();
+  
+      // Create a new PHPWord Object
+      $phpWord = new PhpWord();
+      $section = $phpWord->addSection();
+  
+      // Add HTML content to the Word document
+      Html::addHtml($section, $htmlContent);
+  
+      // Save the document
+      $fileName = 'feb.docx';  // Name of the file to be created
+      $tempFile = tempnam(sys_get_temp_dir(), $fileName);  // Create a temporary file
+  
+      // Write the Word document to the temporary file
+      $writer = IOFactory::createWriter($phpWord, 'Word2007');
+      $writer->save($tempFile);
+  
+      // Return the document as a download and delete the temporary file after sending
+      return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
+  }
+  
+
+  
 
   public function delete(Request $request)
   {
@@ -1218,6 +1282,19 @@ class FebController extends Controller
         'status' => 202,
       ]);
     }
+  }
+
+  public function checkfeb(Request $request)
+  {
+      $ID = session()->get('id');
+      $numero = $request->numerofeb;
+
+      $feb = Feb::where('numerofeb', $numero)
+      ->where('projetid', $ID)
+      ->exists();
+
+      return response()->json(['exists' => $feb]);
+    
   }
 
 

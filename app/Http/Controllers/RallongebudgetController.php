@@ -116,7 +116,7 @@ class RallongebudgetController extends Controller
 
       $output .= '
           <table class="table table-bordered table-sm fs--1 mb-0">
-              <tr>
+              <tr style="background-color:#82E0AA">
                   <td style="padding:5px"><b>Rubrique du projet</b></td>
                   <td style="padding:5px"><b>Pays / région</b></td>
                   <td style="padding:5px"><b>N<sup>o</sup> Projet</b></td>
@@ -146,14 +146,14 @@ class RallongebudgetController extends Controller
               </tr>
           </table>
           <br>';
-
+//class="table table-striped table-bordered table-sm table-centered align-middle table-nowrap mb-0"
       $output .= '
-          <table class="table table-striped table-bordered table-sm table-centered align-middle table-nowrap mb-0">
+          <table class="table table-bordered table-sm fs--1 mb-0" >
               <thead>
-                  <tr>
+                  <tr style="background-color:#82E0AA;">
                       <th><b>#</b></th>
                       <th><b>Code</b></th>
-                      <th><b>Description ligne budgétaire</b></th>
+                      <th style="width:25%"><b>Description ligne budgétaire</b></th>
                       <th><center><b>Budget</b></center></th>';
 
       for ($i = 1; $i <= $periode; $i++) {

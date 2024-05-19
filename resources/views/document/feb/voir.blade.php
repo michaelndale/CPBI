@@ -13,6 +13,7 @@
                     <center>
                         <a href="{{ route('listfeb')}}" class="btn btn-info"> <i class="fas fa-long-arrow-alt-left"></i> Retour en arrière.</a>
                         <a href="{{ route('generate-pdf-feb', $dataFeb->id) }}" class="btn btn-success"><i class="fa fa-print"> </i> Générer document PDF</a>
+                       <!-- <a href="{{ route('generate.word.feb', $dataFeb->id) }}" class="btn btn-primary">Download Word Document</a> -->
                         <div class="text-muted">
                             <table style=" width:100%">
                                 <tr>
