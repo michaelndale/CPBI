@@ -218,9 +218,9 @@
                                                             <input  value="{{ $datElements->id }}" type="hidden" id="libelle_description_id" name="libelle_description_id[]" >
                                                           </td>
                                                             <td><input style="width:100%" value="{{ $datElements->unite }}" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm unit_price" required  min="1"> </td>
-                                                            <td><input style="width:100%" value="{{ $datElements->quantite }}" type="number" id="qty" name="qty[]" class="form-control form-control-sm qty" required  min="1"></td>
-                                                            <td><input style="width:100%" value="{{ $datElements->frequence }}" type="number" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency" required  min="1"></td>
-                                                            <td><input style="width:100%" value="{{ $datElements->pu }}" type="number" id="pu" name="pu[]" class="form-control form-control-sm pu" required  min="1"></td>
+                                                            <td><input style="width:100%" value="{{ $datElements->quantite }}" type="text" id="qty" name="qty[]" class="form-control form-control-sm qty" required  min="1"></td>
+                                                            <td><input style="width:100%" value="{{ $datElements->frequence }}" type="text" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency" required  min="1"></td>
+                                                            <td><input style="width:100%" value="{{ $datElements->pu }}" type="text" id="pu" name="pu[]" class="form-control form-control-sm pu" required  min="1"></td>
                                                             <td><input style="width:100%" value="{{ $datElements->montant }}" type="text" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
                                                             <td><a href="{{ route('deleteelementsfeb', $datElements->idef) }}" id="{{ $datElements->idef }}" class="text-danger font-18 deleteIcon" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
 
@@ -361,9 +361,9 @@
             </td>
             <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required></td>
             <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm" required ></td>
-            <td><input style="width:100%" type="number" id="qty" name="qty[]" class="form-control form-control-sm qty" required min="1"></td>
-            <td><input style="width:100%" type="number" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency" required  min="1"></td>
-            <td><input style="width:100%" type="number" id="pu" name="pu[]" class="form-control form-control-sm pu" required  min="1"></td>
+            <td><input style="width:100%" type="text" id="qty" name="qty[]" class="form-control form-control-sm qty" required min="1"></td>
+            <td><input style="width:100%" type="text" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency" required  min="1"></td>
+            <td><input style="width:100%" type="text" id="pu" name="pu[]" class="form-control form-control-sm pu" required  min="1"></td>
             <td><input style="width:100%" type="text" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly required></td>
             <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
         </tr>

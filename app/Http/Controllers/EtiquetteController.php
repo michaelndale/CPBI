@@ -2,32 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Classeur;
-use Exception;
+use App\Models\Etiquette;
 use Illuminate\Http\Request;
 
-class ClasseurController extends Controller
+class EtiquetteController extends Controller
 {
     public function index()
     {
-      $title = 'Classeur';
+      $title = 'Etiquette';
       $active = 'Archivage';
-      $classeur = Classeur::all();
+      $etiquette = Etiquette::all();
       return view(
-        'classeur.index',
+        'etiquette.index',
         [
           'title' => $title,
           'active' => $active,
-          'classeur' => $classeur
+          'etiquette' =>  $etiquette
         ]
       );
     }
   
     public function fetchAll()
 {
-    $classeurs = Classeur::join('users', 'classeurs.userid', '=', 'users.id')
+    $classeurs = Etiquette::join('users', 'etiquettes.userid', '=', 'users.id')
         ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->select('classeurs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
+        ->select('etiquettes.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
         ->get();
 
     $output = '';
@@ -37,7 +36,7 @@ class ClasseurController extends Controller
 
         foreach ($classeurs as $classeur) {
             // Utilisation de la méthode value() pour obtenir uniquement la valeur de libellec
-            $libelle = Classeur::where('id', $classeur->parent)->value('libellec');
+            $libelle = Etiquette::where('id', $classeur->parent)->value('libellec');
             //$libelleAffichage = $libelle ? $libelle . ' / ' . $classeur->libellec : $classeur->libellec;
 
             $output .= '<tr>
@@ -109,56 +108,5 @@ class ClasseurController extends Controller
                 'status' => 202,
             ]);
         }
-    }
-    
-  
-    // edit an employee ajax request
-    public function edit(Request $request)
-    {
-      $id = $request->id;
-      $fon = Classeur::find($id);
-      return response()->json($fon);
-    }
-  
-    // update an function ajax request
-    public function update(Request $request)
-    {
-  
-      try {
-        $title = $request->cs_title;
-        $check = Classeur::where('libellec',$title)->first();
-        
-        if($check){
-          return response()->json([
-            'status' => 201,
-          ]);
-        }else{
-  
-            $emp = Classeur::find($request->cs_id);
-            $emp->libellec = $request->cs_title;
-            $emp->userid = Auth()->user()->id;
-            $emp->update();
-            
-            return response()->json([
-              'status' => 200,
-            ]);
-  
-  
-  
-        }
-      } catch (Exception $e) {
-        return response()->json([
-          'status' => 202,
-        ]);
-      
-    
-    }
-  }
-  
-    // supresseion
-    public function deleteall(Request $request)
-    {
-      $id = $request->id;
-      Classeur::destroy($id);
     }
 }

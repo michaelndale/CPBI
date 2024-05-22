@@ -90,7 +90,7 @@
             </div>
 
             <div class="col-12 gy-2">
-              <div class="form-floating"><textarea class="form-control" id="description" name="description" placeholder="Description du projet" style="height: 100px" required></textarea><label for="floatingProjectOverview">Description du projet</label></div>
+              <div class="form-floating"><textarea class="form-control" id="description" name="description" placeholder="Description du projet" style="height: 100px" required></textarea><label for="floatingProjectOverview">Résumé Exécutif du projet</label></div>
             </div>
             <div class="col-12 gy-4">
               <div class="row g-3 justify-content-end">

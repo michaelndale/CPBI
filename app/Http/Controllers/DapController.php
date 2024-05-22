@@ -152,7 +152,6 @@ class DapController extends Controller
   
           // Détermination des valeurs pour les champs ov, ch, justifier et nonjustifier
           $ov = $request->has('ov') ? 1 : 0;
-          $ch = $request->has('ch') ? 1 : 0;
           $justifier = $request->has('justifier') ? 1 : 0;
           $nonjustifier = $request->has('nonjustifier') ? 1 : 0;
   
@@ -164,7 +163,7 @@ class DapController extends Controller
           $dap->lieu           = $request->lieu;
           $dap->comptabiliteb  = $request->comptebanque;
           $dap->ov             = $ov;
-          $dap->cho            = $ch;
+          $dap->cho            = $request->ch;
           $dap->demandeetablie = $request->demandeetablie;
           $dap->verifierpar    = $request->verifier;
           $dap->approuverpar   = $request->approuver;
@@ -203,6 +202,7 @@ class DapController extends Controller
                               $dapE->ligneided = $request->ligneid[$key] ?? null;
                               $dapE->montantavance = $request->montantavance[$key] ?? null;
                               $dapE->duree_avance = $request->duree_avance[$key] ?? null;
+                              $dapE->numfacture = $request->numfacture[$key] ?? null;
                               $dapE->descriptionn = $request->descriptionel[$key] ?? null;
                           }
   

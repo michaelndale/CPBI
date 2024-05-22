@@ -11,9 +11,9 @@
             <div class="card-body">
                 <div class="invoice-title">
                     <center>
-                        <a href="{{ route('listfeb')}}" class="btn btn-info"> <i class="fas fa-long-arrow-alt-left"></i> Retour en arrière.</a>
+                        <!--  <a href="{{ route('listfeb')}}" class="btn btn-info"> <i class="fas fa-long-arrow-alt-left"></i> Retour en arrière.</a>
                         <a href="{{ route('generate-pdf-feb', $dataFeb->id) }}" class="btn btn-success"><i class="fa fa-print"> </i> Générer document PDF</a>
-                       <!-- <a href="{{ route('generate.word.feb', $dataFeb->id) }}" class="btn btn-primary">Download Word Document</a> -->
+                      <a href="{{ route('generate.word.feb', $dataFeb->id) }}" class="btn btn-primary">Download Word Document</a> -->
                         <div class="text-muted">
                             <table style=" width:100%">
                                 <tr>
@@ -23,7 +23,6 @@
                                         <center>
                                             <p class="mb-1">
                                             <h3>{{ $dateinfo->entete }}</h3>
-
                                         </center>
                                     </td>
                                 </tr>
@@ -47,7 +46,7 @@
                     <div class="col-sm-12">
                         <table class="table table-bordered  table-sm fs--1 mb-0">
                             <tr>
-                                <td>Composante/ Projet/Section: {{ ucfirst(Session::get('title')) }} </td>
+                                <td>Composante/ Projet/Section: {{ ucfirst($dataprojets->title) }} </td>
                                 <td>Période: {{ $dataFeb->periode }}
 
                                 @if (isset($onebeneficaire->libelle) && !empty($onebeneficaire->libelle)) 

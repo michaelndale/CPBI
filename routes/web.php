@@ -19,6 +19,7 @@ use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\DeviseController;
 use App\Http\Controllers\DjaController;
 use App\Http\Controllers\ElementsfeuilletempsController;
+use App\Http\Controllers\EtiquetteController;
 use App\Http\Controllers\FdtController;
 use App\Http\Controllers\FebController;
 use App\Http\Controllers\FeuilletempsController;
@@ -417,6 +418,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/getarchive', [ArchivageController::class, 'getarchive'])->name('getarchive');
         Route::post('/storeClasseur', [ArchivageController::class, 'store'])->name('storeClasseur');
         Route::post('/fetchAllclasseur', [ArchivageController::class, 'store'])->name('fetchAllclasseur');
+    });
+
+    Route::prefix('etiquette')->group(function () {
+        Route::get('/', [EtiquetteController::class, 'index'])->name('etiquette');
+        Route::post('/storeetiquette', [EtiquetteController::class, 'storeexpediction'])->name('storeetiquette');
+        Route::post('/fetchalletiquette', [EtiquetteController::class, 'store'])->name('fetchalletiquette');
     });
 
     Route::prefix('activity')->group(function () {

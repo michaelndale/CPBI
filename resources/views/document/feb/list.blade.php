@@ -201,9 +201,9 @@ $("#addBtn").on("click", function() {
             <td><div id="Showpoll${rowIdx}" class="Showpoll"> </div> </td>
             <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required></td>
             <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm" required></td>
-            <td><input style="width:100%" type="number" id="qty" name="qty[]" class="form-control form-control-sm qty" required ></td>
-            <td><input style="width:100%" type="number" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency"  required ></td>
-            <td><input style="width:100%" type="number" id="pu" name="pu[]" class="form-control form-control-sm pu"  required></td>
+            <td><input style="width:100%" type="text" id="qty" name="qty[]" class="form-control form-control-sm qty" required ></td>
+            <td><input style="width:100%" type="text" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency"  required ></td>
+            <td><input style="width:100%" type="text" id="pu" name="pu[]" class="form-control form-control-sm pu"  required></td>
             <td><input style="width:100%" type="text" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
             <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
         </tr>

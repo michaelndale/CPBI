@@ -208,6 +208,7 @@
               $("#ancienmontantligne").val(data.budgetactuel);
               $("#r_souscompte").val(data.souscompte);
               $("#r_idligne").val(data.idr);
+              $("#r_idr").val(data.idr);
             } else {
               // Affichez un message d'alerte si aucune donnée n'est trouvée
               toastr.error('Aucune donnée trouvée pour cet ID.');
@@ -247,9 +248,8 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
-
-            toastr.success("Très bien! Le budget a été bien modifié.", "Modification");
             fetchAllrallonge();
+            toastr.success("Très bien! Le budget a été bien modifié.", "Modification");
             $("#revisionbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#editrevisionform")[0].reset();
             $("#revisionModal").modal('hide');
@@ -297,8 +297,9 @@
             },
             success: function(response) {
               if (response.status == 200) {
-                toastr.success("Ligne budgétaire supprimée avec succès.", "Succès");
                 fetchAllrallonge();
+                toastr.success("Ligne budgétaire supprimée avec succès.", "Succès");
+               
               } else if (response.status == 201) {
                 toastr.error("Vous n'avez pas l'autorisation de supprimer cette ligne budgétaire.", "Erreur");
               } else {

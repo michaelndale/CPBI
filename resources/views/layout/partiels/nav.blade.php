@@ -413,6 +413,7 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
               <ul class="sub-menu" aria-expanded="false">
                 <li><a href="{{ route('archivage') }}">Archive</a></li>
                 <li><a href="{{ route('classeur') }}">Classeur</a></li>
+                <li><a href="{{ route('classeur') }}">Etiquette</a></li>
               </ul>
             </li>
 

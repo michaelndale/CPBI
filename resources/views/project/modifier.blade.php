@@ -48,8 +48,8 @@
                                 </div>
                               </td>
                               <td class="ps-1 py-1"><a class="fw-semi-bold d-block lh-sm" href="#!">
-                                  <input type="hidden" value="{{ ucfirst($responsables->id) }}" name="resid">
-                                  <select name="lead" class="form-control form-control-sm">
+                                
+                                  <select name="resid" class="form-control form-control-sm">
                                     <option value="{{ ucfirst($responsables->id) }}">{{ ucfirst($responsables->nom) }} {{ ucfirst($responsables->prenom) }}</option>
                                     @foreach ($alluser as $allusers)
                                       <option value="{{ $allusers->id }}"> {{ ucfirst($allusers->nom) }} {{ ucfirst($allusers->prenom) }} </option>

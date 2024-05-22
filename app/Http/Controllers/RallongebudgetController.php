@@ -206,7 +206,7 @@ class RallongebudgetController extends Controller
           // Récupération des sous-comptes
           $sous_compte = DB::table('rallongebudgets')
             ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
-            ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero', 'rallongebudgets.id as id')
+            ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero', 'rallongebudgets.id as idr')
             ->where('rallongebudgets.projetid', $IDP)
             ->where('rallongebudgets.compteid', $datas->id)
             ->get();
@@ -221,8 +221,8 @@ class RallongebudgetController extends Controller
                         <i class="mdi mdi-dots-vertical ms-2"></i>
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item text-primary mx-1 showrevision" id="'.$sc->id .'"  data-bs-toggle="modal" data-bs-target="#revisionModal" title="Revision budgétaire"><i class="far fa-edit"></i> Execute la revision budgétaire </a>
-                        <a class="dropdown-item text-danger mx-1 deleterevision"  id="'.$sc->id.'"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
+                        <a class="dropdown-item text-primary mx-1 showrevision" id="'.$sc->idr.'"  data-bs-toggle="modal" data-bs-target="#revisionModal" title="Revision budgétaire"><i class="far fa-edit"></i> Execute la revision budgétaire </a>
+                        <a class="dropdown-item text-danger mx-1 deleterevision"  id="'.$sc->idr.'"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
                     </div>
                   </div>
               '
@@ -365,7 +365,7 @@ class RallongebudgetController extends Controller
       $globale += $request->r_budgetactuel;
   
       if ($budget >= $globale) {
-          $MisesA = Rallongebudget::find($request->r_idligne);
+          $MisesA =  Rallongebudget::find($request->r_idr);
           $MisesA->budgetactuel = $request->r_budgetactuel;
           $MisesA->update();
   
@@ -523,17 +523,21 @@ class RallongebudgetController extends Controller
     try {
 
       $emp = Rallongebudget::find($request->id);
+
       if ($emp->userid == Auth::id()) {
+    
         $id = $request->id;
-        Rallongebudget::destroy($id);
+        Rallongebudget::where('id', $id)->delete();
         return response()->json([
           'status' => 200,
         ]);
+
       } else {
         return response()->json([
           'status' => 205,
         ]);
       }
+     
     } catch (Exception $e) {
       return response()->json([
         'status' => 202,

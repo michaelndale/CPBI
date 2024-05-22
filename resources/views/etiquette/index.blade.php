@@ -9,7 +9,7 @@
                         <div class="row">
                             <div class="col-12" style="margin:auto">
                                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                                    <h4 class="mb-sm-0">Classeur </h4>
+                                    <h4 class="mb-sm-0">Categorie d'etiquette </h4>
                                     <div class="page-title-right">
                                     <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModal" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-plus-circle"></i> Nouveau classeur</a> 
                                     </div>
@@ -37,7 +37,7 @@
                                                 <tr style="background-color:#82E0AA">
                                                   <th style="width:10%">#</th>
                                                   <th>Nom affiché</th>
-                                                  <th>Parent classeur</th>
+                                                  <th>Info-bulle</th>
                                                   <th>Créé par</th>
                                                   <th>Créé le</th>
                                                   <th>Action</th>
@@ -82,29 +82,17 @@
       @method('post')
       @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouveau classeur </h5>
+          <h5 class="modal-title" id="verticallyCenteredModalLabel">Creer categorie d'etiquette  </h5>
         
 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
 
-          <label class="text-1000 fw-bold mb-2">Nom </label>
+          <label class="text-1000 fw-bold mb-2">categorie d'etiquette</label>
           <input class="form-control" id="title" name="title" type="text" placeholder="Entrer nom"  required /> <br>
 
-          <label class="text-1000 fw-bold mb-2">Parent</label>
-          <select class="form-control" name="parent" type="text" placeholder="Entrer libellé"   >
-                <option disabled="true" selected="true">--Aucun--</option>
-              @foreach ($classeur as $classeurs)
-                <option value="{{ $classeurs->id }}">{{ ucfirst($classeurs->libellec) }}</option>
-              @endforeach
-          </select> 
-
-          <input class="form-control" id="nomClasseur" name="nomClasseur" type="hidden" placeholder="Nom du classeur sélectionné" readonly />
-          <br>
-
-          <label class="text-1000 fw-bold mb-2">Description</label>
-          <textarea class="form-control" id="description" name="description" type="text" placeholder="Description" ></textarea>
-
+          <label class="text-1000 fw-bold mb-2">Info-bull</label>
+          <input class="form-control" id="title" name="title" type="text" placeholder="Entrer nom"  required /> <br>
         </div>
         <div class="modal-footer">
           <button type="submit" name="add" id="add" class="btn btn-primary" type="button"><i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
@@ -144,21 +132,6 @@
   </div>
 </div>
 
-<script>
-    // Récupérer le select et l'input
-    var selectClasseur = document.querySelector('select[name="parent"]');
-    var inputNomClasseur = document.querySelector('input[name="nomClasseur"]');
-
-    // Écouter l'événement de changement de valeur du select
-    selectClasseur.addEventListener('change', function() {
-        // Récupérer le texte de l'option sélectionnée dans le select
-        var nomClasseur = this.options[this.selectedIndex].text;
-
-        // Mettre à jour la valeur de l'input avec le nom du classeur sélectionné
-        inputNomClasseur.value = nomClasseur;
-    });
-</script>
-
 
   <script>
     $(function() {
@@ -184,7 +157,7 @@
 
             if (response.status == 200) {
               toastr.success("classeur enregistrer avec succès!", "Enregistrement");
-              fetchAllClasseur();
+              fetchAlletiquette();
               $("#addform")[0].reset();
               $("#addModal").modal('hide');
               document.getElementById("add").disabled = false;
@@ -245,7 +218,7 @@
           {
             if (response.status == 200) {
               $.notify("Mise à jour  avec succès !", "success");
-              fetchAllClasseur();
+              fetchAlletiquette();
               $("#editform")[0].reset();
               $("#editModal").modal('hide');
             }
@@ -292,7 +265,7 @@
               success: function(response) {
                 console.log(response);
                 $.notify("Classeur supprimer avec succès !", "success");
-                fetchAllClasseur();
+                fetchAlletiquette();
               }
             });
           }
@@ -300,10 +273,10 @@
       });
 
 
-      fetchAllClasseur();
-      function fetchAllClasseur() {
+      fetchAlletiquette();
+      function fetchAlletiquette() {
         $.ajax({
-          url: "{{ route('fetchAllCs') }}",
+          url: "{{ route('fetchalletiquette') }}",
           method: 'get',
           success: function(reponse) {
             $("#show_all").html(reponse);

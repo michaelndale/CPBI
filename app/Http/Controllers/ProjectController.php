@@ -25,8 +25,7 @@ class ProjectController extends Controller
       $active = 'Project';
       $members= DB::table('users')
               ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-              ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
-              ->orWhere('fonction', '!=' ,'Chauffeur')
+              ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction' )
               ->orderBy('nom', 'ASC')
               ->get();
 

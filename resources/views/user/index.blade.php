@@ -41,15 +41,15 @@
              
                 </thead>
                 <tbody >
-                  @foreach ($personnel as $personnels)
+                  @foreach ($user as $use)
                   <tr>
-                    <td> {{ $personnels->nom }} {{ $personnels->prenom }}</td>
-                    <td> {{ $personnels->identifiant }} </td>
-                    <td> {{ $personnels->fonction }}</td>
+                    <td> {{ $use->nom }} {{ $use->prenom }}</td>
+                    <td> {{ $use->identifiant }} </td>
+                    <td> {{ $use->fonction }}</td>
                     <td>
                       <center>
                     @php
-                                $signature = $personnels->signature;
+                                $signature = $use->signature;
                                 $imagePath = public_path($signature);
                             @endphp
 
@@ -61,8 +61,8 @@
                             </center>
                     </td>
                     <td> 
-                      <a href="{{ route('changepassword', $personnels->id)}}" title="Modification mot de passe"> <i class="fa fa-edit"></i></a> 
-                      <a href="{{ route('shomesignature', $personnels->id)}}" title="Modification signature"> <i class="fa fa-image"></i></a></td>
+                      <a href="{{ route('changepassword', $use->idu)}}" title="Modification mot de passe"> <i class="fa fa-edit"></i></a> 
+                      <a href="{{ route('shomesignature', $use->idu)}}" title="Modification signature"> <i class="fa fa-image"></i></a></td>
                   </tr>
                   @endforeach
                  

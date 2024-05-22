@@ -81,13 +81,15 @@
                                         <input type="text" class="form-control form-control-sm" value="{{ $somfeb }}" readonly style="background-color:#c0c0c0" required>
                                     </td>
 
+                                    <td> Numero cheque:
+                                        <input type="text" name="ch"  id="ch" class="form-control form-control-sm" >
+                                    </td>
+
                                     <td align="center"> OV nº : <br>
                                         <input type="checkbox" class="form-check-input" name="ov" id="ov">
                                     </td>
 
-                                    <td align="center"> CHQ nº <br>
-                                        <input type="checkbox" class="form-check-input" name="ch" id="ch">
-                                    </td>
+                                    
                                 </tr>
 
                             </table>

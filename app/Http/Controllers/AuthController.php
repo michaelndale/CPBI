@@ -29,9 +29,9 @@ class AuthController extends Controller
     $title = 'Utilisateur';
     $active = 'Parameter';
     $users = Personnel::orderBy('nom', 'ASC')->get();
-    $personnel = DB::table('users')
+    $user = DB::table('users')
       ->join('personnels', 'personnels.id', 'users.personnelid')
-      ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
+      ->select('users.*', 'users.id as idu' , 'personnels.nom', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
       ->get();
 
     $profile = Fonction::all();
@@ -45,7 +45,7 @@ class AuthController extends Controller
         'profile'    => $profile,
         'department' => $department,
         'statut'     => $statut,
-        'personnel'  => $personnel,
+        'user'  => $user,
         'users'      => $users
       ]
     );
@@ -72,7 +72,7 @@ class AuthController extends Controller
   {
     $User = DB::table('users')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+      ->select('users.*', 'users.id as idu', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
       ->orderBy('nom', 'ASC')
       ->get();
 
@@ -87,14 +87,13 @@ class AuthController extends Controller
                   </a>
               </td>
               <td> ' . $rs->identifiant . '</td>
-         
               <td>' . $rs->role . '  </td>
               <td>' . $rs->statut . '  </td>
               <td>' .  date('d.m.Y', strtotime($rs->created_at)) . ' </td>
               <td>
-                <a href="#" id="' . $rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-                <a href="#" id="' . $rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-                <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
+                <a href="#" id="' . $rs->idu . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+                <a href="#" id="' . $rs->idu . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
+                <a href="#" id="' . $rs->idu . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
             </td>
             </tr>';
       }
@@ -386,7 +385,7 @@ class AuthController extends Controller
 
     $user = DB::table('users')
       ->join('personnels', 'personnels.id', 'users.personnelid')
-      ->select('users.*', 'personnels.nom', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
+      ->select('users.*', 'personnels.nom', 'users.id as idu', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
       ->where('users.id', $id)
       ->first();
 
@@ -408,7 +407,7 @@ class AuthController extends Controller
     $user = DB::table('users')
       ->join('personnels', 'personnels.id', 'users.personnelid')
       ->select('users.*', 'personnels.nom', 'users.id as idu', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
-      ->where('personnels.id', $id)
+      ->where('users.id', $id)
       ->first();
 
     return view(

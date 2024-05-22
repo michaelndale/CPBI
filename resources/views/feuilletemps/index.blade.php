@@ -98,12 +98,12 @@
 
                         <div class="col-sm-4 col-lg-12 col-xl-4">
                             <label class="text-1000 fw-bold mb-2">Durée en minutes</label>
-                            <input class="form-control" id="nombre" name="nombre" type="number" min="1" placeholder="Durée" required />
+                            <input class="form-control" id="nombre" name="nombre" type="text" min="1" placeholder="Durée" required />
                         </div>
 
                         <div class="col-sm-4 col-lg-12 col-xl-4">
                             <label class="text-1000 fw-bold mb-2">Réalisation(x) </label>
-                            <select class="form-control" id="realisation" name="realisation" type="number" min="1" placeholder="Réalisation" required />
+                            <select class="form-control" id="realisation" name="realisation" type="text" min="1" placeholder="Réalisation" required />
                             <option>Séléctionner l'option</option>
                             <option value="E">Entièrement </option>
                             <option value="P">Partiellement </option>
@@ -112,13 +112,13 @@
 
                         <div class="col-sm-4 col-lg-12 col-xl-6">
                             <label class="text-1000 fw-bold mb-2">Indicateurs Objectivement Vérifiable (IOV)</label>
-                            <input class="form-control" id="iov" name="iov" type="number" min="1" placeholder="Nombe" required />
+                            <input class="form-control" id="iov" name="iov" type="text" min="1" placeholder="Nombe" required />
                         </div>
 
 
                         <div class="col-sm-4 col-lg-12 col-xl-6">
                             <label class="text-1000 fw-bold mb-2">Résultats obtenus (Qte)</label>
-                            <input class="form-control" id="resultat" name="resultat" type="number" min="1" placeholder="Nombe" required />
+                            <input class="form-control" id="resultat" name="resultat" type="text" min="1" placeholder="Nombe" required />
                         </div>
 
 
@@ -202,13 +202,13 @@
 
                         <div class="col-sm-4 col-lg-12 col-xl-6">
                             <label class="text-1000 fw-bold mb-2">Indicateurs Objectivement Vérifiable (IOV)</label>
-                            <input class="form-control" id="eiov" name="eiov" type="number" min="1" placeholder="Nombe" required />
+                            <input class="form-control" id="eiov" name="eiov" type="text"  placeholder="Nombre" required />
                         </div>
 
 
                         <div class="col-sm-4 col-lg-12 col-xl-6">
                             <label class="text-1000 fw-bold mb-2">Résultats obtenus (Qte)</label>
-                            <input class="form-control" id="eresultat" name="eresultat" type="number" min="1" placeholder="Nombe" required />
+                            <input class="form-control" id="eresultat" name="eresultat" type="text" min="1" placeholder="Nombre" required />
                         </div>
 
 

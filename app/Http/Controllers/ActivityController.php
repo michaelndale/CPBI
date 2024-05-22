@@ -72,7 +72,6 @@ class ActivityController extends Controller
 
         $SommeAllActivite = DB::table('activities')
             ->where('projectid', $ID)
-            ->orderBy('id', 'DESC')
             ->sum('montantbudget');
 
         $output = '';
@@ -84,11 +83,13 @@ class ActivityController extends Controller
                     <th><center>Code</center></th>
                     <th>Ligne et sous ligne budgetaire</th>
                     <th>
-                        Activité <span style="margin-left: 40%;">Montant total des activités: <b>' . number_format($SommeAllActivite, 0, ',', ' ') . '</b></span>
+                        Activité <span style="margin-left: 40%;">Montant total des activités: </b></span>
                     </th>
                 </tr>
             </thead>
             <tbody>';
+
+           // <b>' . number_format($SommeAllActivite, 0, ',', ' ') .$ID. '
 
         if ($service->count() > 0) {
             $nombre = 1;
@@ -131,7 +132,6 @@ class ActivityController extends Controller
                         $act = DB::table('activities')
                             ->where('projectid', $ID)
                             ->where('compteidr', $ids)
-                            ->orderBy('id', 'DESC')
                             ->get();
 
                         $actsome = DB::table('activities')

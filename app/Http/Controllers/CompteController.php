@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Compte;
+use App\Models\Rallongebudget;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -359,6 +360,9 @@ class CompteController extends Controller
 
 
         Compte::destroy($id);
+
+        Rallongebudget::where('souscompte', $id)->delete();
+
         return response()->json([
           'status' => 200,
         ]);

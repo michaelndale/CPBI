@@ -700,6 +700,7 @@ class FebController extends Controller
           $output .= '<td width="10%" > Numéro FEB : ' . $datas->numerofeb . '</td>';
           $output .= '<td width="20%"> Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
           $output .= '<td width="20%"> Duré avance  <input type="number" name="duree_avence[]" id="duree_avence[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+          $output .= '<td width="20%">Numéro facture <input type="text" class="description" name="numfacture[]" id="numfacture[]" style="width: 100%; border:1px solid #c0c0c0" /> </td>';
           $output .= '<td width="20%">Description  <input type="text" class="description" name="descriptionel[]" id="descriptionel[]" style="width: 100%; border:1px solid #c0c0c0" /> </td>';
           $output .= '<td > </td>';
           $output .= '</tr>';
@@ -752,15 +753,20 @@ class FebController extends Controller
 
   public function show($key)
   {
-      // Check if the session variable 'id' exists
-      if (!session()->has('id')) {
-          return redirect()->route('dashboard');
-      }
-  
+     
       $key = Crypt::decrypt($key);
       $check = Feb::findOrFail($key);
-  
-      if (!session()->has('budget')) {
+
+      $title = 'FEB';
+      $idl = $check->ligne_bugdetaire;
+      $idfeb = $check->id;
+
+      $datElement = Elementfeb::where('febid', $idfeb)->get();
+      $IDB = $check->projetid;
+      $chec = Project::findOrFail($IDB);
+      $budget = $chec->budget;
+
+     /* if (!session()->has('budget')) {
           $idprojetcrispte = Crypt::encrypt($check->projetid);
           $ke = Crypt::decrypt($idprojetcrispte);
           $chec = Project::findOrFail($ke);
@@ -772,15 +778,12 @@ class FebController extends Controller
           session()->put('devise', $chec->devise);
           session()->put('budget', $chec->budget);
           session()->put('periode', $chec->periode);
-      }
+      } 
   
       $budget = session()->get('budget');
       $IDB = session()->get('id');
-  
-      $title = 'FEB';
-      $idl = $check->ligne_bugdetaire;
-      $idfeb = $check->id;
-  
+  */
+     
       $onebeneficaire = Beneficaire::find($check->beneficiaire);
   
       $sommeallfeb = DB::table('elementfebs')
@@ -826,13 +829,14 @@ class FebController extends Controller
           ->where('users.id', $check->chefcomposante)
           ->first();
   
-      $datElement = Elementfeb::where('febid', $idfeb)->get();
+      
   
       $dateinfo = Identification::all();
   
       return view('document.feb.voir', [
           'title' => $title,
           'dataFeb' => $check,
+          'dataprojets' => $chec,
           'dataLigne' => $dataLigne,
           'sommelignpourcentage' => $sommelignpourcentage,
           'datElement' => $datElement,
@@ -1014,12 +1018,18 @@ class FebController extends Controller
   public function generatePDFfeb($id)
   {
       // Vérifie si la variable de session 'id' existe
-      if (!session()->has('id')) {
-          return redirect()->route('dashboard');
-      }
-  
-      $budget = session()->get('budget');
-      $IDB = session()->get('id');
+     
+     
+      $check = Feb::findOrFail($id);
+
+      $title = 'FEB';
+      $idl = $check->ligne_bugdetaire;
+      $idfeb = $check->id;
+
+      $datElement = Elementfeb::where('febid', $idfeb)->get();
+      $IDB = $check->projetid;
+      $chec = Project::findOrFail($IDB);
+      $budget = $chec->budget;
   
       // Instancie Dompdf
       $dompdf = new Dompdf();
@@ -1034,9 +1044,7 @@ class FebController extends Controller
   
       $onebeneficaire = Beneficaire::where('id', $datafeb->beneficiaire)->first();
   
-      $idl = $datafeb->ligne_bugdetaire;
-      $idfeb = $datafeb->id;
-  
+     
       $ID = session()->get('id');
   
       $compte = DB::table('comptes')
@@ -1094,7 +1102,7 @@ class FebController extends Controller
           ->where('users.id', $datafeb->chefcomposante)
           ->first();
   
-      $datElement = Elementfeb::where('febid', $idfeb)->get();
+   
   
       // Génère le fichier PDF
       $pdf = FacadePdf::loadView('document.feb.feb', compact(
@@ -1110,7 +1118,8 @@ class FebController extends Controller
           'compte',
           'datElement',
           'dataLigne',
-          'onebeneficaire'
+          'onebeneficaire',
+          'chec'
       ));
   
       $pdf->setPaper('A4', 'landscape'); // Format A4 en mode paysage
