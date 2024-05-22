@@ -70,7 +70,7 @@
             <tr>
               <td class="align-middle ps-3 name" style="width:10%">Coût estimatif</td>
               <td class="align-middle email" colspan="2">
-                <input type="number" class="form-control form-control-sm" name="montant" id="montant" style="width: 100%" required />
+                <input type="number" class="form-control form-control-sm" name="montant"  min="0" id="montant" style="width: 100%" required />
               </td>
 
 
@@ -144,7 +144,7 @@
                   <tr>
                     <td class="align-middle ps-3 name" style="width:10%">Couts estimes </td>
                     <td class="align-middle email" colspan="2">
-                      <input type="number" class="form-control form-control-sm" name="montantact" id="montantact" style="width: 100%" />
+                      <input type="number" class="form-control form-control-sm" min="0" name="montantact" id="montantact" style="width: 100%" />
                     </td>
 
 

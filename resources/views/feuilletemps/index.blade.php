@@ -16,29 +16,37 @@
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
-                        <div class="card-body">
+                      
 
                             <div class="table-responsive">
-                                <table class="table table-centered align-middle table-nowrap mb-0">
+                                <table class="table table-bordered  table-centered align-middle table-nowrap table-sm fs--1  mb-0">
                                     <thead>
-                                        <tr>
+                                        <tr style="background-color:#82E0AA">
                                             <th>#</th>
                                             <th>Date du jour</th>
                                             <th>Projet</th>
                                             <th>Description / Activités réalisées</th>
-                                            <th>Durée en minnutes</th>
+                                            <th>Durée en minutes</th> <!-- Correction de "minnutes" à "minutes" -->
                                             <th>Comment l'activité a-t-elle été réalisée ?</th>
-                                            <th>Indicateurs Objectivement verifiable (IOV)</th>
-                                            <th>Resultats obtenus (Quantitatifs)</th>
+                                            <th>Indicateurs Objectivement vérifiables (IOV)</th> <!-- Correction de "verifiable" à "vérifiables" -->
+                                            <th>Résultats obtenus (Quantitatifs)</th> <!-- Correction de "Resultats" à "Résultats" -->
+                                            <th>Heure d'arrivee</th>
+                                            <th>Heure de retart</th>
+                                            <th>Heure de depart</th>
                                             <th>Observation plan redressement</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="showfeuille">
-
+                                    <tr>
+                                                    <td colspan="10"><h5 class="text-center text-secondery my-5">
+                                                        @include('layout.partiels.load')
+                                                      </td>
+                                                    </tr>
                                     </tbody>
                                 </table>
-                            </div>
+                          
+
 
                         </div>
                     </div>
@@ -86,22 +94,9 @@
                         <div class="col-sm-6 col-lg-12 col-xl-12">
                             <label class="text-1000 fw-bold mb-2"> Description/Activités réalisées</label>
                             <textarea class="form-control " id="description" name="description" type="text" required></textarea>
-
-
-
                         </div>
 
-                        <div class="col-sm-4 col-lg-12 col-xl-4">
-                            <label class="text-1000 fw-bold mb-2">Date du jour de travail </label>
-                            <input class="form-control" id="datejour" name="datejour" type="date" placeholder="Date " required />
-                        </div>
-
-                        <div class="col-sm-4 col-lg-12 col-xl-4">
-                            <label class="text-1000 fw-bold mb-2">Durée en minutes</label>
-                            <input class="form-control" id="nombre" name="nombre" type="text" min="1" placeholder="Durée" required />
-                        </div>
-
-                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
                             <label class="text-1000 fw-bold mb-2">Réalisation(x) </label>
                             <select class="form-control" id="realisation" name="realisation" type="text" min="1" placeholder="Réalisation" required />
                             <option>Séléctionner l'option</option>
@@ -110,16 +105,36 @@
                             </select>
                         </div>
 
-                        <div class="col-sm-4 col-lg-12 col-xl-6">
-                            <label class="text-1000 fw-bold mb-2">Indicateurs Objectivement Vérifiable (IOV)</label>
-                            <input class="form-control" id="iov" name="iov" type="text" min="1" placeholder="Nombe" required />
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Date du jour de travail </label>
+                            <input class="form-control" id="datejour" name="datejour" type="date" placeholder="Date " required />
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Durée en minutes</label>
+                            <input class="form-control" id="nombre" name="nombre" type="text" min="1" placeholder="Durée" required />
+                        </div>
+
+                      
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Heure d'arrivee</label>
+                            <input class="form-control" id="heurearrive" name="heurearrive" type="time"   required />
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Heure depart</label>
+                            <input class="form-control" id="heuredepart" name="heuredepart" type="time" />
                         </div>
 
 
-                        <div class="col-sm-4 col-lg-12 col-xl-6">
-                            <label class="text-1000 fw-bold mb-2">Résultats obtenus (Qte)</label>
-                            <input class="form-control" id="resultat" name="resultat" type="text" min="1" placeholder="Nombe" required />
+                        <div class="col-sm-4 col-lg-12 col-xl-9">
+                            <label class="text-1000 fw-bold mb-2">Indicateurs Objectivement</label>
+                            <input class="form-control" id="iov" name="iov" type="text" min="1" placeholder="Indicateurs" required />
                         </div>
+
+
+                     
+                     
 
 
 
@@ -161,7 +176,7 @@
                     <div class="row">
                         <div class="col-sm-6 col-lg-12 col-xl-12">
                             <label class="text-1000 fw-bold mb-2"> Programme, Projet ou Unité</label>
-                            <input class="form-control" id="idf" name="idf" type="hidden"  />
+                            <input class="form-control" id="idf" name="idf" type="hidden" />
                             <select class="form-select" id="eprojetid" name="eprojetid" type="text" placeholder="Entrer projet" required>
                                 <option disabled="true" selected="true" value=""> -- Sélectionner l'option -- </option>
                                 @forelse ($projet as $projets)
@@ -181,17 +196,8 @@
 
                         </div>
 
-                        <div class="col-sm-4 col-lg-12 col-xl-4">
-                            <label class="text-1000 fw-bold mb-2">Date du jour de travail </label>
-                            <input class="form-control" id="edatejour" name="edatejour" type="date" placeholder="Date " required />
-                        </div>
 
-                        <div class="col-sm-4 col-lg-12 col-xl-4">
-                            <label class="text-1000 fw-bold mb-2">Durée en minutes</label>
-                            <input class="form-control" id="enombre" name="enombre" type="number" min="1" placeholder="Durée" required />
-                        </div>
-
-                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
                             <label class="text-1000 fw-bold mb-2">Réalisation(x) </label>
                             <select class="form-control" id="erealisation" name="erealisation" type="number" min="1" placeholder="Réalisation" required />
                             <option>Séléctionner l'option</option>
@@ -200,16 +206,38 @@
                             </select>
                         </div>
 
-                        <div class="col-sm-4 col-lg-12 col-xl-6">
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Date du jour de travail </label>
+                            <input class="form-control" id="edatejour" name="edatejour" type="date" placeholder="Date " required />
+                        </div>
+
+
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Durée en minutes</label>
+                            <input class="form-control" id="enombre" name="enombre" type="number" min="1" placeholder="Durée" required />
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Heure d'arrivee</label>
+                            <input class="form-control" id="eheurearrive" name="eheurearrive" type="time"   required />
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Heure depart</label>
+                            <input class="form-control" id="eheuredepart" name="eheuredepart" type="time" />
+                        </div>
+
+                    
+
+
+
+                        <div class="col-sm-4 col-lg-12 col-xl-9">
                             <label class="text-1000 fw-bold mb-2">Indicateurs Objectivement Vérifiable (IOV)</label>
-                            <input class="form-control" id="eiov" name="eiov" type="text"  placeholder="Nombre" required />
+                            <input class="form-control" id="eiov" name="eiov" type="text" placeholder="Indicateurs" required />
                         </div>
 
 
-                        <div class="col-sm-4 col-lg-12 col-xl-6">
-                            <label class="text-1000 fw-bold mb-2">Résultats obtenus (Qte)</label>
-                            <input class="form-control" id="eresultat" name="eresultat" type="text" min="1" placeholder="Nombre" required />
-                        </div>
+                       
 
 
 
@@ -293,6 +321,8 @@
                     $("#enombre").val(response.nombre);
                     $("#erealisation").val(response.realisation);
                     $("#eiov").val(response.iov);
+                    $("#eheurearrive").val(response.heurearrive);
+                    $("#eheuredepart").val(response.heuredepart);
                     $("#eobservation").val(response.observation);
                     $("#idf").val(response.id);
                 }
@@ -303,7 +333,7 @@
         $("#editFeuilleform").submit(function(e) {
             e.preventDefault();
             const fd = new FormData(this);
-            
+
             $("#btneditfeuille").html('<i class="fas fa-spinner fa-spin"></i>');
             document.getElementById("btneditfeuille").disabled = true;
 

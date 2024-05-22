@@ -50,7 +50,7 @@
 
             <div class="col-sm-6 col-lg-12 col-xl-4">
               <label class="text-1000 fw-bold mb-2">Budget </label>
-              <input class="form-control" id="budgetactuel" name="budgetactuel" type="number" min="1" placeholder="Budget" required />
+              <input class="form-control" id="budgetactuel" name="budgetactuel" type="number" min="0" placeholder="Budget" required />
             </div>
             <hr>
 
@@ -123,7 +123,7 @@
 
             <div class="col-sm-6 col-lg-12 col-xl-6">
               Budget
-              <input type="number" name="r_budgetactuel" id="r_budgetactuel" class="form-control" />
+              <input type="number" name="r_budgetactuel" min="0" id="r_budgetactuel" class="form-control" />
               <input type="hidden" name="ancienmontantligne" id="ancienmontantligne" class="form-control" />
               <input type="hidden" name="r_souscompte" id="r_souscompte" class="form-control" />
               <input type="hidden" name="r_idligne" id="r_idligne" class="form-control" />

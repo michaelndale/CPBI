@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Etiquette;
+use Exception;
 use Illuminate\Http\Request;
 
 class EtiquetteController extends Controller
@@ -41,8 +42,8 @@ class EtiquetteController extends Controller
 
             $output .= '<tr>
                 <td class="align-middle ps-3 name">' . $nombre . '</td>
-                <td>' . ucfirst($classeur->libellec) . '</td>
-                <td>' . ucfirst($libelle) . '</td>
+                <td>' . ucfirst($classeur->nom_e) . '</td>
+                <td>' . ucfirst($libelle).'</td>
                 <td>' . ucfirst($classeur->user_nom) . ' ' . ucfirst($classeur->user_prenom) . '</td>
                 <td>' . date('d.m.Y H:i:s', strtotime($classeur->created_at)) . '</td>
                 <td>
@@ -74,31 +75,31 @@ class EtiquetteController extends Controller
 
   
     // insert a new employee ajax request
-    public function store(Classeur $Classeur, Request $request)
+    public function store(Etiquette $Etiquette, Request $request)
     {
         try {
             $title = $request->title;
-            $nomClasseur = $request->nomClasseur;
+            $nomEtiquette = $request->nomEtiquette;
     
-            // Vérifier si $request->nomClasseur contient des éléments
-            if ($nomClasseur) {
-                // Si oui, $title contiendra $nomClasseur + $title
-                $title = $nomClasseur . ' / ' . $title;
+            // Vérifier si $request->nomEtiquette contient des éléments
+            if ($nomEtiquette) {
+                // Si oui, $title contiendra $nomEtiquette + $title
+                $title = $nomEtiquette . ' / ' . $title;
             }
     
-            $check = Classeur::where('libellec', $title)->first();
+            $check = Etiquette::where('libellec', $title)->first();
     
             if ($check) {
                 return response()->json([
                     'status' => 201,
                 ]);
             } else {
-                $Classeur->libellec = $title;
-                $Classeur->parent = $request->parent;
-                $Classeur->description = $request->description;
+                $Etiquette->libellec = $title;
+                $Etiquette->parent = $request->parent;
+                $Etiquette->description = $request->description;
     
-                $Classeur->userid = Auth()->user()->id;
-                $Classeur->save();
+                $Etiquette->userid = Auth()->user()->id;
+                $Etiquette->save();
                 return response()->json([
                     'status' => 200,
                 ]);

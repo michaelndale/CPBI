@@ -187,9 +187,9 @@
                                             <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required></td>
                                             <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm unit_price" required></td>
                                             <td><input style="width:100%" type="text" id="qty" name="qty[]" class="form-control form-control-sm qty" required></td>
-                                            <td><input style="width:100%" type="text" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency" required></td>
-                                            <td><input style="width:100%" type="text" id="pu" name="pu[]" class="form-control form-control-sm pu" required></td>
-                                            <td><input style="width:100%" type="text" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
+                                            <td><input style="width:100%" type="number" id="frenquency"     min="1" name="frenquency[]" class="form-control form-control-sm frenquency" required></td>
+                                            <td><input style="width:100%" type="number" id="pu" name="pu[]"  min="0" class="form-control form-control-sm pu" required></td>
+                                            <td><input style="width:100%" type="number" min="0" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
 
                                             <td><a href="javascript:void(0)" class="text-primary font-18" title="Add" id="addBtn"><i class="fa fa-plus-circle"></i></a></td>
                                         </tr>

@@ -13,6 +13,7 @@ use App\Models\Profile;
 use App\Models\Status;
 use App\Models\User;
 use App\Notifications\SendUserRegistrationNotification;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Contracts\Session\Session;
@@ -474,8 +475,13 @@ class AuthController extends Controller
     }
   }
 
-
-
+  public function activeUsers()
+  {
+      // Récupérer les utilisateurs actifs dans les 10 dernières minutes
+      $title= "ACTIFS";
+      $activeUsers = User::where('last_activity', '>=', Carbon::now()->subMinutes(10))->get();
+      return view('active-users.active-users', compact('activeUsers','title'));
+  }
 
 
   public function logout()

@@ -16,16 +16,19 @@ class User extends Authenticatable
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
+     * 
      */
     protected $fillable = [
         'identifiant',
         'personnelid',
         'role',
         'password',
-        'userid'
+        'userid',
+        'last_activity' => 'datetime',
         
     ];
 
+ 
     /**
      * The attributes that should be hidden for serialization.
      *

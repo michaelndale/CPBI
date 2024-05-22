@@ -6,6 +6,7 @@ use App\Models\elementsfeuilletemps;
 use App\Models\Feuilletemps;
 use App\Models\Historique;
 use App\Models\Project;
+use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -57,7 +58,10 @@ class FeuilletempsController extends Controller
         $feuille->realisation = $request->realisation;
         $feuille->iov = $request->iov;
         $feuille->resultat = $request->resultat;
+        $feuille->heurearrive = $request->heurearrive;
+        $feuille->heuredepart = $request->heuredepart;
         $feuille->observation = $request->observation;
+        
 
         $feuille->save();
 
@@ -75,63 +79,68 @@ class FeuilletempsController extends Controller
 
   public function monfeuille()
   {
-
-    $data = DB::table('feuilletemps')
-      ->Join('projects', 'feuilletemps.projetid', 'projects.id')
-      ->select('feuilletemps.*', 'feuilletemps.id', 'projects.title')
-      ->orderby('id', 'DESC')
-      ->where('feuilletemps.userid', Auth::id())
-      ->get();
-
-    $output = '';
-    if ($data->count() > 0) {
-      $nombre = 1;
-      foreach ($data as $datas) {
-        $output .= '
-          <tr>
-            <td> ' . $nombre . '  </td>
-            <td> ' . date("d-m-Y", strtotime($datas->datepresence)) . '  </td>
-            <td> ' . $datas->title . '  </td>
-            <td> ' . $datas->description . ' </td>
-            <td> ' . $datas->nombre . ' </td>
-            <td> ' . $datas->realisation . ' </td>
-            <td> ' . $datas->iov . ' </td>
-            <td> ' . $datas->resultat . ' </td>
-            <td> ' . $datas->observation . ' </td>
-           
-            <td> 
-            <center>
-            <div class="btn-group me-2 mb-2 mb-sm-0">
-                <button class="btn btn-primary btn-sm dropdown-toggle"  data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="mdi mdi-dots-vertical ms-2"></i> Action
-                </button>
-              <div class="dropdown-menu">
-                  <a href="#" class="dropdown-item text-primary mx-1 editIcon"  id="' . $datas->id . '" title="Modifier"  data-bs-toggle="modal" data-bs-target="#EditFeuilleModalLabel" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent" ><i class="far fa-edit"></i> Modifier </a>
-                  <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer </a>
-              </div>
-            </div>
-            </center>
-            </td>
-       
-           
-          </tr>
-        ';
-        $nombre++;
+      $data = DB::table('feuilletemps')
+          ->join('projects', 'feuilletemps.projetid', '=', 'projects.id')
+          ->select('feuilletemps.*', 'projects.title')
+          ->orderby('feuilletemps.id', 'DESC')
+          ->where('feuilletemps.userid', Auth::id())
+          ->get();
+  
+      $output = '';
+      if ($data->count() > 0) {
+          $nombre = 1;
+          foreach ($data as $datas) {
+              $heurearrive = new DateTime($datas->heurearrive);
+              $referenceTime = new DateTime('07:30:00');
+              $interval = $heurearrive->diff($referenceTime);
+  
+              $difference = $interval->format('%h : %i ');
+  
+              $output .= '
+                  <tr>
+                      <td>' . $nombre . '</td>
+                      <td>' . date("d-m-Y", strtotime($datas->datepresence)) . '</td>
+                      <td>' . $datas->title . '</td>
+                      <td>' . $datas->description . '</td>
+                      <td>' . $datas->nombre . '</td>
+                      <td>' . $datas->realisation . '</td>
+                      <td>' . $datas->iov . '</td>
+                      <td>' . $datas->resultat . '</td>
+                      <td>' . $datas->heurearrive . '</td>
+                      <td>' . $difference . '</td>
+                      <td>' . $datas->heuredepart . '</td>
+                      <td>' . $datas->observation . '</td>
+                      <td>
+                          <center>
+                          <div class="btn-group me-2 mb-2 mb-sm-0">
+                              <a href=""  data-bs-toggle="dropdown" aria-expanded="false">
+                                  <i class="mdi mdi-dots-vertical ms-2"></i> Action
+                              </a>
+                              <div class="dropdown-menu">
+                                  <a href="#" class="dropdown-item text-primary mx-1 editIcon"  id="' . $datas->id . '" title="Modifier"  data-bs-toggle="modal" data-bs-target="#EditFeuilleModalLabel" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent" ><i class="far fa-edit"></i> Modifier </a>
+                                  <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer </a>
+                              </div>
+                          </div>
+                          </center>
+                      </td>
+                  </tr>
+              ';
+              $nombre++;
+          }
+          echo $output;
+      } else {
+          echo '<tr>
+                  <td colspan="13">
+                  <center>
+                      <h6 style="margin-top:1%; color:#c0c0c0">
+                      <center><font size="10px"><i class="fa fa-info-circle"></i></font><br><br>
+                      Ceci est vide  !</center> </h6>
+                  </center>
+                  </td>
+                </tr>';
       }
-      echo $output;
-    } else {
-      echo '<tr>
-          <td colspan="9">
-          <center>
-            <h6 style="margin-top:1% ;color:#c0c0c0"> 
-            <center><font size="10px"><i class="fa fa-info-circle"  ></i> </font><br><br>
-            Ceci est vide  !</center> </h6>
-          </center>
-          </td>
-          </tr>
-          ';
-    }
   }
+  
 
   /**
    * Display the specified resource.
@@ -160,6 +169,8 @@ class FeuilletempsController extends Controller
         $feuille->nombre = $request->enombre;
         $feuille->realisation = $request->erealisation;
         $feuille->iov = $request->eiov;
+        $feuille->heurearrive = $request->eheurearrive;
+        $feuille->heuredepart = $request->eheuredepart;
         $feuille->resultat = $request->eresultat;
         $feuille->observation = $request->eobservation;
 

@@ -115,55 +115,64 @@
         @if (session()->has('id'))
             <div class="px-lg-2">
                 <div class="row g-0">
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
+                  <div class="col" style="border:1px solid #c0c0c0">
+                    <a class="dropdown-icon-item" href="{{ route('rallongebudget') }}">
                       <i class="fa fa-folder-open" size='5'></i>
-                      <span>Projets</span>
+                      <span>Budget</span>
                     </a>
                   </div>
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
+                  <div class="col" style="border:1px solid #c0c0c0">
+                    <a class="dropdown-icon-item" href="{{ route('activity') }}">
                       <i class="fa fa-folder-open" size='5'></i>
                       <span>Activités</span>
                     </a>
                   </div>
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
+                  <div class="col" style="border:1px solid #c0c0c0">
+                    <a class="dropdown-icon-item" href="{{ route('listfeb') }}">
+                      <i class="fa fa-edit" size='5'></i>
+                      <span>FEB</span>
+                    </a>
+                  </div>
+                  <div class="col" style="border:1px solid #c0c0c0">
+                    <a class="dropdown-icon-item" href="{{ route('listdap') }}">
+                      <i class="fa fa-edit" size='5'></i>
+                      <span>DAP</span>
+                    </a>
+                  </div>
+                  <div class="col" style="border:1px solid #c0c0c0">
+                    <a class="dropdown-icon-item" href="{{ route('listdja') }}">
+                      <i class="fa fa-edit" size='5'></i>
+                      <span>DJA</span>
+                    </a>
+                  </div>
+                  <div class="col" style="border:1px solid #c0c0c0">
+                    <a class="dropdown-icon-item" href="{{ route('affectation') }}">
                       <i class="fa fa-users" size='5'></i>
-                      <span>RH</span>
-                    </a>
-                  </div>
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-car" size='5'></i>
-                      <span>ParcAuto</span>
-                    </a>
-                  </div>
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-users" size='5'></i>
-                      <span>Archivage</span>
-                    </a>
-                  </div>
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-info-circle" size='5'></i>
-                      <span>Infos</span>
+                      <span>Intervenant</span>
                     </a>
                   </div>
 
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-info-circle" size='5'></i>
-                      <span>Infos</span>
+                  <div class="col" style="border:1px solid #c0c0c0">
+                    <a class="dropdown-icon-item" href="{{ route('rapportcumule') }}">
+                      <i class="fa fa-file-alt" size='5'></i>
+                      <span>Rapport commule</span>
                     </a>
                   </div>
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-info-circle" size='5'></i>
-                      <span>Infos</span>
+                  <div class="col" style="border:1px solid #c0c0c0">
+                    <a class="dropdown-icon-item" href="{{ route('planoperationnel') }}">
+                      <i class="fa fa-file-alt" size='5'></i>
+                      <span>Plan d'action</span>
                     </a>
                   </div>
+
+                  <div class="col" style="border:1px solid #c0c0c0">
+                    <a class="dropdown-icon-item" href="#">
+                      <i class="fa fa-info-circle" size='5'></i>
+                      <span>Plan d'action</span>
+                    </a>
+                  </div>
+
+                  
                 </div>
 
               
@@ -266,7 +275,7 @@
 
             </div>
             <!-- end row -->
-
+<br><br><br><br>
 
 
         </div> <!-- container-fluid -->

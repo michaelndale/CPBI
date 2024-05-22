@@ -383,8 +383,8 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
 
                 <li><a href="javascript: void(0);" class="has-arrow">Emploi du temps</a>
                   <ul class="sub-menu" aria-expanded="true">
-                    <li><a href="{{ route('feuilletemps') }}">Mon FT</a></li>
-                    <li><a href=" route('rft') ">RFT</a></li> 
+                    <li><a href="{{ route('feuilletemps') }}">FTD</a></li>
+                    <li><a href=" route('rft') ">FTM</a></li> 
                    
                     <!--<li><a href="javascript: void(0);">Level 2.2</a></li>  -->
                   </ul>
@@ -393,9 +393,14 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
                 <li><a href="javascript: void(0);" class="has-arrow">Personnel</a>
                   <ul class="sub-menu" aria-expanded="true">
                     <li><a href="{{ route('personnel') }}">Tous les employés</a></li>
-                    <!--<li><a href="javascript: void(0);">Level 2.2</a></li>  -->
+                    <li><a href="{{ route('user') }}">Utilisateurs</a></li>
+                    <li><a href="{{ route('fonction')}}">Fonctions</a></li>
                   </ul>
                 </li>
+
+                <li><a href="{{ route('service') }}">Services</a></li>
+                 
+                <li><a href="{{ route('department')}}">Departements</a></li>
 
               
 
@@ -413,7 +418,7 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
               <ul class="sub-menu" aria-expanded="false">
                 <li><a href="{{ route('archivage') }}">Archive</a></li>
                 <li><a href="{{ route('classeur') }}">Classeur</a></li>
-                <li><a href="{{ route('classeur') }}">Etiquette</a></li>
+                <li><a href="{{ route('etiquette') }}">Etiquette</a></li>
               </ul>
             </li>
 
@@ -445,24 +450,14 @@ $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
                 <span>Paramètre</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{ route('user') }}">Utilisateurs</a></li>
                 <li><a href="{{ route('info') }}">Identifications</a></li>
-                <li><a href="{{ route('service') }}">Services</a></li>
-                <li><a href="{{ route('fonction')}}">Fonctions</a></li>
-                <li><a href="{{ route('department')}}">Departements</a></li>
+                <li><a href="{{ route('notis') }}">Notifications</a></li>
+                <li><a href="{{ route('history') }}">Historiques</a></li>
+                <li><a href="{{ route('active-users') }}">Qui est connecter ?</a></li>
               </ul>
             </li>
 
-            <li>
-              <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="mdi mdi-comment-text-multiple"></i>
-                <span>Autres</span>
-              </a>
-              <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{ route('notis') }}">Notifications</a></li>
-                <li><a href="{{ route('history') }}">Historiques</a></li>
-              </ul>
-            </li>
+          
 
             <li>
               <a href="javascript:void(0);" class="dropdown-item notify-item" data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel">

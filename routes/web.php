@@ -47,7 +47,8 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\StatutvehiculeController;
 use App\Http\Controllers\TypeprojetController;
 use App\Http\Controllers\VehiculeController;
-
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('go');
@@ -494,6 +495,18 @@ Route::middleware('auth')->group(function () {
 
        
     });
+
+    Route::get('/active-users', [AuthController::class, 'activeUsers'])->name('active-users');
+
+  /*  Route::get('/test-update-last-activity', function() {
+        if (Auth::check()) {
+            $user = Auth::user();
+            $user->last_activity = Carbon::now();
+            $user->save();
+            return 'Last activity updated';
+        }
+        return 'Not authenticated';
+    }); */
 
     //FIN RH
 
