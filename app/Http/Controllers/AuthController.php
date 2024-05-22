@@ -32,6 +32,8 @@ class AuthController extends Controller
     $user = DB::table('users')
       ->join('personnels', 'personnels.id', 'users.personnelid')
       ->select('users.*', 'users.id as idu' , 'personnels.nom', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
+      ->where('personnels.fonction', '!=', 'Administrateur système.')
+      ->orderBy('personnels.nom', 'ASC')
       ->get();
 
     $profile = Fonction::all();
@@ -73,12 +75,13 @@ class AuthController extends Controller
     $User = DB::table('users')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'users.id as idu', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
-      ->orderBy('nom', 'ASC')
+      ->where('personnels.fonction', '!=', 'Administrateur système.')
+      ->orderBy('personnels.nom', 'ASC')
       ->get();
 
     $output = '';
     if ($User->count() > 0) {
-
+      $nombre = 1;
       foreach ($User as $rs) {
         $output .= '<tr >
               <td>
@@ -86,6 +89,7 @@ class AuthController extends Controller
                     <h6 class="mb-0 ms-3 fw-semi-bold">' . ucfirst($rs->nom) . ' ' . ucfirst($rs->prenom) . '</h6>
                   </a>
               </td>
+              <td> ' .$nombre . '</td>
               <td> ' . $rs->identifiant . '</td>
               <td>' . $rs->role . '  </td>
               <td>' . $rs->statut . '  </td>
@@ -96,6 +100,7 @@ class AuthController extends Controller
                 <a href="#" id="' . $rs->idu . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
             </td>
             </tr>';
+            $nombre++;
       }
       echo $output;
     } else {
@@ -118,6 +123,7 @@ class AuthController extends Controller
       ->orderBy('nom', 'ASC')
       ->get();
     $output = '';
+    
     if ($User->count() > 0) {
 
       foreach ($User as $rs) {
@@ -387,6 +393,7 @@ class AuthController extends Controller
       ->join('personnels', 'personnels.id', 'users.personnelid')
       ->select('users.*', 'personnels.nom', 'users.id as idu', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
       ->where('users.id', $id)
+      ->where('personnels.fonction', '!=', 'Administrateur système.')
       ->first();
 
     return view(

@@ -7,7 +7,6 @@ use App\Models\dap;
 use App\Models\Dja;
 use App\Models\Elementdap;
 use App\Models\Feb;
-use App\Models\Folder;
 use App\Models\Historique;
 use App\Models\Identification;
 use App\Models\Notification;
@@ -35,8 +34,6 @@ class DapController extends Controller
   public function fetchAll()
   {
     $ID = session()->get('id');
-
-
     $data =  DB::table('elementdaps')
     ->select('numerodap', DB::raw('MIN(id) as id'), DB::raw('MIN(dapid) as dapid') , DB::raw('MIN(referencefeb) as referencefeb')) // Sélectionnez numerodap et l'ID minimum
     ->where('projetidda', $ID)
@@ -50,15 +47,12 @@ class DapController extends Controller
       $nombre = 1;
       foreach ($data as $datas) {
 
-      
         $infodap = DB::table('daps')
                 ->where('id', $datas->dapid)
                 ->first();
             if($infodap->ov==1){ $ov="checked" ; } else{ $ov=""; }
             if($infodap->cho==1){ $cho="checked" ; } else{ $cho=""; }
             if($infodap->justifier==1){ $justifier="checked" ; } else{ $justifier=""; }
-
-
             $numerofeb = DB::table('febs')
                 ->join('elementdaps','febs.id' , 'elementdaps.referencefeb')
                 ->where('elementdaps.numerodap', $datas->numerodap)
@@ -66,7 +60,7 @@ class DapController extends Controller
       
 //   <a href="dap/' . $cryptedId . '/edit" class="dropdown-item text-primary mx-1 editIcon " title="Modifier"><i class="far fa-edit"></i> Modifier</a>
 
-        $cryptedId = Crypt::encrypt($datas->numerodap);
+        $cryptedId = Crypt::encrypt($infodap->id);
         $output .= '
         <tr>
           <td> 
@@ -74,10 +68,9 @@ class DapController extends Controller
           <div class="btn-group me-2 mb-2 mb-sm-0">
             <button class="btn btn-primary btn-sm dropdown-toggle"  data-bs-toggle="dropdown" aria-expanded="false"> <i class="mdi mdi-dots-vertical ms-2"></i> Actions </button>
             <div class="dropdown-menu">
-                <a href="dap/' . $cryptedId . '/view" class="dropdown-item text-success mx-1 voirIcon" ><i class="far fa-edit"></i> Voir dap</a>
-             
-                <a href="dap/' . $datas->id . '/generate-pdf-dap" class="dropdown-item  mx-1"><i class="fa fa-print"> </i> Générer document PDF</a>
-                <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
+                <a href="dap/'.$cryptedId.'/view" class="dropdown-item text-success mx-1 voirIcon" ><i class="far fa-edit"></i> Voir dap</a>  
+                <a href="dap/'.$infodap->id.'/generate-pdf-dap" class="dropdown-item  mx-1"><i class="fa fa-print"> </i> Générer document PDF</a>
+                <a class="dropdown-item text-danger mx-1 deleteIcon"  id="'.$infodap->id.'"  href="#"><i class="far fa-trash-alt"></i> '.$infodap->id.'Supprimer</a>
             </div>
           </div>
           </center>
@@ -94,11 +87,7 @@ class DapController extends Controller
 
            }
 
-           
-            
-           
             $output .='
-
            </td>
            <td>'.$infodap->lieu.'</td>
            <td align="center"><input type="checkbox"  '. $ov .' class="form-check-input" /> </td>
@@ -132,13 +121,10 @@ class DapController extends Controller
     {
         $ID = session()->get('id');
         $numero = $request->numerodap;
-
         $dap = Dap::where('numerodp', $numero)
         ->where('projetiddap', $ID)
         ->exists();
-
         return response()->json(['exists' => $dap]);
-      
     }
 
  
@@ -250,20 +236,12 @@ class DapController extends Controller
       }
   }
   
-  
-  
-  
-  
 
   // insert a new employee ajax request
   public function updatestore(Request $request)
   {
     try {
-
-      
-
       $dap = dap::where('id', $request->dapid)->first();
-
       if ($request->has('ov')) {
         $ov = 1;
       } else {
@@ -486,53 +464,65 @@ class DapController extends Controller
 
 
 
-  public function delete(Request $request)
-  {
+ public function delete(Request $request)
+{
+    DB::beginTransaction();
 
     try {
-      $emp = dap::find($request->id);
-      if ($emp->userid == Auth::id()) {
-          $id = $request->id;
-          $his = new Historique;
-          $function = "Suppression";
-          $operation = "Suppression Dap";
-          $link = 'dap';
-          $his->fonction = $function;
-          $his->operation = $operation;
-          $his->userid = Auth()->user()->id;
-          $his->link = $link;
-          $his->save();
+        // Trouver l'enregistrement dap par ID
+        $dap = dap::find($request->id);
 
-          $id = $request->id;
-          dap::destroy($id);
-          
-          $elements = Elementdap::where('dapid', '=', $id )->get();
+        // Vérifier si l'enregistrement dap existe
+        if (!$dap) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'DAP not found',
+            ]);
+        }
 
-          foreach ($elements as $element) {
+        // Vérifier si l'utilisateur est autorisé à supprimer cet enregistrement
+        if ($dap->userid != Auth::id()) {
+            return response()->json([
+                'status' => 403,
+                'message' => 'Unauthorized action',
+            ]);
+        }
 
-              $idf = $element->referencefeb	;
-              $Up = Feb::where('id', $idf)->first();
-              $Up->statut = 0;
-              $U=$Up->update();
+        // Créer un nouvel enregistrement dans l'historique
+        $historique = new Historique();
+        $historique->fonction = "Suppression";
+        $historique->operation = "Suppression Dap";
+        $historique->userid = Auth::id();
+        $historique->link = 'dap';
+        $historique->save();
 
-              if($U){
-                $element->delete();
-              }
-            
-          }
+        // Trouver tous les enregistrements Elementdap associés au dap
+        $elements = Elementdap::where('dapid', $request->id)->get();
+        
+        // Collecter les ids des Feb à mettre à jour
+        $febIds = $elements->pluck('referencefeb')->toArray();
+
+        // Mettre à jour les enregistrements Feb en une seule fois
+        Feb::whereIn('id', $febIds)->update(['statut' => 0]);
+
+        // Supprimer les enregistrements Elementdap
+        Elementdap::where('dapid', $request->id)->delete();
+
+        // Supprimer l'enregistrement dap
+        $dap->delete();
+
+        DB::commit();
 
         return response()->json([
-          'status' => 200,
+            'status' => 200,
         ]);
-      } else {
-        return response()->json([
-          'status' => 205,
-        ]);
-      }
     } catch (Exception $e) {
-      return response()->json([
-        'status' => 202,
-      ]);
+        DB::rollBack();
+
+        return response()->json([
+            'status' => 500,
+            'message' => 'Internal Server Error',
+        ]);
     }
   }
 

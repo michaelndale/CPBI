@@ -33,7 +33,9 @@ class PersonnelController extends Controller
 
     public function fetchAll()
     {
-      $personnel =Personnel::orderBy('nom', 'ASC')->get();
+      $personnel =Personnel::orderBy('nom', 'ASC')
+      ->where('fonction', '!=', 'Administrateur système.')
+      ->get();
       $output = '';
       if ($personnel->count() > 0) {
        

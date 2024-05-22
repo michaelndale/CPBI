@@ -283,7 +283,7 @@
         </div>
     </div>
 </div>
-
+<!--
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -318,3 +318,5 @@
         updateRequired();
     });
 </script>
+
+-->

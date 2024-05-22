@@ -694,8 +694,8 @@ class FebController extends Controller
           $pourcentage_total += $pourcentage;
 
           // Construire la sortie HTML pour chaque élément sélectionné
-          $output .= '<input type="hidden" name="febid[]" id="febid[]" value="' . $datas->id . '" />
-                      <input type="hidden" id="ligneid[]" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
+          $output .= '<input type="hidden" name="febid[]" id="febid[]" value="'.$datas->id.'" />
+                      <input type="hidden" id="ligneid[]" name="ligneid[]" value="'.$datas->ligne_bugdetaire .'" />';
           $output .= '<tr>';
           $output .= '<td width="10%" > Numéro FEB : ' . $datas->numerofeb . '</td>';
           $output .= '<td width="20%"> Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';

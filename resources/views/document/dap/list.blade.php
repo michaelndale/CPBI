@@ -288,50 +288,52 @@ $(document).ready(function() {
     // Delete feb ajax request
 
     $(document).on('click', '.deleteIcon', function(e) {
-      e.preventDefault();
-      let id = $(this).attr('id');
-      let csrf = '{{ csrf_token() }}';
-      Swal.fire({
+    e.preventDefault();
+    let id = $(this).attr('id');
+    let csrf = '{{ csrf_token() }}';
+    Swal.fire({
         title: 'Êtes-vous sûr ?',
         text: "DAP est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ?  ",
-
         showCancelButton: true,
         confirmButtonColor: 'green',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Oui, Supprimer !',
-        cancelButtonText: 'Annuller'
-      }).then((result) => {
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
         if (result.isConfirmed) {
-          $.ajax({
-            url: "{{ route('deletedap') }}",
-            method: 'delete',
-            data: {
-              id: id,
-              _token: csrf
-            },
-            success: function(response) {
-              
-
-              if (response.status == 200) {
-                toastr.success("DAP supprimer avec succès !", "Suppression");
-                fetchAlldap();
-                window.location.href = "{{ route('listdap') }}";
-              }
-
-              if (response.status == 205) {
-                toastr.error("Vous n'avez pas l'accreditation de supprimer ce DAP !", "Erreur");
-              }
-
-              if (response.status == 202) {
-                toastr.error("Erreur d'execution !", "Erreur");
-              }
-              fetchAlldap();
-
-            }
-          });
+            $.ajax({
+                url: "{{ route('deletedap') }}",
+                method: 'delete',
+                data: {
+                    id: id,
+                    _token: csrf
+                },
+                success: function(response) {
+                    if (response.status == 200) {
+                        toastr.success("DAP supprimé avec succès !", "Suppression");
+                        fetchAlldap();
+                         window.location.href = "{{ route('listdap') }}";
+                    } else if (response.status == 205) {
+                        toastr.error("Vous n'avez pas l'accréditation de supprimer ce DAP !", "Erreur");
+                    } 
+                   else if (response.status == 403) {
+                        toastr.error("Unauthorized action !", "Erreur");
+                    } 
+                    else if (response.status == 404) {
+                        toastr.error("DAP not found", "Erreur");
+                    } 
+                    else {
+                        toastr.error("Erreur d'exécution !", "Erreur");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    toastr.error("Erreur d'exécution lors de la suppression du DAP : " + error, "Erreur");
+                }
+            });
         }
-      })
     });
+});
+
 
     fetchAlldap();
     function fetchAlldap() {
