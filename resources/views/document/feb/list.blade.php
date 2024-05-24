@@ -314,74 +314,77 @@ function calc_total() {
       });
 
       $("#addfebForm").submit(function(e) {
-        e.preventDefault();
-        const fd = new FormData(this);
-        $("#addfebbtn").html('<i class="fas fa-spinner fa-spin"></i>');
-        document.getElementById("addfebbtn").disabled = true;
-        $("#loadingModal").modal('show'); // Affiche le popup de chargement
+    e.preventDefault();
+    const fd = new FormData(this);
+    $("#addfebbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+    document.getElementById("addfebbtn").disabled = true;
+    $("#loadingModal").modal('show'); // Affiche le popup de chargement
 
-        
-
-        $.ajax({
-          url: "{{ route('storefeb') }}",
-          method: 'post',
-          data: fd,
-          cache: false,
-          contentType: false,
-          processData: false,
-          dataType: 'json',
-          success: function(response) {
+    $.ajax({
+        url: "{{ route('storefeb') }}",
+        method: 'post',
+        data: fd,
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
             if (response.status == 200) {
-
-              fetchAllfeb();
-              Sommefeb();
-
-             
-              $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-              $("#numerofeb_error").text("");
-              $('#numerofeb').addClass('');
-
-              $("#addfebForm")[0].reset();
-               
-              $("#addfebModal").modal('hide');
-
-              document.getElementById("addfebbtn").disabled = false;
-
-              toastr.success("Feb ajouté avec succès !", "Enregistrement");
+                fetchAllfeb();
+                Sommefeb();
+                $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                $("#numerofeb_error").text("");
+                $('#numerofeb').addClass('');
+                $("#addfebForm")[0].reset();
+                $("#addfebModal").modal('hide');
+                document.getElementById("addfebbtn").disabled = false;
+                toastr.success("Feb ajouté avec succès !", "Enregistrement");
             }
             if (response.status == 201) {
-              toastr.error("Attention: FEB numéro existe déjà !", "Attention");
-              $("#addfebModal").modal('show');
-              $("#numerofeb_error").text("Numéro existe");
-              $('#numerofeb').addClass('has-error');
-              document.getElementById("addfebbtn").disabled = false;
-              $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i>  Sauvegarder');
+                toastr.error("Attention: FEB numéro existe déjà !", "Attention");
+                $("#addfebModal").modal('show');
+                $("#numerofeb_error").text("Numéro existe");
+                $('#numerofeb').addClass('has-error');
+                document.getElementById("addfebbtn").disabled = false;
+                $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i>  Sauvegarder');
             }
-
             if (response.status == 202) {
-              toastr.error("Erreur d'exécution: " + response.error, "Erreur");
-              $("#addfebModal").modal('show');
-              document.getElementById("addfebbtn").disabled = false;
-              $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-             
+                toastr.error("Erreur d'exécution: " + response.error, "Erreur");
+                $("#addfebModal").modal('show');
+                document.getElementById("addfebbtn").disabled = false;
+                $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             }
-
             if (response.status == 203) {
-              toastr.error("Le montant global du feb depasse le budget de la ligne encours", "Attention");
-              $("#addfebModal").modal('show');
-              document.getElementById("addfebbtn").disabled = false;
-              $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-             
+                if (confirm(response.message)) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'confirm_ligne',
+                        value: '1'
+                    }).appendTo('#addfebForm');
+                    $('#addfebForm').submit();
+                } else {
+                    toastr.error("Opération annulée par l'utilisateur.", "Attention");
+                    $("#addfebModal").modal('show');
+                    document.getElementById("addfebbtn").disabled = false;
+                    $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                }
             }
+            if (response.status == 204) {
+                  toastr.error(response.message, "Attention");
+                  $("#addfebModal").modal('show');
+                  document.getElementById("addfebbtn").disabled = false;
+                  $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              }
 
             $("#addfebbtn").text('Sauvegarder');
             $("#loadingModal").modal('hide'); 
             setTimeout(function() {
                 $("#loadingModal").modal('hide');
             }, 600); // 2000 millisecondes = 2 secondes
-          }
-        });
-      });
+        }
+    });
+});
+
 
       // Delete feb ajax request
 

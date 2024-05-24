@@ -37,14 +37,14 @@
                 <hr class="my-4">
                 <div class="row">
                     <H5>
-                        <center> Demande et d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodap }}/{{ date('Y')}} </center>
+                        <center> Demande et d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodp }}/{{ date('Y')}} </center>
                     </H5>
                     <div class="col-sm-12">
                         <table class="table table-bordered  table-sm">
                             <tr>
                                 <td width="55%">
                                     Service: {{ $datadap->titres }} <BR>
-                                    Composante/ Projet/Section: {{ ucfirst(Session::get('title')) }} <br><br>
+                                    Composante/ Projet/Section: {{  $datadap->projettitle }} <br><br>
 
                                     Source de creation : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }} <br>
 
@@ -78,7 +78,7 @@
                                         Taux d'execution actuel : {{ $pourcentage_encours}}% <br>
                                         Taux execution globale : {{ $pourcetage_globale }}% <br>
 
-                                        Solde comptable BQ: {{ number_format($solde_comptable, 0, ',', ' ')  }} {{ Session::get('devise') }}
+                                        Solde comptable BQ: {{ number_format($solde_comptable, 0, ',', ' ')  }} {{ $devise }}
 
                                 </td>
                             </tr>
@@ -158,7 +158,7 @@
 
                             @method('post')
                             @csrf
-                            <input type="hidden" name="dapid" value="{{ $datadap->iddape }}">
+                            <input type="hidden" name="dapid" value="{{ $datadap->id }}">
 
                             <table class="table table-bordered  table-sm">
                                 <tr>
@@ -381,7 +381,7 @@
                             <br>
 
 
-                            <a href="{{ route('generate-pdf-dap',$datadap->numerodap ) }}" class="btn btn-success"><i class="fa fa-print"> </i> Générer document PDF</a>
+                            <a href="{{ route('generate-pdf-dap',$datadap->id ) }}" class="btn btn-success"><i class="fa fa-print"> </i> Générer document PDF</a>
                             <div class="float-end">
                                 <!-- <a href="{{ route('generate-pdf-feb', $datadap->id) }}" class="btn btn-primary">Générer PDF</a> n-->
 
@@ -410,7 +410,7 @@
         <form autocomplete="off" action="{{ route('update_autorisation_dap') }}" method="POST">
             @method('post')
             @csrf
-            <input type="hidden" name="dapid" value="{{ $datadap->iddape }}">
+            <input type="hidden" name="dapid" value="{{ $datadap->id }}">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-edit"></i> Modifier Observation/Instructions du SG </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
@@ -445,7 +445,7 @@
 
             @method('post')
             @csrf
-            <input type="hidden" name="dapid" value="{{ $datadap->iddape }}">
+            <input type="hidden" name="dapid" value="{{ $datadap->id }}">
 
             <div class="modal-content">
                 <div class="modal-header">

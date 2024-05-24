@@ -59,8 +59,10 @@ class DjaController extends Controller
                 <i class="mdi mdi-dots-vertical ms-2"></i> Action
             </button>
             <div class="dropdown-menu">
-                <a href="#" class="dropdown-item text-success mx-1 voirdja" id="' . $datas->numerodap . '"  data-bs-toggle="modal" data-bs-target="#djaModale" ><i class="far fa-edit"></i>Justificatif</a>
-                <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer dja</a>
+                <a href="#" class="dropdown-item text-success mx-1 voirdja" id="' . $datas->numerodap . '"  data-bs-toggle="modal" data-bs-target="#djaModale" ><i class="far fa-edit"></i> Justificatif DJA </a>
+                <a href="dja/'.$cryptedId.'/view" class="dropdown-item text-success mx-1"><i class="far fa-eye"></i> Voir DJA </a>
+                <a href="dja/'.$cryptedId.'/edit" class="dropdown-item text-success mx-1" ><i class="far fa-edit"></i> Modifier DJA</a>
+                <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer DJA</a>
             </div>
           </div>
           </center>
@@ -89,10 +91,7 @@ class DjaController extends Controller
         ';
     }
   }
-
   // insert a new employee ajax request
-
-
   public function list()
   {
     $title = "DJA";
@@ -361,7 +360,7 @@ class DjaController extends Controller
       $IDP = session()->get('id');
       $output = '';
       // Initialisez une variable pour stocker les sorties de tableau
-      $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
+   
       // Effectuez la recherche de données pour chaque identifiant sélectionné
       $data = DB::table('elementdaps')
         ->join('febs', 'elementdaps.referencefeb', 'febs.id')
@@ -370,12 +369,10 @@ class DjaController extends Controller
         ->get();
 
       $iddja = DB::table('djas')
-        ->where('numerodap', $IDn)
-        ->first();
+              ->where('numerodap', $IDn)
+              ->first();
 
       $personnel = Personnel::all();
-
-
       $vehicules = Vehicule::all();
 
       if ($data->count() > 0) {
@@ -389,6 +386,7 @@ class DjaController extends Controller
 
           $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)->first();
           // Construire la sortie HTML pour chaque élément sélectionné
+          $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
           $output .= '<input type="hidden" name="febid[]" id="febid[]" value="' . $datas->idfb . '" / > 
                       <input type="hidden" name="iddjas[]" id="iddjas[]" value="' . $iddja->id . '" /> 
                       <input type="hidden" name="dpasid[]" id="dpasid[]" value="'.$datas->idedaps.'" />';
@@ -435,7 +433,10 @@ class DjaController extends Controller
 
       } else {
         // Si aucune donnée n'est trouvée, retournez un message d'erreur avec une classe "danger"
-        $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;"><tr class="table-danger"><td colspan="7">Aucune donnée trouvée sur la justification. ceci est une DJA non justifier</td></tr></table>';
+        $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
+                        <tr class="table-danger"><td colspan="7">Aucune donnée trouvée sur la justification. ceci est une DJA non justifier</td>
+                        </tr>
+                    </table>';
       }
 
      

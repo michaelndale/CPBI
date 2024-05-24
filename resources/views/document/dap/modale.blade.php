@@ -245,33 +245,6 @@
                                 </tr>
                             </table>
 
-
-                            <br>
-
-
-                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
-
-                                <tr>
-                                    <td><b> Fonds recus par</b></td>
-                                </tr>
-                                <tr>
-                               <td>
-                                        <select type="text" class="form-control form-control-sm" name="beneficiaire" id="beneficiaire" required>
-                                            <option value="">-- Fonds recus par --</option>
-                                            @foreach ($personnel as $personnels)
-                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
-                                            @endforeach
-
-                                        </select>
-                                    </td>
-                                    <!--  <td>
-                                        <input type="text" name="nomb" id=""> <input type="prenomb">
-                                    </td> -->
-                                </tr>
-                            </table>
-
-
-
                         </div>
                     </div>
 
@@ -283,40 +256,3 @@
         </div>
     </div>
 </div>
-<!--
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const checkbox1 = document.getElementById('ch');
-        const checkbox2 = document.getElementById('ov');
-
-        function updateRequired() {
-            if (checkbox1.checked || checkbox2.checked) {
-                checkbox1.removeAttribute('required');
-                checkbox2.removeAttribute('required');
-            } else {
-                checkbox1.setAttribute('required', '');
-                checkbox2.setAttribute('required', '');
-            }
-        }
-
-        checkbox1.addEventListener('change', function() {
-            if (this.checked) {
-                checkbox2.checked = false;
-            }
-            updateRequired();
-        });
-
-        checkbox2.addEventListener('change', function() {
-            if (this.checked) {
-                checkbox1.checked = false;
-            }
-            updateRequired();
-        });
-
-        // Au chargement initial de la page, rendre une case obligatoire
-        updateRequired();
-    });
-</script>
-
--->

@@ -10,9 +10,9 @@
           <div class="col-12 col-md">
             <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Demande et Justification d'Avance "DJA" </h4>
           </div>
-          <div class="col col-md-auto">
+         <!-- <div class="col col-md-auto">
             <a href="javascript:void()" ><span class="me-2" data-feather="plus-circle"></span> <i class="fa fa-plus-circle"></i> Nouvel justification</a></nav>
-            </div>
+            </div>  -->
           
         </div>
       </div>
@@ -200,7 +200,9 @@ $(document).on('input', '.description-input', function() {
           }
         })
       });
-      $(document).on('click', '.voirdja', function(e) {
+
+      
+  $(document).on('click', '.voirdja', function(e) {
     e.preventDefault(); // Empêcher le comportement par défaut du lien
     var febrefs = $(this).attr('id'); // Utilisez attr() pour obtenir l'ID du lien
     $.ajax({

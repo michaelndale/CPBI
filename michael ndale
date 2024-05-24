@@ -4,7 +4,6 @@ miguel NDALE
 Passionner de la tecbhnologie
 
 
-
 $dataallfeb = DB::table('elementfebs')
       ->orderby('id', 'DESC')
       ->Where('projetids', $ID)

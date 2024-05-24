@@ -10,6 +10,7 @@ use App\Models\Elementfeb;
 use App\Models\Feb;
 use App\Models\Historique;
 use App\Models\Identification;
+use App\Models\Personnel;
 use App\Models\Project;
 use App\Models\Rallongebudget;
 use App\Models\Vehicule;
@@ -145,9 +146,50 @@ class FebController extends Controller
       ->get();
 
 
+$dap_demandeetablie= DB::table('daps')
+->Where('demandeetablie', Auth::id() )
+->Where('demandeetablie_signe',  0)
+->get();
+
+
+
+$dap_verifier= DB::table('daps')
+->Where('verifierpar', Auth::id() )
+->Where('verifierpar_signe',  0)
+->get();
+
+$dap_approuverpar= DB::table('daps')
+->Where('approuverpar', Auth::id() )
+->Where('approuverpar_signe',  0)
+->get();
+
+$dap_responsable= DB::table('daps')
+->Where('responsable', Auth::id() )
+->Where('responsable_signe',  0)
+->get();
+
+$dap_secretaire= DB::table('daps')
+->Where('secretaire', Auth::id() )
+->Where('secretaure_general_signe',  0)
+->get();
+
+$dap_chefprogramme= DB::table('daps')
+->Where('chefprogramme', Auth::id() )
+->Where('chefprogramme_signe',  0)
+->get();
+
+
     $documents = $documents->concat($documentacce)
       ->concat($documentcompte)
       ->concat($documentchefcomposent);
+
+      $dap_documents = $documents->concat($dap_demandeetablie)
+      ->concat($dap_verifier)
+      ->concat($dap_approuverpar)
+      ->concat($dap_responsable)
+      ->concat($dap_secretaire)
+      ->concat($dap_chefprogramme);
+
 
     $output = '';
     if ($documents->count() > 0) {
@@ -182,7 +224,33 @@ class FebController extends Controller
       }
 
       echo $output;
-    } else {
+    } 
+
+    if ($dap_documents->count() > 0) {
+
+      $nombre_dap = 1;
+      $anne = date('Y');
+      foreach ($dap_documents as $dap_doc) {
+
+
+        $cryptedIDocdap = Crypt::encrypt($dap_doc->id);
+
+        $output .= '<tr>
+              <td>' . $nombre_dap . '</td>
+              <td>DAP</td>
+              <td><a href="' . route('viewdap', $cryptedIDocdap) . '"><b><u>' . ucfirst($dap_doc->numerodp) . '/' . $anne . '</u></b></a></td>
+              <td>' . date('d-m-Y', strtotime($dap_doc->dateautorisation)) . '</td>
+              <td>' . date('d-m-Y', strtotime($dap_doc->created_at)) . '</td>
+              <td> </td>
+             
+            </tr>';
+            $nombre_dap++;
+      }
+
+      echo $output;
+    } 
+    
+    else {
       echo ' <tr>
       <td colspan="5">
       <center>
@@ -306,121 +374,140 @@ class FebController extends Controller
 
   public function store(Request $request)
   {
-    DB::beginTransaction();
-
-    try {
-      $IDP = session()->get('id');
-
-      $comp = $request->referenceid;
-      $compp = explode("-", $comp);
-
-      $grandcompte = $compp[0];
-      $souscompte  = $compp[1];
-
-      $somme_budget_ligne = DB::table('rallongebudgets')
-        ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
-        ->where('rallongebudgets.projetid', $IDP)
-        ->where('rallongebudgets.souscompte', $souscompte)
-        ->sum('rallongebudgets.budgetactuel');
-
-      $somme_activite_ligne = DB::table('elementfebs')
-        ->where('projetids', $IDP)
-        ->where('eligne', $souscompte)
-        ->sum('montant');
-
-      $sum = 0;
-
-      foreach ($request->numerodetail as $key => $items) {
-        $element1 = $request->pu[$key];
-        $element2 = $request->qty[$key];
-        $element3 = $request->frenquency[$key];
-        $somme = $element1 * $element2 * $element3;
-        $sum += $somme;
-      }
-
-      $montant_somme = $sum + $somme_activite_ligne;
-
-      if ($somme_budget_ligne >= $montant_somme) {
-        $numerofeb = $request->numerofeb;
-        $check =   Feb::where('numerofeb',$numerofeb)
-        ->where('projetid', $IDP )
-        ->first();
-       
-        if ($check) {
-          return response()->json([
-            'status' => 201
-          ]);
-        } else {
-          $bc = $request->has('bc') ? 1 : 0;
-          $om = $request->has('om') ? 1 : 0;
-          $facture = $request->has('facture') ? 1 : 0;
-          $fpdevis = $request->has('fpdevis') ? 1 : 0;
-          $nec = $request->has('nec') ? 1 : 0;
-
-          $activity = new Feb();
-          $activity->numerofeb = $request->numerofeb;
-          $activity->projetid = $request->projetid;
-          $activity->periode = $request->periode;
-          $activity->datefeb = $request->datefeb;
-          $activity->datelimite = $request->datelimite;
-          $activity->ligne_bugdetaire = $grandcompte;
-          $activity->descriptionf = $request->descriptionf;
-          $activity->bc = $bc;
-          $activity->facture = $facture;
-          $activity->om = $om;
-          $activity->fpdevis = $fpdevis;
-          $activity->nec = $nec;
-          $activity->acce = $request->acce;
-          $activity->comptable = $request->comptable;
-          $activity->chefcomposante = $request->chefcomposante;
-          $activity->beneficiaire = $request->beneficiaire;
-          $activity->total = $sum;
-          $activity->userid = Auth::id();
-          $activity->save();
-
-          $IDf = $activity->id;
-
+      DB::beginTransaction();
+  
+      try {
+          $IDP = session()->get('id');
+  
+          $comp = $request->referenceid;
+          $compp = explode("-", $comp);
+  
+          $grandcompte = $compp[0];
+          $souscompte  = $compp[1];
+  
+          $somme_budget_ligne = DB::table('rallongebudgets')
+              ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+              ->where('rallongebudgets.projetid', $IDP)
+              ->where('rallongebudgets.souscompte', $souscompte)
+              ->sum('rallongebudgets.budgetactuel');
+              
+  
+          $somme_budget_grand_ligne = DB::table('rallongebudgets')
+              ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+              ->where('rallongebudgets.projetid', $IDP)
+              ->where('rallongebudgets.compteid', $grandcompte)
+              ->sum('rallongebudgets.budgetactuel');
+  
+          $somme_activite_ligne = DB::table('elementfebs')
+              ->where('projetids', $IDP)
+              ->where('eligne', $souscompte)
+              ->sum('montant');
+  
+          $sum = 0;
+  
           foreach ($request->numerodetail as $key => $items) {
-            $somme_total = $request->pu[$key] * $request->qty[$key] * $request->frenquency[$key];
-
-            $elementfeb = new Elementfeb();
-            $elementfeb->febid = $IDf;
-            $elementfeb->numero = $request->numerofeb;
-            $elementfeb->libellee = $request->description[$key];
-            $elementfeb->libelle_description = $request->libelle_description[$key];
-            $elementfeb->unite = $request->unit_cost[$key];
-            $elementfeb->quantite = $request->qty[$key];
-            $elementfeb->frequence = $request->frenquency[$key];
-            $elementfeb->pu = $request->pu[$key];
-            $elementfeb->montant = $somme_total;
-            $elementfeb->projetids = $request->projetid;
-            $elementfeb->tperiode = $request->periode;
-            $elementfeb->grandligne = $grandcompte;
-            $elementfeb->eligne = $souscompte;
-            $elementfeb->userid = Auth::id();
-            $elementfeb->save();
+              $element1 = $request->pu[$key];
+              $element2 = $request->qty[$key];
+              $element3 = $request->frenquency[$key];
+              $somme = $element1 * $element2 * $element3;
+              $sum += $somme;
           }
-
-          DB::commit();
-
-          return response()->json([
-            'status' => 200,
-          ]);
+  
+          $montant_somme = $sum + $somme_activite_ligne;
+  
+          // Première vérification
+          if ($somme_budget_ligne < $montant_somme && !$request->has('confirm_ligne')) {
+              return response()->json([
+                  'status' => 203,
+                  'message' => "Le montant dépasse à la fois le budget de l'activité et celui du sous-ligne budgétaire disponible. Souhaitez-vous poursuivre les opérations sur la ligne budgétaire, sachant que cela pourrait affecter l'exécution du budget pour d'autres activités ?",
+                  'need_confirmation' => 'ligne'
+              ]);
+          }
+  
+          // Deuxième vérification
+          if ($somme_budget_grand_ligne < $montant_somme) {
+            return response()->json([
+                'status' => 204,
+                'message' => 'Le montant dépasse le budget de la grande ligne budgétaire disponible ('.$somme_budget_grand_ligne.'€).',
+            ]);
         }
-      } else {
-        return response()->json([
-          'status' => 203,
-        ]);
+  
+          $numerofeb = $request->numerofeb;
+          $check = Feb::where('numerofeb', $numerofeb)
+              ->where('projetid', $IDP)
+              ->first();
+  
+          if ($check) {
+              return response()->json([
+                  'status' => 201
+              ]);
+          } else {
+              $bc = $request->has('bc') ? 1 : 0;
+              $om = $request->has('om') ? 1 : 0;
+              $facture = $request->has('facture') ? 1 : 0;
+              $fpdevis = $request->has('fpdevis') ? 1 : 0;
+              $nec = $request->has('nec') ? 1 : 0;
+  
+              $activity = new Feb();
+              $activity->numerofeb = $request->numerofeb;
+              $activity->projetid = $request->projetid;
+              $activity->periode = $request->periode;
+              $activity->datefeb = $request->datefeb;
+              $activity->datelimite = $request->datelimite;
+              $activity->ligne_bugdetaire = $grandcompte;
+              $activity->descriptionf = $request->descriptionf;
+              $activity->bc = $bc;
+              $activity->facture = $facture;
+              $activity->om = $om;
+              $activity->fpdevis = $fpdevis;
+              $activity->nec = $nec;
+              $activity->acce = $request->acce;
+              $activity->comptable = $request->comptable;
+              $activity->chefcomposante = $request->chefcomposante;
+              $activity->beneficiaire = $request->beneficiaire;
+              $activity->total = $sum;
+              $activity->userid = Auth::id();
+              $activity->save();
+  
+              $IDf = $activity->id;
+  
+              foreach ($request->numerodetail as $key => $items) {
+                  $somme_total = $request->pu[$key] * $request->qty[$key] * $request->frenquency[$key];
+  
+                  $elementfeb = new Elementfeb();
+                  $elementfeb->febid = $IDf;
+                  $elementfeb->numero = $request->numerofeb;
+                  $elementfeb->libellee = $request->description[$key];
+                  $elementfeb->libelle_description = $request->libelle_description[$key];
+                  $elementfeb->unite = $request->unit_cost[$key];
+                  $elementfeb->quantite = $request->qty[$key];
+                  $elementfeb->frequence = $request->frenquency[$key];
+                  $elementfeb->pu = $request->pu[$key];
+                  $elementfeb->montant = $somme_total;
+                  $elementfeb->projetids = $request->projetid;
+                  $elementfeb->tperiode = $request->periode;
+                  $elementfeb->grandligne = $grandcompte;
+                  $elementfeb->eligne = $souscompte;
+                  $elementfeb->userid = Auth::id();
+                  $elementfeb->save();
+              }
+  
+              DB::commit();
+  
+              return response()->json([
+                  'status' => 200,
+              ]);
+          }
+      } catch (\Exception $e) {
+          DB::rollBack();
+  
+          return response()->json([
+              'status' => 202,
+              'error' => $e->getMessage()
+          ]);
       }
-    } catch (\Exception $e) {
-      DB::rollBack();
-
-      return response()->json([
-        'status' => 202,
-        'error' => $e->getMessage()
-      ]);
-    }
   }
+  
 
 
 
@@ -638,81 +725,88 @@ class FebController extends Controller
   }
 
   public function findfebelementretour(Request $request)
-  {
+{
     $IDs = $request->ids; // Utilisez 'ids' pour obtenir tous les identifiants sélectionnés
     $devise = session()->get('devise');
     $budget = session()->get('budget');
     $IDP = session()->get('id');
 
-
-
     // Initialisez une variable pour stocker les sorties de tableau
     $output = '';
     $output .= '
     <table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%">
-   ';
+    ';
 
     $totoglobale = 0; // Initialiser le total global à zéro
     $pourcentage_total = 0; // Initialiser le pourcentage total à zéro
 
     foreach ($IDs as $ID) {
-      // Effectuez la recherche de données pour chaque identifiant sélectionné
-      $data = DB::table('febs')
-        ->where('febs.id', $ID)
-        ->get();
+        // Effectuez la recherche de données pour chaque identifiant sélectionné
+        $data = DB::table('febs')
+            ->where('febs.id', $ID)
+            ->get();
 
-      $vehicules = Vehicule::all();
+        $personnels = Personnel::all();
 
+        if ($data->count() > 0) {
+            $totoSUM = DB::table('elementfebs')
+                ->where('febid', $ID)
+                ->sum('montant');
 
+            // Ajouter $totoSUM au total global
+            $totoglobale += $totoSUM;
 
-      if ($data->count() > 0) {
+            // Générer la sortie HTML pour chaque élément sélectionné
+            foreach ($data as $datas) {
+                // Sommes élément
+                $sommefeb = DB::table('elementfebs')
+                    ->where('febid', $datas->id)
+                    ->where('projetids', $IDP)
+                    ->sum('montant');
 
-        $totoSUM = DB::table('elementfebs')
-          ->orderBy('id', 'DESC')
-          ->where('febid', $ID)
-          ->sum('montant');
+                $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)
+                    ->first();
 
-        // Ajouter $totoSUM au total global
-        $totoglobale += $totoSUM;
+                $pourcentage = round(($sommefeb * 100) / $budget, 2);
 
-        // Générer la sortie HTML pour chaque élément sélectionné
-        foreach ($data as $datas) {
-          // sommes element
-          $sommefeb = DB::table('elementfebs')
-            ->Where('febid', $datas->id)
-            ->Where('projetids', $IDP)
-            ->SUM('montant');
+                // Ajouter le pourcentage de cette itération au pourcentage total
+                $pourcentage_total += $pourcentage;
 
-          $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)
-            ->first();
-
-
-
-          $pourcentage = round(($sommefeb * 100) / $budget, 2);
-
-          // Ajouter le pourcentage de cette itération au pourcentage total
-          $pourcentage_total += $pourcentage;
-
-          // Construire la sortie HTML pour chaque élément sélectionné
-          $output .= '<input type="hidden" name="febid[]" id="febid[]" value="'.$datas->id.'" />
-                      <input type="hidden" id="ligneid[]" name="ligneid[]" value="'.$datas->ligne_bugdetaire .'" />';
-          $output .= '<tr>';
-          $output .= '<td width="10%" > Numéro FEB : ' . $datas->numerofeb . '</td>';
-          $output .= '<td width="20%"> Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-          $output .= '<td width="20%"> Duré avance  <input type="number" name="duree_avence[]" id="duree_avence[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-          $output .= '<td width="20%">Numéro facture <input type="text" class="description" name="numfacture[]" id="numfacture[]" style="width: 100%; border:1px solid #c0c0c0" /> </td>';
-          $output .= '<td width="20%">Description  <input type="text" class="description" name="descriptionel[]" id="descriptionel[]" style="width: 100%; border:1px solid #c0c0c0" /> </td>';
-          $output .= '<td > </td>';
-          $output .= '</tr>';
+                // Construire la sortie HTML pour chaque élément sélectionné
+                $output .= '<input type="hidden" name="febid[]" value="' . $datas->id . '" />';
+                $output .= '<input type="hidden" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
+                $output .= '<tr>';
+                $output .= '<td width="10%"> Numéro FEB : ' . $datas->numerofeb . '</td>';
+                $output .= '<td width="20%"> Montant de l\'Avance <input type="number" name="montantavance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                $output .= '<td width="20%"> Durée avance <input type="number" name="duree_avance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                $output .= '<td width="20%">Description <input type="text" name="descriptionel[]" style="width: 100%; border:1px solid #c0c0c0" /> </td>';
+                $output .= '<td> </td>';
+                $output .= '</tr>';
+            }
         }
-      }
     }
     $output .= '</table>';
 
+    $output .= '
+    <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+        <tr>
+            <td><b>Fonds reçus par</b></td>
+        </tr>
+        <tr>
+            <td>
+                <select class="form-control form-control-sm" name="beneficiaire" id="beneficiaire">
+                    <option value="">-- Fonds reçus par --</option>';
+                    foreach ($personnels as $personnel) {
+                        $output .= '<option value="' . $personnel->userid . '">' . $personnel->nom . ' ' . $personnel->prenom . '</option>';
+                    }
+    $output .= '
+                </select>
+            </td>
+        </tr>
+    </table>';
+
     return $output;
-  }
-
-
+}
 
   public function list()
   {

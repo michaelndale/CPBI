@@ -81,12 +81,12 @@
                                             <input type="text" class="form-control form-control-sm" name="descriptionf" id="descriptionf" required>
                                         </td>
 
-                                        <td class="align-middle ps-3 name" colo>Bénéficiaire </td>
+                                        <td class="align-middle ps-3 name" >Bénéficiaire </td>
                                         <td colspan="3">
 
 
                                             <select class="form-control  form-control-sm" id="beneficiaire" name="beneficiaire" >
-                                                <option disabled="true" selected="true">--Sélectionner bénéficiaire--</option>';
+                                                <option disabled="true" selected="true" value="">--Sélectionner bénéficiaire--</option>';
                                                 @foreach ($beneficaire as $beneficaires)
                                                 <option value="{{ $beneficaires->id }}">{{ $beneficaires->libelle }}</option>
                                                 @endforeach
@@ -140,7 +140,7 @@
                                         </td>
 
                                         <td class="align-middle ps-3 name" style="width:8%">
-                                            <center>NEC: <br>
+                                            <center>PEA: <br>
                                                 <input type="checkbox" class="form-check-input" name="nec" id="nec">
                                             </center>
                                         </td>

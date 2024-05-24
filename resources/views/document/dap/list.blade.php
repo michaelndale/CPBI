@@ -234,12 +234,13 @@ $(document).ready(function() {
   $(function() {
 
     $("#adddapForm").submit(function(e) {
-      e.preventDefault();
-      const fd = new FormData(this);
-      $("#adddapbtn").html('<i class="fas fa-spinner fa-spin"></i>');
-      document.getElementById("adddapbtn").disabled = false;
-        $("#loadingModal").modal('show'); // Affiche le popup de chargement
-      $.ajax({
+    e.preventDefault();
+    const fd = new FormData(this);
+    $("#adddapbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+    document.getElementById("adddapbtn").disabled = true; // Désactiver le bouton
+    $("#loadingModal").modal('show'); // Affiche le popup de chargement
+
+    $.ajax({
         url: "{{ route('storedap') }}",
         method: 'post',
         data: fd,
@@ -248,42 +249,38 @@ $(document).ready(function() {
         processData: false,
         dataType: 'json',
         success: function(response) {
-          if (response.status == 200) {
+            $("#loadingModal").modal('hide'); // Cacher le popup de chargement
 
-            fetchAlldap();
+            if (response.status == 200) {
+                fetchAlldap();
+                $("#adddapForm")[0].reset();
+                $("#dapModale").modal('hide');
+                toastr.success("DAP ajouté avec succès !", "Succès");
+                window.location.href = "{{ route('listdap') }}";
+            } else if (response.status == 201) {
+                toastr.error("Attention: DAP fonction existe déjà !", "Info");
+                $("#dapModale").modal('show');
+            } else if (response.status == 202) {
+                toastr.error("Erreur d'exécution, vérifiez votre connexion Internet", "Erreur");
+                $("#dapModale").modal('show');
+            } else if (response.status == 203) {
+                toastr.error("Erreur d'exécution: " + response.error, "Erreur");
+                $("#dapModale").modal('show');
+            }
 
-            $("#adddapForm")[0].reset();
-            $("#dapModale").modal('hide');
-
-            toastr.success("DAP ajouté avec succès !", "success");
-
-            window.location.href = "{{ route('listdap') }}";
-
-          }
-          if (response.status == 201) {
-            toastr.error("Attention: DAP fonction existe déjà !", "info");
+            $("#adddapbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            document.getElementById("adddapbtn").disabled = false; // Réactiver le bouton
+        },
+        error: function(xhr, status, error) {
+            $("#loadingModal").modal('hide'); // Cacher le popup de chargement
+            toastr.error("Erreur d'exécution: " + error, "Erreur");
             $("#dapModale").modal('show');
             $("#adddapbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-              document.getElementById("adddapbtn").disabled = false;
-          }
-
-          if (response.status == 202) {
-            toastr.error("Erreur d'execution, verifier votre internet", "error");
-            $("#dapModale").modal('show');
-            $("#adddapbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-              document.getElementById("adddapbtn").disabled = false;
-          }
-          if (response.status == 203) {
-            toastr.error("Erreur d'exécution: " + response.error, "Erreur");
-            $("#dapModale").modal('show');
-            $("#adddapbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            document.getElementById("adddapbtn").disabled = false;
-          }
-
-        
+            document.getElementById("adddapbtn").disabled = false; // Réactiver le bouton
         }
-      });
     });
+});
+
 
     // Delete feb ajax request
 

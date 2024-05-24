@@ -67,6 +67,144 @@
 
     </div>
      
+<!-- Assurez-vous que jQuery est inclus avant ce script -->
+<!-- Assurez-vous que jQuery est inclus avant ce script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#classeur').change(function() {
+      var classeurId = $(this).val();
+      if (classeurId) {
+        $.ajax({
+          url: '{{ route("getEtiquettesByCl", ":classeurId") }}'.replace(':classeurId', classeurId),
+          type: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            $('#etiquette').empty(); // Clear the existing options
+            $('#etiquette').append('<option value="" selected="selected">Séléctionner étiquette</option>');
+            $.each(data, function(key, etiquette) {
+              $('#etiquette').append('<option value="' + etiquette.id + '">' + etiquette.nom_e + '</option>');
+            });
+          }
+        });
+      } else {
+        $('#etiquette').empty();
+        $('#etiquette').append('<option value="" selected="selected">Séléctionner étiquette</option>');
+      }
+    });
+  });
+</script>
+
+
+      
+<script>
+
+$(document).ready(function() {
+    // Fonction pour gérer la soumission du formulaire d'ajout d'archive
+    function handleFormSubmit(event) {
+        event.preventDefault();
+        
+        // Vérification des champs du formulaire
+        if (!validateForm()) {
+            return;
+        }
+
+        // Création des données à envoyer
+        var formData = new FormData(this);
+
+        // Ouvrir le modal de chargement
+        $('#loadingModal').modal('show');
+
+        // Envoi des données via AJAX
+        $.ajax({
+            url: '{{ route("archives.store") }}',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function(evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = (evt.loaded / evt.total) * 100;
+                        $('#progressBar').width(percentComplete + '%'); // Mettre à jour la barre de progression
+
+                        // Si la progression est terminée
+                        if (percentComplete === 100) {
+                            // Fermer le modal de chargement après une courte attente
+                            setTimeout(function() {
+                                $('#loadingModal').modal('hide');
+                            }, 500);
+                        }
+                    }
+                }, false);
+                return xhr;
+            },
+            success: function(response) {
+                resetForm();
+                // Fermer le modal de chargement
+                $('#loadingModal').modal('hide');
+                // Afficher un message de succès
+                alert(response.message);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                $('#loadingModal').modal('hide');
+                var errorMessage = 'Erreur lors de l\'envoi des données.';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
+                }
+                alert(errorMessage);
+                // Fermer le modal de chargement en cas d'erreur
+                $('#loadingModal').modal('hide');
+            }
+        });
+    }
+
+    // Fonction pour valider le formulaire 
+    function validateForm() {
+        var title = $('#titre').val();
+        var type = $('input[name="type"]:checked').val();
+        var documentFile = $('#file_archive')[0].files[0];
+        var description = $('#description').val();
+
+        if (title.trim() === '' || !type || !documentFile || description.trim() === '') {
+            alert('Veuillez remplir tous les champs du formulaire.');
+            return false;
+        }
+
+        // Vérification de la taille du document
+        var maxFileSize = 10 * 1024 * 1024; // 10 MB
+        if (documentFile.size > maxFileSize) {
+            alert('La taille du document ne doit pas dépasser 10 MB.');
+            return false;
+        }
+
+        // Vérification du format du fichier
+        var filePath = $('#file_archive').val();
+        var allowedExtensions = /(\.pdf|\.doc|\.docx|\.xls|\.xlsx)$/i;
+        if (!allowedExtensions.exec(filePath)) {
+            alert('Veuillez sélectionner un fichier PDF, Word ou Excel.');
+            return false;
+        }
+
+        return true;
+    }
+
+    // Fonction pour réinitialiser le formulaire après soumission réussie
+    function resetForm() {
+        $('#archiveForm')[0].reset();
+    }
+
+    // Attacher l'événement de soumission du formulaire à la fonction handleFormSubmit
+    $('#archiveForm').submit(handleFormSubmit);
+});
+
+
+</script>
+
+
 
 
 
@@ -98,120 +236,6 @@
 
 
 
-
-          // Add user ajax 
-          $("#addform").submit(function(e) {
-            e.preventDefault();
-            const fd = new FormData(this);
-            $("#addbtn").text('Ajouter...');
-            $.ajax({
-              url: "{{ route('storeexpediction') }}",
-              method: 'post',
-              data: fd,
-              cache: false,
-              contentType: false,
-              processData: false,
-              dataType: 'json',
-              success: function(response) {
-                if (response.status == 200) {
-                  fetchAllportie();
-                  $.notify("Enregitrer avec succès !", "success");
-                  $("#addbtn").text('Enregistrement');
-                  $("#addModal").modal('hide');
-                  $("#addform")[0].reset();
-
-                }
-
-                if (response.status == 201) {
-                  $.notify("Attention: la lettre  existe déjà !", "info");
-                  $("#addModal").modal('show');
-                }
-
-                if (response.status == 202) {
-                  $.notify("Erreur d'execution, verifier votre internet", "error");
-                  $("#addModal").modal('show');
-                  $("#addbtn").text('Enregitrer');
-                }
-
-              }
-            });
-          });
-
-          // Edit user ajax request
-          $(document).on('click', '.editIcon', function(e) {
-            e.preventDefault();
-            let id = $(this).attr('id');
-            $.ajax({
-              url: "{{ route('editUs') }}",
-              method: 'get',
-              data: {
-                id: id,
-                _token: '{{ csrf_token() }}'
-              },
-              success: function(response) {
-                $("#fun_title").val(response.title);
-                $("#fun_id").val(response.id);
-              }
-            });
-          });
-
-          // update user ajax request
-          $("#edit_function_form").submit(function(e) {
-            e.preventDefault();
-            const fd = new FormData(this);
-            $("#edit_function_btn").text('Mises ajours...');
-            $.ajax({
-              url: "{{ route('updateUs') }}",
-              method: 'post',
-              data: fd,
-              cache: false,
-              contentType: false,
-              processData: false,
-              dataType: 'json',
-              success: function(response) {
-                if (response.status == 200) {
-                  $.notify("Function update Successfully !", "success");
-                  fetchAllportie();
-
-                }
-                $("#edit_function_btn").text('Update function');
-                $("#edit_function_form")[0].reset();
-                $("#edit_functionModal").modal('hide');
-              }
-            });
-          });
-
-          // Delete user ajax request
-          $(document).on('click', '.deleteIcon', function(e) {
-            e.preventDefault();
-            let id = $(this).attr('id');
-            let csrf = '{{ csrf_token() }}';
-            Swal.fire({
-              title: 'Êtes-vous sûr ?',
-              text: "Vous ne pourrez pas revenir en arrière !",
-
-              showCancelButton: true,
-              confirmButtonColor: 'green',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Oui , Supprimer !'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                $.ajax({
-                  url: "{{ route('deletepor') }}",
-                  method: 'delete',
-                  data: {
-                    id: id,
-                    _token: csrf
-                  },
-                  success: function(response) {
-                    console.log(response);
-                    $.notify("Supprimer avec succès !", "success");
-                    fetchAllportie();
-                  }
-                });
-              }
-            })
-          });
 
           fetchAllportie();
 

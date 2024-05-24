@@ -407,24 +407,18 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('archivage')->group(function () {
         Route::get('/', [ArchivageController::class, 'index'])->name('archivage');
-       
-        // Route::get('/fetchAllvl', [VehiculeController::class, 'fetchAll'])->name('fetchAllvl');
-        // 
-        // Route::delete('/deletevl', [VehiculeController::class, 'deleteall'])->name('deletevl');
-        //Route::get('/editfl', [FolderController::class, 'edit'])->name('editfl');
-        //Route::post('/updatefl', [FolderController::class, 'update'])->name('updatefl'); 
-
-        Route::post('/storeexpediction', [ArchivageController::class, 'storeexpediction'])->name('storeexpediction');
-
+        Route::post('archives', [ArchivageController::class, 'store'])->name('archives.store');
         Route::get('/getarchive', [ArchivageController::class, 'getarchive'])->name('getarchive');
         Route::post('/storeClasseur', [ArchivageController::class, 'store'])->name('storeClasseur');
         Route::post('/fetchAllclasseur', [ArchivageController::class, 'store'])->name('fetchAllclasseur');
+        Route::get('/getEtiquettes/{classeurId}', [EtiquetteController::class, 'getEtiquettesByClasseur'])->name('getEtiquettesByCl');
+
     });
 
     Route::prefix('etiquette')->group(function () {
         Route::get('/', [EtiquetteController::class, 'index'])->name('etiquette');
-        Route::post('/storeetiquette', [EtiquetteController::class, 'storeexpediction'])->name('storeetiquette');
-        Route::post('/fetchalletiquette', [EtiquetteController::class, 'store'])->name('fetchalletiquette');
+        Route::post('/storeetiquette', [EtiquetteController::class, 'store'])->name('storeetiquette');
+        Route::get('/fetchalletiquette', [EtiquetteController::class, 'fetchAll'])->name('fetchalletiquette');
     });
 
     Route::prefix('activity')->group(function () {

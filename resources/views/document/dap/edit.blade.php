@@ -25,9 +25,9 @@
                                                 <tbody class="list">
 
                                                     <tr>
-                                                        <td style="width:120px"> Numéro fiche </br>
+                                                        <td style="width:120px"> Numéro dap </br>
                                                         <input type="hidden" value="{{ $datadap->iddape }}" id="dapid" name="dapid" class="form-control form-control-sm" required>
-                                                            <input type="text" value="{{ $datadap->numerodap }}" id="numerodap" name="numerodap" class="form-control form-control-sm" required>
+                                                            <input type="text" value="{{ $datadap->numerodp }}" id="numerodap" name="numerodap" class="form-control form-control-sm" readonly style="background-color:#c0c0c0" >
                                                         </td>
                                                         <td style="width:300px"> Service <br>
                                                             <select type="text" name="serviceid" id="serviceid" style="width: 100%" class="form-control form-control-sm" required>
@@ -49,8 +49,7 @@
 
                                                         <td class="align-middle" style="width:20%">
                                                             <b>FEB ID: </b> <br>
-                                                            <input type="text" value="{{ $datadap->referencefeb }}" class="form-control form-control-sm" readonly style="background-color:#c0c0c0"/>
-
+                                                        
 
                                                         </td>
 
@@ -71,6 +70,10 @@
                                                         <input type="text" class="form-control form-control-sm" value="{{ $somfeb }}" readonly style="background-color:#c0c0c0" required>
                                                     </td>
 
+                                                    <td> CHQ nº:
+                                                        <input type="text" id="cho" name="cho" class="form-control form-control-sm" value="{{ $datadap->cho }}">
+                                                    </td>
+
                                                     <td align="center"> OV nº : <br>
                                                         <input type="checkbox" class="form-check-input" name="ov" id="ov" @if($datadap->ov==1)
                                                         checked value="{{ $datadap->ov }}"
@@ -80,14 +83,7 @@
                                                         />
                                                     </td>
 
-                                                    <td align="center"> CHQ nº <br>
-                                                        <input type="checkbox" class="form-check-input" name="ch" id="ch" @if( $datadap->cho==1)
-                                                        checked value="{{ $datadap->cho }}"
-                                                        @else
-                                                        value="{{ $datadap->cho }}"
-                                                        @endif
-                                                        />
-                                                    </td>
+                                                  
                                                 </tr>
 
                                             </table>
@@ -101,7 +97,7 @@
                                                         <td colspan="3"> Ligne bugetaire : <b> {{ $datafeb->libelle }}</b> </td>
                                                     </tr>
                                                     <tr>
-                                                        <td> Etablie par : <b> {{ ucfirst($datafeb->nom) }} {{ ucfirst($datafeb->prenom)  }}</b> </td>
+                                                        <td> Etablie par : <b> {{ ucfirst($initiateur->nom) }} {{ ucfirst($initiateur->prenom)  }}</b> </td>
                                                         <td> Activité : {{ $datafeb->descriptionf }}</td>
                                                         <td> Montant globale feb : {{ $sommefebs }}</td>
                                                     </tr>

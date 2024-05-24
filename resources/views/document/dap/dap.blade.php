@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demande et d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodap }}</title>
+    <title>Demande et d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodp }}</title>
     <style>
         /* Styles pour l'en-tête de la première page */
         header.first-page-header {
@@ -148,15 +148,15 @@
 
     <div class="main-content content-after-header " id="main-content">
         <H3>
-            <center> Demande et d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodap }}/{{ date('Y')}} </center>
+            <center> Demande et d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodp }}/{{ date('Y')}} </center>
         </H3>
         <div class="col-sm-12">
             <table style=" width:100%" class="table table-sm m-0" id="mytable">
                 <tr>
                     <td width="55%">
                         Service: {{ $datadap->titres }} <BR>
-                        Composante/ Projet/Section: {{ ucfirst(Session::get('title')) }} <br>
-                        Devise : {{ Session::get('devise') }} <br>
+                        Composante/ Projet/Section: {{ ucfirst( $datadap->titres) }} <br>
+                        Devise : {{ $devise }} <br>
 
                         Moyen de Paiement :
 

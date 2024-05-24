@@ -1,25 +1,69 @@
 @extends('layout/app')
 @section('page-content')
 @php
- $documentacce= DB::table('febs')
- ->Where('acce', Auth::id() )
- ->Where('acce_signe',  0)
- ->get()
- ->count();
- 
- $documentcompte = DB::table('febs')
- ->Where('comptable', Auth::id() )
- ->Where('comptable_signe',  0)
- ->get()
- ->count();
- 
- $documentchefcomposent= DB::table('febs')
- ->Where('chefcomposante', Auth::id() )
- ->Where('chef_signe',  0)
- ->get()
- ->count();
- 
- $documentNombre= $documentacce + $documentcompte + $documentchefcomposent;
+$documentacce= DB::table('febs')
+->Where('acce', Auth::id() )
+->Where('acce_signe',  0)
+->get()
+->count();
+
+$documentcompte = DB::table('febs')
+->Where('comptable', Auth::id() )
+->Where('comptable_signe',  0)
+->get()
+->count();
+
+$documentchefcomposent= DB::table('febs')
+->Where('chefcomposante', Auth::id() )
+->Where('chef_signe',  0)
+->get()
+->count();
+
+
+
+$dap_demandeetablie= DB::table('daps')
+->Where('demandeetablie', Auth::id() )
+->Where('demandeetablie_signe',  0)
+->get()
+->count();
+
+
+
+$dap_verifier= DB::table('daps')
+->Where('verifierpar', Auth::id() )
+->Where('verifierpar_signe',  0)
+->get()
+->count();
+
+$dap_approuverpar= DB::table('daps')
+->Where('approuverpar', Auth::id() )
+->Where('approuverpar_signe',  0)
+->get()
+->count();
+
+$dap_responsable= DB::table('daps')
+->Where('responsable', Auth::id() )
+->Where('responsable_signe',  0)
+->get()
+->count();
+
+$dap_secretaire= DB::table('daps')
+->Where('secretaire', Auth::id() )
+->Where('secretaure_general_signe',  0)
+->get()
+->count();
+
+$dap_chefprogramme= DB::table('daps')
+->Where('chefprogramme', Auth::id() )
+->Where('chefprogramme_signe',  0)
+->get()
+->count();
+
+
+$dap_nombre= $dap_demandeetablie + $dap_verifier + $dap_approuverpar + $dap_responsable + $dap_secretaire + $dap_chefprogramme ;
+$fab_nombre= $documentacce + $documentcompte + $documentchefcomposent;
+
+$documentNombre = $dap_nombre + $fab_nombre ;
  
  @endphp
 

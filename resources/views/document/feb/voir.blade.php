@@ -49,9 +49,8 @@
                                 <td>Composante/ Projet/Section: {{ ucfirst($dataprojets->title) }} </td>
                                 <td>Période: {{ $dataFeb->periode }}
 
-                                @if (isset($onebeneficaire->libelle) && !empty($onebeneficaire->libelle)) 
-                                    Bénéficiaire : {{ $onebeneficaire->libelle }} 
-                                @endif
+                              
+                                
                                     
                             </td>
                             </tr>
@@ -110,7 +109,9 @@
                                     />
                                 </td>
 
-                                <td> Bénéficiaire : {{ $dataFeb->beneficiaire }} </td>
+                                <td> @if (isset($onebeneficaire->libelle) && !empty($onebeneficaire->libelle)) 
+                                    Bénéficiaire : {{ $onebeneficaire->libelle }} 
+                                @endif</td>
                             </tr>
 
 
