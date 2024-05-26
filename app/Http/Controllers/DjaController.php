@@ -59,9 +59,9 @@ class DjaController extends Controller
                 <i class="mdi mdi-dots-vertical ms-2"></i> Action
             </button>
             <div class="dropdown-menu">
-                <a href="#" class="dropdown-item text-success mx-1 voirdja" id="' . $datas->numerodap . '"  data-bs-toggle="modal" data-bs-target="#djaModale" ><i class="far fa-edit"></i> Justificatif DJA </a>
+                <a href="#" class="dropdown-item text-success mx-1 voirdja" id="'. $datas->numerodap.'"  data-bs-toggle="modal" data-bs-target="#djaModale" ><i class="far fa-edit"></i> Justificatif DJA </a>
                 <a href="dja/'.$cryptedId.'/view" class="dropdown-item text-success mx-1"><i class="far fa-eye"></i> Voir DJA </a>
-                <a href="dja/'.$cryptedId.'/edit" class="dropdown-item text-success mx-1" ><i class="far fa-edit"></i> Modifier DJA</a>
+              
                 <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer DJA</a>
             </div>
           </div>
@@ -274,7 +274,6 @@ class DjaController extends Controller
     );
   }
 
-
   public function edit($id)
   {
 
@@ -354,102 +353,106 @@ class DjaController extends Controller
 
   public function getdjas(Request $request)
   {
-    try {
-      $IDn = $request->id;
-      $budget = session()->get('budget');
-      $IDP = session()->get('id');
-      $output = '';
-      // Initialisez une variable pour stocker les sorties de tableau
-   
-      // Effectuez la recherche de données pour chaque identifiant sélectionné
-      $data = DB::table('elementdaps')
-        ->join('febs', 'elementdaps.referencefeb', 'febs.id')
-        ->select('elementdaps.*', 'elementdaps.id as idedaps', 'febs.ligne_bugdetaire', 'febs.numerofeb', 'febs.id as idfb')
-        ->where('numerodap', $IDn)
-        ->get();
-
-      $iddja = DB::table('djas')
+      try {
+          $IDn = $request->id;
+          $budget = session()->get('budget');
+          $IDP = session()->get('id');
+          $output = '';
+          // Initialisez une variable pour stocker les sorties de tableau
+  
+          // Effectuez la recherche de données pour chaque identifiant sélectionné
+          $data = DB::table('elementdaps')
+              ->join('febs', 'elementdaps.referencefeb', 'febs.id')
+              ->select('elementdaps.*', 'elementdaps.id as idedaps', 'febs.ligne_bugdetaire', 'febs.numerofeb', 'febs.id as idfb')
+              ->where('elementdaps.numerodap', $IDn)
+              ->where('projetidda', $IDP)
+              ->get();
+  
+          $iddja = DB::table('djas')
               ->where('numerodap', $IDn)
               ->first();
+  
+          $personnel = Personnel::all();
+          $vehicules = Vehicule::all();
 
-      $personnel = Personnel::all();
-      $vehicules = Vehicule::all();
-
-      if ($data->count() > 0) {
-        // Générer la sortie HTML pour chaque élément sélectionné
-        foreach ($data as $datas) {
-          // sommes element
-          $sommefeb = DB::table('elementfebs')
-            ->Where('febid', $datas->referencefeb)
-            ->Where('projetids', $IDP)
-            ->SUM('montant');
-
-          $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)->first();
-          // Construire la sortie HTML pour chaque élément sélectionné
-          $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
-          $output .= '<input type="hidden" name="febid[]" id="febid[]" value="' . $datas->idfb . '" / > 
-                      <input type="hidden" name="iddjas[]" id="iddjas[]" value="' . $iddja->id . '" /> 
-                      <input type="hidden" name="dpasid[]" id="dpasid[]" value="'.$datas->idedaps.'" />';
-
-          $output .= '<input type="hidden" id="ligneid[]" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
-          $output .= '<tr>';
-          $output .= '<td width="10%">Numéro FEB : ' . $datas->numerofeb . '</td>';
-          $output .= '<td width="13%">Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" value="' . $sommefeb . '" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-          $output .= '<td width="13%">Montant utilise      <input type="number" name="montant_utiliser[]" id="montant_utiliser[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-          $output .= '<td width="13%">Surplus/Manque       <input type="text" name="surplus[]" id="surplus[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-          $output .= '<td width="13%">Montant Retourne     <input type="text" name="montant_retourne[]" id="montant_retourne[]" style="width: 100%; border:1px solid #c0c0c0" />   <div class="error-message" style="color: red;"></div></td>';
-          $output .= '<td width="13%">Bordereau            <input type="text"  name="bordereau[]" id="bordereau[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-          $output .= '<td width="13%">Description           <input type="text" id="description[]" name="description[]" class="description-input" style="width: 100%; border:1px solid #c0c0c0" /></td>                    ';
-          $output .= '<td width="13%" style="display: none;"> Plaque  
-                        <select type="text" name="plaque[]" id="plaque[]" class="plaque-input" style="width: 100%; border:1px solid #c0c0c0"> 
-                        <option value="">Aucun</option>';
-                          foreach ($vehicules as $vehicule) 
-                          {
-                            $output .= '<option value="'. $vehicule->matricule.'">' . $vehicule->matricule . '</option>';
-                          }
-          $output .= '</select> </td>';
-          $output .= '</tr></table>';
-        }
-
-
-      $output .= '
-      <table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
-          <tr>
-              <td class="align-middle ps-3 name" colspan="7">
-                  <b>Réception des pièces justificatives de l\'utilisation de l\'avance par: </b>
-                  <select type="text" class="form-control form-control-sm" name="receptionpar" id="receptionpar" style="width:40%">
-                    <option value="">--Choisissez le personnel--</option>';
-                      
-      foreach ($personnel as $personnels) {
-          $output .= '<option value="' . $personnels->id . '">' . $personnels->nom . ' ' . $personnels->prenom . '</option>';
+          if($iddja->	justifie==1){
+  
+          if ($data->count() > 0) {
+              // Générer la sortie HTML pour chaque élément sélectionné
+              foreach ($data as $datas) {
+                  // sommes element
+                  $sommefeb = DB::table('elementfebs')
+                      ->where('febid', $datas->referencefeb)
+                      ->where('projetids', $IDP)
+                      ->sum('montant');
+  
+                  $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)->first();
+                  // Construire la sortie HTML pour chaque élément sélectionné
+                  $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
+                  $output .= '<input type="hidden" name="febid[]" id="febid[]" value="' . $datas->idfb . '" / > 
+                              <input type="hidden" name="iddjas[]" id="iddjas[]" value="' . $iddja->id . '" /> 
+                              <input type="hidden" name="dpasid[]" id="dpasid[]" value="'.$datas->idedaps.'" />';
+  
+                  $output .= '<input type="hidden" id="ligneid[]" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
+                  if ($datas->montantavance == NULL) {
+                    $montantavance = 0;
+                } else {
+                    $montantavance = $datas->montantavance;
+                }
+                
+                  $output .= '<tr>';
+                  $output .= '<td width="10%">Numéro FEB : ' . $datas->numerofeb . '</td>';
+                  $output .= '<td width="13%">Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" value="' .$montantavance . '" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                  $output .= '<td width="13%">Montant utilisé <input type="number" name="montant_utiliser[]" id="montant_utiliser[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                  $output .= '<td width="13%">Surplus/Manque <input type="text" name="surplus[]" id="surplus[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                  $output .= '<td width="13%">Montant Retourné <input type="text" name="montant_retourne[]" id="montant_retourne[]" style="width: 100%; border:1px solid #c0c0c0" />   <div class="error-message" style="color: red;"></div></td>';
+                  $output .= '<td width="13%">Bordereau <input type="text"  name="bordereau[]" id="bordereau[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                  $output .= '<td width="13%">Description <input type="text" id="description[]" name="description[]" class="description-input" style="width: 100%; border:1px solid #c0c0c0" /></td>                    ';
+                  $output .= '<td width="13%" style="display: none;"> Plaque  
+                                  <select type="text" name="plaque[]" id="plaque[]" class="plaque-input" style="width: 100%; border:1px solid #c0c0c0"> 
+                                  <option disabled="true" selected="true"> >Aucun</option>';
+                  foreach ($vehicules as $vehicule) 
+                  {
+                      $output .= '<option value="'. $vehicule->matricule.'">' . $vehicule->matricule . '</option>';
+                  }
+                  $output .= '</select> </td>';
+                  $output .= '</tr></table>';
+              }
+  
+  
+              $output .= '
+              <table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
+                  <tr>
+                      <td class="align-middle ps-3 name" colspan="7">
+                          <b>Réception des pièces justificatives de l\'utilisation de l\'avance par: </b>
+                          <select type="text" class="form-control form-control-sm" name="receptionpar" id="receptionpar" style="width:100%">
+                              <option disabled="true" selected="true" value="">--Choisissez le personnel--</option>';
+                              foreach ($personnel as $personnels) {
+                                  $output .= '<option value="'.$personnels->id.'">' . $personnels->nom . ' ' . $personnels->prenom . '</option>';
+                              }
+              $output .= '
+                          </select>
+                      </td>
+                  </tr>
+              </table>';
+  
+  
+          } 
+        }else {
+              // Si aucune donnée n'est trouvée, retournez un message d'erreur avec une classe "danger"
+              $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
+                              <tr class="table-danger"><td colspan="7">Aucune donnée trouvée sur la justification. Ceci est une DJA non justifiée</td>
+                              </tr>
+                          </table>';
+          }
+  
+          return $output;
+      } catch (\Exception $e) {
+          // Retourner un message d'erreur en cas d'exception
+          return response()->json(['error' => 'Une erreur est survenue : ' . $e->getMessage()], 500);
       }
-      
-      $output .= '
-                  </select>
-              </td>
-          </tr>
-      </table>';
-
-
-      } else {
-        // Si aucune donnée n'est trouvée, retournez un message d'erreur avec une classe "danger"
-        $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
-                        <tr class="table-danger"><td colspan="7">Aucune donnée trouvée sur la justification. ceci est une DJA non justifier</td>
-                        </tr>
-                    </table>';
-      }
-
-     
-
-    
-      return $output;
-    } catch (\Exception $e) {
-      // Retourner un message d'erreur en cas d'exception
-      return response()->json(['error' => 'Une erreur est survenue : ' . $e->getMessage()], 500);
-    }
   }
-
- 
+  
   public function saveDjas(Request $request)
   {
       try {
@@ -551,6 +554,4 @@ class DjaController extends Controller
 }
 
 
-// <a href="dja/'.$cryptedId.'/view" class="dropdown-item text-success mx-1 voirIcon"  ><i class="far fa-edit"></i> Voir dja</a>
-//<a href="dja/'.$cryptedId.'/edit" class="dropdown-item text-primary mx-1 editIcon " title="Modifier"><i class="far fa-edit"></i> Modifier dja</a>
-//<a href="dja/'.$cryptedId. '/generate-pdf-dja" class="dropdown-item  mx-1"><i class="fa fa-print"> </i> Générer document PDF</a>
+//   <a href="dja/'.$cryptedId.'/edit" class="dropdown-item text-success mx-1" ><i class="far fa-edit"></i> Modifier DJA</a>

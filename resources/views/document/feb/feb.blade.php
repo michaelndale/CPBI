@@ -101,7 +101,7 @@
             <tr>
                 <td>
                     <center>
-                        <img src="element/logo/logo.png" alt="logo" height="80px" />
+                        <img src="element/logo/logo.png" alt="logo" height="60px" />
                     </center>
                 </td>
                 <td>

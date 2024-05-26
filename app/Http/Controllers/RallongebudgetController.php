@@ -182,7 +182,7 @@ class RallongebudgetController extends Controller
                       <td align="right"><b>' . number_format($somme_budget_ligne, 0, ',', ' ') . '</b></td>';
 
           for ($i = 1; $i <= $periode; $i++) {
-            $tglign = 'T' . $i;
+            $tglign = 'T'.$i;
             $somme_TMOntant = DB::table('elementfebs')
               ->where('tperiode', $tglign)
               ->where('projetids', $IDP)

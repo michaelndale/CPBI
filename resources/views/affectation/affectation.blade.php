@@ -31,14 +31,14 @@
                     <tr>
                       <td class="align-middle ps-3">
                         
-                        <input class="form-check-input" name="personnel[]" type="checkbox" value="{{ $members->id }}" 
+                        <input class="form-check-input" name="personnel[]" type="checkbox" value="{{ $members->personnelid }}" 
                         @php 
                         if(isset($existe)){
                           foreach ($existe as $existes): 
                           $proj=$existes->projectid;
                           $memb= $existes->memberid;
                           $sessionprojec= Session::get('id');
-                          if($proj== $sessionprojec && $memb== $members->id):
+                          if($proj== $sessionprojec && $memb== $members->personnelid):
                           echo "checked";
                           endif ;
                           endforeach;
@@ -52,21 +52,7 @@
                         {{ ucfirst($members->nom) }} {{ ucfirst($members->prenom) }}
                       </td>
 
-                      <td class="align-left">
-                        <input type="text" style="height:20px" name="role[]" 
-                        value="@php
-                          if(isset($existe)){
-                          foreach ($existe as $existes): 
-                          $proj=$existes->projectid;
-                          $memb= $existes->memberid;
-                          $sessionprojec= Session::get('id');
-                          if($proj== $sessionprojec && $memb== $members->id):
-                            echo $existes->role;
-                          endif ;
-                          endforeach;
-                        }
-                          @endphp"  placeholder="Role dans le projet" class="form-control form-control-sm"/>
-                      </td>
+                    
                     </tr>
                     @endforeach
                   </table>

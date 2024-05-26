@@ -4,7 +4,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="myLargeModalLabel"><i class="fa fa-folder-open"></i> Document en attente des signatures</h5>
+        <h5 class="modal-title" id="myLargeModalLabel"><i class="fa fa-folder-open"></i>Tâches à faire en attente </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" >
@@ -16,12 +16,13 @@
                   <thead>
                     <tr>
                       <th class="sort border-top "><b>ID </b></center></th>
-                      <th class="sort border-top" data-sort="date"><b>Document</b></th>
+                      <th class="sort border-top" data-sort="Document"><b>Document</b></th>
                       <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> Doc </b></th>
-                      <th class="sort border-top" data-sort="date"><b>Date Doc</b></th>
-                      <th class="sort border-top" data-sort="date"><b>Date creation</b></th>
-                      <th class="sort border-top" data-sort="date"><b>Date limite</b></th>
-
+                      <th class="sort border-top" data-sort="Date Doc"><b>Date Doc</b></th>
+                      <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
+                      <th class="sort border-top" data-sort="Date limite"><b>Date limite</b></th>
+                      <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
+                      
                     </tr>
                   </thead>
 
@@ -521,17 +522,6 @@
       });
     }
 
-    navfetchnotification();
-
-  function navfetchnotification() {
-      $.ajax({
-        url: "{{ route('navfetchnotification') }}",
-        method: 'get',
-        success: function(reponse) {
-          $("#navallnotification").html(reponse);
-        }
-      });
-    }
 </script>
 <!-- Right bar overlay-->
 <div class="rightbar-overlay"></div>

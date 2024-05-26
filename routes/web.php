@@ -42,6 +42,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RallongebudgetController;
 use App\Http\Controllers\RapportcummuleController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SignalefebController;
 use App\Http\Controllers\SqrController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\StatutvehiculeController;
@@ -262,6 +263,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/findligne', [FebController::class, 'findligne'])->name('findligne');
         Route::post('/updatefeb', [FebController::class, 'update'])->name('updatefeb');
         Route::delete('/deletefeb', [FebController::class, 'delete'])->name('deletefeb');
+        Route::delete('/desactiverlesignalefeb', [FebController::class, 'desacctiveSignale'])->name('desactiverlesignalefeb');
         Route::get('/{key}/view/', [FebController::class, 'show'])->name('key.viewFeb');
         Route::get('{id}/edit/', [FebController::class, 'showonefeb'])->name('showfeb');
         Route::put('/updatallfeb/{cle}', [FebController::class, 'Updatestore'])->name('updateallfeb');
@@ -269,7 +271,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('deleteelementsfeb', [FebController::class, 'deleteelementsfeb'])->name('deleteelementsfeb');
         Route::post('/check-feb', [FebController::class, 'checkfeb'])->name('check.feb');
         Route::get('/generate-word-feb/{id}', [FebController::class, 'generateWordFeb'])->name('generate.word.feb');
+       
+        Route::get('/feb/fetchAllsignalefeb/{febid?}', [SignalefebController::class, 'fetchAllsignalefeb'])->name('fetchAllsignalefeb');
 
+        Route::post('/storesignalefeb', [SignalefebController::class, 'storeSignaleFeb'])->name('storesignalefeb');
     });
 
     Route::get('/getfeb', [FebController::class, 'findfebelement'])->name('getfeb');
@@ -280,7 +285,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/getactivite', [FebController::class, 'getactivite'])->name('getactivite');
     Route::get('/fetctnotifiaction', [FebController::class, 'notificationdoc'])->name('allnotification');
-    Route::get('/navfetctnotifiaction', [FebController::class, 'navnotificationdoc'])->name('navfetchnotification');
+
 
     Route::get('/condictionsearch', [RallongebudgetController::class, 'condictionsearch'])->name('condictionsearch');
 

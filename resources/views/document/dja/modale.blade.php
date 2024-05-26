@@ -14,7 +14,7 @@
     <div class="modal-dialog modal-xl  modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Rapport d'utilisation de l'avance</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+                <h5 class="modal-title">Ajouter l'utilisation de l'avance</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
             </div>
             <div class="modal-body">
                 <form class="row g-3 mb-6" method="POST" id="addjdaForm">
@@ -32,7 +32,7 @@
                     </div>
             </div>
             <div class="modal-footer">
-                <button  id="addjustifierbtn" name="addjustifierbtn" class="btn btn-primary addjustifierbtn" type="submit">Enregistrer</button>
+                <button  id="addjustifierbtn" name="addjustifierbtn" class="btn btn-primary addjustifierbtn" type="submit"><i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
             </div>
             </form>
         </div>

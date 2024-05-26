@@ -164,7 +164,7 @@
 
                                     <td>
                                         <select type="text" class="form-control form-control-sm" name="demandeetablie" id="demandeetablie" required>
-                                            <option value="">-- Chef de Composante/Projet/Section --</option>
+                                            <option disabled="true" selected="true" value="">-- Chef de Composante/Projet/Section --</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
@@ -172,7 +172,7 @@
                                     </td>
                                     <td>
                                         <select type="text" class="form-control form-control-sm" name="verifier" id="verifier" required>
-                                            <option value="">--Chef Comptable--</option>
+                                            <option disabled="true" selected="true" value="">--Chef Comptable--</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
@@ -182,7 +182,7 @@
 
                                     <td>
                                         <select type="text" class="form-control form-control-sm" name="approuver" id="approuver" required>
-                                            <option value="">--Chef de Service --</option>
+                                            <option disabled="true" selected="true" value="">--Chef de Service --</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
@@ -209,7 +209,7 @@
                                     <td>
                                         Responsable Administratif et Financier : <br>
                                         <select type="text" class="form-control form-control-sm" name="resposablefinancier" id="resposablefinancier" required>
-                                            <option value="">--Selectionnez personnel--</option>
+                                            <option disabled="true" selected="true" value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
@@ -218,7 +218,7 @@
                                     <td>
                                         Secrétaire Général de la CEPBU : <br>
                                         <select type="text" class="form-control form-control-sm" name="secretairegenerale" id="secretairegenerale" required>
-                                            <option value="">--Selectionnez personnel--</option>
+                                            <option disabled="true" selected="true" value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
@@ -229,7 +229,7 @@
                                     <td>
                                         Chef des Programmes </br>
                                         <select type="text" class="form-control form-control-sm" name="chefprogramme" id="chefprogramme" required>
-                                            <option value="">--Selectionnez personnel--</option>
+                                            <option  disabled="true" selected="true" value="">--Selectionnez personnel--</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach

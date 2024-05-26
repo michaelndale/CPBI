@@ -12,13 +12,11 @@ use Illuminate\Support\Facades\DB;
 
 class AffectationController extends Controller
 {
-   
+  // Affectation store
+  public function storeAffectation(Request $request)
+  {
 
-     // Affectation store
-     public function storeAffectation(Request $request)
-     {
 
-       
     $projectId = $request->project_id;
     $members = $request->personnel;
 
@@ -27,51 +25,49 @@ class AffectationController extends Controller
 
     // Parcourir les membres sélectionnés
     foreach ($members as $memberId) {
-        $role = $request->role[$memberId];
+   
 
-        // Vérifier si l'utilisateur est sélectionné
-        if (in_array($memberId, $members)) {
-            // Créer une nouvelle affectation
-            Affectation::create([
-                'projectid' => $projectId,
-                'memberid' => $memberId,
-                'userid' => Auth::id(), // Vous devez définir l'utilisateur ici
-                'role' => $role
-            ]);
-        }
+      // Vérifier si l'utilisateur est sélectionné
+      if (in_array($memberId, $members)) {
+        // Créer une nouvelle affectation
+        Affectation::create([
+          'projectid' => $projectId,
+          'memberid' => $memberId
+        ]);
+      }
     }
 
-    return redirect()->back()->with('success', 'Mise à jour réussi avec succès..');   
-     }
+    return redirect()->back()->with('success', 'Mise à jour réussi avec succès..');
+  }
 
+  public function index()
+  {
+    $title = 'Affectation project';
+    $active = 'Project';
+    $idp = session()->get('id');
 
-
-    public function index ()
-    {
-      $title='Affectation project';
-      $active = 'Project';
-      $idp = session()->get('id');
-
-      $member = DB::table('personnels')
-            ->join('users', 'personnels.id', '=', 'users.personnelid')
-            ->get();
-      
-    
-
-   
-      $existe = DB::table('affectations')
-      ->join('users', 'affectations.memberid', '=', 'users.personnelid')
-      ->select('affectations.*')
-      ->where('affectations.projectid',$idp)
+    $member = DB::table('personnels')
+      ->join('users', 'personnels.id', '=', 'users.personnelid')
+      ->select('users.*', 'personnels.*', 'users.personnelid as personnelid')
       ->get();
 
-      return view('affectation.affectation', 
-        [
-          'title'  => $title,
-          'active' => $active,
-          'member' => $member,
-          'existe' => $existe
-      ]);
-    }
- 
+
+
+
+    $existe = DB::table('affectations')
+      ->join('users', 'affectations.memberid', '=', 'users.personnelid')
+      ->select('affectations.*')
+      ->where('affectations.projectid', $idp)
+      ->get();
+
+    return view(
+      'affectation.affectation',
+      [
+        'title'  => $title,
+        'active' => $active,
+        'member' => $member,
+        'existe' => $existe
+      ]
+    );
+  }
 }

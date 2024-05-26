@@ -198,17 +198,25 @@ class DapController extends Controller
               }
           }
   
-          if ($justifier == 1) {
+          if ($justifier == 1 ||  $justifier == 0 ) {
               // Enregistrement des informations de justification
               $justification = new Dja();
               $justification->numerodjas = $request->numerodap;
               $justification->projetiddja = $request->projetid;
               $justification->numerodap = $request->numerodap;
               $justification->numeroov = $ov;
-              $justification->justifie = $justifier;
+              if ($justifier == 1) 
+              {
+                $justification->justifie = 1;
+              }else{
+                $justification->justifie = 0;
+              }
+
               $justification->userid = Auth::id();
               $justification->save();
-          }
+         
+            }
+         
   
           // Confirmer la transaction
           DB::commit();

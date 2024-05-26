@@ -54,12 +54,16 @@
                       <th class="sort border-top" data-sort="om"> <b> <center>Montant total </center></b></th>
                       <th class="sort border-top" data-sort="periode"><center><b>Période</b></center></th>
                       <th class="sort border-top ps-3" data-sort="facture"><center><b>Facture</b></center></th>
-                      <th class="sort border-top" data-sort="om"><center><b>OM</b></center></th>
-                      <th class="sort border-top" data-sort="bc"><center><b>BC</b></center></th>
-                      <th class="sort border-top" data-sort="bc"><center><b>NEC</b></center></th>
-                      <th class="sort border-top" data-sort="bc"><center><b>FP/Devis</b></center></th>
-                      <th class="sort border-top" data-sort="date"><center><b>Date</b></center></th>
-                      <th class="sort border-top" data-sort="om"> <b>%</b> </th>
+                      <th class="sort border-top" data-sort="om"><center><b>O.M</b></center></th>
+                      <th class="sort border-top" data-sort="bc"><center><b>B.C</b></center></th>
+                      <th class="sort border-top" data-sort="PVA"><center><b>P.V.A</b></center></th>
+                      <th class="sort border-top" data-sort="F.P"><center><b>F.P/Devis/Liste</b></center></th>
+                      <th class="sort border-top" data-sort="F.P"><center><b>Reçu</b></center></th>
+                      <th class="sort border-top" data-sort="F.P"><center><b>R.M</b></center></th>
+                      <th class="sort border-top" data-sort="date"><center><b>Date FEB</b></center></th>
+                      <th class="sort border-top" data-sort="date"><center><b>Créé le</b></center></th>
+                      <th class="sort border-top" data-sort="date"><center><b>Créé par</b></center></th>
+                      <th class="sort border-top" data-sort="%"><center> <b>%</b></center> </th>
                       
                     </tr>
                   </thead>
@@ -67,7 +71,7 @@
 
                   <tbody class="show_all" id="show_all" >
                     <tr >
-                      <td colspan="11">
+                      <td colspan="14">
                         <h5 class="text-center text-secondery my-5">
                           <center> @include('layout.partiels.load') </center>
                       </td>
@@ -90,6 +94,7 @@
     </div>
   
 
+    
 
   @include('document.feb.modale')
 
@@ -362,8 +367,9 @@ function calc_total() {
                         value: '1'
                     }).appendTo('#addfebForm');
                     $('#addfebForm').submit();
+                    
                 } else {
-                    toastr.error("Opération annulée par l'utilisateur.", "Attention");
+                    toastr.info("Vous avez annulée l'opération.", "Info");
                     $("#addfebModal").modal('show');
                     document.getElementById("addfebbtn").disabled = false;
                     $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
@@ -420,6 +426,52 @@ function calc_total() {
 
               if (response.status == 205) {
                 toastr.error("Vous n'avez pas l'accreditation de supprimer ce FEB!", "Erreur");
+              }
+
+              if (response.status == 202) {
+                toastr.error("Erreur d'execution !", "Erreur");
+              }
+                fetchAllfeb();
+                Sommefeb();
+
+              }
+            });
+          }
+        })
+      });
+
+      $(document).on('click', '.desactiversignale', function(e) {
+        e.preventDefault();
+        let id = $(this).attr('id');
+        let csrf = '{{ csrf_token() }}';
+        Swal.fire({
+          title: 'Êtes-vous sûr ?',
+          text: "Vous etes sur le point de desactiver le signale ?  ",
+
+          showCancelButton: true,
+          confirmButtonColor: 'green',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Oui, desactiver !',
+          cancelButtonText: 'Annuller'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              url: "{{ route('desactiverlesignalefeb') }}",
+              method: 'delete',
+              data: {
+                id: id,
+                _token: csrf
+              },
+              success: function(response) {
+              
+                if (response.status == 200) {
+                toastr.success("Signale desactive succès !", "Desactivation");
+                fetchAllfeb();
+                Sommefeb();
+              }
+
+              if (response.status == 205) {
+                toastr.error("Vous n'avez pas l'accreditation de desactive le signale du FEB!", "Erreur");
               }
 
               if (response.status == 202) {

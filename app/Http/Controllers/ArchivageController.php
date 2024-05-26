@@ -27,54 +27,46 @@ class ArchivageController extends Controller
         ]
       );
     }
-    public function getarchive(Request $request)
+    public function getArchive(Request $request)
     {
-      $id = $request->id;
-      $resul =  Archive::where('classeur_id',$id)->orderBy('id', 'DESC')->get(); 
-      $output = '';
-      if ($resul->count() > 0) {
-        $output .= '
-     
-        <table class="table table-striped table-sm fs--1 mb-0">
-            <thead>
-            <tr>
-              <th class="align-middle ps-3 name">#</th>
-              <th >Titre</th>
-              <th >Statut</th>
-              <th >Attache</th>
-              <th >Date</th>
-              <th><center>Action</center></th>
-            </tr>
-          </thead>
-          <tbody class="list">
-           ';
-        $nombre = 1;
-        foreach ($resul as $rs) {
-          $output .= '<tr>
-              <td class="align-middle ps-3 name">' . $nombre . '</td>
-              <td>' . ucfirst($rs->title). '</td>
-              <td>' . ucfirst($rs->type). '</td>
-              <td><a href="' . $rs->document_path. '" ><i class="fa fa-file"></i></a></td>
-              <td>' . ucfirst($rs->created_at). '</td>
-              <td>
-              <center>
-              <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-              <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
-            </center>
-               
-              </td>
-            </tr>';
-          $nombre++;
+        $id = $request->id;
+        $results = Archive::where('classeur_id', $id)->orderBy('id', 'DESC')->get();
+        $output = '';
+        if ($results->count() > 0) {
+            $output .= '
+                <table class="table table-striped table-sm fs--1 mb-0">
+                    <thead>
+                        <tr>
+                            <th class="align-middle ps-3 name">#</th>
+                            <th >Titre</th>
+                            <th>Attache</th>
+                            <th>Format</th> <!-- Nouvelle colonne pour le format -->
+                            <th>Statut</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="list">';
+            $nombre = 1;
+            foreach ($results as $result) {
+                $output .= '
+                    <tr>
+                        <td class="align-middle ps-3 name">' . $nombre . '</td>
+                        <td style="width:50%">' . ucfirst($result->title) . '</td>
+                        <td><center><a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset('storage/document/' . basename($result->document_path)) . '" title="Ouvrir le document"><i class="fas fa-file-export"></i></a></center></td>
+                        <td>' . strtoupper(pathinfo($result->document_path, PATHINFO_EXTENSION)). '</td> <!-- Affiche le format du fichier -->
+                        <td>' . $result->type . '</td>
+                        <td>' . date('d-m-Y', strtotime($result->created_at)) . '</td>
+                    </tr>';
+                $nombre++;
+            }
+            $output .= '</tbody></table>';
+            echo $output;
+        } else {
+            echo '<h4 class="text-center text-secondary my-5">Aucune donnée pour ce classeur !</h4>';
         }
-        $output .= '</tbody></table>';
-        echo $output;
-      } else {
-        echo '<h4 class="text-center text-secondery my-5" > Aucun données pour cette classeur ! </h4>';
-      }
-
-      
-      //return response()->json($fon);
     }
+    
+    
 
     public function store(Request $request)
     {

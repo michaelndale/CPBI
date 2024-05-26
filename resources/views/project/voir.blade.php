@@ -281,7 +281,7 @@
                                                         <td><h5 class="font-size-14 m-0"><a href="javascript: void(0);" class="text-dark">{{ ucfirst($intervennant->nom) }} {{ ucfirst($intervennant->prenom) }}</a></h5></td>
                                                        
                                                         <td>
-                                                            <i class="mdi mdi-circle-medium font-size-18 text-success align-middle me-1"></i> {{ ucfirst($intervennant->role) }}
+                                                            <i class="mdi mdi-circle-medium font-size-18 text-success align-middle me-1"></i> 
                                                         </td>
                                                     </tr>
                                                   

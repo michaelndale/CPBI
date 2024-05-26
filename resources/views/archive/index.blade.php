@@ -70,6 +70,24 @@
 <!-- Assurez-vous que jQuery est inclus avant ce script -->
 <!-- Assurez-vous que jQuery est inclus avant ce script -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+function openPopup(element) {
+    var documentUrl = element.getAttribute('data-document-url');
+    var width = screen.width * 0.9; // 90% de la largeur de l'écran
+    var height = screen.height * 0.9; // 90% de la hauteur de l'écran
+    var left = (screen.width - width) / 2;
+    var top = (screen.height - height) / 2;
+    var options = 'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left + ',resizable=yes,scrollbars=yes';
+    window.open(documentUrl, 'Document', options);
+}
+</script>
+
+
+
+
+
+
+
 
 <script>
   $(document).ready(function() {
@@ -127,8 +145,8 @@ $(document).ready(function() {
                 var xhr = new window.XMLHttpRequest();
                 xhr.upload.addEventListener("progress", function(evt) {
                     if (evt.lengthComputable) {
-                        var percentComplete = (evt.loaded / evt.total) * 100;
-                        $('#progressBar').width(percentComplete + '%'); // Mettre à jour la barre de progression
+                        var percentComplete = Math.floor((evt.loaded / evt.total) * 100);
+                        $('#progressBar').width(percentComplete + '%').text(percentComplete + '%'); // Mettre à jour la barre de progression et afficher le pourcentage
 
                         // Si la progression est terminée
                         if (percentComplete === 100) {
@@ -145,17 +163,20 @@ $(document).ready(function() {
                 resetForm();
                 // Fermer le modal de chargement
                 $('#loadingModal').modal('hide');
+                $('#addModal').modal('hide');
                 // Afficher un message de succès
-                alert(response.message);
+                 toastr.success(response.message);
             },
             error: function(xhr, status, error) {
                 console.error(error);
                 $('#loadingModal').modal('hide');
                 var errorMessage = 'Erreur lors de l\'envoi des données.';
                 if (xhr.responseJSON && xhr.responseJSON.error) {
-                    errorMessage = xhr.responseJSON.error;
+                     toastr.error(xhr.responseJSON.error);
                 }
-                alert(errorMessage);
+                toastr.error(errorMessage);
+                // Changer la couleur de la barre de progression en rouge en cas d'erreur
+                $('#progressBar').addClass('progress-bar-danger');
                 // Fermer le modal de chargement en cas d'erreur
                 $('#loadingModal').modal('hide');
             }
@@ -164,33 +185,35 @@ $(document).ready(function() {
 
     // Fonction pour valider le formulaire 
     function validateForm() {
-        var title = $('#titre').val();
-        var type = $('input[name="type"]:checked').val();
-        var documentFile = $('#file_archive')[0].files[0];
-        var description = $('#description').val();
+    var title = $('#titre').val();
+    var type = $('input[name="type"]:checked').val();
+    var documentFile = $('#file_archive')[0].files[0];
+    var description = $('#description').val();
 
-        if (title.trim() === '' || !type || !documentFile || description.trim() === '') {
-            alert('Veuillez remplir tous les champs du formulaire.');
-            return false;
-        }
-
-        // Vérification de la taille du document
-        var maxFileSize = 10 * 1024 * 1024; // 10 MB
-        if (documentFile.size > maxFileSize) {
-            alert('La taille du document ne doit pas dépasser 10 MB.');
-            return false;
-        }
-
-        // Vérification du format du fichier
-        var filePath = $('#file_archive').val();
-        var allowedExtensions = /(\.pdf|\.doc|\.docx|\.xls|\.xlsx)$/i;
-        if (!allowedExtensions.exec(filePath)) {
-            alert('Veuillez sélectionner un fichier PDF, Word ou Excel.');
-            return false;
-        }
-
-        return true;
+    if (title.trim() === '' || !type || !documentFile || description.trim() === '') {
+        toastr.error('Veuillez remplir tous les champs du formulaire.');
+        return false;
     }
+
+    // Vérification de la taille du document (1 Go)
+    var maxFileSize = 1024 * 1024 * 1024; // 1 Go
+    if (documentFile.size > maxFileSize) {
+        toastr.error('La taille du document ne doit pas dépasser 1 Go.');
+        return false;
+    }
+
+    // Vérification du format du fichier
+    var filePath = $('#file_archive').val();
+    var allowedExtensions = /(\.pdf|\.doc|\.docx|\.xls|\.xlsx|\.ppt|\.pptx|\.mp3|\.mp4|\.avi|\.mov|\.jpg|\.jpeg|\.png|\.gif)$/i;
+    if (!allowedExtensions.exec(filePath)) {
+        toastr.error('Veuillez sélectionner un fichier PDF, Word, Excel, PowerPoint, MP3, MP4, AVI, MOV, JPG, JPEG, PNG ou GIF.');
+        return false;
+    }
+
+    return true;
+}
+
+
 
     // Fonction pour réinitialiser le formulaire après soumission réussie
     function resetForm() {
@@ -200,6 +223,7 @@ $(document).ready(function() {
     // Attacher l'événement de soumission du formulaire à la fonction handleFormSubmit
     $('#archiveForm').submit(handleFormSubmit);
 });
+
 
 
 </script>

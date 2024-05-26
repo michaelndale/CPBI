@@ -10,7 +10,7 @@
                         <div class="text-muted">
                             <table style=" width:100%">
                                 <tr>
-                                    <td style=" width:10% ;"> <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="100" /> </td>
+                                    <td style=" width:10% ;"> <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="50" /> </td>
 
                                     <td>
                                         <center>
@@ -178,14 +178,14 @@
                                     <td>{{ $liste_justifications->numerodap }}</td>
                                     <td>{{ $liste_justifications->numfacture }}</td>
                                     <td>{{ $liste_justifications->montantavance }}</td>
-                                    <td>{{ $liste_justifications->montantutiliser }}</td>
-                                    <td>{{ $liste_justifications->surplus }}</td>
-                                    <td>{{ $liste_justifications->montantretour }}</td>
-                                    <td>{{ $liste_justifications->bordereau }}</td>
+                                    <td></td>
+                                    <td></td>
                                     <td>{{ $liste_justifications->duree_avance }}</td>
-                                    <td>{{ $liste_justifications->datedu }}</td>
+                                    <td></td>
                                     <td>{{ $liste_justifications->descriptionn }}</td>
-                                    <td>{{ $liste_justifications->matriculenum }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -323,11 +323,7 @@
                                     <center>
                                         Responsable Administratif et Financier
                                         <!-- poser signature -->
-                                        @if(Auth::user()->id == $datadap->responsable)
-                                        <input class="form-check-input" type="checkbox" name="responsablesignature" {{ $datadap->responsable_signe=="1"? 'checked':'' }}>
-                                        @endif
-                                        <input type="hidden" name="clone_responsablesignature" value="{{ $datadap->responsable_signe }}" />
-
+                                      
                                         <br> {{ ucfirst($responsable->nom) }} {{ ucfirst($responsable->prenom) }}
 
 
@@ -344,12 +340,7 @@
                                     <center>
                                         Chef des Programmes
                                         <!-- POser signature -->
-                                        @if(Auth::user()->id == $datadap->chefprogramme)
-                                        <input class="form-check-input" type="checkbox" name="chefprogrammesignature" {{ $datadap->chefprogramme_signe=="1"? 'checked':'' }}>
-                                        @endif
-                                        <input type="hidden" name="clone_chefprogrammesignature" value="{{ $datadap->chefprogramme_signe }}" />
-
-
+                                        
 
                                         <br> {{ ucfirst($chefprogramme->nom) }} {{ ucfirst($chefprogramme->prenom) }}
 
@@ -364,9 +355,7 @@
 
                                 <td align="center">Secretaire General de la CEPBU
 
-                                    @if(Auth::user()->id == $datadap->secretaire)
-                                    <input class="form-check-input" type="checkbox" name="secretairesignature" {{ $datadap->secretaure_general_signe=="1"? 'checked':'' }}>
-                                    @endif
+                                  
                                     <br>
 
 

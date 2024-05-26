@@ -343,11 +343,13 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                 <table class="table table-striped table-sm fs--1 mb-0" >
                   <thead>
                     <tr>
-                      <th class="sort border-top "><b>ID </b></center></th>
-                      <th class="sort border-top" data-sort="date"><b>Document</b></th>
+                        <th class="sort border-top "><b>ID </b></center></th>
+                      <th class="sort border-top" data-sort="Document"><b>Document</b></th>
                       <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> Doc </b></th>
-                      <th class="sort border-top" data-sort="date"><b>Date Doc</b></th>
-                      <th class="sort border-top" data-sort="date"><b>Date creation</b></th>
+                      <th class="sort border-top" data-sort="Date Doc"><b>Date Doc</b></th>
+                      <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
+                      <th class="sort border-top" data-sort="Date limite"><b>Date limite</b></th>
+                      <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
                     </tr>
                   </thead>
 

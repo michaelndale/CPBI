@@ -208,42 +208,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
               <i class="ri-fullscreen-line"></i>
             </button>
           </div>
-          @if ( $documentNombre != 0)
-          <div class="dropdown d-inline-block">
-            <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="ri-notification-3-line"></i>
-              <span class="noti-dot"></span>
-            </button>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown">
-              <div class="p-3">
-                <div class="row align-items-center">
-                  <div class="col">
-                    <h6 class="m-0"> Documents en attentes </h6>
-                  </div>
-                 
-                </div>
-              </div>
-              <div data-simplebar style="max-height: 230px;" id="navallnotification">
-
-
-
-
-                
-
-                
-
-
-              </div>
-              <div class="p-2 border-top">
-                <div class="d-grid">
-                  <a class=" waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" href="javascript:void(0)">
-                  <center> <i class="mdi mdi-arrow-right-circle me-1"></i>Voir plus..</center>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          @endif
+         
 
 
           @php
@@ -346,7 +311,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
            
 
               <a href="#" class="waves-effect" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
-                <i class="ri-dashboard-2-line"></i><span class="badge rounded-pill bg-danger float-end">{{ $documentNombre }}</span>
+                <i class="fas fa-file-signature"></i><span class="badge rounded-pill bg-danger float-end">{{ $documentNombre }}</span>
                 <span>Documents</span>
               </a>
             </li>
@@ -354,7 +319,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
             <li>
               <a href="{{ route('dashboard') }}" class="waves-effect">
-                <i class="ri-dashboard-2-line"></i>
+                <i class="fas fa-home"></i>
                 <span>Tableau de bord</span>
               </a>
             </li>
@@ -395,7 +360,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="ri-projector-line"></i>
+                <i class="fas fa-feather"></i>
                 <span>Outils projets</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
@@ -417,7 +382,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="ri-projector-line"></i>
+                <i class="fas fa-users"></i>
                 <span>RH</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
@@ -454,7 +419,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="ri-projector-line"></i>
+                <i class="fa fa-archive"></i>
                 <span>Archivage</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
@@ -469,7 +434,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="ri-taxi-fill "></i>
+                <i class="fas fa-taxi"></i>
                 <span>Parc automobile</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
@@ -488,7 +453,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="mdi mdi-cog-outline"></i>
+                <i class="fas fa-cogs"></i>
                 <span>Paramètre</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
