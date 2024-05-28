@@ -6,6 +6,8 @@ use App\Models\activitefeb;
 use App\Models\Activity;
 use App\Models\Beneficaire;
 use App\Models\Compte;
+use App\Models\Elementdap;
+use App\Models\Elementdjas;
 use App\Models\Elementfeb;
 use App\Models\Feb;
 use App\Models\Historique;
@@ -125,7 +127,7 @@ class FebController extends Controller
     } else {
       $output .= '
         <tr>
-            <td colspan="11">
+            <td colspan="15">
                 <center>
                     <h6 style="margin-top:1%; color:#c0c0c0">
                         <center>
@@ -410,6 +412,7 @@ class FebController extends Controller
         $recu = $request->has('recu') ? 1 : 0;
         $ar = $request->has('ar') ? 1 : 0;
         $be = $request->has('be') ? 1 : 0;
+        $apc = $request->has('apc') ? 1 : 0;
 
 
         $activity = new Feb();
@@ -432,6 +435,7 @@ class FebController extends Controller
         $activity->recu = $recu;
         $activity->ar = $ar;
         $activity->be = $be;
+        $activity->apc = $apc;
         $activity->acce = $request->acce;
         $activity->comptable = $request->comptable;
         $activity->chefcomposante = $request->chefcomposante;
@@ -485,29 +489,72 @@ class FebController extends Controller
 
     try {
       $IDP = session()->get('id');
+      
+     
+      $activityTwo = Elementdap::where('referencefeb', $request->febid)->get();
+
+      // Vérifier si des éléments existent
+      if ($activityTwo->isNotEmpty()) {
+          // Mettre à jour les éléments FEB existants
+          foreach ($activityTwo as $element) {
+              $element->update([
+                  'ligneided' => $request->ligneid,
+    
+              ]);
+          }
+      } 
+
+      $activityTree = Elementdjas::where('febid', $request->febid)->get();
+
+      // Vérifier si des éléments existent
+      if ($activityTree->isNotEmpty()) {
+          // Mettre à jour les éléments FEB existants
+          foreach ($activityTree as $elementTree) {
+            $elementTree->update([
+                  'ligneid' => $request->ligneid,
+    
+              ]);
+          }
+      } 
+
+ 
 
       $activity = Feb::find($request->febid);
-
-      $bc = $request->has('bc') ? 1 : 0;
+     
       $om = $request->has('om') ? 1 : 0;
       $facture = $request->has('facture') ? 1 : 0;
       $fpdevis = $request->has('fpdevis') ? 1 : 0;
       $nec = $request->has('nec') ? 1 : 0;
+      $rm = $request->has('rm') ? 1 : 0;
+      $tdr = $request->has('tdr') ? 1 : 0;
+      $bv = $request->has('bv') ? 1 : 0;
+      $recu = $request->has('recu') ? 1 : 0;
+      $ar = $request->has('ar') ? 1 : 0;
+      $be = $request->has('be') ? 1 : 0;
+      $apc = $request->has('apc') ? 1 : 0;
 
       $activity->numerofeb = $request->numerofeb;
       $activity->periode = $request->periode;
       $activity->datefeb = $request->datefeb;
       $activity->datelimite = $request->datelimite;
-      $activity->bc = $bc;
+      $activity->be = $be;
       $activity->facture = $facture;
       $activity->om = $om;
       $activity->fpdevis = $fpdevis;
       $activity->nec = $nec;
+      $activity->rm = $rm;
+      $activity->tdr = $tdr;
+      $activity->bv = $bv;
+      $activity->recu = $recu;
+      $activity->ar = $ar;
+      $activity->be = $be;
+      $activity->apc = $apc;
       $activity->comptable = $request->comptable;
       $activity->acce = $request->acce;
       $activity->chefcomposante = $request->chefcomposante;
       $activity->descriptionf = $request->descriptionf;
       $activity->beneficiaire = $request->beneficiaire;
+      $activity->sous_ligne_bugdetaire	 = $request->ligneid;
       $activity->update();
 
       $dataToUpdate = [];
@@ -731,8 +778,7 @@ class FebController extends Controller
             ->where('projetids', $IDP)
             ->sum('montant');
 
-          $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)
-            ->first();
+          $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)->first();
 
           $pourcentage = round(($sommefeb * 100) / $budget, 2);
 
@@ -741,7 +787,7 @@ class FebController extends Controller
 
           // Construire la sortie HTML pour chaque élément sélectionné
           $output .= '<input type="hidden" name="febid[]" value="' . $datas->id . '" />';
-          $output .= '<input type="hidden" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
+          $output .= '<input type="hidden" name="ligneid[]" value="'.$datas->sous_ligne_bugdetaire.'" />';
           $output .= '<tr>';
           $output .= '<td width="10%"> Numéro FEB : ' . $datas->numerofeb . '</td>';
           $output .= '<td width="20%"> Montant de l\'Avance <input type="number" min="0" name="montantavance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
@@ -774,55 +820,63 @@ class FebController extends Controller
 
     return $output;
   }
-
   public function list()
   {
-    $title = "FEB";
-    $ID = session()->get('id');
-    $compte =  DB::table('comptes')
-      ->Where('comptes.projetid', $ID)
-      ->Where('compteid', '=', 0)
-      ->get();
-
-    $beneficaire = Beneficaire::orderBy('libelle')->get();
-
-
-    $personnel = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-      ->orderBy('nom', 'ASC')
-      ->get();
-
-
-    $activite = DB::table('activities')
-      ->orderby('id', 'DESC')
-      ->Where('projectid', $ID)
-      ->get();
-
-
-    return view(
-      'document.feb.list',
-      [
-        'title' => $title,
-        'activite' => $activite,
-        'personnel' => $personnel,
-        'compte' => $compte,
-        'beneficaire' => $beneficaire
-      ]
-    );
+      // Récupérer l'ID de la session
+      $ID = session()->get('id');
+      
+      // Vérifier si l'ID de la session n'est pas défini
+      if (!$ID) {
+          // Rediriger vers la route nommée 'dashboard'
+          return redirect()->route('dashboard');
+      }
+  
+      // Si l'ID de la session est défini, continuer avec le reste de la fonction
+      $title = "FEB";
+      $compte =  DB::table('comptes')
+          ->where('comptes.projetid', $ID)
+          ->where('compteid', '=', 0)
+          ->get();
+  
+      $beneficaire = Beneficaire::orderBy('libelle')->get();
+  
+      $personnel = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+          ->orderBy('nom', 'ASC')
+          ->get();
+  
+      $activite = DB::table('activities')
+          ->orderBy('id', 'DESC')
+          ->where('projectid', $ID)
+          ->get();
+  
+      return view(
+          'document.feb.list',
+          [
+              'title' => $title,
+              'activite' => $activite,
+              'personnel' => $personnel,
+              'compte' => $compte,
+              'beneficaire' => $beneficaire
+          ]
+      );
   }
+  
 
   public function show($key)
   {
 
+    $title = 'FEB';
     $key = Crypt::decrypt($key);
     $check = Feb::findOrFail($key);
 
-    $title = 'FEB';
-    $idl = $check->ligne_bugdetaire;
+    $idl = $check->sous_ligne_bugdetaire;
     $idfeb = $check->id;
 
     $datElement = Elementfeb::where('febid', $idfeb)->get();
+
+    
     $IDB = $check->projetid;
     $chec = Project::findOrFail($IDB);
     $budget = $chec->budget;
@@ -872,8 +926,6 @@ class FebController extends Controller
       ->where('users.id', $check->chefcomposante)
       ->first();
 
-
-
     $dateinfo = Identification::all();
 
     return view('document.feb.voir', [
@@ -907,14 +959,14 @@ class FebController extends Controller
     $idf = Crypt::decrypt($idf);
 
     $dataJosonfeb = DB::table('febs')
-      ->join('comptes', 'febs.ligne_bugdetaire', 'comptes.id')
+      ->join('comptes', 'febs.sous_ligne_bugdetaire', 'comptes.id')
       ->select('febs.*', 'febs.id as idfb', 'comptes.id as idc', 'comptes.numero as numeroc', 'comptes.libelle as libellec')
       ->where('febs.id', $idf)
       ->first();
 
     $title = 'FEB';
 
-    $idl = $dataJosonfeb->ligne_bugdetaire;
+    $idl = $dataJosonfeb->sous_ligne_bugdetaire;
     $idfeb = $dataJosonfeb->id;
 
     $ID = session()->get('id');
@@ -977,9 +1029,14 @@ class FebController extends Controller
 
     $datElement = DB::table('elementfebs')
       ->join('activities', 'elementfebs.libellee', 'activities.id')
-      ->select('elementfebs.*', 'elementfebs.id as idef', 'activities.id as ida', 'activities.titre as titrea')
+      ->join('comptes', 'elementfebs.eligne','comptes.id')
+      ->select('elementfebs.*', 'elementfebs.id as idef', 'activities.id as ida', 'activities.titre as titrea','comptes.libelle as lignetitre')
       ->where('febid', $idfeb)
       ->get();
+
+
+
+
 
     $datElementgene = DB::table('elementfebs')
       ->join('activities', 'elementfebs.libellee', 'activities.id')
@@ -1061,7 +1118,7 @@ class FebController extends Controller
     $check = Feb::findOrFail($id);
 
     $title = 'FEB';
-    $idl = $check->ligne_bugdetaire;
+    $idl = $check->sous_ligne_bugdetaire;
     $idfeb = $check->id;
 
     $datElement = Elementfeb::where('febid', $idfeb)->get();
@@ -1074,7 +1131,7 @@ class FebController extends Controller
     $infoglo = DB::table('identifications')->first();
 
     $datafeb = DB::table('febs')
-      ->join('comptes', 'febs.ligne_bugdetaire', 'comptes.id')
+      ->join('comptes', 'febs.sous_ligne_bugdetaire', 'comptes.id')
       ->join('projects', 'febs.projetid', '=', 'projects.id')
       ->select('febs.*', 'comptes.id as idc', 'projects.title as libelleA', 'comptes.numero as numeroc', 'comptes.libelle as libellec')
       ->where('febs.id', $id)
@@ -1163,7 +1220,7 @@ class FebController extends Controller
     $pdf->setPaper('A4', 'landscape'); // Format A4 en mode paysage
 
     // Nom du fichier PDF téléchargé avec numéro FEB et date actuelle
-    $fileName = 'FEB_NUM' . $datafeb->numerofeb . '_' . Carbon::now()->format('iHs_dmY') . '.pdf';
+    $fileName = 'FEB_NUM_'. $datafeb->numerofeb .'.pdf';
 
     // Télécharge le PDF
     return $pdf->download($fileName);

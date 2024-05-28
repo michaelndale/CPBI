@@ -11,7 +11,7 @@
                         <div class="text-muted">
                             <table style=" width:100%">
                                 <tr>
-                                    <td style=" width:10% ;"> <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="100" /> </td>
+                                    <td style=" width:10% ;"> <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="50" /> </td>
 
                                     <td>
                                         <center>
@@ -37,7 +37,7 @@
                 <hr class="my-4">
                 <div class="row">
                     <H5>
-                        <center> Demande et d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodp }}/{{ date('Y')}} </center>
+                        <center> Demande d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodp }}/{{ date('Y')}} </center>
                     </H5>
                     <div class="col-sm-12">
                         <table class="table table-bordered  table-sm">
@@ -78,7 +78,7 @@
                                         Taux d'execution actuel : {{ $pourcentage_encours}}% <br>
                                         Taux execution globale : {{ $pourcetage_globale }}% <br>
 
-                                        Solde comptable BQ: {{ number_format($solde_comptable, 0, ',', ' ')  }} {{ $devise }}
+                                        Solde comptable BQ: {{ number_format($datadap->soldecompte, 0, ',', ' ')  }} {{ $devise }}
 
                                 </td>
                             </tr>
@@ -86,10 +86,6 @@
 
 
                         <h6> <u>Synthese sur l'utilisation dea fonds demandes(Vr details sur FB en avance)</u></h6>
-
-
-
-
 
 
 

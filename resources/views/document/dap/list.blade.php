@@ -18,7 +18,7 @@
       <div class="card-header p-4 border-bottom border-300 bg-soft">
         <div class="row g-3 justify-content-between align-items-end">
           <div class="col-12 col-md">
-            <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Demande et d'Autorisation de Paiement "DAP" </h4>
+            <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Demande d'Autorisation de Paiement "DAP" </h4>
           </div>
           <div class="col col-md-auto">
 
@@ -60,15 +60,15 @@
                   <th class="sort border-top "> <center><b>CHO </b></center></th>
                   <th class="sort border-top "> <center><b>Compte bancaire </b></center></th>
                   <th class="sort border-top "> <center><b>DJA (Justifier) </b></center></th>
-                  <th class="sort border-top "> <center><b> Date enr. </b></center></th>
-
+                  <th class="sort border-top "> <center><b> Créé le. </b></center></th>
+                  <th class="sort border-top "> <center><b> Créé par </b></center></th>
                 </tr>
               </thead>
 
 
               <tbody class="show_all" id="show_all">
                 <tr>
-                  <td colspan="9">
+                  <td colspan="11">
                     <h5 class="text-center text-secondery my-5">
                       @include('layout.partiels.load')
                   </td>

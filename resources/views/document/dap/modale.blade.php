@@ -14,7 +14,7 @@
     <div class="modal-dialog modal-xl  modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="far fa-file-alt "></i> Demande et Autorisation de Paiement (DAP) </h5>
+                <h5 class="modal-title"><i class="far fa-file-alt "></i> Demande  d'Autorisation de Paiement (DAP) </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -78,7 +78,7 @@
                                     </td>
 
                                     <td> Solde comptable (Sc):
-                                        <input type="text" class="form-control form-control-sm" value="{{ $somfeb }}" readonly style="background-color:#c0c0c0" required>
+                                        <input type="number" min="0" class="form-control form-control-sm" name="soldecompte" value="{{ $somfeb }}" style="background-color:#c0c0c0" required>
                                     </td>
 
                                     <td> Numero cheque:

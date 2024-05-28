@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -68,6 +69,7 @@
         #mytable tr:hover {
             background-color: #ddd;
         }
+
         body {
             font-size: 80%;
         }
@@ -88,7 +90,9 @@
             font-family: 'Roboto', sans-serif;
         }
 
-        h1, h2, h3 {
+        h1,
+        h2,
+        h3 {
             font-family: 'Open Sans', sans-serif;
         }
     </style>
@@ -97,7 +101,7 @@
 <body>
     <!-- En-tête fixe -->
     <header id="page-header">
-        <table style="width:100%; margin-top:-40px">
+        <table class="table table-striped table-sm fs--1 mb-0" style="width:100%; margin-top:-40px">
             <tr>
                 <td>
                     <center>
@@ -131,16 +135,16 @@
             <center> FICHE D’EXPRESSION DES BESOINS (FEB) N° {{ $datafeb->numerofeb }} </center>
         </H3>
 
-        <table style=" width:100%" class="table table-sm m-0" id="mytable">
+        <table style=" width:100%" class="table table-striped table-sm fs--1 mb-0" id="mytable">
             <tr>
                 <td style="width:50%">
                     Composante/ Projet/Section: {{ $datafeb->libelleA }}
                 </td>
                 <td>
                     Période: {{ $datafeb->periode }} ; Date : {{ date('d-m-Y', strtotime($datafeb->datefeb))  }} ;
-                     @if (isset($onebeneficaire->libelle) && !empty($onebeneficaire->libelle)) 
-                        Bénéficiaire : {{ $onebeneficaire->libelle }} 
-                     @endif
+                    @if (isset($onebeneficaire->libelle) && !empty($onebeneficaire->libelle))
+                    Bénéficiaire : {{ $onebeneficaire->libelle }}
+                    @endif
                 </td>
             </tr>
 
@@ -155,52 +159,135 @@
             </tr>
 
             <tr>
-                <td>
-                    Références :
+                <td style="margin:0px;padding:0px;"> 
+                    <table style="margin:0px;padding:0px; border:0px; background-color:white">
+                        <tr style="margin:0px;padding:0px; border:0px; background-color:white">
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Bon de commande"> &nbsp; BC:</label> </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
+                                <input type="checkbox" class="form-check-input" readonly @if ($datafeb->bc==1)
+                                checked value="{{ $datafeb->bc }}"
+                                @else
+                                value="{{ $datafeb->bc }}"
+                                @endif />
+                            </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><label>&nbsp; Facture:</label></td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
+                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->facture==1)
+                                checked value="{{ $datafeb->facture }}"
+                                @else
+                                value="{{ $datafeb->facture }}"
+                                @endif
+                                />
+                            </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Bon de commande">&nbsp; O.M: </label> </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
+                                <input type="checkbox" name="om" id="om" class="form-check-input" readonly @if($datafeb->om==1)
+                                checked value="{{ $datafeb->om }}"
+                                @else
+                                value="{{ $datafeb->om }}"
+                                @endif
+                                />
+                            </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><label title="Termes de référence"> &nbsp;TDR:</label></td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
+                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->nec==1)
+                                checked value="{{ $datafeb->nec }}"
+                                @else
+                                value="{{ $datafeb->nec }}"
+                                @endif />
+                            </td>
 
-                    BC : <input type="checkbox" name="bc" id="bc" class="form-check-input" readonly @if ($datafeb->bc==1)
-                    checked value="{{ $datafeb->bc }}"
-                    @else
-                    value="{{ $datafeb->bc }}"
-                    @endif /> &nbsp; Facture:
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Facture proforma"> &nbsp;FP/Dévis/Liste: </label> </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
+                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->fpdevis==1)
+                                checked value="{{ $datafeb->fpdevis }}"
+                                @else
+                                value="{{ $datafeb->fpdevis }}"
+                                @endif
+                                />
+                            </td>
 
-                    <input type="checkbox" name="facture" id="facture" class="form-check-input" readonly @if($datafeb->facture==1)
-                    checked value="{{ $datafeb->facture }}"
-                    @else
-                    value="{{ $datafeb->facture }}"
-                    @endif
 
-                    />
 
-                    &nbsp;O.M : <input type="checkbox" name="om" id="om" class="form-check-input" readonly @if($datafeb->om==1)
-                    checked value="{{ $datafeb->om }}"
-                    @else
-                    value="{{ $datafeb->om }}"
-                    @endif
-                    />
-                    &nbsp;FP/Devis : <input type="checkbox" class="form-check-input" readonly @if($datafeb->fpdevis==1)
-                    checked value="{{ $datafeb->fpdevis }}"
-                    @else
-                    value="{{ $datafeb->fpdevis }}"
-                    @endif
-                    />
-                    &nbsp;NEC : <input type="checkbox" class="form-check-input" readonly @if($datafeb->nec==1)
-                    checked value="{{ $datafeb->nec }}"
-                    @else
-                    value="{{ $datafeb->nec }}"
-                    @endif />
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><label title="Termes de référence"> &nbsp;R.M: </label></td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
+                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->rm==1)
+                                checked value="{{ $datafeb->rm }}"
+                                @else
+                                value="{{ $datafeb->rm }}"
+                                @endif />
+
+                            </td>
+                      
+
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Termes de Référence"> &nbsp;T.D.R: </label> </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
+                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->tdr==1)
+                                checked value="{{ $datafeb->tdr }}"
+                                @else
+                                value="{{ $datafeb->tdr }}"
+                                @endif />
+
+                            </td>
+
+                            </tr>
+
+<tr>
+
+                           
+
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Bordereau de versement"> &nbsp;B.V:</label> </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <input type="checkbox" class="form-check-input" readonly @if($datafeb->bv==1)
+                                checked value="{{ $datafeb->bv }}"
+                                @else
+                                value="{{ $datafeb->bv }}"
+                                @endif />
+                            </td>
+                           
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Reçu">&nbsp; Reçu : </label> </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><input type="checkbox" class="form-check-input" readonly @if($datafeb->recu==1)
+                                checked value="{{ $datafeb->recu }}"
+                                @else
+                                value="{{ $datafeb->recu }}"
+                                @endif /></td>
+
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><label title="Accussé de reception"> &nbsp;A.R:</label> </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><input type="checkbox" class="form-check-input" readonly @if($datafeb->recu==1)
+                                checked value="{{ $datafeb->recu }}"
+                                @else
+                                value="{{ $datafeb->recu }}"
+                                @endif /> </td>
+
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Bordereau d'expédition">&nbsp; B.E:</label> </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <input type="checkbox" class="form-check-input" readonly @if($datafeb->be==1)
+                                checked value="{{ $datafeb->be }}"
+                                @else
+                                value="{{ $datafeb->be }}"
+                                @endif
+                                /></td>
+
+                        </tr>
+
+                    </table>
+
+
+
                 </td>
+
+
+
+
                 <td>
                     Taux d’exécution globale du projet: {{ $POURCENTAGE_GLOGALE }}% ; <br> Taux d’exécution de la ligne budgétaire: {{ $sommelignpourcentage }}%
                 </td>
             </tr>
 
         </table>
-     <br>
+        <br>
         <font size="15px">Détails sur l’utilisation des fonds demandés :</font>
 
 
-        <table style=" width:100%" class="table table-sm m-0" id="mytable">
+        <table style=" width:100%" class="table table-striped table-sm fs--1 mb-0" id="mytable">
             <thead>
                 <tr>
                     <th>N<sup>o</sup></th>
@@ -211,8 +298,8 @@
                     </th>
                     <th>
                         <center>Quantité </center>
-                   
-                        </th>
+
+                    </th>
                     <th>
                         <center>Frequence </center>
                     </th>
@@ -245,7 +332,9 @@
 
                     </td>
                     <td style="width:15%">{{ ucfirst($datelementfebs->libelle_description) }}</td>
-                    <td style="width:10%"><center> {{ ucfirst($datelementfebs->unite) }}</center></td>
+                    <td style="width:10%">
+                        <center> {{ ucfirst($datelementfebs->unite) }}</center>
+                    </td>
                     <td style="width:10%">
                         <center> {{ $datelementfebs->quantite }} </center>
                     </td>
@@ -265,42 +354,48 @@
                 @endforeach
             </tbody>
             <tr style=" background-color: #040895;">
-                <td colspan="7"> <font color="white"><b> Total général </b> </font></td>
-                    <td><center> <font color="white"><b> {{ number_format($sommefeb,0, ',', ' ') }} {{ Session::get('devise') }} </b></font></center> </h5>
+                <td colspan="7">
+                    <font color="white"><b> Total général </b> </font>
                 </td>
-              </tr>
+                <td>
+                    <center>
+                        <font color="white"><b> {{ number_format($sommefeb,0, ',', ' ') }} {{ Session::get('devise') }} </b></font>
+                    </center>
+                    </h5>
+                </td>
+            </tr>
         </table>
-        <table style="width:100%; margin:auto">
+        <table style="width:100%; margin:auto" class="table table-striped table-sm fs--1 mb-0">
             <tr>
                 <td>
                     <center>
                         <u>Etablie par (AC/CE/CS)</u> :
                         <br>
-                            {{ $etablienom->nom }} {{ $etablienom->prenom }} 
+                        {{ $etablienom->nom }} {{ $etablienom->prenom }}
 
-                            @if ($datafeb->acce_signe==1)
-                             <br>
-                            <img src="{{ $etablienom->signature }}" width="200px" />
-                            @endif
+                        @if ($datafeb->acce_signe==1)
+                        <br>
+                        <img src="{{ $etablienom->signature }}" width="200px" />
+                        @endif
                     </center>
 
                 </td>
                 <td>
-                <center>
-                    <u>Vérifiée par (Comptable)</u> : <br>
+                    <center>
+                        <u>Vérifiée par (Comptable)</u> : <br>
                         {{ $comptable_nom->nom }} {{ $comptable_nom->prenom }} <br>
-                    @if ($datafeb->comptable_signe==1)
+                        @if ($datafeb->comptable_signe==1)
                         <img src="{{ $comptable_nom->signature }}" width="200px" />
-                    @endif
-                </center>
+                        @endif
+                    </center>
 
                 </td>
 
                 <td colspan="2">
                     <center>
                         <u>Approuvée par (Chef de Composante/Projet/Section)</u>:
-                        
-                        <br>  {{ $checcomposant_nom->nom }} {{ $checcomposant_nom->prenom }}<br>
+
+                        <br> {{ $checcomposant_nom->nom }} {{ $checcomposant_nom->prenom }}<br>
 
                         @if ($datafeb->chef_signe==1)
                         <img src="{{ $checcomposant_nom->signature }}" width="200px" />
@@ -333,7 +428,7 @@
         window.onbeforeprint = hideHeaderOnSubsequentPages;
     </script>
 
-    
+
 </body>
 
 </html>

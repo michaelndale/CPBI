@@ -9,7 +9,7 @@
             <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> Archivage </h4>
 
             <div class="page-title-right">
-              <a class="fs--1 fw-bold" href="javascript::;" data-bs-toggle="modal" data-bs-target="#addModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle "></span> Ajouter classeur </a>
+              <a class="fs--1 fw-bold" href="javascript::;" data-bs-toggle="modal" data-bs-target="#addModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle "></span> Ajouter documentation </a>
             </div>
 
           </div>
@@ -134,6 +134,9 @@ $(document).ready(function() {
         // Ouvrir le modal de chargement
         $('#loadingModal').modal('show');
 
+        $("#addbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("addbtn").disabled = true;
+
         // Envoi des données via AJAX
         $.ajax({
             url: '{{ route("archives.store") }}',
@@ -153,6 +156,8 @@ $(document).ready(function() {
                             // Fermer le modal de chargement après une courte attente
                             setTimeout(function() {
                                 $('#loadingModal').modal('hide');
+                                $("#addbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                                document.getElementById("addbtn").disabled = false;
                             }, 500);
                         }
                     }
@@ -164,22 +169,25 @@ $(document).ready(function() {
                 // Fermer le modal de chargement
                 $('#loadingModal').modal('hide');
                 $('#addModal').modal('hide');
+                $("#addbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                document.getElementById("addbtn").disabled = false;
                 // Afficher un message de succès
                  toastr.success(response.message);
             },
             error: function(xhr, status, error) {
-                console.error(error);
-                $('#loadingModal').modal('hide');
-                var errorMessage = 'Erreur lors de l\'envoi des données.';
-                if (xhr.responseJSON && xhr.responseJSON.error) {
-                     toastr.error(xhr.responseJSON.error);
-                }
-                toastr.error(errorMessage);
-                // Changer la couleur de la barre de progression en rouge en cas d'erreur
-                $('#progressBar').addClass('progress-bar-danger');
-                // Fermer le modal de chargement en cas d'erreur
-                $('#loadingModal').modal('hide');
-            }
+    console.error(error);
+    $('#loadingModal').modal('hide');
+    var errorMessage = 'Erreur lors de l\'envoi des données. ' + error; // Ajout de l'erreur complète à errorMessage
+    if (xhr.responseJSON && xhr.responseJSON.error) {
+        toastr.error(xhr.responseJSON.error);
+    }
+    toastr.error(errorMessage);
+    // Changer la couleur de la barre de progression en rouge en cas d'erreur
+    $('#progressBar').addClass('progress-bar-danger');
+    // Fermer le modal de chargement en cas d'erreur
+    $('#loadingModal').modal('hide');
+}
+
         });
     }
 
@@ -188,10 +196,12 @@ $(document).ready(function() {
     var title = $('#titre').val();
     var type = $('input[name="type"]:checked').val();
     var documentFile = $('#file_archive')[0].files[0];
-    var description = $('#description').val();
+  
 
-    if (title.trim() === '' || !type || !documentFile || description.trim() === '') {
+    if (title.trim() === '' || !type || !documentFile ) {
         toastr.error('Veuillez remplir tous les champs du formulaire.');
+        $("#addbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+        document.getElementById("addbtn").disabled = false;
         return false;
     }
 
@@ -199,6 +209,8 @@ $(document).ready(function() {
     var maxFileSize = 1024 * 1024 * 1024; // 1 Go
     if (documentFile.size > maxFileSize) {
         toastr.error('La taille du document ne doit pas dépasser 1 Go.');
+        $("#addbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+        document.getElementById("addbtn").disabled = false;
         return false;
     }
 
@@ -207,6 +219,8 @@ $(document).ready(function() {
     var allowedExtensions = /(\.pdf|\.doc|\.docx|\.xls|\.xlsx|\.ppt|\.pptx|\.mp3|\.mp4|\.avi|\.mov|\.jpg|\.jpeg|\.png|\.gif)$/i;
     if (!allowedExtensions.exec(filePath)) {
         toastr.error('Veuillez sélectionner un fichier PDF, Word, Excel, PowerPoint, MP3, MP4, AVI, MOV, JPG, JPEG, PNG ou GIF.');
+        $("#addbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+        document.getElementById("addbtn").disabled = false;
         return false;
     }
 

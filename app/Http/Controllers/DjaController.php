@@ -28,10 +28,14 @@ class DjaController extends Controller
   public function fetchAll()
   {
     $ID = session()->get('id');
-    $data = DB::table('djas')
-      ->orderby('id', 'DESC')
-      ->Where('projetiddja', $ID)
-      ->get();
+    $data =  DB::table('djas')
+    ->join('users', 'djas.userid', '=', 'users.id')
+    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->select('djas.*', 'personnels.prenom as user_prenom')
+    ->where('djas.projetiddja', $ID)
+    ->orderBy('djas.id', 'DESC')
+    ->get();
+
 
     $output = '';
     if ($data->count() > 0) {
@@ -50,19 +54,25 @@ class DjaController extends Controller
           $jus = "";
         }
 
+        if($datas->statut==1){
+          $lien='<a href="#" class="dropdown-item mx-1 editvoirdja" id="'. $datas->numerodap.'"  data-bs-toggle="modal" data-bs-target="#editdjaModale" ><i class="far fa-edit"></i> Modifier </a>';
+        }else{
+          $lien='<a href="#" class="dropdown-item mx-1 voirdja" id="'. $datas->numerodap.'"  data-bs-toggle="modal" data-bs-target="#djaModale" ><i class="far fa-edit"></i> Justificatif </a>';
+        }
+
         $output .= '
         <tr>
           <td> 
           <center>
           <div class="btn-group me-2 mb-2 mb-sm-0">
-            <button class="btn btn-primary btn-sm dropdown-toggle"  data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="dropdown-toggle"  data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="mdi mdi-dots-vertical ms-2"></i> Action
-            </button>
+            </a>
             <div class="dropdown-menu">
-                <a href="#" class="dropdown-item text-success mx-1 voirdja" id="'. $datas->numerodap.'"  data-bs-toggle="modal" data-bs-target="#djaModale" ><i class="far fa-edit"></i> Justificatif DJA </a>
-                <a href="dja/'.$cryptedId.'/view" class="dropdown-item text-success mx-1"><i class="far fa-eye"></i> Voir DJA </a>
-              
-                <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $datas->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer DJA</a>
+               '. $lien.'
+                <a href="dja/'.$cryptedId.'/view" class="dropdown-item  mx-1"><i class="far fa-eye"></i> Voir  </a>   
+                
+                
             </div>
           </div>
           </center>
@@ -72,6 +82,7 @@ class DjaController extends Controller
           <td> <input type="checkbox" ' . $ov . ' class="form-check-input" />  </td>
           <td><input type="checkbox" ' . $jus . ' class="form-check-input" /></td>
           <td> ' .date('d-m-Y', strtotime($datas->created_at)). '  </td>
+          <td> ' . ucfirst($datas->user_prenom) . ' </td>
          
         </tr>
       ';
@@ -80,7 +91,7 @@ class DjaController extends Controller
       echo $output;
     } else {
       echo '<tr>
-        <td colspan="9">
+        <td colspan="11">
         <center>
           <h6 style="margin-top:1% ;color:#c0c0c0"> 
           <center><font size="10px"><i class="fa fa-info-circle"  ></i> </font><br><br>
@@ -352,204 +363,227 @@ class DjaController extends Controller
   }
 
   public function getdjas(Request $request)
-  {
-      try {
-          $IDn = $request->id;
-          $budget = session()->get('budget');
-          $IDP = session()->get('id');
-          $output = '';
-          // Initialisez une variable pour stocker les sorties de tableau
-  
-          // Effectuez la recherche de données pour chaque identifiant sélectionné
-          $data = DB::table('elementdaps')
-              ->join('febs', 'elementdaps.referencefeb', 'febs.id')
-              ->select('elementdaps.*', 'elementdaps.id as idedaps', 'febs.ligne_bugdetaire', 'febs.numerofeb', 'febs.id as idfb')
-              ->where('elementdaps.numerodap', $IDn)
-              ->where('projetidda', $IDP)
-              ->get();
-  
-          $iddja = DB::table('djas')
-              ->where('numerodap', $IDn)
-              ->first();
-  
-          $personnel = Personnel::all();
-          $vehicules = Vehicule::all();
+{
+    try {
+        $IDn = $request->id;
+        $budget = session()->get('budget');
+        $IDP = session()->get('id');
+        $output = '';
+        // Initialisez une variable pour stocker les sorties de tableau
 
-          if($iddja->	justifie==1){
-  
-          if ($data->count() > 0) {
-              // Générer la sortie HTML pour chaque élément sélectionné
-              foreach ($data as $datas) {
-                  // sommes element
-                  $sommefeb = DB::table('elementfebs')
-                      ->where('febid', $datas->referencefeb)
-                      ->where('projetids', $IDP)
-                      ->sum('montant');
-  
-                  $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)->first();
-                  // Construire la sortie HTML pour chaque élément sélectionné
-                  $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
-                  $output .= '<input type="hidden" name="febid[]" id="febid[]" value="' . $datas->idfb . '" / > 
-                              <input type="hidden" name="iddjas[]" id="iddjas[]" value="' . $iddja->id . '" /> 
-                              <input type="hidden" name="dpasid[]" id="dpasid[]" value="'.$datas->idedaps.'" />';
-  
-                  $output .= '<input type="hidden" id="ligneid[]" name="ligneid[]" value="' . $datas->ligne_bugdetaire . '" />';
-                  if ($datas->montantavance == NULL) {
-                    $montantavance = 0;
-                } else {
-                    $montantavance = $datas->montantavance;
+        // Effectuez la recherche de données pour chaque identifiant sélectionné
+        $data = DB::table('elementdaps')
+            ->join('febs', 'elementdaps.referencefeb', 'febs.id')
+            ->select('elementdaps.*', 'elementdaps.id as idedaps', 'febs.ligne_bugdetaire', 'febs.numerofeb', 'febs.id as idfb','febs.sous_ligne_bugdetaire')
+            ->where('elementdaps.numerodap', $IDn)
+            ->where('projetidda', $IDP)
+            ->get();
+
+        $iddja = DB::table('djas')
+            ->where('numerodap', $IDn)
+            ->first();
+
+        $personnel = Personnel::all();
+        $vehicules = Vehicule::all();
+
+        if($iddja->justifie == 1){
+
+            if ($data->count() > 0) {
+                // Générer la sortie HTML pour chaque élément sélectionné
+                foreach ($data as $datas) {
+                    // sommes element
+                    $sommefeb = DB::table('elementfebs')
+                        ->where('febid', $datas->referencefeb)
+                        ->where('projetids', $IDP)
+                        ->sum('montant');
+
+                    $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)->first();
+                    // Construire la sortie HTML pour chaque élément sélectionné
+                    $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
+                    $output .= '<input type="hidden" name="febid[]" id="febid[]" value="'.$datas->idfb.'">
+                                <input type="hidden" name="iddjas[]" id="iddjas[]" value="'.$iddja->id.'">
+                                <input type="hidden" name="dpasid[]" id="dpasid[]" value="'.$datas->idedaps.'">';
+
+                    $output .= '<input type="hidden" id="ligneid[]" name="ligneid[]" value="'. $datas->sous_ligne_bugdetaire.'" />';
+                    if ($datas->montantavance == NULL) {
+                        $montantavance = 0;
+                    } else {
+                        $montantavance = $datas->montantavance;
+                    }
+
+                    $output .= '<tr>';
+                    $output .= '<td width="10%">Numéro FEB : ' . $datas->numerofeb . '</td>';
+                    $output .= '<td width="13%">Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" value="' .$montantavance . '" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                    $output .= '<td width="13%">Montant utilisé <input type="number" name="montant_utiliser[]" id="montant_utiliser[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                    $output .= '<td width="13%">Surplus/Manque <input type="text" name="surplus[]" id="surplus[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                    $output .= '<td width="13%">Montant Retourné <input type="text" name="montant_retourne[]" id="montant_retourne[]" style="width: 100%; border:1px solid #c0c0c0" />   <div class="error-message" style="color: red;"></div></td>';
+                    $output .= '<td width="13%">Bordereau <input type="text"  name="bordereau[]" id="bordereau[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
+                    $output .= '<td width="13%">Description <input type="text" id="description[]" name="description[]" class="description-input" style="width: 100%; border:1px solid #c0c0c0" /></td>                    ';
+                    $output .= '<td width="13%" style="display: none;"> Plaque  
+                                    <select type="text" name="plaque[]" id="plaque[]" class="plaque-input" style="width: 100%; border:1px solid #c0c0c0"> 
+                                    <option disabled="true" selected="true"> >Aucun</option>';
+                    foreach ($vehicules as $vehicule) 
+                    {
+                        $output .= '<option value="'. $vehicule->matricule.'">' . $vehicule->matricule . '</option>';
+                    }
+                    $output .= '</select></td>';
+                    $output .= '</tr></table>';
                 }
-                
-                  $output .= '<tr>';
-                  $output .= '<td width="10%">Numéro FEB : ' . $datas->numerofeb . '</td>';
-                  $output .= '<td width="13%">Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" value="' .$montantavance . '" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                  $output .= '<td width="13%">Montant utilisé <input type="number" name="montant_utiliser[]" id="montant_utiliser[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                  $output .= '<td width="13%">Surplus/Manque <input type="text" name="surplus[]" id="surplus[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                  $output .= '<td width="13%">Montant Retourné <input type="text" name="montant_retourne[]" id="montant_retourne[]" style="width: 100%; border:1px solid #c0c0c0" />   <div class="error-message" style="color: red;"></div></td>';
-                  $output .= '<td width="13%">Bordereau <input type="text"  name="bordereau[]" id="bordereau[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                  $output .= '<td width="13%">Description <input type="text" id="description[]" name="description[]" class="description-input" style="width: 100%; border:1px solid #c0c0c0" /></td>                    ';
-                  $output .= '<td width="13%" style="display: none;"> Plaque  
-                                  <select type="text" name="plaque[]" id="plaque[]" class="plaque-input" style="width: 100%; border:1px solid #c0c0c0"> 
-                                  <option disabled="true" selected="true"> >Aucun</option>';
-                  foreach ($vehicules as $vehicule) 
-                  {
-                      $output .= '<option value="'. $vehicule->matricule.'">' . $vehicule->matricule . '</option>';
-                  }
-                  $output .= '</select> </td>';
-                  $output .= '</tr></table>';
-              }
+
+                $output .= '
+                <table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
+                    <tr>
+                        <td class="align-middle ps-3 name" colspan="7">
+                            <b>Réception des pièces justificatives de l\'utilisation de l\'avance par: </b>
+                            <select type="text" class="form-control form-control-sm" name="receptionpar" id="receptionpar" style="width:100%">
+                                <option disabled="true" selected="true" value="">--Choisissez le personnel--</option>';
+                                foreach ($personnel as $personnels) {
+                                    $output .= '<option value="'.$personnels->id.'">' . $personnels->nom . ' ' . $personnels->prenom . '</option>';
+                                }
+                $output .= '
+                            </select>
+                        </td>
+                    </tr>
+                </table>';
+            } 
+        } else {
+                // Si aucune donnée n'est trouvée, retournez un message d'erreur avec une classe "danger"
+                $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
+                                <tr class="table-danger"><td colspan="7">Aucune donnée trouvée sur la justification. Ceci est une DJA non justifiée</td>
+                                </tr>
+                            </table>';
+        }
+
+        return $output;
+    } catch (\Exception $e) {
+        // Retourner un message d'erreur en cas d'exception
+        return response()->json(['error' => 'Une erreur est survenue : ' . $e->getMessage()], 500);
+    }
+}
+
   
   
-              $output .= '
-              <table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
-                  <tr>
-                      <td class="align-middle ps-3 name" colspan="7">
-                          <b>Réception des pièces justificatives de l\'utilisation de l\'avance par: </b>
-                          <select type="text" class="form-control form-control-sm" name="receptionpar" id="receptionpar" style="width:100%">
-                              <option disabled="true" selected="true" value="">--Choisissez le personnel--</option>';
-                              foreach ($personnel as $personnels) {
-                                  $output .= '<option value="'.$personnels->id.'">' . $personnels->nom . ' ' . $personnels->prenom . '</option>';
-                              }
-              $output .= '
-                          </select>
-                      </td>
-                  </tr>
-              </table>';
-  
-  
-          } 
-        }else {
-              // Si aucune donnée n'est trouvée, retournez un message d'erreur avec une classe "danger"
-              $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
-                              <tr class="table-danger"><td colspan="7">Aucune donnée trouvée sur la justification. Ceci est une DJA non justifiée</td>
-                              </tr>
-                          </table>';
-          }
-  
-          return $output;
-      } catch (\Exception $e) {
-          // Retourner un message d'erreur en cas d'exception
-          return response()->json(['error' => 'Une erreur est survenue : ' . $e->getMessage()], 500);
-      }
-  }
-  
-  public function saveDjas(Request $request)
-  {
-      try {
-          // Récupérer les données du formulaire
-          $febidArray =  $request->febid;
-          $djasidArray = $request->iddjas;
-          $dapsidArray = $request->dpasid;
-          $ligneidArray = $request->ligneid;
-          $montantAvanceArray = $request->montantavance;
-          $montantUtiliserArray = $request->montant_utiliser;
-          $surplusArray = $request->surplus;
-          $montantRetourneArray = $request->montant_retourne;
-          $bordereauArray = $request->bordereau;
-          $descriptionArray = $request->description;
-          $plaqueArray = $request->has('plaque') ? $request->plaque : "";
-          $receptionpar = $request->receptionpar;
-  
-          // Initialiser la liste des champs vides
-          $emptyFields = [];
-  
-          // Vérifier si tous les champs sont remplis
-          if (empty($febidArray)) {
-              $emptyFields[] = 'febid';
-          }
-          if (empty($djasidArray)) {
-              $emptyFields[] = 'iddjas';
-          }
-          if (empty($dapsidArray)) {
-              $emptyFields[] = 'dpasid';
-          }
-          if (empty($ligneidArray)) {
-              $emptyFields[] = 'ligneid';
-          }
-          if (empty($montantAvanceArray)) {
-              $emptyFields[] = 'montantavance';
-          }
-          if (empty($montantUtiliserArray)) {
-              $emptyFields[] = 'montant_utiliser';
-          }
-          if (empty($surplusArray)) {
-              $emptyFields[] = 'surplus';
-          }
-          if (empty($montantRetourneArray)) {
-              $emptyFields[] = 'montant_retourne';
-          }
-          if (empty($bordereauArray)) {
-              $emptyFields[] = 'bordereau';
-          }
-          if (empty($descriptionArray)) {
-              $emptyFields[] = 'description';
-          }
-          if (empty($receptionpar)) {
-              $emptyFields[] = 'receptionpar';
-          }
-  
-          // Si des champs sont vides, renvoyer une erreur
-          if (!empty($emptyFields)) {
-              return response()->json([
-                  'status' => 203,
-                  'error' => "Les champs suivants sont obligatoires : " . implode(", ", $emptyFields)
-              ]);
-          }
-  
-          // Parcourir les données et les enregistrer dans la base de données
-          foreach ($febidArray as $key => $febid) {
-              $dja = new Elementdjas();
-              $dja->febid = $febid;
-              $dja->iddjas = $djasidArray[$key];
-              $dja->idddap = $dapsidArray[$key];
-              $dja->ligneid = $ligneidArray[$key];
-              $dja->montant_avance = $montantAvanceArray[$key];
-              $dja->montant_utiliser = $montantUtiliserArray[$key];
-              $dja->surplus = $surplusArray[$key];
-              $dja->montant_retourne = $montantRetourneArray[$key];
-              $dja->bordereau = $bordereauArray[$key];
-              $dja->description = $descriptionArray[$key];
-              $dja->plaque = $plaqueArray[$key];
-              $dja->receptionpar = $receptionpar;
-              $dja->save();
-          }
-  
-          // Confirmer la transaction
-          DB::commit();
-  
-          return response()->json([
-              'status' => 200,
-          ]);
-      } catch (Exception $e) {
-          // En cas d'erreur, annuler la transaction
-          DB::rollback();
-  
-          return response()->json([
-              'status' => 203,
-              'error' => $e->getMessage()
-          ]);
-      }
-  }
+public function saveDjas(Request $request)
+{
+    DB::beginTransaction(); // Démarrer une transaction
+
+    try {
+        // Récupérer les données du formulaire
+        $febidArray = $request->febid ?? [];
+        $djasidArray = $request->iddjas ?? [];
+        $dapsidArray = $request->dpasid ?? [];
+        $ligneidArray = $request->ligneid ?? [];
+        $montantAvanceArray = $request->montantavance ?? [];
+        $montantUtiliserArray = $request->montant_utiliser ?? [];
+        $surplusArray = $request->surplus ?? [];
+        $montantRetourneArray = $request->montant_retourne ?? [];
+        $bordereauArray = $request->bordereau ?? [];
+        $descriptionArray = $request->description ?? [];
+        $plaqueArray = $request->has('plaque') ? $request->plaque : [];
+        $receptionpar = $request->receptionpar ?? '';
+
+        // Initialiser la liste des champs vides
+        $emptyFields = [];
+
+        // Vérifier si tous les champs sont remplis
+        if (empty($febidArray)) {
+            $emptyFields[] = 'febid';
+        }
+        if (empty($djasidArray)) {
+            $emptyFields[] = 'iddjas';
+        }
+        if (empty($dapsidArray)) {
+            $emptyFields[] = 'dpasid';
+        }
+        if (empty($ligneidArray)) {
+            $emptyFields[] = 'ligneid';
+        }
+        if (empty($montantAvanceArray)) {
+            $emptyFields[] = 'montantavance';
+        }
+        if (empty($montantUtiliserArray)) {
+            $emptyFields[] = 'montant_utiliser';
+        }
+        if (empty($surplusArray)) {
+            $emptyFields[] = 'surplus';
+        }
+        if (empty($montantRetourneArray)) {
+            $emptyFields[] = 'montant_retourne';
+        }
+        if (empty($bordereauArray)) {
+            $emptyFields[] = 'bordereau';
+        }
+        if (empty($descriptionArray)) {
+            $emptyFields[] = 'description';
+        }
+        if (empty($receptionpar)) {
+            $emptyFields[] = 'receptionpar';
+        }
+
+        // Si des champs sont vides, renvoyer une erreur
+        if (!empty($emptyFields)) {
+            return response()->json([
+                'status' => 203,
+                'error' => "Les champs suivants sont obligatoires : " . implode(", ", $emptyFields)
+            ]);
+        }
+
+        // Mettre à jour le statut des enregistrements dans la table djas
+        foreach ($djasidArray as $id) {
+            DB::table('djas')->where('id', $id)->update(['statut' => 1]);
+        }
+
+        // Parcourir les données et les enregistrer dans la base de données
+        foreach ($febidArray as $key => $febid) {
+            // Vérifier si l'index existe dans tous les tableaux avant de l'utiliser
+            if (!isset(
+                $djasidArray[$key], $dapsidArray[$key], $ligneidArray[$key], $montantAvanceArray[$key], 
+                $montantUtiliserArray[$key], $surplusArray[$key], $montantRetourneArray[$key], 
+                $bordereauArray[$key], $descriptionArray[$key]
+            )) {
+                throw new Exception("Index $key n'existe pas dans un ou plusieurs tableaux.");
+            }
+
+            // Vérifier si l'index existe dans le tableau $plaqueArray
+            $plaque = isset($plaqueArray[$key]) ? $plaqueArray[$key] : null;
+
+            $dja = new Elementdjas();
+            $dja->febid = $febid;
+            $dja->iddjas = $djasidArray[$key];
+            $dja->idddap = $dapsidArray[$key];
+            $dja->ligneid = $ligneidArray[$key];
+            $dja->montant_avance = $montantAvanceArray[$key];
+            $dja->montant_utiliser = $montantUtiliserArray[$key];
+            $dja->surplus = $surplusArray[$key];
+            $dja->montant_retourne = $montantRetourneArray[$key];
+            $dja->bordereau = $bordereauArray[$key];
+            $dja->description = $descriptionArray[$key];
+            $dja->plaque = $plaque;
+            $dja->receptionpar = $receptionpar;
+            $dja->save();
+        }
+
+        // Confirmer la transaction
+        DB::commit();
+
+        return response()->json([
+            'status' => 200,
+        ]);
+    } catch (Exception $e) {
+        // En cas d'erreur, annuler la transaction
+        DB::rollback();
+
+        return response()->json([
+            'status' => 203,
+            'error' => $e->getMessage()
+        ]);
+    }
+}
+
+
+
+
+
  
 }
 

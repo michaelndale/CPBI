@@ -23,7 +23,7 @@
         <div class="col-lg-12" style="margin:auto">
           <div class="card">
             <div class="table-responsive">
-              <table class="table table-bordered mb-0" id="show_all_activite">
+              <table class="table table-bordered  table-striped table-sm fs--1 mb-0" id="show_all_activite">
                 <thead>
 
                   <tr style="background-color:#82E0AA">

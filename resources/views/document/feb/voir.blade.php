@@ -15,58 +15,19 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                         <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> Le details de la FEB (N° {{ $dataFeb->numerofeb }} ) </h4>
                         <div class="page-title-right">
 
-                        <button type="button" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal" data-febid="{{ $dataFeb->id ? $dataFeb->id : '' }}">
-                            <i class="fab fa-telegram-plane ms-1"></i> Signalé FEB
-                        </button>
+                            <button type="button" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal" data-febid="{{ $dataFeb->id ? $dataFeb->id : '' }}">
+                                <i class="fab fa-telegram-plane ms-1"></i> Signalé FEB
+                            </button>
 
-                        @include('document.feb.message')
-                                  
+                            @include('document.feb.message')
 
-
-                
                             <div class="btn-toolbar float-end" role="toolbar">
-                                                    <div class="btn-group me-2 mb-2 mb-sm-0">
-                                                        <a href="{{ route('generate-pdf-feb', $dataFeb->id) }}"  class="btn btn-primary waves-light waves-effect"><i class="fa fa-print"></i> </a>
-                                                        <a href="{{ route('showfeb', $cryptedId ) }}"  class="btn btn-primary waves-light waves-effect"><i class="fa fa-edit"></i> </a>
-                                                        
-                                                        <button type="button" class="btn btn-primary waves-light waves-effect"><i class=" ri-question-answer-line"></i></button>
-                                                        <button type="button" class="btn btn-primary waves-light waves-effect"><i class="far fa-trash-alt"></i></button>
-                                                    </div>
-                                                  <!--  <div class="btn-group me-2 mb-2 mb-sm-0">
-                                                        <button type="button" class="btn btn-primary waves-light waves-effect dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="fa fa-folder"></i> <i class="mdi mdi-chevron-down ms-1"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#">Updates</a>
-                                                            <a class="dropdown-item" href="#">Social</a>
-                                                            <a class="dropdown-item" href="#">Team Manage</a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="btn-group me-2 mb-2 mb-sm-0">
-                                                        <button type="button" class="btn btn-primary waves-light waves-effect dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="fa fa-tag"></i> <i class="mdi mdi-chevron-down ms-1"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#">Updates</a>
-                                                            <a class="dropdown-item" href="#">Social</a>
-                                                            <a class="dropdown-item" href="#">Team Manage</a>
-                                                        </div>
-                                                    </div>
-                    
-                                                    <div class="btn-group me-2 mb-2 mb-sm-0">
-                                                        <button type="button" class="btn btn-primary waves-light waves-effect dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            More <i class="mdi mdi-dots-vertical ms-2"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#">Mark as Unread</a>
-                                                            <a class="dropdown-item" href="#">Mark as Important</a>
-                                                            <a class="dropdown-item" href="#">Add to Tasks</a>
-                                                            <a class="dropdown-item" href="#">Add Star</a>
-                                                            <a class="dropdown-item" href="#">Mute</a>
-                                                        </div>
-                                                    </div>  -->
-                                                </div>
-                       
+                                <div class="btn-group me-2 mb-2 mb-sm-0">
+                                    <a href="{{ route('generate-pdf-feb', $dataFeb->id) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-print"></i> </a>
+                                    <a href="{{ route('showfeb', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-edit"></i> </a>
+                                    <a href="{{ route('listfeb') }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-list"></i></a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -78,9 +39,6 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                         <div class="card-body">
                             <div class="invoice-title">
                                 <center>
-                                    <!--  <a href="{{ route('listfeb')}}" class="btn btn-info"> <i class="fas fa-long-arrow-alt-left"></i> Retour en arrière.</a>
-                        <a href="{{ route('generate-pdf-feb', $dataFeb->id) }}" class="btn btn-success"><i class="fa fa-print"> </i> Générer document PDF</a>
-                      <a href="{{ route('generate.word.feb', $dataFeb->id) }}" class="btn btn-primary">Download Word Document</a> -->
                                     <div class="text-muted">
                                         <table style=" width:100%">
                                             <tr>
@@ -117,9 +75,6 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                         <tr>
                                             <td>Composante/ Projet/Section: {{ ucfirst($dataprojets->title) }} </td>
                                             <td>Période: {{ $dataFeb->periode }}
-
-
-
 
                                             </td>
                                         </tr>
@@ -186,33 +141,38 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                                 checked value="{{ $dataFeb->tdr }}"
                                                 @else
                                                 value="{{ $dataFeb->tdr }}"
-                                                @endif
+                                                @endif  />
 
-                                                &nbsp;&nbsp; <label title="Bordereau de versement"> B.V :</label> <input type="checkbox" class="form-check-input" readonly @if($dataFeb->br==1)
+                                                &nbsp;&nbsp; <label title="Bordereau de versement"> B.V :</label> <input type="checkbox" class="form-check-input" readonly @if($dataFeb->bv==1)
                                                 checked value="{{ $dataFeb->bv }}"
                                                 @else
                                                 value="{{ $dataFeb->bv }}"
-                                                @endif
+                                                @endif  />
 
                                                 &nbsp;&nbsp; <label title="Reçu"> Reçu : </label> <input type="checkbox" class="form-check-input" readonly @if($dataFeb->recu==1)
                                                 checked value="{{ $dataFeb->recu }}"
                                                 @else
                                                 value="{{ $dataFeb->recu }}"
-                                                @endif
+                                                @endif  />
 
                                                 &nbsp;&nbsp; <label title="Accussé de reception"> A.R :</label> <input type="checkbox" class="form-check-input" readonly @if($dataFeb->recu==1)
                                                 checked value="{{ $dataFeb->recu }}"
                                                 @else
                                                 value="{{ $dataFeb->recu }}"
-                                                @endif
+                                                @endif   />
 
                                                 &nbsp;&nbsp; <label title="Bordereau d'expédition"> B.E :</label> <input type="checkbox" class="form-check-input" readonly @if($dataFeb->be==1)
                                                 checked value="{{ $dataFeb->be }}"
                                                 @else
                                                 value="{{ $dataFeb->be }}"
                                                 @endif
+                                                />
 
-
+                                                &nbsp;&nbsp; <label title="Appel a la participation a la construction au CFK"> A.P.C</label> <input type="checkbox" class="form-check-input" readonly @if($dataFeb->apc==1)
+                                                checked value="{{ $dataFeb->apc }}"
+                                                @else
+                                                value="{{ $dataFeb->apc }}"
+                                                @endif
                                                 />
                                             </td>
 
@@ -220,11 +180,6 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                                 Bénéficiaire : {{ $onebeneficaire->libelle }}
                                                 @endif</td>
                                         </tr>
-
-
-
-
-
                                     </table>
                                 </div>
                                 <!-- end col -->
@@ -384,16 +339,8 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                         <p align="center">
                                             {{ $dateinfo->piedpage }}
                                         </p>
-
-
-
                                         <br>
-
                                         <div class="float-end">
-
-                                            <!-- <a href="javascript:window.print()" class="btn btn-success me-1"><i class="fa fa-print"> Imprimer</i></a> -->
-
-
                                             <button type="submit" name="save" id="dave" class="btn btn-primary w-md"> <i class="fas fa-cloud-download-alt"> </i> Sauvegarder la sinatgure </button>
                                             <br>
                                             <br><small>
@@ -409,7 +356,9 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                         <br>
                     </div>
                 </div>
-                </div> </div>
-                <br> <br>
-              
-                @endsection
+            </div>
+        </div>
+        <br> 
+        <br>
+
+        @endsection

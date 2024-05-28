@@ -29,7 +29,7 @@
                                 <tbody class="list">
                                     <tr>
                                         <td class="align-middle ps-3 name" style="width:20%">Composante/ Projet/Section</td>
-                                        <td class="align-middle email" colspan="14">
+                                        <td class="align-middle email" colspan="15">
                                             <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
                                             <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
                                         </td>
@@ -37,7 +37,7 @@
                                     <tr>
 
                                         <td class="align-middle ps-3 name">Ligne budgétaire: </td>
-                                        <td class="align-middle email" colspan="14">
+                                        <td class="align-middle email" colspan="15">
 
 
 
@@ -77,12 +77,12 @@
                                     </tr>
                                     <tr>
                                         <td class="align-middle ps-3 name">Activités </td>
-                                        <td colspan="6">
+                                        <td colspan="8">
                                             <input type="text" class="form-control form-control-sm" name="descriptionf" id="descriptionf" required>
                                         </td>
 
                                         <td class="align-middle ps-3 name" >Bénéficiaire </td>
-                                        <td colspan="10">
+                                        <td colspan="8">
 
 
                                             <select class="form-control  form-control-sm" id="beneficiaire" name="beneficiaire" >
@@ -187,6 +187,12 @@
                                             </center>
                                         </td>
 
+                                        <td class="align-middle ps-3 name" style="width:4%">
+                                            <center><label title="Appel a la participation a la construction au CFK">A.P.C</label> <br>
+                                                <input type="checkbox" class="form-check-input" name="apc" id="apc">
+                                            </center>
+                                        </td>
+
                                     </tr>
                                 </tbody>
                             </table>
@@ -196,17 +202,17 @@
 
 
                             <div class="table-responsive">
-                                <table class="table table-hover table-white" id="tableEstimate">
-                                    <thead>
+                                <table class="table table-striped table-sm fs--1 mb-0"  id="tableEstimate">
+                                    <thead style="background-color:#3CB371; color:white">
                                         <tr>
-                                            <th style="width:80px">Num</th>
-                                            <th>Designation  des activités de la ligne</th>
-                                            <th>Description</th>
-                                            <th style="width:150px">Unité</th>
-                                            <th style="width:100px">Q<sup>té</sup></th>
-                                            <th style="width:50px">Frequence</th>
-                                            <th style="width:130px">P.U</th>
-                                            <th style="width:150px">P.T</th>
+                                            <th style="width:80px; color:white"><b>Num</b></th>
+                                            <th style="  color:white"><b> Designation  des activités de la ligne </b></th>
+                                            <th style=" color:white"> <b> Description </b></th>
+                                            <th style="width:150px;  color:white"><b>Unité</b></th>
+                                            <th style="width:100px ;  color:white"><b>Q<sup>té </b></sup></th>
+                                            <th style="width:50px; color:white"><b>Frequence</b></th>
+                                            <th style="width:130px;  color:white"><b>P.U</b></th>
+                                            <th style="width:150px;  color:white"><b>P.T</b></th>
 
                                             <th> </th>
                                         </tr>

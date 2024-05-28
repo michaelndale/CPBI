@@ -39,7 +39,8 @@
                   <th><b>N<sup>o</sup> DAP</b></th>
                   <th><b>OV </b></th>
                   <th><b> Justifier ?</b></th>
-                  <th><b> Date enr. </b></th>
+                  <th><b>Créé le. </b></th>
+                  <th><b>Créé par </b></th>
 
                 </tr>
               </thead>
@@ -116,56 +117,61 @@
 
     // Add  ajax 
     $("#addjdaForm").submit(function(e) {
-      e.preventDefault();
-      const fd = new FormData(this);
+  e.preventDefault();
+  const fd = new FormData(this);
 
-      $("#addjustifierbtn").html('<i class="fas fa-spinner fa-spin"></i>');
-      document.getElementById("addjustifierbtn").disabled = true; // Désactivez le bouton pour éviter les doubles soumissions
-      $("#loadingModal").modal('show'); // Affiche le popup de chargement
+  $("#addjustifierbtn").html('<i class="fas fa-spinner fa-spin"></i> En cours...');
+  $("#addjustifierbtn").prop('disabled', true); // Désactiver le bouton de soumission
 
-      $.ajax({
-        url: "{{ route('storejustification') }}",
-        method: 'post',
-        data: fd,
-        cache: false,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-          if (response.status == 200) {
-            fetchAlldja();
-            toastr.success("DJA ajouté avec succès !", "success");
-            $("#djaModale").modal('hide');
-          } else if (response.status == 201) {
-            toastr.error("Attention: DJA fonction existe déjà !", "info");
-            $("#djaModale").modal('show');
-            document.getElementById("addjustifierbtn").disabled = false; // Réactive le bouton
-          } else if (response.status == 202) {
-            toastr.error("Erreur d'execution, verifier votre internet", "error");
-            $("#djaModale").modal('show');
+  $.ajax({
+    url: "{{ route('storejustification') }}",
+    method: 'post',
+    data: fd,
+    cache: false,
+    contentType: false,
+    processData: false,
+    dataType: 'json',
+    success: function(response) {
+    if (response.status == 200) {
+        fetchAlldja();
+        toastr.success("DJA ajouté avec succès !", "success");
+        $("#djaModale").modal('hide');
 
-            document.getElementById("addjustifierbtn").disabled = false; // Réactive le bouton
-          } else if (response.status == 203) {
-            toastr.error("Erreur d'exécution : " + response.error, "error");
-            $("#djaModale").modal('show');
-            document.getElementById("addjustifierbtn").disabled = false; // Réactive le bouton
-          }
+        // Redirection vers la page DJA
+        window.location.href = "{{ route('listdap') }}";
+    } else if (response.status == 201) {
+        toastr.error("Attention: DJA fonction existe déjà !", "info");
+        $("#djaModale").modal('show');
+        document.getElementById("addjustifierbtn").disabled = false; // Réactive le bouton
+    } else if (response.status == 202) {
+        toastr.error("Erreur d'execution, verifier votre internet", "error");
+        $("#djaModale").modal('show');
 
-          $("#addjustifierbtn").html('Sauvegarder'); // Réinitialise le texte du bouton
-          document.getElementById("djaModale").disabled = false; // Réactive le bouton
-          $("#loadingModal").modal('hide');
-          setTimeout(function() {
-            $("#loadingModal").modal('hide');
-          }, 600); // 600 millisecondes = 0.6 secondes
-        },
-        error: function(xhr, status, error) {
-          toastr.error("Une erreur s'est produite : " + error, "error");
-          $("#addjustifierbtn").html('Sauvegarder'); // Réinitialise le texte du bouton
-          document.getElementById("addjustifierbtn").disabled = false; // Réactive le bouton
-          $("#loadingModal").modal('hide');
-        }
-      });
-    });
+        document.getElementById("addjustifierbtn").disabled = false; // Réactive le bouton
+    } else if (response.status == 203) {
+        toastr.error("Erreur d'exécution : " + response.error, "error");
+        $("#djaModale").modal('show');
+        document.getElementById("addjustifierbtn").disabled = false; // Réactive le bouton
+    }
+
+    $("#addjustifierbtn").html('Sauvegarder'); // Réinitialise le texte du bouton
+    document.getElementById("djaModale").disabled = false; // Réactive le bouton
+    $("#loadingModal").modal('hide');
+    setTimeout(function() {
+        $("#loadingModal").modal('hide');
+    }, 600); // 600 millisecondes = 0.6 secondes
+}
+,
+    error: function(xhr, status, error) {
+      toastr.error("Une erreur s'est produite : " + error, "Erreur");
+    },
+    complete: function() {
+      $("#addjustifierbtn").html('Sauvegarder'); // Réinitialiser le texte du bouton
+      $("#addjustifierbtn").prop('disabled', false); // Réactiver le bouton de soumission
+    }
+  });
+});
+
 
 
     $(document).on('click', '.deleteIcon', function(e) {

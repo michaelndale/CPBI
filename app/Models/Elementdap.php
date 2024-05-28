@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Elementdap extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'ligneided', 
+    ];
 }

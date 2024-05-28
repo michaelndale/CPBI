@@ -71,7 +71,7 @@
 
                   <tbody class="show_all" id="show_all" >
                     <tr >
-                      <td colspan="14">
+                      <td colspan="15">
                         <h5 class="text-center text-secondery my-5">
                           <center> @include('layout.partiels.load') </center>
                       </td>

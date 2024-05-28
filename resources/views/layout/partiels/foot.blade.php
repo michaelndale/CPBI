@@ -206,7 +206,8 @@
           <div class="row">
             <div class="custom-file">
               <input id="profileuserid" name="profileuserid" type="hidden" value="{{ Auth::user()->id }}" />
-              <input type="file" class="form-control" id="file" name="file" accept=".png" onchange="preview_image(event)">
+              <input type="file" class="form-control" id="file" name="file" accept="image/jpeg, image/png" onchange="preview_image(event)">
+
             </div>
             <br><br>
             <div id="wrapper">

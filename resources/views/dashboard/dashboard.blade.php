@@ -3,19 +3,19 @@
 @php
 $documentacce= DB::table('febs')
 ->Where('acce', Auth::id() )
-->Where('acce_signe',  0)
+->Where('acce_signe', 0)
 ->get()
 ->count();
 
 $documentcompte = DB::table('febs')
 ->Where('comptable', Auth::id() )
-->Where('comptable_signe',  0)
+->Where('comptable_signe', 0)
 ->get()
 ->count();
 
 $documentchefcomposent= DB::table('febs')
 ->Where('chefcomposante', Auth::id() )
-->Where('chef_signe',  0)
+->Where('chef_signe', 0)
 ->get()
 ->count();
 
@@ -23,7 +23,7 @@ $documentchefcomposent= DB::table('febs')
 
 $dap_demandeetablie= DB::table('daps')
 ->Where('demandeetablie', Auth::id() )
-->Where('demandeetablie_signe',  0)
+->Where('demandeetablie_signe', 0)
 ->get()
 ->count();
 
@@ -31,31 +31,31 @@ $dap_demandeetablie= DB::table('daps')
 
 $dap_verifier= DB::table('daps')
 ->Where('verifierpar', Auth::id() )
-->Where('verifierpar_signe',  0)
+->Where('verifierpar_signe', 0)
 ->get()
 ->count();
 
 $dap_approuverpar= DB::table('daps')
 ->Where('approuverpar', Auth::id() )
-->Where('approuverpar_signe',  0)
+->Where('approuverpar_signe', 0)
 ->get()
 ->count();
 
 $dap_responsable= DB::table('daps')
 ->Where('responsable', Auth::id() )
-->Where('responsable_signe',  0)
+->Where('responsable_signe', 0)
 ->get()
 ->count();
 
 $dap_secretaire= DB::table('daps')
 ->Where('secretaire', Auth::id() )
-->Where('secretaure_general_signe',  0)
+->Where('secretaure_general_signe', 0)
 ->get()
 ->count();
 
 $dap_chefprogramme= DB::table('daps')
 ->Where('chefprogramme', Auth::id() )
-->Where('chefprogramme_signe',  0)
+->Where('chefprogramme_signe', 0)
 ->get()
 ->count();
 
@@ -64,8 +64,8 @@ $dap_nombre= $dap_demandeetablie + $dap_verifier + $dap_approuverpar + $dap_resp
 $fab_nombre= $documentacce + $documentcompte + $documentchefcomposent;
 
 $documentNombre = $dap_nombre + $fab_nombre ;
- 
- @endphp
+
+@endphp
 
 <div class="main-content">
     <div class="page-content">
@@ -85,6 +85,25 @@ $documentNombre = $dap_nombre + $fab_nombre ;
             <!-- end page title -->
 
             <div class="row">
+
+                <div class="col-lg-12">
+                    <div class="card border border-danger">
+                        <div class="card-header bg-transparent border-danger">
+                            <h5 class="my-0 text-danger"><i class="mdi mdi-block-helper me-3"></i>MESSAGE D’ALERTE…</h5>
+                        </div>
+                        <div class="card-body">
+
+                            <p class="card-text"> Compte tenu des erreurs constatées dans l'exécution de l'application, tous les DAP ont été supprimés. Ces erreurs étaient causées par des saisies erronées des utilisateurs. <br>
+                                Nous vous demandons donc de refaire les DAP pour les personnes dont les informations ont été supprimées au sein de votre projet.
+                                <br>Veuillez suivre scrupuleusement la procédure de création, en respectant la nomenclature de chaque champ. <br>
+
+                                Nous ne pouvons pas tous reprendre ici les erreurs constatées, mais nous sommes à votre disposition dans la salle de conférence pour vous faciliter cette étape.
+
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-xl-12">
                     <div class="row">
                         <div class="col-md-3">
@@ -156,72 +175,72 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                         </div>
                     </div>
                     <!-- end row -->
-        @if (session()->has('id'))
-            <div class="px-lg-2">
-                <div class="row g-0">
-                  <div class="col" style="border:1px solid #c0c0c0">
-                    <a class="dropdown-icon-item" href="{{ route('rallongebudget') }}">
-                      <i class="fa fa-folder-open" size='5'></i>
-                      <span>Budget</span>
-                    </a>
-                  </div>
-                  <div class="col" style="border:1px solid #c0c0c0">
-                    <a class="dropdown-icon-item" href="{{ route('activity') }}">
-                      <i class="fa fa-folder-open" size='5'></i>
-                      <span>Activités</span>
-                    </a>
-                  </div>
-                  <div class="col" style="border:1px solid #c0c0c0">
-                    <a class="dropdown-icon-item" href="{{ route('listfeb') }}">
-                      <i class="fa fa-edit" size='5'></i>
-                      <span>FEB</span>
-                    </a>
-                  </div>
-                  <div class="col" style="border:1px solid #c0c0c0">
-                    <a class="dropdown-icon-item" href="{{ route('listdap') }}">
-                      <i class="fa fa-edit" size='5'></i>
-                      <span>DAP</span>
-                    </a>
-                  </div>
-                  <div class="col" style="border:1px solid #c0c0c0">
-                    <a class="dropdown-icon-item" href="{{ route('listdja') }}">
-                      <i class="fa fa-edit" size='5'></i>
-                      <span>DJA</span>
-                    </a>
-                  </div>
-                  <div class="col" style="border:1px solid #c0c0c0">
-                    <a class="dropdown-icon-item" href="{{ route('affectation') }}">
-                      <i class="fa fa-users" size='5'></i>
-                      <span>Intervenant</span>
-                    </a>
-                  </div>
+                    @if (session()->has('id'))
+                    <div class="px-lg-2">
+                        <div class="row g-0">
+                            <div class="col" style="border:1px solid #c0c0c0">
+                                <a class="dropdown-icon-item" href="{{ route('rallongebudget') }}">
+                                    <i class="fa fa-folder-open" size='5'></i>
+                                    <span>Budget</span>
+                                </a>
+                            </div>
+                            <div class="col" style="border:1px solid #c0c0c0">
+                                <a class="dropdown-icon-item" href="{{ route('activity') }}">
+                                    <i class="fa fa-folder-open" size='5'></i>
+                                    <span>Activités</span>
+                                </a>
+                            </div>
+                            <div class="col" style="border:1px solid #c0c0c0">
+                                <a class="dropdown-icon-item" href="{{ route('listfeb') }}">
+                                    <i class="fa fa-edit" size='5'></i>
+                                    <span>FEB</span>
+                                </a>
+                            </div>
+                            <div class="col" style="border:1px solid #c0c0c0">
+                                <a class="dropdown-icon-item" href="{{ route('listdap') }}">
+                                    <i class="fa fa-edit" size='5'></i>
+                                    <span>DAP</span>
+                                </a>
+                            </div>
+                            <div class="col" style="border:1px solid #c0c0c0">
+                                <a class="dropdown-icon-item" href="{{ route('listdja') }}">
+                                    <i class="fa fa-edit" size='5'></i>
+                                    <span>DJA</span>
+                                </a>
+                            </div>
+                            <div class="col" style="border:1px solid #c0c0c0">
+                                <a class="dropdown-icon-item" href="{{ route('affectation') }}">
+                                    <i class="fa fa-users" size='5'></i>
+                                    <span>Intervenant</span>
+                                </a>
+                            </div>
 
-                  <div class="col" style="border:1px solid #c0c0c0">
-                    <a class="dropdown-icon-item" href="{{ route('rapportcumule') }}">
-                      <i class="fa fa-file-alt" size='5'></i>
-                      <span>Rapport commule</span>
-                    </a>
-                  </div>
-                  <div class="col" style="border:1px solid #c0c0c0">
-                    <a class="dropdown-icon-item" href="{{ route('planoperationnel') }}">
-                      <i class="fa fa-file-alt" size='5'></i>
-                      <span>Plan d'action</span>
-                    </a>
-                  </div>
+                            <div class="col" style="border:1px solid #c0c0c0">
+                                <a class="dropdown-icon-item" href="{{ route('rapportcumule') }}">
+                                    <i class="fa fa-file-alt" size='5'></i>
+                                    <span>Rapport commule</span>
+                                </a>
+                            </div>
+                            <div class="col" style="border:1px solid #c0c0c0">
+                                <a class="dropdown-icon-item" href="{{ route('planoperationnel') }}">
+                                    <i class="fa fa-file-alt" size='5'></i>
+                                    <span>Plan d'action</span>
+                                </a>
+                            </div>
 
-                  <div class="col" style="border:1px solid #c0c0c0">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-info-circle" size='5'></i>
-                      <span>Plan d'action</span>
-                    </a>
-                  </div>
+                            <div class="col" style="border:1px solid #c0c0c0">
+                                <a class="dropdown-icon-item" href="#">
+                                    <i class="fa fa-info-circle" size='5'></i>
+                                    <span>Plan d'action</span>
+                                </a>
+                            </div>
 
-                  
-                </div>
 
-              
-              </div>
-        @endif
+                        </div>
+
+
+                    </div>
+                    @endif
 
 
                     <!-- end row -->
@@ -319,7 +338,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
             </div>
             <!-- end row -->
-<br><br><br><br>
+            <br><br><br><br>
 
 
         </div> <!-- container-fluid -->
@@ -327,51 +346,52 @@ $documentNombre = $dap_nombre + $fab_nombre ;
     <!-- End Page-content -->
 
 
-@if ($documentNombre != 0)
-<div class="modal fade" id="monNotification" tabindex="-1" role="dialog" aria-labelledby="monNotificationLabel" aria-hidden="true">
-<div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="myLargeModalLabel"><i class="fa fa-folder-open"></i> Tâches à faire en attente</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" >
+    @if ($documentNombre != 0)
+    <div class="modal fade" id="monNotification" tabindex="-1" role="dialog" aria-labelledby="monNotificationLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel"><i class="fa fa-folder-open"></i> Tâches à faire en attente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
 
 
-      <div id="tableExample2" >
-              <div class="table-responsive">
-                <table class="table table-striped table-sm fs--1 mb-0" >
-                  <thead>
-                    <tr>
-                        <th class="sort border-top "><b>ID </b></center></th>
-                      <th class="sort border-top" data-sort="Document"><b>Document</b></th>
-                      <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> Doc </b></th>
-                      <th class="sort border-top" data-sort="Date Doc"><b>Date Doc</b></th>
-                      <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
-                      <th class="sort border-top" data-sort="Date limite"><b>Date limite</b></th>
-                      <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
-                    </tr>
-                  </thead>
+                    <div id="tableExample2">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-sm fs--1 mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="sort border-top "><b>ID </b></center>
+                                        </th>
+                                        <th class="sort border-top" data-sort="Document"><b>Document</b></th>
+                                        <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> Doc </b></th>
+                                        <th class="sort border-top" data-sort="Date Doc"><b>Date Doc</b></th>
+                                        <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
+                                        <th class="sort border-top" data-sort="Date limite"><b>Date limite</b></th>
+                                        <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
+                                    </tr>
+                                </thead>
 
 
-                  <tbody id="allnotification" >
-                  </tbody>
-                </table>
-              </div>
-      </div>
-        
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog --> 
-</div>
-@endif
+                                <tbody id="allnotification">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
-<script>
-  $(document).ready(function(){
-    // Sélectionnez votre modal et utilisez la méthode modal('show') pour l'ouvrir
-    $('#monNotification').modal('show');
-  });
-</script>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    @endif
+
+    <script>
+        $(document).ready(function() {
+            // Sélectionnez votre modal et utilisez la méthode modal('show') pour l'ouvrir
+            $('#monNotification').modal('show');
+        });
+    </script>
 
 
 
@@ -380,56 +400,57 @@ $documentNombre = $dap_nombre + $fab_nombre ;
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script type="text/javascript">
-    $(document).ready(function() {
+        $(document).ready(function() {
 
-        $(document).on('change', '.classcategory', function() {
-            var cat_id = $(this).val();
-            var op = '<option value="0" selected disabled>--Année--</option>';
+            $(document).on('change', '.classcategory', function() {
+                var cat_id = $(this).val();
+                var op = '<option value="0" selected disabled>--Année--</option>';
 
-            $.ajax({
-                type: 'get',
-                url: "{{ route('findClaseur') }}",
-                data: { 'id': cat_id },
-                success: function(data) {
-                    console.log(data);
-                    if (data.length == 0) {
-                        op += '<option value="0" disabled>Aucun</option>';
-                        toastr.error("Attention!!\n Le dossier n'a pas de projet", "Information");
-                    } else {
-                        for (var i = 0; i < data.length; i++) {
-                            op += '<option value="' + data[i].annee + '">' + data[i].annee + '</option>';
+                $.ajax({
+                    type: 'get',
+                    url: "{{ route('findClaseur') }}",
+                    data: {
+                        'id': cat_id
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        if (data.length == 0) {
+                            op += '<option value="0" disabled>Aucun</option>';
+                            toastr.error("Attention!!\n Le dossier n'a pas de projet", "Information");
+                        } else {
+                            for (var i = 0; i < data.length; i++) {
+                                op += '<option value="' + data[i].annee + '">' + data[i].annee + '</option>';
+                            }
                         }
+                        $("#annee").html(op);
+                    },
+                    error: function() {
+                        toastr.error("Erreur de connexion à la base de données,\n Vérifiez votre connexion", "Attention");
                     }
-                    $("#annee").html(op);
-                },
-                error: function() {
-                    toastr.error("Erreur de connexion à la base de données,\n Vérifiez votre connexion", "Attention");
-                }
+                });
+            });
+
+            $(document).on('change', '.annee', function() {
+                var ann_id = $(this).val();
+                var classcategory = $('#classcategory').val();
+
+                $.ajax({
+                    type: 'get',
+                    url: "{{ route('findAnnee') }}",
+                    data: {
+                        'id': ann_id,
+                        'docid': classcategory
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        $("#show_all_projet").html(data);
+                    },
+                    error: function() {
+                        toastr.error("Erreur lors de la récupération des données du projet.", "Attention");
+                    }
+                });
             });
         });
-
-        $(document).on('change', '.annee', function() {
-            var ann_id = $(this).val();
-            var classcategory = $('#classcategory').val();
-
-            $.ajax({
-                type: 'get',
-                url: "{{ route('findAnnee') }}",
-                data: {
-                    'id': ann_id,
-                    'docid': classcategory
-                },
-                dataType: 'json',
-                success: function(data) {
-                    $("#show_all_projet").html(data);
-                },
-                error: function() {
-                    toastr.error("Erreur lors de la récupération des données du projet.", "Attention");
-                }
-            });
-        });
-    });
-</script>
-
+    </script>
 
     @endsection

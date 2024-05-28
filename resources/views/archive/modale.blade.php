@@ -10,7 +10,7 @@
                 <div class="modal-body">
                     <div class="col-sm-6 col-md-12">
                         <div class="row">
-                            <div class="col-sm-3 col-md-12">
+                            <div class="col-sm-3 col-md-6">
                                 <div class="form-floating mb-1">
                                     <select class="form-select" id="classeur" name="classeur">
                                         <option value="" selected="selected">Séléctionner classeur</option>
@@ -21,8 +21,8 @@
                                     <label for="classeur">Classeur</label>
                                 </div>
                             </div>
-                            <br>
-                            <div class="col-sm-3 col-md-12">
+                          
+                            <div class="col-sm-3 col-md-6">
                                 <div class="form-floating mb-1">
                                     <select class="form-select" id="etiquette" name="etiquette">
                                         <option value="" selected="selected">Séléctionner étiquette</option>
@@ -66,7 +66,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" name="addbtn" id="addbtn" class="btn btn-primary">Sauvegarder</button>
+                    <button type="submit" name="addbtn" id="addbtn" class="btn btn-primary"><i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
                 </div>
             </form>
         </div>

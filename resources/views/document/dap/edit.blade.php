@@ -1,5 +1,38 @@
 @extends('layout/app')
 @section('page-content')
+ <style>
+        /* Styles pour l'en-tête de la première page */
+
+        body {
+            font-size: 80%;
+            /* taille de police de base */
+        }
+
+        h1 {
+            font-size: 2em;
+            /* taille de la police pour les titres */
+        }
+
+        p {
+            font-size: 1em;
+            /* taille de la police pour les paragraphes */
+        }
+
+        .small-text {
+            font-size: 0.8em;
+            /* taille de la police pour les textes de petite taille */
+        }
+
+        /* Exemple de CSS */
+      
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Open Sans', sans-serif;
+            /* Utilisation d'une autre police web légère pour les titres */
+        }
+    </style>
 <div class="main-content">
     <br>
     <div class="content">
@@ -11,7 +44,7 @@
                     <div class="col-sm-12">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title"> <i class="far fa-edit "></i> Modification de la demande et Autorisation de Paiement (DAP) </h5> <br> <br>
+                                <h5 class="modal-title"> <i class="far fa-edit "></i> Modification de la Demande  d'Autorisation de Paiement (DAP) </h5> <br> <br>
                             </div>
                             <div class="modal-body">
 
@@ -67,7 +100,7 @@
                                                     </td>
 
                                                     <td> Solde comptable (Sc):
-                                                        <input type="text" class="form-control form-control-sm" value="{{ $somfeb }}" readonly style="background-color:#c0c0c0" required>
+                                                        <input type="text" class="form-control form-control-sm" name="soldecompte" value="{{ $datadap->soldecompte }}"  style="background-color:#c0c0c0" required>
                                                     </td>
 
                                                     <td> CHQ nº:
@@ -142,7 +175,7 @@
                                                         <select type="text" class="form-control form-control-sm" name="verifier" id="verifier" required>
                                                             <option value="{{ $chefcomptable->idus }}">{{ ucfirst($chefcomptable->nom) }} {{ ucfirst($chefcomptable->prenom) }}</option>
                                                             @foreach ($personnel as $personnels)
-                                                            <option value="{{ $personnels->id }}">{{ $personnels->prenom }} {{ $personnels->prenom }}</option>
+                                                            <option value="{{ $personnels->id }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                                             @endforeach
                                                         </select>
                                                     </td>
