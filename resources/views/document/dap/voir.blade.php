@@ -56,11 +56,7 @@
                                     value="{{ $datadap->ov }}"
                                     @endif /> &nbsp; &nbsp;&nbsp;
 
-                                    Cheque : <input type="checkbox" class="form-check-input" readonly @if ( $datadap->cho==1)
-                                    checked value="{{ $datadap->cho }}"
-                                    @else
-                                    value="{{ $datadap->cho }}"
-                                    @endif /> &nbsp; &nbsp;&nbsp;
+                                    Cheque : {{ ucfirst($etablienom->cho) }} &nbsp; &nbsp;&nbsp;
 
 
                                 </td>

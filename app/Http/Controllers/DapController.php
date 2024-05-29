@@ -132,7 +132,6 @@ class DapController extends Controller
     }
   }
 
-
   public function checkDap(Request $request)
   {
     $ID = session()->get('id');
@@ -142,8 +141,6 @@ class DapController extends Controller
       ->exists();
     return response()->json(['exists' => $dap]);
   }
-
-
 
   // insert a new employee ajax request
   public function store(Request $request)
@@ -211,28 +208,37 @@ class DapController extends Controller
             if ($element) {
               $element->statut = 1;
               $element->save();
+
+
+              if ($justifier == 1 ||  $justifier == 0) {
+                // Enregistrement des informations de justification
+                $justification = new Dja();
+                $justification->numerodjas = $request->numerodap;
+                $justification->projetiddja = $request->projetid;
+                $justification->numerodap = $IDdap;  // numero dap est IDDAP
+                $justification->numeroov = $ov;
+               
+                if ($justifier == 1) {
+                  $justification->justifie = 1;
+                } else {
+                  $justification->justifie = 0;
+                }
+        
+                $justification->userid = Auth::id();
+                $justification->save();
+              }
+        
+
+
+
+
+
             }
           }
         }
       }
 
-      if ($justifier == 1 ||  $justifier == 0) {
-        // Enregistrement des informations de justification
-        $justification = new Dja();
-        $justification->numerodjas = $request->numerodap;
-        $justification->projetiddja = $request->projetid;
-        $justification->numerodap = $request->numerodap;
-        $justification->numeroov = $ov;
-        if ($justifier == 1) {
-          $justification->justifie = 1;
-        } else {
-          $justification->justifie = 0;
-        }
-
-        $justification->userid = Auth::id();
-        $justification->save();
-      }
-
+     
 
       // Confirmer la transaction
       DB::commit();
@@ -251,14 +257,16 @@ class DapController extends Controller
     }
   }
 
-
   // insert a new employee ajax request
   public function updatestore(Request $request)
   {
     try {
+      $IDpp= session()->get('id');
       $dap = dap::where('id', $request->dapid)->first();
+      $dja = Dja::where('numerodjas', $request->numerodap)->where('projetiddja',$IDpp)->first(); // change apres service
 
-      if (!$dap) {
+
+      if (!$dap  && !$dja) {
         return back()->with('failed', 'DAP non trouvé.');
       }
 
@@ -279,15 +287,17 @@ class DapController extends Controller
       $dap->secretaire = $request->secretairegenerale;
       $dap->chefprogramme = $request->chefprogramme;
       $dap->observation = $request->observation;
+      $dap->update();
 
-      $dap->save();
+      $dja->numerodap = $request->dapid;
+      $dja->numeroov = $ov;
+      $dja->update();
 
       return back()->with('success', 'Mises à jour effectuées avec succès.');
     } catch (Exception $e) {
       return back()->with('failed', 'Échec ! ' . $e->getMessage());
     }
   }
-
 
   public function list()
   {
@@ -350,7 +360,6 @@ class DapController extends Controller
       ]
     );
   }
-
 
   public function updatesignature(Request $request)
   {
@@ -481,8 +490,6 @@ class DapController extends Controller
     }
   }
 
-
-
   public function delete(Request $request)
   {
     DB::beginTransaction();
@@ -552,8 +559,6 @@ class DapController extends Controller
       ]);
     }
   }
-
-
 
   public function show($idd)
   {
@@ -691,7 +696,6 @@ class DapController extends Controller
     );
   }
 
-
   public function edit($idd)
   {
 
@@ -745,13 +749,11 @@ class DapController extends Controller
    
 
 
-    $elementdaps_feb = DB::table('elementdaps')
-      ->join('febs', 'elementdaps.referencefeb', 'febs.id')
-      ->join('comptes', 'febs.ligne_bugdetaire', '=', 'comptes.id')
-      ->join('rallongebudgets', 'febs.ligne_bugdetaire', '=', 'rallongebudgets.compteid')
-      ->select('febs.*', 'comptes.libelle', 'rallongebudgets.budgetactuel')
-      ->Where('elementdaps.dapid', $idd)
-      ->first();
+    $elementdaps_feb  = DB::table('febs')
+      ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
+      ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf')
+      ->where('elementdaps.dapid', $idd)
+      ->get();
 
     $sommefebs =   DB::table('elementdaps')
       ->join('elementfebs', 'elementdaps.referencefeb', 'elementfebs.febid')
@@ -815,7 +817,8 @@ class DapController extends Controller
         'responsable' => $responsable,
         'secretaire'  => $secretaire,
         'chefprogramme' => $chefprogramme,
-        'initiateur' => $initiateur
+        'initiateur' => $initiateur,
+      
       ]
     );
   }
@@ -1002,4 +1005,5 @@ class DapController extends Controller
     // Télécharge le PDF
     return $pdf->download($fileName);
   }
+
 }

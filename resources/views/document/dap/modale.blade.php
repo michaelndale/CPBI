@@ -49,7 +49,7 @@
                                         <td class="align-middle" style="width:20% ;  background: rgba(76, 175, 80, 0.3)">
                                             <b>NUMERO FEB: </b> <br>
                                             <select type="text" class="form-control form-control-sm febid" style="width: 100%" required multiple>
-                                                <option value="">--Aucun--</option>
+                                                <option disabled="true" selected="true">--Aucun--</option>
                                                 @forelse ($feb as $febs)
                                                 <option value="{{ $febs->id }}"> {{ $febs->numerofeb }}</option>
                                                 @empty

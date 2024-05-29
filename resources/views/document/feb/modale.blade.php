@@ -42,7 +42,7 @@
 
 
                                             <select class="form-control  form-control-sm ligneid" id="referenceid" name="referenceid" required>
-                                                <option value="">Sélectionner la ligne budgétaire</option>
+                                                <option disabled="true" selected="true" value="">Sélectionner la ligne budgétaire</option>
                                                 @foreach ($compte as $comptes)
                                                 <optgroup label="{{ $comptes->libelle }}">
                                                     @php
@@ -223,7 +223,7 @@
                                             <td>
                                                 <div id="Showpoll" class="Showpoll">
                                                     <select style="width:100%" type="text" class="form-control form-control-sm">
-                                                        <option>Aucun</option>
+                                                        <option disabled="true" selected="true">Aucun</option>
                                                     </select>
                                                 </div>
                                             </td>

@@ -33,7 +33,7 @@ class DjaController extends Controller
     ->join('personnels', 'users.personnelid', '=', 'personnels.id')
     ->select('djas.*', 'personnels.prenom as user_prenom')
     ->where('djas.projetiddja', $ID)
-    ->orderBy('djas.id', 'DESC')
+    ->orderBy('djas.numerodjas', 'asc')
     ->get();
 
 
@@ -71,8 +71,6 @@ class DjaController extends Controller
             <div class="dropdown-menu">
                '. $lien.'
                 <a href="dja/'.$cryptedId.'/view" class="dropdown-item  mx-1"><i class="far fa-eye"></i> Voir  </a>   
-                
-                
             </div>
           </div>
           </center>
@@ -81,9 +79,8 @@ class DjaController extends Controller
           <td> ' . $datas->numerodap . ' </td>
           <td> <input type="checkbox" ' . $ov . ' class="form-check-input" />  </td>
           <td><input type="checkbox" ' . $jus . ' class="form-check-input" /></td>
-          <td> ' .date('d-m-Y', strtotime($datas->created_at)). '  </td>
-          <td> ' . ucfirst($datas->user_prenom) . ' </td>
-         
+          <td> ' .date('d-m-Y', strtotime($datas->created_at)).'  </td>
+          <td> ' .ucfirst($datas->user_prenom) . ' </td>
         </tr>
       ';
         $nombre++;
