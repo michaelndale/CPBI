@@ -92,16 +92,19 @@ class FebController extends Controller
                                 <a href="feb/'.$cryptedId.'/view" class="dropdown-item mx-1" id="' . $datas->id . '">
                                     <i class="fas fa-eye"></i> Voir 
                                 </a>
+                                <a href="feb/'.$cryptedId.'/showannex" class="dropdown-item mx-1" id="' . $datas->id . '">
+                                <i class="fas fa-paperclip"></i> Attachez les annex
+                            </a>
                                 <a href="feb/'.$cryptedId.'/edit" class="dropdown-item mx-1" id="' . $datas->id . '" title="Modifier">
                                     <i class="far fa-edit"></i> Modifier
                                 </a>
                                 <a href="feb/'.$datas->id.'/generate-pdf-feb" class="dropdown-item mx-1">
                                     <i class="fa fa-print"></i> Générer PDF
                                 </a>
-                                <a class="dropdown-item text-danger mx-1 desactiversignale" id="'.$datas->id.'" href="#">
-                                <i class="far fa-trash-alt"></i> Desactiver le signale
+                                <a class="dropdown-item desactiversignale" id="'.$datas->id.'" href="#">
+                                <i class="fas fa-random"></i> Desactiver le signale
                             </a>
-                                <a class="dropdown-item text-danger mx-1 deleteIcon" id="'.$datas->id.'" href="#">
+                                <a class="dropdown-item text-white mx-1 deleteIcon" id="'.$datas->id.'" href="#" style="background-color:red">
                                     <i class="far fa-trash-alt"></i> Supprimer
                                 </a>
                             </div>
@@ -142,171 +145,211 @@ class FebController extends Controller
             </td>
         </tr>';
     }
-
     echo $output;
   }
 
   public function notificationdoc()
   {
-    $documents = collect([]);
-
-    // Jointure pour obtenir les informations des utilisateurs dans documentacce
-    $documentacce = DB::table('febs')
-      ->join('users', 'febs.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->where('acce', Auth::id())
-      ->where('acce_signe', 0)
-      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
-      ->get();
-
-    // Jointure pour obtenir les informations des utilisateurs dans documentcompte
-    $documentcompte = DB::table('febs')
-      ->join('users', 'febs.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->where('comptable', Auth::id())
-      ->where('comptable_signe', 0)
-      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
-      ->get();
-
-    // Jointure pour obtenir les informations des utilisateurs dans documentchefcomposent
-    $documentchefcomposent = DB::table('febs')
-      ->join('users', 'febs.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->where('chefcomposante', Auth::id())
-      ->where('chef_signe', 0)
-      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
-      ->get();
-
-    $documents_dap = collect([]);
-
-    $dap_demandeetablie = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->where('demandeetablie', Auth::id())
-      ->where('demandeetablie_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
-      ->get();
-
-    // Jointure pour obtenir les informations des utilisateurs dans dap_verifier
-    $dap_verifier = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->where('verifierpar', Auth::id())
-      ->where('verifierpar_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
-      ->get();
-
-    // Jointure pour obtenir les informations des utilisateurs dans dap_approuverpar
-    $dap_approuverpar = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->where('approuverpar', Auth::id())
-      ->where('approuverpar_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
-      ->get();
-
-    // Jointure pour obtenir les informations des utilisateurs dans dap_responsable
-    $dap_responsable = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->where('responsable', Auth::id())
-      ->where('responsable_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
-      ->get();
-
-    // Jointure pour obtenir les informations des utilisateurs dans dap_secretaire
-    $dap_secretaire = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->where('secretaire', Auth::id())
-      ->where('secretaure_general_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
-      ->get();
-
-    // Jointure pour obtenir les informations des utilisateurs dans dap_chefprogramme
-    $dap_chefprogramme = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->where('chefprogramme', Auth::id())
-      ->where('chefprogramme_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
-      ->get();
-
-    $documents = $documents->concat($documentacce)
-      ->concat($documentcompte)
-      ->concat($documentchefcomposent);
-
-    $dap_documents = $documents_dap->concat($dap_demandeetablie)
-      ->concat($dap_verifier)
-      ->concat($dap_approuverpar)
-      ->concat($dap_responsable)
-      ->concat($dap_secretaire)
-      ->concat($dap_chefprogramme);
-
-    $output = '';
-    $nombre = 1;
-
-    if ($documents->count() > 0) {
-      $anne = date('Y');
-      foreach ($documents as $doc) {
-        $cryptedIDoc = Crypt::encrypt($doc->id);
-
-        if (isset($doc->datelimite) && !empty($doc->datelimite)) {
-          $datelimite = date('d-m-Y', strtotime($doc->datelimite));
-        } else {
-          $datelimite = 'Pas de date limite';
-        }
-
-        $output .= '<tr>
-        
-                <td>' . $nombre . '</td>
-                <td>FEB</td>
-                <td><a href="' . route('key.viewFeb', $cryptedIDoc) . '"><b><u>' . ucfirst($doc->numerofeb) . '/' . $anne . ' <i class="fas fa-external-link-alt"></i> </u></b></a></td>
-                <td>' . date('d-m-Y', strtotime($doc->datefeb)) . '</td>
-                <td>' . date('d-m-Y', strtotime($doc->created_at)) . '</td>
-                <td>' . $datelimite . '</td>
-                <td>' . ucfirst($doc->user_nom) . ' ' . ucfirst($doc->user_prenom) . '</td>
-            </tr>';
-
-        $nombre++;
+      $documents = collect([]);
+  
+      // Jointure pour obtenir les informations des utilisateurs dans documentacce
+      $documentacce = DB::table('febs')
+          ->join('users', 'febs.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->join('projects', 'febs.projetid', '=', 'projects.id')
+          ->where('acce', Auth::id())
+          ->where('acce_signe', 0)
+          ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+          ->get();
+  
+      // Ajouter le type de document
+      $documentacce->each(function($item) {
+          $item->document_type = 'feb';
+      });
+  
+      // Jointure pour obtenir les informations des utilisateurs dans documentcompte
+      $documentcompte = DB::table('febs')
+          ->join('users', 'febs.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->join('projects', 'febs.projetid', '=', 'projects.id')
+          ->where('comptable', Auth::id())
+          ->where('comptable_signe', 0)
+          ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+          ->get();
+  
+      // Ajouter le type de document
+      $documentcompte->each(function($item) {
+          $item->document_type = 'feb';
+      });
+  
+      // Jointure pour obtenir les informations des utilisateurs dans documentchefcomposent
+      $documentchefcomposent = DB::table('febs')
+          ->join('users', 'febs.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->join('projects', 'febs.projetid', '=', 'projects.id')
+          ->where('chefcomposante', Auth::id())
+          ->where('chef_signe', 0)
+          ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+          ->get();
+  
+      // Ajouter le type de document
+      $documentchefcomposent->each(function($item) {
+          $item->document_type = 'feb';
+      });
+  
+      $documents_dap = collect([]);
+  
+      $dap_demandeetablie = DB::table('daps')
+          ->join('users', 'daps.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+          ->where('demandeetablie', Auth::id())
+          ->where('demandeetablie_signe', 0)
+          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+          ->get();
+  
+      // Ajouter le type de document
+      $dap_demandeetablie->each(function($item) {
+          $item->document_type = 'dap';
+      });
+  
+      // Jointure pour obtenir les informations des utilisateurs dans dap_verifier
+      $dap_verifier = DB::table('daps')
+          ->join('users', 'daps.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+          ->where('verifierpar', Auth::id())
+          ->where('verifierpar_signe', 0)
+          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+          ->get();
+  
+      // Ajouter le type de document
+      $dap_verifier->each(function($item) {
+          $item->document_type = 'dap';
+      });
+  
+      // Jointure pour obtenir les informations des utilisateurs dans dap_approuverpar
+      $dap_approuverpar = DB::table('daps')
+          ->join('users', 'daps.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+          ->where('approuverpar', Auth::id())
+          ->where('approuverpar_signe', 0)
+          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+          ->get();
+  
+      // Ajouter le type de document
+      $dap_approuverpar->each(function($item) {
+          $item->document_type = 'dap';
+      });
+  
+      // Jointure pour obtenir les informations des utilisateurs dans dap_responsable
+      $dap_responsable = DB::table('daps')
+          ->join('users', 'daps.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+          ->where('responsable', Auth::id())
+          ->where('responsable_signe', 0)
+          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+          ->get();
+  
+      // Ajouter le type de document
+      $dap_responsable->each(function($item) {
+          $item->document_type = 'dap';
+      });
+  
+      // Jointure pour obtenir les informations des utilisateurs dans dap_secretaire
+      $dap_secretaire = DB::table('daps')
+          ->join('users', 'daps.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+          ->where('secretaire', Auth::id())
+          ->where('secretaure_general_signe', 0)
+          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+          ->get();
+  
+      // Ajouter le type de document
+      $dap_secretaire->each(function($item) {
+          $item->document_type = 'dap';
+      });
+  
+      // Jointure pour obtenir les informations des utilisateurs dans dap_chefprogramme
+      $dap_chefprogramme = DB::table('daps')
+          ->join('users', 'daps.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+          ->where('chefprogramme', Auth::id())
+          ->where('chefprogramme_signe', 0)
+          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+          ->get();
+  
+      // Ajouter le type de document
+      $dap_chefprogramme->each(function($item) {
+          $item->document_type = 'dap';
+      });
+  
+      $documents = $documents->concat($documentacce)
+          ->concat($documentcompte)
+          ->concat($documentchefcomposent);
+  
+      $dap_documents = $documents_dap->concat($dap_demandeetablie)
+          ->concat($dap_verifier)
+          ->concat($dap_approuverpar)
+          ->concat($dap_responsable)
+          ->concat($dap_secretaire)
+          ->concat($dap_chefprogramme);
+  
+      $all_documents = $documents->concat($dap_documents);
+  
+      $output = '';
+      $nombre = 1;
+  
+      if ($all_documents->count() > 0) {
+          // Grouper par numéro de projet et titre
+          $groupedDocuments = $all_documents->groupBy(function($item) {
+              return $item->numeroprojets . ' : ' . $item->projet;
+          });
+  
+          foreach ($groupedDocuments as $projet => $docs) {
+              $output .= '<tr><td colspan="7"><b>' . ucfirst($projet) . '</b></td></tr>';
+              foreach ($docs as $doc) {
+                  $cryptedIDoc = Crypt::encrypt($doc->id);
+  
+                  if (isset($doc->datelimite) && !empty($doc->datelimite)) {
+                      $datelimite = date('d-m-Y', strtotime($doc->datelimite));
+                  } else {
+                      $datelimite = 'Pas de date limite';
+                  }
+  
+                  $output .= '<tr>
+                          <td>' . $nombre . '</td>
+                          <td>' . ($doc->document_type === 'feb' ? 'FEB' : 'DAP') . '</td>
+                          <td><a href="' . ($doc->document_type === 'feb' ? route('key.viewFeb', $cryptedIDoc) : route('viewdap', $cryptedIDoc)) . '"><b><u>' . ucfirst($doc->document_type === 'feb' ? $doc->numerofeb : $doc->numerodp) . '/' . date('Y') . ' <i class="fas fa-external-link-alt"></i> </u></b></a></td>
+                          <td>' . date('d-m-Y', strtotime($doc->datefeb ?? $doc->dateautorisation)) . '</td>
+                          <td>' . date('d-m-Y', strtotime($doc->created_at)) . '</td>
+                          <td>' . $datelimite . '</td>
+                          <td>' . ucfirst($doc->user_nom) . ' ' . ucfirst($doc->user_prenom) . '</td>
+                      </tr>';
+  
+                  $nombre++;
+              }
+          }
       }
-    }
-
-    if ($dap_documents->count() > 0) {
-      $nombre = 1; // Réinitialiser le compteur pour les DAP
-      $anne = date('Y');
-      foreach ($dap_documents as $dap_doc) {
-        $cryptedIDocdap = Crypt::encrypt($dap_doc->id);
-
-        $output .= '<tr>
-                <td>' . $nombre . '</td>
-                <td>DAP</td>
-                <td><a href="' . route('viewdap', $cryptedIDocdap) . '"><b><u>' . $dap_doc->numerodp . '/' . $anne . ' <i class="fas fa-external-link-alt"></i></u></b></a></td>
-                <td>' . date('d-m-Y', strtotime($dap_doc->dateautorisation)) . '</td>
-                <td>' . date('d-m-Y', strtotime($dap_doc->created_at)) . '</td>
-                <td></td>
-                <td>' . ucfirst($dap_doc->user_nom) . ' ' . ucfirst($dap_doc->user_prenom) . '</td>
-            </tr>';
-
-        $nombre++;
+  
+      if ($output === '') {
+          $output = '<tr>
+              <td colspan="7">
+              <center>
+                  <h6 style="color:red">Aucun document trouvé</h6>
+              </center>
+              </td>
+          </tr>';
       }
-    }
-
-    if ($output === '') {
-      $output = '<tr>
-            <td colspan="6">
-            <center>
-                <h6 style="margin-top:1% ;color:#c0c0c0">
-                <center><font size="50px"><i class="fa fa-info-circle"></i> </font><br><br>
-                Ceci est vide  !</center> </h6>
-            </center>
-            </td>
-        </tr>';
-    }
-
-    echo $output;
+  
+      return $output;
   }
-
+  
+  
   public function Sommefeb()
   {
     $devise = session()->get('devise');
@@ -872,6 +915,7 @@ class FebController extends Controller
     $check = Feb::findOrFail($key);
 
     $idl = $check->sous_ligne_bugdetaire;
+    $id_gl = $check->ligne_bugdetaire;
     $idfeb = $check->id;
 
     $datElement = Elementfeb::where('febid', $idfeb)->get();
@@ -880,6 +924,11 @@ class FebController extends Controller
     $IDB = $check->projetid;
     $chec = Project::findOrFail($IDB);
     $budget = $chec->budget;
+
+    $somme_ligne_principale = DB::table('rallongebudgets')
+    ->where('compteid', $id_gl)
+    ->sum('budgetactuel');
+
 
     $onebeneficaire = Beneficaire::find($check->beneficiaire);
 
@@ -890,10 +939,10 @@ class FebController extends Controller
     $dataLigne = Compte::find($idl);
 
     $sommelign = DB::table('elementfebs')
-      ->where('grandligne', $idl)
+      ->where('grandligne',  $id_gl)
       ->sum('montant');
 
-    $sommelignpourcentage = round(($sommelign * 100) / $budget, 2);
+    $sommelignpourcentage = round(($sommelign * 100) /  $somme_ligne_principale, 2);
 
     $sommefeb = DB::table('elementfebs')
       ->where('febid', $idfeb)
@@ -946,6 +995,21 @@ class FebController extends Controller
     ]);
   }
 
+  public function showannex($key)
+  {
+
+    $title = 'FEB';
+    $key = Crypt::decrypt($key);
+    $check = Feb::findOrFail($key);
+
+    return view('document.feb.addanex', [
+      'title' => $title,
+      'dataFeb' => $check
+    ]);
+  }
+
+
+
   public function showonefeb($idf)
   {
     // Check if the session variable 'id' exists
@@ -986,7 +1050,7 @@ class FebController extends Controller
 
     // Debut % ligne
     $sommelign = DB::table('elementfebs')
-      ->where('grandligne', $idl)
+      ->where('eligne', $idl)
       ->sum('montant');
     $sommelignpourcentage = round(($sommelign * 100) / $budget);
     // fin
@@ -1119,12 +1183,18 @@ class FebController extends Controller
 
     $title = 'FEB';
     $idl = $check->sous_ligne_bugdetaire;
+    $id_gl = $check->ligne_bugdetaire;
     $idfeb = $check->id;
 
     $datElement = Elementfeb::where('febid', $idfeb)->get();
     $IDB = $check->projetid;
     $chec = Project::findOrFail($IDB);
     $budget = $chec->budget;
+
+    $somme_ligne_principale = DB::table('rallongebudgets')
+    ->where('compteid', $id_gl)
+    ->sum('budgetactuel');
+
 
     // Instancie Dompdf
     $dompdf = new Dompdf();
@@ -1162,9 +1232,9 @@ class FebController extends Controller
     $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
 
     $sommelign = DB::table('elementfebs')
-      ->where('grandligne', $idl)
+      ->where('eligne', $idl)
       ->sum('montant');
-    $sommelignpourcentage = round(($sommelign * 100) / $budget, 2);
+    $sommelignpourcentage = round(($sommelign * 100) / $somme_ligne_principale, 2);
 
     $sommefeb = DB::table('elementfebs')
       ->where('febid', $idfeb)
@@ -1271,7 +1341,7 @@ class FebController extends Controller
     $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
 
     $sommelign = DB::table('elementfebs')
-      ->where('grandligne', $idl)
+      ->where('eligne', $idl)
       ->sum('montant');
     $sommelignpourcentage = round(($sommelign * 100) / $budget, 2);
 
@@ -1464,5 +1534,289 @@ class FebController extends Controller
       ]);
     }
   }
+
+  public function updatannex(Request $request)
+  {
+    DB::beginTransaction(); // Démarre la transaction
+    try {
+
+      if (!empty($request->boncommande)) {
+        $originalName = $request->boncommande->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->boncommande->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->boncommande->move(public_path('projet/bomcommande/'), $imageName);
+        $boncommande = 'projet/bomcommande/' . $imageName;
+    }
+    
+    if (!empty($request->facture)) {
+        $originalName = $request->facture->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->facture->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->facture->move(public_path('projet/facture/'), $imageName);
+        $facture = 'projet/facture/' . $imageName;
+    }
+    
+    if (!empty($request->ordreM)) {
+        $originalName = $request->ordreM->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->ordreM->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->ordreM->move(public_path('projet/ordremission/'), $imageName);
+        $ordremission = 'projet/ordremission/' . $imageName;
+    }
+    
+    if (!empty($request->url_pva)) {
+        $originalName = $request->url_pva->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->url_pva->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->url_pva->move(public_path('projet/pva/'), $imageName);
+        $pva = 'projet/pva/' . $imageName;
+    }
+    
+    if (!empty($request->factureP)) {
+        $originalName = $request->factureP->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->factureP->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->factureP->move(public_path('projet/facture_proformat/'), $imageName);
+        $factureProformat = 'projet/facture_proformat/' . $imageName;
+    }
+    
+    if (!empty($request->rapportM)) {
+        $originalName = $request->rapportM->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->rapportM->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->rapportM->move(public_path('projet/rapport_mission/'), $imageName);
+        $rapport_mission = 'projet/rapport_mission/' . $imageName;
+    }
+    
+    if (!empty($request->termeR)) {
+        $originalName = $request->termeR->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->termeR->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->termeR->move(public_path('projet/terme_reference/'), $imageName);
+        $terme_reference = 'projet/terme_reference/' . $imageName;
+    }
+    
+    if (!empty($request->bordereauV)) {
+        $originalName = $request->bordereauV->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->bordereauV->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->bordereauV->move(public_path('projet/bordereau_versement/'), $imageName);
+        $bordereau_versement = 'projet/bordereau_versement/' . $imageName;
+    }
+    
+    if (!empty($request->recu)) {
+        $originalName = $request->recu->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->recu->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->recu->move(public_path('projet/recu/'), $imageName);
+        $recu = 'projet/recu/' . $imageName;
+    }
+    
+    if (!empty($request->auccuseR)) {
+        $originalName = $request->auccuseR->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->auccuseR->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->auccuseR->move(public_path('projet/accuse_reception/'), $imageName);
+        $accuse_reception = 'projet/accuse_reception/' . $imageName;
+    }
+    
+    if (!empty($request->bordereauE)) {
+        $originalName = $request->bordereauE->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->bordereauE->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->bordereauE->move(public_path('projet/bordereau_expediction/'), $imageName);
+        $bordereau_expediction = 'projet/bordereau_expediction/' . $imageName;
+    }
+    
+    if (!empty($request->appelP)) {
+        $originalName = $request->appelP->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->appelP->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->appelP->move(public_path('projet/appel_cfk/'), $imageName);
+        $appel_cfk = 'projet/appel_cfk/' . $imageName;
+    }
+    
+
+
+
+
+      $UpAnnex = Feb::find($request->febid);
+
+      if (!empty($request->boncommande)) { $UpAnnex->url_bon_commande =  $boncommande;  }
+      if (!empty($request->facture))     { $UpAnnex->url_facture =  $facture;  }
+      if (!empty($request->ordreM))      { $UpAnnex->url_ordre_mission=  $ordremission ;  }
+      if (!empty($request->url_pva))      { $UpAnnex->url_pva=  $pva ;  }
+      if (!empty($request->factureP))    { $UpAnnex->url_factureProformat= $factureProformat ;  }
+      if (!empty($request->rapportM))    { $UpAnnex->url_rapport_mission=  $rapport_mission ;  }
+      if (!empty($request->termeR))      { $UpAnnex->url_terme_reference=   $terme_reference ;  }
+      if (!empty($request->bordereauV))  { $UpAnnex->url_bordereau_versement =  $bordereau_versement  ;  }
+      if (!empty($request->recu))        { $UpAnnex->url_recu =  $recu  ;  }
+      if (!empty($request->auccuseR))    { $UpAnnex->url_accusse_reception =  $accuse_reception ;  }
+      if (!empty($request->bordereauE))  { $UpAnnex->url_bordereau_expediction = $bordereau_expediction ;  }
+      if (!empty($request->appelP))      { $UpAnnex->url_appel_cfk  =  $appel_cfk  ;  }
+
+      $UpAnnex->update(); 
+
+      DB::commit(); 
+      return response()->json([
+        'status' => 200,
+      ]);
+    } catch (Exception $e) {
+      DB::rollBack(); 
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
+  }
+
+  public function updat_annex(Request $request)
+  {
+    DB::beginTransaction(); // Démarre la transaction
+    try {
+
+      $UpAnnex = Feb::find($request->febid);
+      if (!empty($request->boncommande)) {
+        $originalName = $request->boncommande->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->boncommande->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->boncommande->move(public_path('projet/bomcommande/'), $imageName);
+        $boncommande = 'projet/bomcommande/' . $imageName;
+    }
+    
+    if (!empty($request->facture)) {
+        $originalName = $request->facture->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->facture->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->facture->move(public_path('projet/facture/'), $imageName);
+        $facture = 'projet/facture/' . $imageName;
+    }
+    
+    if (!empty($request->ordreM)) {
+        $originalName = $request->ordreM->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->ordreM->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->ordreM->move(public_path('projet/ordremission/'), $imageName);
+        $ordremission = 'projet/ordremission/' . $imageName;
+    }
+    
+    if (!empty($request->url_pva)) {
+        $originalName = $request->url_pva->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->url_pva->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->url_pva->move(public_path('projet/pva/'), $imageName);
+        $pva = 'projet/pva/' . $imageName;
+    }
+    
+    if (!empty($request->factureP)) {
+        $originalName = $request->factureP->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->factureP->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->factureP->move(public_path('projet/facture_proformat/'), $imageName);
+        $factureProformat = 'projet/facture_proformat/' . $imageName;
+    }
+    
+    if (!empty($request->rapportM)) {
+        $originalName = $request->rapportM->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->rapportM->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->rapportM->move(public_path('projet/rapport_mission/'), $imageName);
+        $rapport_mission = 'projet/rapport_mission/' . $imageName;
+    }
+    
+    if (!empty($request->termeR)) {
+        $originalName = $request->termeR->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->termeR->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->termeR->move(public_path('projet/terme_reference/'), $imageName);
+        $terme_reference = 'projet/terme_reference/' . $imageName;
+    }
+    
+    if (!empty($request->bordereauV)) {
+        $originalName = $request->bordereauV->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->bordereauV->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->bordereauV->move(public_path('projet/bordereau_versement/'), $imageName);
+        $bordereau_versement = 'projet/bordereau_versement/' . $imageName;
+    }
+    
+    if (!empty($request->recu)) {
+        $originalName = $request->recu->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->recu->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->recu->move(public_path('projet/recu/'), $imageName);
+        $recu = 'projet/recu/' . $imageName;
+    }
+    
+    if (!empty($request->auccuseR)) {
+        $originalName = $request->auccuseR->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->auccuseR->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->auccuseR->move(public_path('projet/accuse_reception/'), $imageName);
+        $accuse_reception = 'projet/accuse_reception/' . $imageName;
+    }
+    
+    if (!empty($request->bordereauE)) {
+        $originalName = $request->bordereauE->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->bordereauE->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->bordereauE->move(public_path('projet/bordereau_expediction/'), $imageName);
+        $bordereau_expediction = 'projet/bordereau_expediction/' . $imageName;
+    }
+    
+    if (!empty($request->appelP)) {
+        $originalName = $request->appelP->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->appelP->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->appelP->move(public_path('projet/appel_cfk/'), $imageName);
+        $appel_cfk = 'projet/appel_cfk/' . $imageName;
+    }
+    
+
+      if (!empty($request->boncommande)) { $UpAnnex->url_bon_commande =  $boncommande;  }
+      if (!empty($request->facture))     { $UpAnnex->url_facture =  $facture;  }
+      if (!empty($request->ordreM))      { $UpAnnex->url_ordre_mission=  $ordremission ;  }
+      if (!empty($request->url_pva))      { $UpAnnex->url_pva=  $pva ;  }
+      if (!empty($request->factureP))    { $UpAnnex->url_factureProformat= $factureProformat ;  }
+      if (!empty($request->rapportM))    { $UpAnnex->url_rapport_mission=  $rapport_mission ;  }
+      if (!empty($request->termeR))      { $UpAnnex->url_terme_reference=   $terme_reference ;  }
+      if (!empty($request->bordereauV))  { $UpAnnex->url_bordereau_versement =  $bordereau_versement  ;  }
+      if (!empty($request->recu))        { $UpAnnex->url_recu =  $recu  ;  }
+      if (!empty($request->auccuseR))    { $UpAnnex->url_accusse_reception =  $accuse_reception ;  }
+      if (!empty($request->bordereauE))  { $UpAnnex->url_bordereau_expediction = $bordereau_expediction ;  }
+      if (!empty($request->appelP))      { $UpAnnex->url_appel_cfk  =  $appel_cfk  ;  }
+
+      $UpAnnex->update(); 
+
+      DB::commit(); 
+      return redirect()->back()->with('success', 'Mises ajour reussi .');
+    } catch (Exception $e) {
+      return redirect()->back()->with('danger', 'Erreur de mises ajours ');
+    }
+  }
+
 
 }

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FICHE D’EXPRESSION DES BESOINS (FEB) N° {{ $datafeb->numerofeb }}</title>
+    <title>BON DE PETITE CAISSE (BPC) N° {{ $datafeb->numerofeb }}</title>
     <style>
         /* Styles pour l'en-tête de la première page */
         header.first-page-header {
@@ -147,7 +146,7 @@
 
     <div class="main-content content-after-header " id="main-content">
         <H3>
-            <center> FICHE D’EXPRESSION DES BESOINS (FEB) : N° {{ $datafeb->numerofeb }} </center>
+            <center> FICHE D’EXPRESSION DES BESOINS (FEB) N° {{ $datafeb->numerofeb }} </center>
         </H3>
 
         <table style=" width:100%" class="table table-striped table-sm fs--1 mb-0" id="mytable">
@@ -240,19 +239,26 @@
                         </tr>
 
                     </table>
-                </td>
 
+
+
+                </td>
+                
+                
+                
+
+              
             </tr>
 
             <tr>
 
             <td>
-                  Code : {{ $dataLigne->numero }}  <br> 
+                  Code : {{ $dataLigne->numero }} ;
                      Ligne budgétaire: {{ $dataLigne->libelle }}
                 </td>
                 
                 <td>
-                    Taux d’exécution de la ligne et ses sous lignes: {{ $sommelignpourcentage }}% <br> 
+                    Taux d’exécution de la ligne budgétaire: {{ $sommelignpourcentage }}% <br> <br>
                     Taux d’exécution globale du projet: {{ $POURCENTAGE_GLOGALE }}% ;
 
                 </td>
@@ -329,19 +335,18 @@
                 @endphp
                 @endforeach
             </tbody>
-            <tr>
+            <tr style=" background-color: #040895;">
                 <td colspan="7">
-                  <b> Total général </b> 
+                    <font color="white"><b> Total général </b> </font>
                 </td>
                 <td>
                     <center>
-                     <b> {{ number_format($sommefeb,0, ',', ' ') }} </b>
+                        <font color="white"><b> {{ number_format($sommefeb,0, ',', ' ') }} </b></font>
                     </center>
                     </h5>
                 </td>
             </tr>
         </table>
-        <br>
         <table style="width:100%; margin:auto" class="table table-striped table-sm fs--1 mb-0">
             <tr>
                 <td>
@@ -384,7 +389,7 @@
                 <center>  <img src="{{ $comptable_nom->signature }}" width="200px" />    </center>
                         @endif
                 </td>
-                <td align="center"  colspan="2">
+                <td align="center">
                     @if ($datafeb->chef_signe==1)
                     <center> <img src="{{ $checcomposant_nom->signature }}" width="200px" /></center>   
                     @endif
@@ -393,6 +398,28 @@
             </tr>
         </table>
     </div>
+
+    <script>
+        // Fonction pour ajuster la marge supérieure du contenu en fonction de la hauteur de l'en-tête
+        function adjustContentMargin() {
+            var headerHeight = document.getElementById('page-header').offsetHeight;
+            document.getElementById('main-content').style.marginTop = headerHeight + 'px';
+        }
+        window.onload = adjustContentMargin;
+        window.onresize = adjustContentMargin;
+
+        // Fonction pour masquer l'en-tête sur les pages suivantes lors de l'impression
+        function hideHeaderOnSubsequentPages() {
+            var header = document.getElementById('page-header');
+            var originalDisplayStyle = header.style.display;
+            header.style.display = 'none';
+            setTimeout(function() {
+                header.style.display = originalDisplayStyle;
+            }, 1000);
+        }
+        window.onbeforeprint = hideHeaderOnSubsequentPages;
+    </script>
+
 
 </body>
 

@@ -12,7 +12,7 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
             <div class="row">
                 <div class="col-12" style="margin:auto">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> Le details de la FEB (N° {{ $dataFeb->numerofeb }} ) </h4>
+                        <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> Le details du BON DE LA PETITE CAISSE (N° {{ $dataFeb->numerofeb }} ) </h4>
                         <div class="page-title-right">
                             @if($dataFeb->signale==1)
                             <div class="spinner-grow text-danger " role="status" style=" 
@@ -21,16 +21,15 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                 <span class="sr-only">Loading...</span>
                             </div> &nbsp; &nbsp;
                             @endif
-                            <button type="button" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal" data-febid="{{ $dataFeb->id ? $dataFeb->id : '' }}" title="Signaler un FEB en cas de probleme">
+                            <button type="button" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal" data-febid="{{ $dataFeb->id ? $dataFeb->id : '' }}">
                                 <i class="fab fa-telegram-plane ms-1"></i> Signalé FEB
                             </button>
                             @include('document.feb.message')
                             <div class="btn-toolbar float-end" role="toolbar">
                                 <div class="btn-group me-2 mb-2 mb-sm-0">
-                                    <a href="{{ route('generate-pdf-feb', $dataFeb->id) }}" class="btn btn-primary waves-light waves-effect" title="Générer PDF"><i class="fa fa-print"></i> </a>
-                                    <a href="{{ route('showannex', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect" title="Attacher le document"><i class="fas fa-paperclip"></i> </a>
-                                    <a href="{{ route('showfeb', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect" title="Modifier le FEB"><i class="fa fa-edit"></i> </a>
-                                    <a href="{{ route('listfeb') }}" class="btn btn-primary waves-light waves-effect" title="Liste de FEB"><i class="fa fa-list"></i></a>
+                                    <a href="{{ route('generate-pdf-feb', $dataFeb->id) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-print"></i> </a>
+                                    <a href="{{ route('showfeb', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-edit"></i> </a>
+                                    <a href="{{ route('listfeb') }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-list"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -97,183 +96,47 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                             </td>
 
                                             <td>
-                                                <label title="Bon de commande">
-
-                                                    @php
-                                                        $bc_ur = $dataFeb->url_bon_commande;
-                                                        $imagePath_bc = public_path($bc_ur);
-                                                    @endphp
-                                                        @if(file_exists($imagePath_bc))
-                                                        <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($bc_ur) }}"> BC:</a>
-                                                    @else
-                                                     BC
-                                                    @endif
-
-                                                </label>
-
+                                                <label title="Bon de commande"> BC:</label>
                                                 <input type="checkbox" class="form-check-input" disabled @if ($dataFeb->bc==1) checked @endif /> &nbsp;&nbsp;
 
-                                                @php
-                                                    $facture_ur = $dataFeb->url_facture;
-                                                    $imagePath_facture = public_path($facture_ur);
-                                                @endphp
-                                                        @if(file_exists($imagePath_facture))
-                                                        <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($facture_ur) }}"> Facture:</a>
-                                                @else
-                                                     Facture
-                                                @endif
-
-
-                                              
-
+                                                <label> Facture:</label>
                                                 <input type="checkbox" class="form-check-input" disabled @if($dataFeb->facture==1) checked @endif /> &nbsp;&nbsp;
 
-                                                <label title="Ordre de mission">
-
-                                                @php
-                                                    $url_ordre_mission = $dataFeb->url_ordre_mission;
-                                                    $imagePath_ordre_mission = public_path($url_ordre_mission);
-                                                @endphp
-                                                        @if(file_exists($imagePath_ordre_mission))
-                                                        <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($url_ordre_mission) }}"> O.M:</a>
-                                                @else
-                                                     O.M
-                                                @endif
-
-
-                                                </label>
+                                                <label title="Ordre de mission"> O.M :</label>
                                                 <input type="checkbox" name="om" id="om" class="form-check-input" disabled @if($dataFeb->om==1) checked @endif /> &nbsp;&nbsp;
 
-                                                <label title="Procès-verbal d'analyse"> 
-                                                @php
-                                                    $url_pva = $dataFeb->url_pva;
-                                                    $imagePath_url_pva = public_path($url_pva);
-                                                @endphp
-                                                        @if(file_exists($imagePath_url_pva))
-                                                        <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($url_pva) }}">  P.V.A : </a>
-                                                @else
-                                                    P.V.A :
-                                                @endif
-                                                    
-                                               </label>
+                                                <label title="Procès-verbal d'analyse"> P.V.A :</label>
                                                 <input type="checkbox" class="form-check-input" disabled @if($dataFeb->nec==1) checked @endif /> &nbsp;&nbsp;
 
-
-                                                <label title="Facture proformat"> 
-                                                @php
-                                                    $url_factureProformat = $dataFeb->url_factureProformat;
-                                                    $imagePath_url_factureProformat = public_path($url_factureProformat);
-                                                @endphp
-                                                        @if(file_exists($imagePath_url_factureProformat))
-                                                        <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($url_factureProformat) }}">   FP/Dévis/Liste : </a>
-                                                @else
-                                                FP/Dévis/Liste :
-                                                @endif
-                                                    
-                                               </label>
+                                                <label title="Facture proformat"> FP/Dévis/Liste :</label>
                                                 <input type="checkbox" class="form-check-input" disabled @if($dataFeb->fpdevis==1) checked @endif /> &nbsp;&nbsp;
 
-                                                <label title="Facture proformat"> 
-                                                @php
-                                                    $url_rapport_mission = $dataFeb->url_rapport_mission;
-                                                    $imagePath_url_rapport_mission = public_path($url_rapport_mission);
-                                                @endphp
-                                                        @if(file_exists($imagePath_url_rapport_mission))
-                                                        <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($url_rapport_mission) }}">   R.M : </a>
-                                                @else
-                                                R.M :
-                                                @endif
-                                                    
-                                                    
-                                                </label>
+                                                <label title="Rapport de mission"> R.M :</label>
                                                 <input type="checkbox" class="form-check-input" disabled @if($dataFeb->rm==1) checked @endif /> &nbsp;&nbsp;
 
-                                                <label title="Termes de Référence"> 
-                                                @php
-                                                    $url_terme_reference = $dataFeb->url_terme_reference;
-                                                    $imagePath_url_terme_reference = public_path($url_terme_reference);
-                                                @endphp
-                                                    @if(file_exists($imagePath_url_terme_reference))
-                                                    <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($url_terme_reference) }}">    T.D.R : </a>
-                                                @else
-                                                T.D.R :
-                                                @endif
-                                                </label>
+                                                <label title="Termes de Référence"> T.D.R :</label>
                                                 <input type="checkbox" class="form-check-input" disabled @if($dataFeb->tdr==1) checked @endif /> <br>
 
-                                                <label title="Bordereau de versement"> 
-                                                @php
-                                                    $url_bordereau_versement = $dataFeb->url_bordereau_versement;
-                                                    $imagePath_url_bordereau_versement = public_path($url_bordereau_versement);
-                                                @endphp
-                                                    @if(file_exists($imagePath_url_bordereau_versement))
-                                                    <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($url_bordereau_versement) }}">    B.V: </a>
-                                                @else
-                                                B.V :
-                                                @endif
-                                                </label>
+                                                <label title="Bordereau de versement"> B.V :</label>
                                                 <input type="checkbox" class="form-check-input" disabled @if($dataFeb->bv==1) checked @endif /> &nbsp;&nbsp;
 
-                                                <label title="Reçu">
-                                                @php
-                                                    $url_recu = $dataFeb->url_recu;
-                                                    $imagePath_url_recu = public_path($url_recu);
-                                                @endphp
-                                                    @if(file_exists($imagePath_url_recu))
-                                                    <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($url_recu) }}">  Reçu :  </a>
-                                                @else
-                                                Reçu :
-                                                @endif
-                                                    
-                                               </label>
+                                                <label title="Reçu"> Reçu :</label>
                                                 <input type="checkbox" class="form-check-input" disabled @if($dataFeb->recu==1) checked @endif /> &nbsp;&nbsp;
 
-                                                <label title="Accussé de reception"> 
-                                                @php
-                                                    $url_accusse_reception = $dataFeb->url_accusse_reception;
-                                                    $imagePath_url_accusse_reception = public_path($url_accusse_reception);
-                                                @endphp
-                                                    @if(file_exists($imagePath_url_accusse_reception))
-                                                    <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($url_accusse_reception) }}">  A.R :  </a>
-                                                @else
-                                                A.R :
-                                                @endif
-                                                </label>
+                                                <label title="Accussé de reception"> A.R :</label>
                                                 <input type="checkbox" class="form-check-input" disabled @if($dataFeb->ar==1) checked @endif /> &nbsp;&nbsp;
 
-                                                <label title="Bordereau d'expédition"> 
-                                                    @php
-                                                        $url_bordereau_expediction = $dataFeb->url_bordereau_expediction;
-                                                        $imagePath_url_bordereau_expediction = public_path($url_bordereau_expediction);
-                                                    @endphp
-                                                        @if(file_exists($imagePath_url_bordereau_expediction))
-                                                        <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($url_bordereau_expediction) }}">  B.E:  </a>
-                                                    @else
-                                                    B.E :
-                                                    @endif
-                                                </label>
+                                                <label title="Bordereau d'expédition"> B.E :</label>
                                                 <input type="checkbox" class="form-check-input" disabled @if($dataFeb->be==1) checked @endif /> &nbsp;&nbsp;
 
-                                                <label title="Appel a la participation a la construction au CFK"> 
-                                                   
-                                                    @php
-                                                        $url_appel_cfk = $dataFeb->url_appel_cfk;
-                                                        $imagePath_url_appel_cfk = public_path($url_appel_cfk);
-                                                    @endphp
-                                                        @if(file_exists($imagePath_url_appel_cfk))
-                                                        <a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="{{ asset($url_appel_cfk) }}">   A.P.C : </a>
-                                                    @else
-                                                    A.P.C :
-                                                    @endif
-                                                
-                                                </label>
+                                                <label title="Appel a la participation a la construction au CFK"> A.P.C :</label>
                                                 <input type="checkbox" class="form-check-input" disabled @if($dataFeb->apc==1) checked @endif />
                                             </td>
 
 
                                         </tr>
                                         <tr>
-                                            <td> Taux d’exécution de la ligne et ses sous lignes : {{ $sommelignpourcentage }} %</td>
+                                            <td> Taux d’exécution globale de la ligne et sous ligne budgétaire:: {{ $sommelignpourcentage }} %</td>
                                             <td> Taux d’exécution globale sur le projet: {{ $POURCENTAGE_GLOGALE }} %</td>
                                         </tr>
                                         <tr>
@@ -470,28 +333,4 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
         </div>
         <br>
         <br>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    function openPopup(element) {
-        // Récupérer l'URL du document à ouvrir
-        var documentUrl = element.getAttribute('data-document-url');
-
-        // Définir les dimensions de la fenêtre popup
-        var width = screen.width * 0.7; // 50% de la largeur de l'écran
-        var height = screen.height * 0.7; // 50% de la hauteur de l'écran
-
-        // Calculer les coordonnées pour centrer la fenêtre popup
-        var left = (screen.width - width) / 2;
-        var top = (screen.height - height) / 2;
-
-        // Définir les options de la fenêtre popup
-        var options = 'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left + ',resizable=yes,scrollbars=yes';
-
-        // Ouvrir la fenêtre popup
-        window.open(documentUrl, 'Document', options);
-    }
-</script>
-
-
         @endsection

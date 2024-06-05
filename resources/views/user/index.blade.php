@@ -48,10 +48,10 @@
                     <td> {{ $use->fonction }}</td>
                     <td>
                       <center>
-                    @php
-                                $signature = $use->signature;
-                                $imagePath = public_path($signature);
-                            @endphp
+                       @php
+                          $signature = $use->signature;
+                          $imagePath = public_path($signature);
+                        @endphp
 
                             @if(file_exists($imagePath))
                             <i class="fa fa-check-circle text-primary"></i>  

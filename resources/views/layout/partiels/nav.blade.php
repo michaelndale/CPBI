@@ -345,10 +345,11 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                 <li><a href="{{ route('listfeb') }}">FEB</a></li>
                 <li><a href="{{ route('listdap') }}">DAP</a></li>
                 <li><a href="{{ route('listdja') }}">DJA</a></li>  
+                <li><a href="{{ route('bpc') }}">Bon de Petite Caisse</a></li>
                 <li><a href="{{ route('affectation') }}">Intervenants</a></li>
                 <li><a href="{{ route('rapportcumule') }}">Rapport commulatif</a></li>
                 <li><a href="{{ route('planoperationnel') }}">Plan d'action</a></li>
-                <!--<li><a href="{{ route('listbpc') }}">BPC</a></li>
+                <!--
                 <li><a href="{{ route('listsqr') }}">SQR</a></li>
                 <li><a href="{{ route('listftd') }}">FTD</a></li> -
                
@@ -369,6 +370,8 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                 <li><a href="{{ route('typebudget') }}">Type budget</a></li>
                 <li><a href="{{ route('devise') }}">Devise</a></li>
                 <li><a href="{{ route('beneficiaire') }}">Bénéficiaire</a></li>
+                <li><a href="{{ route('banque') }}">Banque</a></li>
+                <li><a href="{{ route('termes') }}">Termes de  refference</a></li>
                 <li><a href="{{ route('list_project') }}">Tout les projets</a></li>
 
                 

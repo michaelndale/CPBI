@@ -5,9 +5,12 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AffectationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppCOntroller;
+use App\Http\Controllers\ApreviationController;
 use App\Http\Controllers\ArchivageController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BanqueController;
 use App\Http\Controllers\BeneficaireController;
+use App\Http\Controllers\BonpetitcaisseController;
 use App\Http\Controllers\BpcController;
 use App\Http\Controllers\CarburantController;
 use App\Http\Controllers\CatactivityController;
@@ -113,6 +116,24 @@ Route::middleware('auth')->group(function () {
         Route::delete('/deleteCs', [ClasseurController::class, 'deleteall'])->name('deleteCs');
         Route::get('/editCs', [ClasseurController::class, 'edit'])->name('editCs');
         Route::post('/updateCs', [ClasseurController::class, 'update'])->name('updateCs');
+    });
+
+    Route::prefix('banque')->group(function () {
+        Route::get('/', [BanqueController::class, 'index'])->name('banque');
+        Route::get('/fetchAllBanque', [BanqueController::class, 'fetchAll'])->name('fetchAllBanque');
+        Route::post('/storebanque', [BanqueController::class, 'store'])->name('storebanque');
+        Route::delete('/deletebanque', [BanqueController::class, 'delete'])->name('deletebanque');
+        Route::get('/edibanque', [BanqueController::class, 'edit'])->name('edibanque');
+        Route::post('/updatebanque', [BanqueController::class, 'update'])->name('updatebanque');
+    });
+
+    Route::prefix('termes')->group(function () {
+        Route::get('/', [ApreviationController::class, 'index'])->name('termes');
+        Route::get('/fetchAllabre', [ApreviationController::class, 'fetchAll'])->name('fetchAllabre');
+        Route::post('/storeabr', [ApreviationController::class, 'store'])->name('storeabr');
+        Route::delete('/deleteabr', [ApreviationController::class, 'delete'])->name('deleteabr');
+        Route::get('/ediagr', [ApreviationController::class, 'edit'])->name('ediabr');
+        Route::post('/updateabr', [ApreviationController::class, 'update'])->name('updateabr');
     });
 
     Route::prefix('department')->group(function () {
@@ -267,20 +288,26 @@ Route::middleware('auth')->group(function () {
         Route::get('/{key}/view/', [FebController::class, 'show'])->name('key.viewFeb');
         Route::get('{id}/edit/', [FebController::class, 'showonefeb'])->name('showfeb');
         Route::put('/updatallfeb/{cle}', [FebController::class, 'Updatestore'])->name('updateallfeb');
+
+        Route::get('/{id}/showannex/', [FebController::class, 'showannex'])->name('showannex');
+        Route::put('/updat_annex/{cle}', [FebController::class, 'updat_annex'])->name('updat_annex');
+
         Route::get('{id}/generate-pdf-feb', [FebController::class, 'generatePDFfeb'])->name('generate-pdf-feb');
         Route::delete('deleteelementsfeb', [FebController::class, 'deleteelementsfeb'])->name('deleteelementsfeb');
         Route::post('/check-feb', [FebController::class, 'checkfeb'])->name('check.feb');
         Route::get('/generate-word-feb/{id}', [FebController::class, 'generateWordFeb'])->name('generate.word.feb');
        
         Route::get('/feb/fetchAllsignalefeb/{febid?}', [SignalefebController::class, 'fetchAllsignalefeb'])->name('fetchAllsignalefeb');
-
         Route::post('/storesignalefeb', [SignalefebController::class, 'storeSignaleFeb'])->name('storesignalefeb');
+        
+        Route::post('/storeAnnexe', [FebController::class, 'updatannex'])->name('storeAnnexe');
+        
     });
 
     Route::get('/getfeb', [FebController::class, 'findfebelement'])->name('getfeb');
     Route::get('/getfebretour', [FebController::class, 'findfebelementretour'])->name('getfebretour');
     Route::get('/getdjas', [DjaController::class, 'getdjas'])->name('getdjas');
-   
+    Route::get('/getdjasto', [DjaController::class, 'getdjasto'])->name('getdjasto');
    
 
     Route::get('/getactivite', [FebController::class, 'getactivite'])->name('getactivite');
@@ -312,13 +339,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/{key}/verification/', [DapController::class, 'show'])->name('key.verificationdap');
         Route::post('/check-dap', [DapController::class, 'checkDap'])->name('check.dap');
         Route::get('/getFuelTypes', [DapController::class, 'getFuelType'])->name('getFuelTypes');
+        Route::post('/get-feb-details', [DapController::class, 'getFebDetails'])->name('get-feb-details');
     });
 
     Route::prefix('dja')->group(function () {
         Route::get('/', [DjaController::class, 'list'])->name('listdja');
        // Route::post('/storedja', [DjaController::class, 'store'])->name('storedja');
         Route::post('/storejustification', [DjaController::class, 'saveDjas'])->name('storejustification');
-        
+        Route::post('/updatejustification', [DjaController::class, 'UpDjas'])->name('updatejustification');
+
         Route::get('/fetchdja', [DjaController::class, 'fetchAll'])->name('fetchdja');
         Route::delete('/deletedja', [DjaController::class, 'delete'])->name('deletedja');
         Route::get('/{id}/view/', [DjaController::class, 'show'])->name('viewdja');
@@ -331,6 +360,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [SqrController::class, 'list'])->name('listsqr');
         Route::post('/storesqr', [SqrController::class, 'store'])->name('storesqr');
     });
+
+    Route::prefix('bonpetitcaisse')->group(function () {
+        Route::get('/', [BonpetitcaisseController::class, 'index'])->name('bpc');
+        Route::get('/liste_bpc', [BonpetitcaisseController::class, 'list'])->name('liste_bpc');
+        Route::post('/storebpc', [BonpetitcaisseController::class, 'store'])->name('storebpc');
+       // Route::get('/{key}/view/', [ProjectController::class, 'show'])->name('key.viewProject');
+       // Route::get('/{key}/edit/', [ProjectController::class, 'editshow'])->name('key.editProject');
+        //Route::put('/updatprojet/{cle}', [ProjectController::class, 'updateprojet'])->name('updatprojet');
+       //Route::delete('/deleteprojet', [ProjectController::class, 'deleteprojet'])->name('projetdelete');
+    });
+
+
+
 
     Route::prefix('ftd')->group(function () {
         Route::get('/', [FdtController::class, 'list'])->name('listftd');

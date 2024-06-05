@@ -110,13 +110,10 @@
   });
 
 
-
-
-
   $(function() {
 
     // Add  ajax 
-    $("#addjdaForm").submit(function(e) {
+$("#addjdaForm").submit(function(e) {
   e.preventDefault();
   const fd = new FormData(this);
 
@@ -174,6 +171,60 @@
 
 
 
+$("#editjdaForm").submit(function(e) {
+    e.preventDefault();
+    const fd = new FormData(this);
+
+    $("#edjustifierbtn").html('<i class="fas fa-spinner fa-spin"></i> En cours...');
+    $("#edjustifierbtn").prop('disabled', true); // Désactiver le bouton de soumission
+
+    $.ajax({
+        url: "{{ route('updatejustification') }}", // Route mise à jour
+        method: 'post',
+        data: fd,
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+            if (response.status == 200) {
+                fetchAlldja();
+                toastr.success("DJA mises à jour avec succès !", "Succès");
+                $("#editdjaModale").modal('hide');
+
+                // Redirection vers la page DJA
+                window.location.href = "{{ route('listdja') }}";
+            } else if (response.status == 201) {
+                toastr.error("Attention : DJA fonction existe déjà !", "Info");
+                $("#editdjaModale").modal('show');
+                $("#edjustifierbtn").prop('disabled', false); // Réactiver le bouton
+            } else if (response.status == 202) {
+                toastr.error("Erreur d'exécution, vérifiez votre connexion internet", "Erreur");
+                $("#editdjaModale").modal('show');
+                $("#edjustifierbtn").prop('disabled', false); // Réactiver le bouton
+            } else if (response.status == 203) {
+                toastr.error("Erreur d'exécution : " + response.error, "Erreur");
+                $("#editdjaModale").modal('show');
+                $("#edjustifierbtn").prop('disabled', false); // Réactiver le bouton
+            }
+        },
+        error: function(xhr, status, error) {
+            toastr.error("Une erreur s'est produite : " + error, "Erreur");
+        },
+        complete: function() {
+            $("#edjustifierbtn").html('Sauvegarder'); // Réinitialiser le texte du bouton
+            $("#edjustifierbtn").prop('disabled', false); // Réactiver le bouton de soumission
+            $("#loadingModal").modal('hide');
+            setTimeout(function() {
+                $("#loadingModal").modal('hide');
+            }, 600); // 600 millisecondes = 0.6 secondes
+        }
+    });
+});
+
+
+
+
     $(document).on('click', '.deleteIcon', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
@@ -218,6 +269,29 @@
         },
         success: function(response) {
           $("#show_justificatif").html(response);
+        },
+        error: function(xhr, status, error) {
+          var errorMessage = "Attention! \n Erreur de connexion à la base de données, \n veuillez vérifier votre connexion";
+          if (xhr.responseJSON && xhr.responseJSON.error) {
+            errorMessage = xhr.responseJSON.error;
+          }
+          toastr.error(errorMessage, "Erreur");
+        }
+      });
+    });
+
+
+    $(document).on('click', '.editjst', function(e) {
+      e.preventDefault(); // Empêcher le comportement par défaut du lien
+      var febrefs = $(this).attr('id'); // Utilisez attr() pour obtenir l'ID du lien
+      $.ajax({
+        type: 'get',
+        url: "{{ route('getdjasto') }}",
+        data: {
+          'id': febrefs
+        },
+        success: function(response) {
+          $("#edit__justificatif").html(response);
         },
         error: function(xhr, status, error) {
           var errorMessage = "Attention! \n Erreur de connexion à la base de données, \n veuillez vérifier votre connexion";

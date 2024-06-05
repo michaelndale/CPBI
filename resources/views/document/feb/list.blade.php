@@ -54,12 +54,12 @@
                       <th class="sort border-top" data-sort="om"> <b> <center>Montant total </center></b></th>
                       <th class="sort border-top" data-sort="periode"><center><b>Période</b></center></th>
                       <th class="sort border-top ps-3" data-sort="facture"><center><b>Facture</b></center></th>
-                      <th class="sort border-top" data-sort="om"><center><b>O.M</b></center></th>
-                      <th class="sort border-top" data-sort="bc"><center><b>B.C</b></center></th>
-                      <th class="sort border-top" data-sort="PVA"><center><b>P.V.A</b></center></th>
-                      <th class="sort border-top" data-sort="F.P"><center><b>F.P/Devis/Liste</b></center></th>
+                      <th class="sort border-top" data-sort="om"><center><b title="Ordre de mission">O.M</b></center></th>
+                      <th class="sort border-top" data-sort="bc"><center><b title="Bon de commande">B.C</b></center></th>
+                      <th class="sort border-top" data-sort="PVA"><center><b title="Procès-verbal d'analyse">P.V.A</b></center></th>
+                      <th class="sort border-top" data-sort="F.P"><center><b title="Facture proformat">F.P/Devis/Liste</b></center></th>
                       <th class="sort border-top" data-sort="F.P"><center><b>Reçu</b></center></th>
-                      <th class="sort border-top" data-sort="F.P"><center><b>R.M</b></center></th>
+                      <th class="sort border-top" data-sort="F.P"><center title="Rapport de mission"><b>R.M</b></center></th>
                       <th class="sort border-top" data-sort="date"><center><b>Date FEB</b></center></th>
                       <th class="sort border-top" data-sort="date"><center><b>Créé le</b></center></th>
                       <th class="sort border-top" data-sort="date"><center><b>Créé par</b></center></th>
@@ -101,6 +101,28 @@
   <BR><BR>
 
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+ <script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    // Par défaut, le bouton "Non" sera sélectionné grâce à l'attribut 'checked' dans le HTML.
+    
+    // Si vous souhaitez ajouter un comportement spécifique lors de la sélection des boutons radio
+    const radioOui = document.getElementById('alimentantionOui');
+    const radioNon = document.getElementById('alimentantionNon');
+
+    radioOui.addEventListener('change', function() {
+        if (this.checked) {
+            console.log('Option "Oui" sélectionnée');
+        }
+    });
+
+    radioNon.addEventListener('change', function() {
+        if (this.checked) {
+            console.log('Option "Non" sélectionnée');
+        }
+    });
+});
+
+ </script>
 
 <script type="text/javascript">
 

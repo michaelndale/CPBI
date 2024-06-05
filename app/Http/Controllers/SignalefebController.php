@@ -28,7 +28,7 @@ class SignalefebController extends Controller
         foreach ($signale as $rs) {
             if ($rs->userid == $rs->notisid) {
                 $output .= '
-                    <li data-simplebar>
+                    <li class="right" >
                         <div class="conversation-list">
                             <div class="chat-avatar">
                                 <img src="' . asset($rs->avatar) . '" alt="avatar">
@@ -44,7 +44,7 @@ class SignalefebController extends Controller
                     </li>';
             } else {
                 $output .= '
-                    <li class="right">
+                    <li data-simplebar>
                         <div class="conversation-list">
                             <div class="chat-avatar">
                                 <img src="' . asset($rs->avatar) . '" alt="avatar">

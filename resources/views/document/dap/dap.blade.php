@@ -63,8 +63,9 @@
         #mytable th,
         #mytable td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 2px;
             text-align: left;
+            font-size: 0.9em;
         }
 
         #mytable th {
@@ -80,7 +81,7 @@
         }
 
         body {
-            font-size: 80%;
+            font-size: 85%;
             /* taille de police de base */
         }
 
@@ -95,7 +96,7 @@
         }
 
         .small-text {
-            font-size: 0.8em;
+            font-size: 0.5em;
             /* taille de la police pour les textes de petite taille */
         }
 
@@ -117,28 +118,30 @@
 <body>
     <!-- En-tête fixe -->
     <header id="page-header">
-        <table style="width:100%; margin-top:-40px">
-            <tr>
-                <td>
-                    <center>
-                        <img src="element/logo/logo.png" alt="logo" height="80px" />
-                    </center>
-                </td>
-                <td>
-                    <h1>
-                        {{ $infoglo->entete }}
-                    </h1>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <center>
-                        <hr style="border-width: 1px;">
-                        {{ $infoglo->sousentete }}
-                    </center>
-                </td>
-            </tr>
-        </table>
+        <div style="display: flex; justify-content: center;">
+     
+            <table style="width:100%; margin-top:-40px; ">
+                <tr>
+                    <td  style="width:6%">
+                        <img src="element/logo/logo.png" alt="logo" height="40px" />
+                    </td>
+                    <td>
+                        <font size="29px">{{ $infoglo->entete }}</font>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <center>
+                            <hr style="border-width: 1px;">
+                            {{ $infoglo->sousentete }}
+                        </center>
+                    </td>
+                </tr>
+            </table>
+        
+       
+        </div>
+
     </header>
 
     <!-- Pied de page fixe -->
@@ -153,63 +156,46 @@
         <div class="col-sm-12">
             <table style=" width:100%" class="table table-striped table-sm fs--1 mb-0" id="mytable">
                 <tr>
-                    <td width="55%">
-                        Service: {{ $datadap->titres }} <BR>
-                        Composante/ Projet/Section: {{ ucfirst( $datadap->titres) }} <br>
-                        Devise : {{ $devise }} <br>
-
-                        Moyen de Paiement : <br>
-
-                      
-                    <table style="margin:0px;padding:0px; border:0px; background-color:white">
-                        <tr style="margin:0px;padding:0px; border:0px; background-color:white">
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Bon de commande">  OV :  </label> </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
-                            <input type="checkbox" class="form-check-input" readonly @if ( $datadap->ov==1)
-                            checked value="{{ $datadap->ov }}"
-                            @else
-                            value="{{ $datadap->ov }}"
-                            @endif />
-                            </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><label>Cheque:</label></td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
-                            <input type="checkbox" class="form-check-input" readonly @if ( $datadap->cho==1)
-                        checked value="{{ $datadap->cho }}"
-                        @else
-                        value="{{ $datadap->cho }}"
-                        @endif /> 
-                            </td>
-                        </tr>
-                    </table>
-
-                     
-                      
-
-                        Créé par: {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }} <br>
-
-
-
-                    </td>
+                    <td style="width:50%"> Service: {{ $datadap->titres }}</td>
                     <td>
                         Référence: FEB n<sup>o</sup>:
                         @php
                         foreach ($datafebElement as $key => $datafebElements) {
                         echo '['.$datafebElements->numerofeb.']';
 
-                        if ($key < count($datafebElement) - 1) { echo ',' ; } } @endphp <BR>
-                            Lieu: {{ $datadap->lieu }} <br>
+                        if ($key < count($datafebElement) - 1) { echo ',' ; } } @endphp </td>
+                </tr>
+                <tr>
+                    <td> Composante/ Projet/Section: {{ $datadap->projettitle }}</td>
+                    <td> Lieu: {{ $datadap->lieu }} </td>
+                </tr>
 
-                            Compte bancaire(BQ) : {{ $datadap->comptabiliteb }} <br>
-                            Taux execution precedent : {{ $taux_execution_avant }}% <br>
-                            Taux d'execution actuel : {{ $pourcentage_encours}}% <br>
-                            Taux execution globale : {{ $pourcetage_globale }}% <br>
+                <tr>
+                    <td>Taux execution globale du projet: {{ $pourcetage_globale }}%  </td>
+                    <td> Compte bancaire(BQ) : {{ $datadap->comptabiliteb }} ; Banque : {{ $datadap->banque }}</td>
+                </tr>
 
-                            Solde comptable BQ: {{ number_format($datadap->soldecompte,0, ',', ' ')  }}
+                <tr>
+                    <td>Créé par : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }} </td>
+                    <td>Relicat budgetaire :{{ number_format($relicat, 0, ',', ' ') . ' ' }} {{ $devise }} </td>
+                </tr>
 
+             
+                <tr style="margin:0px; padding:0px; border:0px; background-color:white">
+                    <td >
+                        <table>
+                            <td style="margin:0px; padding:0px; border:0px; background-color:white; width:28%">
+                                 <label title="OV"> &nbsp; Moyen de Paiement : OV </label> </td>
+                            <td style="margin:0px; padding:0px; border:0px; background-color:white; width:5%">
+                                <input type="checkbox"  readonly @if($datadap->ov==1) checked  @else  @endif />
+                            </td>
+                            <td style="margin:0px; padding:0px; border:0px; background-color:white"> &nbsp; &nbsp; &nbsp; &nbsp; Cheque: {{ $datadap->cho }}</td>
+                            <td style="margin:0px; padding:0px; border:0px; background-color:white">&nbsp; &nbsp; &nbsp; &nbsp; Etabli au nom : {{ $datadap->	paretablie }}</td>
+                        </table>
                     </td>
+                    <td>  Devise : {{ $devise }} </td>
                 </tr>
             </table>
-
 
             <h5> <u>Synthese sur l'utilisation dea fonds demandes(Vr details sur FB en avance)</u></h5>
             <table style=" width:100%" class="table table-striped table-sm fs--1 mb-0" id="mytable">
@@ -218,32 +204,40 @@
                         <th width="13%">Numéro du FEB </th>
                         <th width="60%">Activité </th>
                         <th>Montant total </th>
-                        <th>
-                            <center>T.E/projet</center>
-                        </th>
+                        <th> <center>T.E / L & S.L</center> </th>
                     </tr>
                 </thead><!-- end thead -->
                 <tbody>
-                    @php
-                    $totoglobale = 0; // Initialiser le total global à zéro
-                    $pourcentage_total = 0; // Initialiser le pourcentage total à zéro
+                @php
+                                    $totoglobale = 0; // Initialiser le total global à zéro
+                                    $pourcentage_total = 0; // Initialiser le pourcentage total à zéro
 
-                    @endphp
-                    @foreach ($datafebElement as $datafebElements)
-                    @php
+                                    @endphp
+                                    @foreach ($datafebElement as $datafebElements)
+                                    @php
 
-                    $totoSUM = DB::table('elementfebs')
-                    ->orderBy('id', 'DESC')
-                    ->where('febid', $datafebElements->fid)
-                    ->sum('montant');
+                                    $totoSUM = DB::table('elementfebs')
+                                    ->orderBy('id', 'DESC')
+                                    ->where('febid', $datafebElements->fid)
+                                    ->sum('montant');
+
+                                    $somme_ligne_principale = DB::table('rallongebudgets')
+                                    ->where('compteid', $datafebElements->ligne_bugdetaire)
+                                    ->sum('budgetactuel');
+
+                                    $sommelign = DB::table('elementfebs')
+                                    ->where('grandligne',  $datafebElements->ligne_bugdetaire)
+                                    ->sum('montant');
+
+                                    $sommelignpourcentage = round(($sommelign * 100) /  $somme_ligne_principale, 2);
 
 
-                    $totoglobale += $totoSUM;
-                    $pourcentage = round(($totoSUM * 100) / $budget, 2);
-                    // Ajouter le pourcentage de cette itération au pourcentage total
-                    $pourcentage_total += $pourcentage;
+                                    $totoglobale += $totoSUM;
+                                    $pourcentage = round(($totoSUM * 100) / $budget, 2);
+                                    // Ajouter le pourcentage de cette itération au pourcentage total
+                                    $pourcentage_total += $pourcentage;
 
-                    @endphp
+                                    @endphp
                     <tr>
                         <td>{{ $datafebElements->numerofeb }}</td>
                         <td>{{ $datafebElements->descriptionf }}</td>
@@ -258,13 +252,13 @@
                             {{ number_format($totoSUM, 0, ',', ' ')  }}
 
                         </td>
-                        <td align="center">{{ $pourcentage }} </td>
+                        <td align="center">{{ $sommelignpourcentage }} % </td>
                     </tr>
                     @endforeach
                     <tr style=" background-color: #040895;">
-                        <td style="color:white" colspan="2" align="center"> Total </td>
+                        <td style="color:white" colspan="2" align="center"> Total général </td>
                         <td align="right" style="color:white"> {{ number_format($totoglobale, 0, ',', ' ')  }}</td>
-                        <td style="color:white" align="center"> {{ $pourcentage_total }} %</td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
@@ -279,8 +273,8 @@
 
                 </tr>
                 <tr>
-                    <td> <b> Demande établie par</b> 
-                        <small> Chef de Composante/Projet/Section : {{ ucfirst($Demandeetablie->nom) }} {{ ucfirst($Demandeetablie->prenom) }} </small>
+                    <td> <b> Demande établie par</b>
+                        <small>(Chef de Composante/Projet/Section) : {{ ucfirst($Demandeetablie->nom) }} {{ ucfirst($Demandeetablie->prenom) }} </small>
                         @if ($datadap->demandeetablie_signe==1) <br>
                         <center> <img src="{{  $Demandeetablie->signature }}" width="100px" /> <br>
                             {{ date('d-m-Y', strtotime($datadap->demandeetablie_signe_date)) }}
@@ -288,8 +282,8 @@
                         @endif 
                     </td>
 
-                    <td> <b> Vérifiée par :</b> 
-                        <small> Chef Comptable : {{ ucfirst($chefcomptable->nom) }} {{ ucfirst($chefcomptable->prenom) }} </small>
+                    <td> <b> Vérifiée par </b>
+                        <small>(Chef Comptable) : {{ ucfirst($chefcomptable->nom) }} {{ ucfirst($chefcomptable->prenom) }} </small>
                         @if ($datadap->verifierpar_signe==1) <br>
                         <center>
                             <img src="{{  $chefcomptable->signature }}" width="100px" />
@@ -302,8 +296,8 @@
                     </td>
 
 
-                    <td> <b> Approuvée par : </b> 
-                        <small>Chef de Service :
+                    <td> <b> Approuvée par </b>
+                        <small>(Chef de Service) :
                             {{ ucfirst($chefservice->nom) }} {{ ucfirst($chefservice->prenom) }} <br>
                             @if ($datadap->approuverpar_signe==1)
                             <center> <img src="{{  $chefservice->signature }}" width="100px" /><br>
@@ -319,7 +313,7 @@
             </table>
 
 
-            <table class="table table-striped table-sm fs--1 mb-0"  id="mytable">
+            <table class="table table-striped table-sm fs--1 mb-0" id="mytable">
 
                 <tr>
                     <td colspan="2"> <b> Autorisaction de paiement</b> </td>
@@ -344,7 +338,7 @@
 
                     </td>
                     <td>
-                        Chef des Programmes {{ ucfirst($chefprogramme->nom) }} {{ ucfirst($chefprogramme->prenom) }} <br>
+                        Chef des Programmes : {{ ucfirst($chefprogramme->nom) }} {{ ucfirst($chefprogramme->prenom) }} <br>
                         @if ($datadap->chefprogramme_signe==1)
                         <br>
                         <center>
@@ -365,7 +359,7 @@
                     </td>
 
 
-                  
+
                 </tr>
 
 

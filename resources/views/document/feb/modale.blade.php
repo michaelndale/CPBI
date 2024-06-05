@@ -29,9 +29,15 @@
                                 <tbody class="list">
                                     <tr>
                                         <td class="align-middle ps-3 name" style="width:20%">Composante/ Projet/Section</td>
-                                        <td class="align-middle email" colspan="15">
+                                        <td class="align-middle email" colspan="8">
                                             <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
                                             <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
+                                        </td>
+                                        <td colspan="7">
+                                        Ceci est pour alimenter la petite caisse ? 
+                                            Oui <input type="radio" class="form-check-input" id="alimentantionOui" name="alimentation" value="1">
+                                            &nbsp;&nbsp;&nbsp;
+                                            Non <input type="radio" class="form-check-input" id="alimentantionNon" name="alimentation" value="0" checked>
                                         </td>
                                     </tr>
                                     <tr>
@@ -176,13 +182,13 @@
                                         </td>
 
                                         <td class="align-middle ps-3 name" style="width:4%">
-                                            <center><label title="Accuse reception">A.R</label> <br>
+                                            <center><label title="Accussé de reception">A.R</label> <br>
                                                 <input type="checkbox" class="form-check-input" name="ar" id="ar">
                                             </center>
                                         </td>
 
                                         <td class="align-middle ps-3 name" style="width:4%">
-                                            <center><label title="Bordereau d'expediction">B.E</label> <br>
+                                            <center><label title="Bordereau d'expédition">B.E</label> <br>
                                                 <input type="checkbox" class="form-check-input" name="br" id="br">
                                             </center>
                                         </td>

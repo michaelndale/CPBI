@@ -57,11 +57,12 @@
                   <th class="sort border-top "> <center> <b>N<sup>o</sup>  FEB </b></center> </th>
                   <th class="sort border-top "> <b>Lieu </b></th>
                   <th class="sort border-top "><center> <b>OV  </b></center></th>
-                  <th class="sort border-top "> <center><b>CHO </b></center></th>
-                  <th class="sort border-top "> <center><b>Compte bancaire </b></center></th>
+                  <th class="sort border-top "> <b>CHO </b></th>
+                  <th class="sort border-top "> <b>Compte bancaire </b></th>
+                  <th class="sort border-top "> <b>Etabli au nom</b></th>
                   <th class="sort border-top "> <center><b>DJA (Justifier) </b></center></th>
                   <th class="sort border-top "> <center><b> Créé le. </b></center></th>
-                  <th class="sort border-top "> <center><b> Créé par </b></center></th>
+                  <th class="sort border-top "> <b> Créé par </b></th>
                 </tr>
               </thead>
 
@@ -123,12 +124,13 @@
         },
         success: function(response) {
             if (response.exists) {
-                $('#numerodap_error').text('Erreur : Numéro DAP existe déjà.');
+                $("#numerodap_error").html('<i class="fa fa-times-circle"></i> Numéro DAP existe déjà');
                 $('#numerodap').removeClass('has-success') // Supprime la classe de succès
                 $('#numerodap').addClass('has-error');
                 $('#numerodap_info').text('');
             } else {
-                $('#numerodap_info').text('Numéro Disponible');
+              
+                $("#numerodap_info").html('<i class="fa fa-check-circle"></i> Numéro Disponible');
                 $('#numerodap').removeClass('has-error')  // Supprime la classe de succès
                 $('#numerodap').addClass('has-success');
                 $('#numerodap_error').text('');
@@ -185,7 +187,8 @@ function toggleInputs() {
 }
 
 
-  $(document).ready(function() {
+  $(document).ready(function() 
+  {
     $(document).on('change', '.febid', function() {
         var febrefs = $(this).val(); // Utilisez val() pour obtenir toutes les valeurs sélectionnées
         var div = $(this).parent();

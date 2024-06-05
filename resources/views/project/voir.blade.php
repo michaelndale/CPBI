@@ -78,9 +78,19 @@
                     <a class="dropdown-item" href="{{ route('listdja') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
                       DJA</a>
                   </li>
+
+                      
+                  <li>
+                    <a class="dropdown-item" href="{{ route('bpc') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                    Bon de petite caisse</a>
+                  </li>
+
+                  
+
+               
                 
                   <li>
-                    <a class="dropdown-item" href="{{ route('affectation') }}"><i class="fa fa-users font-size-16 align-middle me-2"></i>  Ajouter les intervenants</a>
+                    <a class="dropdown-item" href="{{ route('affectation') }}"><i class="fa fa-users font-size-16 align-middle me-2"></i>  Intervenants</a>
                   </li>
                 
                   <li>

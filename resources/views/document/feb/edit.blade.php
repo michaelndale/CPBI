@@ -11,12 +11,13 @@
             <div class="row">
                 <div class="col-12" style="margin:auto">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> MODIFICATION DE FICHE D’EXPRESSION DES BESOINS "FEB"(N° {{ $dataFe->numerofeb }} ) </h4>
+                        <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> MODIFICATION DE FICHE D’EXPRESSION DES BESOINS "FEB"(N° {{ $dataFe->numerofeb }}) </h4>
                         <div class="page-title-right">
                             <div class="btn-toolbar float-end" role="toolbar">
                                 <div class="btn-group me-2 mb-2 mb-sm-0">
                                     <a href="{{ route('generate-pdf-feb', $dataFe->id) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-print"></i> </a>
-                                    <a href="{{ route('showfeb', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-edit"></i> </a>
+                                    <a href="{{ route('key.viewFeb', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-eye"></i> </a>
+                                  
                                     <a href="{{ route('listfeb') }}" type="button" class="btn btn-primary waves-light waves-effect"><i class="fa fa-list"></i></a>
                                 </div>
                             </div>
@@ -42,7 +43,7 @@
                                                         <table class="table table-striped table-sm fs--1 mb-0">
                                                             <tbody class="list">
                                                                 <tr>
-                                                                    <td class="align-middle ps-3 name"  colspan="7 ">Composante/ Projet/Section</td>
+                                                                    <td class="align-middle ps-3 name"  colspan="4">Composante/ Projet/Section</td>
                                                                     <td class="align-middle email" colspan="13">
                                                                         <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
                                                                         <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
@@ -50,7 +51,7 @@
                                                                 </tr>
 
                                                                 <tr>
-                                                                    <td class="align-middle ps-3 name"  colspan="7">Ligne budgétaire: </td>
+                                                                    <td class="align-middle ps-3 name"  colspan="4">Ligne budgétaire: </td>
                                                                     <td class="align-middle email" colspan="14">
                                                                         <select class="form-control  form-control-sm" id="ligneid" name="ligneid" required>
                                                                             <option value="{{ $dataFe->idc }}">{{ $dataFe->libellec }}</option>
@@ -73,8 +74,8 @@
                                                                 </tr>
 
                                                                 <tr>
-                                                                    <td class="align-middle ps-3 name" >Activités </td>
-                                                                    <td colspan="8">
+                                                                    <td colspan="4" class="align-middle ps-3 name" >Activités </td>
+                                                                    <td colspan="5">
                                                                         <input style="width:100%" type="hidden" id="idlibelle" name="idlibelle" class="form-control form-control-sm" value="{{ $datElementgene->libellee }}">
                                                                         <input style="width:100%" type="hidden" id="eligne" name="eligne" class="form-control form-control-sm" value="{{ $datElementgene->eligne }}">
                                                                         <input style="width:100%" type="hidden" id="grandligne" name="grandligne" class="form-control form-control-sm" value="{{ $datElementgene->grandligne }}">
@@ -91,7 +92,7 @@
                                                                             <option value="{{ $onebeneficaire->id }}">{{ $onebeneficaire->libelle }} </option>
 
                                                                             @else
-                                                                            <option> Select un benef</option>
+                                                                            <option> Sélectionner un bénéficiaire  </option>
                                                                             @endif
 
                                                                             @foreach ($beneficaire as $beneficaires)
@@ -104,12 +105,13 @@
                                                                 </tr>
                                                               
                                                                 <tr>
-                                                                    <td class="align-middle ps-3 name"  colspan="5">Numéro FEB <br>
-
+                                                                <td class="align-middle ps-3 name"  colspan="4"><br>
+                                                                </td>
+                                                                    <td class="align-middle ps-3 name">Numéro FEB <br>
                                                                         <input type="text" class="form-control form-control-sm" name="numerofeb" id="numerofeb" value="{{ $dataFe->numerofeb }}">
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name">Période: <br>
+                                                                    <td class="align-middle ps-3 name" colspan="3">Période: <br>
                                                                         <select type="text" class="form-control form-control-sm" name="periode" id="periode" style="width: 100%" required>
                                                                             <option value="{{ $dataFe->periode }}"> {{ $dataFe->periode }} </option>
                                                                             @php
@@ -128,7 +130,15 @@
                                                                         <input type="date" class="form-control form-control-sm" name="datelimite" value="{{ $dataFe->datelimite }}" id="datelimite" style="width: 100%">
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                  
+
+                                                                  
+                                                                </tr>
+
+                                                                <tr>
+                                                                  
+                                                                  
+                                                                    <td class="align-middle ps-3 name" >
                                                                         <center> <label title="Bon de commande">B.C</label> <br> 
                                                                         <input type="checkbox" name="bc" id="bc" class="form-check-input" readonly @if ($dataFe->bc==1)
                                                                             checked value="{{ $dataFe->bc }}"
@@ -138,7 +148,7 @@
                                                                         </center>
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                    <td class="align-middle ps-3 name" >
 
                                                                         <center><label>Facture </label> <br>
                                                                             <input type="checkbox" name="facture" id="facture" class="form-check-input" readonly @if($dataFe->facture==1)
@@ -151,7 +161,7 @@
                                                                         </center>
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                    <td class="align-middle ps-3 name" >
                                                                         <center><label title="Ordre de mission">O.M </label> <br>
                                                                             <input type="checkbox" name="om" id="om" class="form-check-input" readonly @if($dataFe->om==1)
                                                                             checked value="{{ $dataFe->om }}"
@@ -162,7 +172,7 @@
                                                                         </center>
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                    <td class="align-middle ps-3 name" >
                                                                         <center><label title="Procès-verbal d'analyse">P.V.A</label><br>
                                                                             <input type="checkbox" class="form-check-input" name="nec" readonly @if($dataFe->nec==1)
                                                                             checked value="{{ $dataFe->nec }}"
@@ -174,7 +184,7 @@
                                                                         </center>
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                    <td class="align-middle ps-3 name" >
                                                                         <center><label title="Facture proformat">FP/Devis/Liste</label> <br>
                                                                             <input type="checkbox" class="form-check-input" name="fpdevis" readonly @if($dataFe->fpdevis==1)
                                                                             checked value="{{ $dataFe->fpdevis }}"
@@ -186,7 +196,7 @@
                                                                         </center>
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                    <td class="align-middle ps-3 name" >
                                                                         <center><label title="Rapport de mission">R.M</label> <br>
                                                                             <input type="checkbox" class="form-check-input" name="rm" readonly @if($dataFe->rm==1)
                                                                             checked value="{{ $dataFe->rm }}"
@@ -198,7 +208,7 @@
                                                                         </center>
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                    <td class="align-middle ps-3 name" >
                                                                         <center><label title="Terme de référence">T.D.R</label> <br>
                                                                             <input type="checkbox" class="form-check-input" name="tdr" readonly @if($dataFe->tdr==1)
                                                                             checked value="{{ $dataFe->tdr }}"
@@ -210,7 +220,7 @@
                                                                         </center>
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                    <td class="align-middle ps-3 name" >
                                                                         <center><label title="Bordereau de versement">B.V</label> <br>
                                                                             <input type="checkbox" class="form-check-input" name="bv" readonly @if($dataFe->bv==1)
                                                                             checked value="{{ $dataFe->bv }}"
@@ -222,7 +232,7 @@
                                                                         </center>
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                    <td class="align-middle ps-3 name" >
                                                                         <center><label title="Reçu">Reçu</label>  <br>
                                                                             <input type="checkbox" class="form-check-input" name="recu" readonly @if($dataFe->recu==1)
                                                                             checked value="{{ $dataFe->recu }}"
@@ -233,7 +243,7 @@
                                                                         </center>
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                    <td class="align-middle ps-3 name" >
                                                                         <center><label title="Accuse reception">A.R</label> <br>
                                                                             <input type="checkbox" class="form-check-input" name="ar" readonly @if($dataFe->ar==1)
                                                                             checked value="{{ $dataFe->ar }}"
@@ -244,7 +254,7 @@
                                                                         </center>
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                    <td class="align-middle ps-3 name" >
                                                                         <center><label title="Bordereau d'expediction">B.E</label>  <br>
                                                                             <input type="checkbox" class="form-check-input" name="be" readonly @if($dataFe->be==1)
                                                                             checked value="{{ $dataFe->be }}"
@@ -255,7 +265,7 @@
                                                                         </center>
                                                                     </td>
 
-                                                                    <td class="align-middle ps-3 name" style="width:8%">
+                                                                    <td class="align-middle ps-3 name" >
                                                                         <center><label title="Appel a la participation a la construction au CFK">A.P.C</label> <br>
                                                                             <input type="checkbox" class="form-check-input" name="apc" readonly @if($dataFe->apc==1)
                                                                             checked value="{{ $dataFe->apc }}"
@@ -263,6 +273,12 @@
                                                                             value="{{ $dataFe->apc }}"
                                                                             @endif
                                                                             />
+                                                                        </center>
+                                                                    </td>
+
+                                                                    <td  style="width:20%">
+                                                                        <center><label title="Annex document">Annex document</label> <br>
+                                                                            <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#annexModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-link"></i></a>
                                                                         </center>
                                                                     </td>
 
@@ -354,7 +370,7 @@
                                                             <table class="table table-striped table-sm fs--1 mb-0">
                                                                 <tfoot style="background-color:#c0c0c0">
                                                                     <tr>
-                                                                        <td colspan="8"><b>Total global {{ $datElements->lignetitre }} :</b></td>
+                                                                        <td colspan="8"><b>Total global :</b></td>
                                                                         <td align="right"><span class="total-global"><b>{{ $sommefeb }} {{ Session::get('devise') }}</b> </span></td>
                                                                         <td></td>
                                                                     </tr>
@@ -431,6 +447,8 @@
                 </div>
             </div>
         </div>
+
+        @include('document.feb.annex')
 
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

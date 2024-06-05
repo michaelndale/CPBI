@@ -14,7 +14,7 @@
     <div class="modal-dialog modal-xl  modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="far fa-file-alt "></i> Demande  d'Autorisation de Paiement (DAP) </h5>
+                <h5 class="modal-title"><i class="far fa-file-alt "></i> Demande d'Autorisation de Paiement (DAP) </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -30,11 +30,11 @@
                                     <tr>
                                         <td style="width:300px"> Service <br>
                                             <select type="text" name="serviceid" id="serviceid" style="width: 100%" class="form-control form-control-sm" required>
-                                                <option value="">--Aucun--</option>
+                                                <option disabled="true" selected="true" value="">--Aucun--</option>
                                                 @forelse ($service as $services)
                                                 <option value="{{ $services->id }}"> {{ $services->title }} </option>
                                                 @empty
-                                                <option value="">--Aucun service trouver--</option>
+                                                <option disabled="true" selected="true" value="">--Aucun service trouver--</option>
                                                 @endforelse
                                             </select>
                                         </td>
@@ -64,7 +64,7 @@
                                 <tr>
 
                                     <td> Numéro du DAP
-                                        <input type="number" name="numerodap" id="numerodap" style="width: 100%" class="form-control form-control-sm" required />
+                                        <input type="text" name="numerodap" id="numerodap" style="width: 100%" class="form-control form-control-sm" required />
                                         <smal id="numerodap_error" name="numerodap_error" class="text text-danger"> </smal>
                                         <smal id="numerodap_info" class="text text-primary"> </smal>
                                     </td>
@@ -77,19 +77,33 @@
                                         <input type="text" class="form-control form-control-sm" name="comptebanque" id="comptebanque" style="width: 100%" required>
                                     </td>
 
-                                    <td> Solde comptable (Sc):
-                                        <input type="number" min="0" class="form-control form-control-sm" name="soldecompte" value="{{ $somfeb }}" style="background-color:#c0c0c0" required>
+                                    <td> Solde comptable dd(Sc):
+                                        <input type="text" min="0" class="form-control form-control-sm" name="soldecompte" value="{{ $somfeb }}" style="background-color:#c0c0c0">
                                     </td>
 
-                                    <td> Numero cheque:
-                                        <input type="text" name="ch"  id="ch" class="form-control form-control-sm" >
+                                    <td> Numéro cheque:
+                                        <input type="text" name="ch" id="ch" class="form-control form-control-sm">
                                     </td>
 
                                     <td align="center"> OV nº : <br>
                                         <input type="checkbox" class="form-check-input" name="ov" id="ov">
                                     </td>
 
-                                    
+                                    <td> Etabli au nom de: 
+                                        <input type="text" name="paretablie" id="paretablie" class="form-control form-control-sm">
+                                    </td>
+
+                                    <td> Banque :
+                                    <select type="text" class="form-control form-control-sm" name="banque" id="banque">
+                                        <option disabled="true" selected="true" value="">-- Sélectionner --</option>
+                                        @foreach ($banque as $banques)
+                                            <option value="{{ $banques->libelle }}">{{ ucfirst($banques->libelle) }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    </td>
+
+
                                 </tr>
 
                             </table>
@@ -209,7 +223,7 @@
                                     <td>
                                         Responsable Administratif et Financier : <br>
                                         <select type="text" class="form-control form-control-sm" name="resposablefinancier" id="resposablefinancier" required>
-                                            <option disabled="true" selected="true" value="">--Selectionnez personnel--</option>
+                                            <option disabled="true" selected="true" value="">--Sélectionner un personnel--</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
@@ -218,7 +232,7 @@
                                     <td>
                                         Secrétaire Général de la CEPBU : <br>
                                         <select type="text" class="form-control form-control-sm" name="secretairegenerale" id="secretairegenerale" required>
-                                            <option disabled="true" selected="true" value="">--Selectionnez personnel--</option>
+                                            <option disabled="true" selected="true" value="">--Sélectionner un personnel--</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
@@ -229,7 +243,7 @@
                                     <td>
                                         Chef des Programmes </br>
                                         <select type="text" class="form-control form-control-sm" name="chefprogramme" id="chefprogramme" required>
-                                            <option  disabled="true" selected="true" value="">--Selectionnez personnel--</option>
+                                            <option disabled="true" selected="true" value="">--Sélectionner un personnel--</option>
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
@@ -247,12 +261,11 @@
 
                         </div>
                     </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" id="adddapbtn" name="adddapbtn"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
-            </div>
-            </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="adddapbtn" name="adddapbtn"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
+                    </div>
+                </form>
         </div>
     </div>
 </div>

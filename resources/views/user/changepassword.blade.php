@@ -30,7 +30,7 @@
       @csrf
       
         <div class="modal-body">
-        <input type="hidde" value="{{ $user->idu }}" name="idmdp" readonly> 
+        <input type="hidden" value="{{ $user->idu }}" name="idmdp" readonly> 
         <input type="" value="{{ $user->nom }} {{ $user->prenom }}" class="form-control form-control-sm" readonly style="background-color:#c0c0c0"> <br>  
 
         Nouveau mot de passe<br>

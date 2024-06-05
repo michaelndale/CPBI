@@ -85,7 +85,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
             <!-- end page title -->
 
             <div class="row">
-
+            <!--
                 <div class="col-lg-12">
                     <div class="card border border-danger">
                         <div class="card-header bg-transparent border-danger">
@@ -102,7 +102,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                             </p>
                         </div>
                     </div>
-                </div>
+                </div>  -->
 
                 <div class="col-xl-12">
                     <div class="row">
@@ -128,7 +128,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                                 <div class="card-body">
                                     <div class="d-flex flex-wrap pb-3 gap-3">
                                         <div class="flex-grow-1 overflow-hidden">
-                                            <p class="text-truncate mb-2">Personnel</p>
+                                            <p class="text-truncate mb-2">Personnels</p>
                                             <h4 class="mt-2 mb-0">{{ $user->count(); }}<span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $user->count(); }}%</sup></h4>
                                         </div>
                                         <div class="text-primary">
@@ -255,7 +255,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                                 <div class="card-body">
 
 
-                                    <h4 class="card-title"><i class="fa fa-search"></i> Recherche projet</h4>
+                                    <h4 class="card-title"><i class="fa fa-search"></i> Recherche du projet</h4>
                                     <div class="mt-4">
 
 
@@ -284,19 +284,14 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                             <div class="card">
                                 <div class="card-body">
 
-                                    <h4 class="card-title mb-3"><i class="fa fa-list"></i> Bref résumé de tous les projets en recherche</h4>
+                                    <h4 class="card-title mb-3"><i class="fa fa-list"></i> Bref résumé de tous les projets de recherche</h4>
 
 
                                     <div class="table-responsive">
                                         <table class="table table-centered align-middle table-nowrap mb-0">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 20px;" class="align-middle">
-                                                        <div class="form-check font-size-15">
-                                                            <input class="form-check-input" type="checkbox" id="checkAll">
-                                                            <label class="form-check-label" for="checkAll"> Numéro</label>
-                                                        </div>
-                                                    </th>
+                                                    <th> Numéro </th>
                                                     <th>Titre du projet</th>
                                                     <th>Date début</th>
                                                     <th>Date fin</th>
@@ -351,7 +346,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="myLargeModalLabel"><i class="fa fa-folder-open"></i> Tâches à faire en attente</h5>
+                    <h5 class="modal-title" id="myLargeModalLabel"><i class="fa fa-list"></i> Tâches à faire en attente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -362,13 +357,12 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                             <table class="table table-striped table-sm fs--1 mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="sort border-top "><b>ID </b></center>
-                                        </th>
+                                        <th class="sort border-top "><b> # </b></center></th>
                                         <th class="sort border-top" data-sort="Document"><b>Document</b></th>
-                                        <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> Doc </b></th>
-                                        <th class="sort border-top" data-sort="Date Doc"><b>Date Doc</b></th>
+                                        <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> DOC</b></th>
+                                        <th class="sort border-top" data-sort="Date Doc"><b>Date FEB </b></th>
                                         <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
-                                        <th class="sort border-top" data-sort="Date limite"><b>Date limite</b></th>
+                                        <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
                                         <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
                                     </tr>
                                 </thead>
