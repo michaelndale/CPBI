@@ -3,6 +3,19 @@ MICHAEL NDALE
 miguel NDALE
 Passionner de la tecbhnologie
 
+if (!session()->has('id')) {
+      // Redirige vers le tableau de bord si l'ID de projet n'existe pas dans la session
+      return redirect()->route('dashboard')->with('error', 'ID de projet non trouvé dans la session.');
+    }
+
+
+$numero_classe_feb =  $check->numerofeb;
+ $sommelign = DB::table('elementfebs')
+      ->where('grandligne', $id_gl)
+      ->where('numero', '<=', $numero_classe_feb)
+      ->where('projetids', $IDB)
+      ->sum('montant');
+
 
 $dataallfeb = DB::table('elementfebs')
       ->orderby('id', 'DESC')

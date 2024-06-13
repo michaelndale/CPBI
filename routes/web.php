@@ -13,6 +13,7 @@ use App\Http\Controllers\BeneficaireController;
 use App\Http\Controllers\BonpetitcaisseController;
 use App\Http\Controllers\BpcController;
 use App\Http\Controllers\CarburantController;
+use App\Http\Controllers\CarnetbordController;
 use App\Http\Controllers\CatactivityController;
 use App\Http\Controllers\CategoriebeneficiaireController;
 use App\Http\Controllers\ClasseurController;
@@ -22,6 +23,8 @@ use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\DeviseController;
 use App\Http\Controllers\DjaController;
 use App\Http\Controllers\ElementsfeuilletempsController;
+use App\Http\Controllers\EntretienProgrammerController;
+use App\Http\Controllers\EntretientController;
 use App\Http\Controllers\EtiquetteController;
 use App\Http\Controllers\FdtController;
 use App\Http\Controllers\FebController;
@@ -176,6 +179,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('carburents')->group(function () {
         Route::get('/', [PleincarburantController::class, 'index'])->name('carburents');
         Route::get('/allcarburents', [PleincarburantController::class, 'allcarburents'])->name('allcarburents'); 
+        Route::delete('/deletePlain', [PleincarburantController::class, 'deletePlain'])->name('deletePlain');
     });
 
  
@@ -340,11 +344,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/check-dap', [DapController::class, 'checkDap'])->name('check.dap');
         Route::get('/getFuelTypes', [DapController::class, 'getFuelType'])->name('getFuelTypes');
         Route::post('/get-feb-details', [DapController::class, 'getFebDetails'])->name('get-feb-details');
+
+        Route::get('/dap/fetchAllsignaledap/{dapid?}', [DapController::class, 'fetchAllsignaledap'])->name('fetchAllsignaledap');
+        Route::post('/storesignaledap', [DapController::class, 'storeSignaleDap'])->name('storesignaledap');
+        
     });
 
     Route::prefix('dja')->group(function () {
         Route::get('/', [DjaController::class, 'list'])->name('listdja');
-       // Route::post('/storedja', [DjaController::class, 'store'])->name('storedja');
         Route::post('/storejustification', [DjaController::class, 'saveDjas'])->name('storejustification');
         Route::post('/updatejustification', [DjaController::class, 'UpDjas'])->name('updatejustification');
 
@@ -365,14 +372,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [BonpetitcaisseController::class, 'index'])->name('bpc');
         Route::get('/liste_bpc', [BonpetitcaisseController::class, 'list'])->name('liste_bpc');
         Route::post('/storebpc', [BonpetitcaisseController::class, 'store'])->name('storebpc');
-       // Route::get('/{key}/view/', [ProjectController::class, 'show'])->name('key.viewProject');
-       // Route::get('/{key}/edit/', [ProjectController::class, 'editshow'])->name('key.editProject');
-        //Route::put('/updatprojet/{cle}', [ProjectController::class, 'updateprojet'])->name('updatprojet');
-       //Route::delete('/deleteprojet', [ProjectController::class, 'deleteprojet'])->name('projetdelete');
     });
-
-
-
 
     Route::prefix('ftd')->group(function () {
         Route::get('/', [FdtController::class, 'list'])->name('listftd');
@@ -384,8 +384,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/fetchAllpor', [PortierController::class, 'fetchAll'])->name('fetchAllpor');
         Route::post('/storepor', [PortierController::class, 'store'])->name('storepor');
         Route::delete('/deletepor', [FolderController::class, 'deleteall'])->name('deletepor');
-        //Route::get('/editfl', [FolderController::class, 'edit'])->name('editfl');
-        //Route::post('/updatefl', [FolderController::class, 'update'])->name('updatefl'); 
     });
 
     Route::prefix('vehicule')->group(function () {
@@ -401,8 +399,30 @@ Route::middleware('auth')->group(function () {
         Route::post('/storeachat', [AchatLocationController::class, 'storeachat'])->name('storeachat');
         Route::delete('/deleteachat', [AchatLocationController::class, 'deleteachat'])->name('deleteachat');
 
-        
+        Route::get('/showvehicule', [VehiculeController::class, 'edit'])->name('showvehicule');
+
     });
+
+    Route::prefix('entretient')->group(function () {
+        Route::get('/', [EntretientController::class, 'index'])->name('entretient');
+        Route::get('/show_entretien', [EntretientController::class, 'fetchAll'])->name('allentretien');
+        Route::post('/storeEntretien', [EntretientController::class, 'store'])->name('storeEntretien');
+
+        Route::get('/show_programme', [EntretienProgrammerController::class, 'fetchallp'])->name('allprogramme');
+        Route::post('/storeProgramme', [EntretienProgrammerController::class, 'storeProgramme'])->name('storeProgramme');
+        Route::delete('/deleteEntretien', [EntretientController::class, 'deleteEntretient'])->name('deleteEntretien');
+
+        Route::delete('/deleteProgramme', [EntretienProgrammerController::class, 'deleteProgramme'])->name('deleteProgramme');
+    });
+
+
+    Route::prefix('carnet_bord')->group(function () {
+        Route::get('/', [CarnetbordController::class, 'index'])->name('carnet_bord');
+        Route::get('/show_carnet', [CarnetbordController::class, 'fetchAll'])->name('all_carnet');
+        Route::post('/storeCarnet', [CarnetbordController::class, 'store'])->name('store_carnet');
+        Route::delete('/deleteCarnet', [CarnetbordController::class, 'deleteProgramme'])->name('delete_carnet');
+    });
+
 
 
     Route::prefix('outilspa')->group(function () {
@@ -435,19 +455,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/editfournisseur', [FournisseurController::class, 'editfournisseur'])->name('editfournisseur');
         Route::post('/updatefournisseur', [FournisseurController::class, 'updatefournisseur'])->name('updatefournisseur'); 
         
-//
+        //
         
         Route::get('/allpiece', [PieceController::class, 'allpiece'])->name('allpiece');
         Route::post('/storepiece', [PieceController::class, 'storepiece'])->name('storepiece'); 
         Route::delete('/deletepiece', [PieceController::class, 'deletepiece'])->name('deletepiece');
         Route::get('/editpiece', [PieceController::class, 'editpiece'])->name('editpiece');
         Route::post('/updatepieceedit', [PieceController::class, 'updatepiece'])->name('updatepieceedit'); 
-
-
-        
-        
-
-        
+      
     });
 
    
@@ -508,8 +523,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/updatUser', [PersonnelController::class, 'updatpassword'])->name('updatUser');
         Route::post('/updatProfile', [PersonnelController::class, 'updatprofile'])->name('updatProfile');
         Route::post('/updatsignature', [PersonnelController::class, 'updatsignature'])->name('updatsignature');
-        // Route::delete('/deletePersonnel', [PersonnelController::class, 'deleteall'])->name('deletePersonnel');
-
     });
 
     Route::prefix('plandeconnecte')->group(function () {
@@ -518,10 +531,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/storeplan', [PlanoperationnelController::class, 'save'])->name('storeplan');
         Route::post('/storerealisation', [PlanoperationnelController::class, 'saverealisation'])->name('storerealisation');
         Route::get('/showplanelement', [PlanoperationnelController::class, 'showplanElement'])->name('showplanelement');
-        // Route::post('/updatPersonnel', [PersonnelController::class, 'update'])->name('updatPersonnel'); 
-        // Route::post('/updatUser', [PersonnelController::class, 'updatpassword'])->name('updatUser'); 
-        // Route::post('/updatProfile', [PersonnelController::class, 'updatprofile'])->name('updatProfile'); 
-        // Route::post('/updatsignature', [PersonnelController::class, 'updatsignature'])->name('updatsignature'); 
         Route::delete('/deletePlan', [PlanoperationnelController::class, 'deletePlan'])->name('deletePlan');
     });
 

@@ -123,7 +123,7 @@
                             <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
 
                                 <tr>
-                                    <td colspan="5">C'est montant est une avance ? &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" class="form-check-input" name="justifier" id="justifier"> &nbsp; &nbsp; &nbsp; Non <input type="checkbox" class="form-check-input" name="nonjustifier" id="nonjustifier"></td>
+                                    <td colspan="5">Ce montant est-il une avance ? &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" class="form-check-input" name="justifier" id="justifier"> &nbsp; &nbsp; &nbsp; Non <input type="checkbox" class="form-check-input" name="nonjustifier" id="nonjustifier"></td>
 
                                 </tr>
                             </table>

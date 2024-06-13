@@ -56,7 +56,7 @@
                   <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                     <h6><i class="fa fa-car"></i> Gestions des véhicules </h6>
                     <div class="page-title-right">
-                      <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addVehiculeModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouveau véhicule</a>
+                      <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addVehiculeModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajout de nouveaux véhicules</a>
                     </div>
                   </div>
                 </div>
@@ -66,18 +66,18 @@
                     <thead>
                       <tr style="background-color:#82E0AA">
                         <th class="align-middle ps-3 name">#</th>
-                        <th>Blaque</th>
+                        <th>Plaque</th>
                         <th>Marque</th>
                         <th>Modèle</th>
                         <th>N<sup>o</sup> Série</th>
                         <th>Couleur</th>
                         <th>Type</th>
-                        <th>Carburent</th>
+                        <th>Carburant</th>
+                        <th>Année</th>
+                        <th>Numéro chassis</th>
                         <th>Statut</th>
-                        <th>Date</th>
-                        <th>
-                          <center>Action</center>
-                        </th>
+                        <th>Créé le</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody id="show_all_vehicule">
@@ -88,8 +88,10 @@
                         </td>
                       </tr>
                     </tbody>
-                    </tbody>
+                   
                   </table>
+
+                  <br><br><br><br><br><br>
                 </div>
               </div>
 
@@ -119,6 +121,7 @@
                     </tbody>
 
                   </table>
+                  <br><br><br><br><br><br>
                 </div>
 
               </div>
@@ -141,15 +144,13 @@
                         <th>Location/Achat</th>
                         <th>Date</th>
                         <th>Kilomètrage</th>
-                        <th>Prix</th>
-                        <th>Expiration</th>
                         <th>Prix vente</th>
-                        <th>Note</th>
+                        <th>Expiration</th>
                         <th>Véhicule</th>
                         <th>Fournisseur</th>
-                        <th>
-                          <center>Action</center>
-                        </th>
+                        <th>Note</th>
+                        <th>Créé le</th>
+                        <th><center>Actions</center></th>
                       </tr>
                     </thead>
                     <tbody id="show_location">
@@ -162,6 +163,7 @@
                     </tbody>
                     </tbody>
                   </table>
+                  <br><br><br><br><br><br>
                 </div>
 
               </div>
@@ -299,7 +301,7 @@
       });
     });
 
-    // Get vehicule  request
+    // Get vehicule  request 
     $(document).on('click', '.editvehicule', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
@@ -320,6 +322,34 @@
           $("#typev").val(response.type);
           $("#carburentv").val(response.carburent);
           $("#statutv").val(response.statut);
+          $("#cannee").val(response.annee);
+          $("#cnumero_chassis").val(response.numero_chassis);
+        }
+      });
+    });
+
+    $(document).on('click', '.voirvehicule', function(e) {
+      e.preventDefault();
+      let id = $(this).attr('id');
+      $.ajax({
+        url: "{{ route('showvehicule') }}",
+        method: 'get',
+        data: {
+          id: id,
+          _token: '{{ csrf_token() }}'
+        },
+        success: function(response) {
+     
+          $("#dmatricule").val(response.matricule);
+          $("#dmarque").val(response.marque);
+          $("#dmodele").val(response.modele);
+          $("#dcouleur").val(response.couleur);
+          $("#dnumserie").val(response.numeroserie);
+          $("#dtype").val(response.type);
+          $("#dcarburent").val(response.carburent);
+          $("#dstatut").val(response.statut);
+          $("#dannee").val(response.annee);
+          $("#dnumero_chassis").val(response.numero_chassis);
         }
       });
     });

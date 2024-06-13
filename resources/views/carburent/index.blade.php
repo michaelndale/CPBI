@@ -12,9 +12,9 @@
             <div class="row">
                 <div class="col-12" style="margin:auto">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0"><i class="fa fa-gas-pump""></i> Carburents </h4>
+                        <h4 class="mb-sm-0"><i class="fa fa-gas-pump""></i> Gestion des Carburants  </h4>
             <div class=" page-title-right">
-                                <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addCarburentModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouveau véhicule</a>
+                                <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addCarburentModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter consommations de carburant.</a>
                     </div>
                 </div>
             </div>
@@ -22,58 +22,13 @@
 
         <div class="col-xl-12">
             <div class="card">
-                <!--  
-            <div class="card-body">
-            <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-              <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#home1" role="tab">
-                  <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
-                  <span class="d-none d-sm-block"><i class="fa fa-car"></i> Véhicules</span>
-                </a>
-              </li>
-              
-                <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#profile1" role="tab">
-                  <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
-                  <span class="d-none d-sm-block"><i class="fa fa-users"></i> Conducteurs</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#messages1" role="tab">
-                  <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
-                  <span class="d-none d-sm-block">Achats/Location</span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#settings1" role="tab">
-                  <span class="d-block d-sm-none"><i class="fas fa-cog"></i></span>
-                  <span class="d-none d-sm-block">Assurances/taxes/visites</span>
-                </a>
-              </li> 
-           
-            </ul>
-            
-
-                 <div class="tab-content p-3 text-muted">
-            <div class="tab-pane active" id="home1" role="tabpanel">
-
-               <div class="col-12" style="margin:auto">
-                  <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h6><i class="fa fa-gas-pump""></i> Gestions des carburents </h6>
-                    <div class="page-title-right">
-                      <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addVehiculeModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouveau véhicule</a>
-                    </div>
-                  </div>
-                </div>
-            -->
-
                 <div class="table-responsive">
                     <table class="table table-bordered table-sm fs--1 mb-0">
                         <thead>
                             <tr style="background-color:#82E0AA">
                                 <th class="align-middle ps-3 name">#</th>
                                 <th>Véhicule</th>
-                                <th>Type carburent</th>
+                                <th>Type carburant</th>
                                 <th>Quantité</th>
                                 <th>Coût</th>
                                 <th>Fournisseur</th>
@@ -81,7 +36,9 @@
                                 <th>Kilometrage fin</th>
                                 <th>Note</th>
                                 <th>Date</th>
-                                <th><center>Action</center></th>
+                                <th>
+                                    <center>Action</center>
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="showpleincarburent">
@@ -94,7 +51,7 @@
                         </tbody>
                         </tbody>
                     </table>
-
+                    <br><br><br><br><br><br>
                 </div>
             </div>
         </div>
@@ -278,6 +235,7 @@
 
 
         fetchcarburent();
+
         function fetchcarburent() {
             $.ajax({
                 url: "{{ route('allcarburents') }}",

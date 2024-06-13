@@ -46,11 +46,7 @@
                                     value="{{ $datadap->ov }}"
                                     @endif /> &nbsp; &nbsp;&nbsp;
 
-                                    Cheque : <input type="checkbox" class="form-check-input" readonly @if ( $datadap->cho==1)
-                                    checked value="{{ $datadap->cho }}"
-                                    @else
-                                    value="{{ $datadap->cho }}"
-                                    @endif /> &nbsp; &nbsp;&nbsp;
+                                    Cheque :{{ $datadap->cho }}
                                     <br>
                                     Devise : {{ Session::get('devise') }} <br>
 
@@ -69,11 +65,10 @@
                                         Lieu: {{ $datadap->lieu }} <br>
 
                                         Compte bancaire(BQ) : {{ $datadap->comptabiliteb }} <br>
-                                        Taux execution precedent : {{ $taux_execution_avant }}% <br>
-                                        Taux d'execution actuel : {{ $pourcentage_encours}}% <br>
+                                       
                                         Taux execution globale : {{ $pourcetage_globale }}% <br>
 
-                                        Solde comptable BQ: {{ number_format($solde_comptable, 0, ',', ' ')  }}
+                                        Relicat budgetaire: {{ number_format($solde_comptable, 0, ',', ' ')  }}
 
                                 </td>
                             </tr>

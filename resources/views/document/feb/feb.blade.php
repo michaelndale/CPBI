@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-
+    
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -119,25 +119,24 @@
 <body>
     <!-- En-tête fixe -->
     <header id="page-header">
-        <table class="table table-striped table-sm fs--1 mb-0" style="width:100%; margin-top:-40px">
-            <tr>
-            <tr>
-                <td style="width:6%">
-                    <img src="element/logo/logo.png" alt="logo" height="40px" />
-                </td>
-                <td>
-                    <font size="29px">{{ $infoglo->entete }}</font>
-
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <center>
-                        <hr style="border-width: 1px;">
-                        {{ $infoglo->sousentete }}
-                    </center>
-                </td>
-            </tr>
-        </table>
+    <table style="width:90%; margin-top:-35px; " align="center">
+                <tr>
+                    <td  style="width:6%"align="right">
+                        <img src="element/logo/logo.png" alt="logo" height="40px" />
+                    </td>
+                    <td align ="center">
+                        <font size="25px">{{ $infoglo->entete }}</font>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <center>
+                            <hr style="border-width: 1px;">
+                            {{ $infoglo->sousentete }}
+                        </center>
+                    </td>
+                </tr>
+            </table>
     </header>
 
     <!-- Pied de page fixe -->
@@ -164,8 +163,9 @@
             </tr>
 
             <tr>
-                <td>
-                    Activité: {{ $datafeb->descriptionf }}
+                <td> Code : {{ $dataLigne->numero }}  <br> 
+                     Ligne budgétaire: {{ $dataLigne->libelle }}
+                    
                 </td>
                
 
@@ -191,7 +191,13 @@
                                 <input type="checkbox" class="form-check-input" readonly @if($datafeb->nec==1) checked  @endif />
                             </td>
 
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Facture proforma"> &nbsp;FP/Dévis/Liste: </label> </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Facture proforma"> &nbsp;FP</label> </td>
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
+                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->fp==1) checked @endif
+                                />
+                            </td>
+
+                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Dévis/Liste"> &nbsp;Dévis/Liste: </label> </td>
                             <td style="margin:0px;padding:0px; border:0px; background-color:white">
                                 <input type="checkbox" class="form-check-input" readonly @if($datafeb->fpdevis==1) checked @endif
                                 />
@@ -237,6 +243,26 @@
                                 @endif
                                 /></td>
 
+                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Procès-verbal d'analyse">&nbsp; A.P.C:</label> </td>
+                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <input type="checkbox" class="form-check-input" readonly @if($datafeb->apc==1)
+                                checked 
+                                @endif
+                                /></td>
+
+                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Rapport d'activités">&nbsp; R.A:</label> </td>
+                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <input type="checkbox" class="form-check-input" readonly @if($datafeb->ra==1)
+                                checked 
+                                @endif
+                                /></td>
+
+                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Autres">&nbsp; Autres:</label> </td>
+                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <input type="checkbox" class="form-check-input" readonly @if($datafeb->autres==1)
+                                checked 
+                                @endif
+                                /></td>
+
+                                
+
                         </tr>
 
                     </table>
@@ -247,19 +273,19 @@
             <tr>
 
             <td>
-                  Code : {{ $dataLigne->numero }}  <br> 
-                     Ligne budgétaire: {{ $dataLigne->libelle }}
+            Activité: {{ $datafeb->descriptionf }}
+
                 </td>
                 
                 <td>
-                    Taux d’exécution de la ligne et ses sous lignes: {{ $sommelignpourcentage }}% <br> 
-                    Taux d’exécution globale du projet: {{ $POURCENTAGE_GLOGALE }}% ;
+                    <label title="le calcul du taux progressif en fonction du numéro de FEB (Formulaire d'Engagement Budgétaire) qui est inférieur ou égal au numéro de FEB en cours.">Taux d’exécution de la ligne et ses sous lignes:   {{ $sommelignpourcentage }}% </label><br> 
+                    Taux d’exécution globale du projet: {{ $POURCENTAGE_GLOGALE }}% 
 
                 </td>
             </tr>
 
         </table>
-        <br>
+       
         <font size="12px">Détails sur l’utilisation des fonds demandés :</font>
 
 
@@ -269,22 +295,11 @@
                     <th>N<sup>o</sup></th>
                     <th>Designation de la ligne</th>
                     <th>Description</th>
-                    <th>
-                        <center>Unité</center>
-                    </th>
-                    <th>
-                        <center>Quantité </center>
-
-                    </th>
-                    <th>
-                        <center>Frequence </center>
-                    </th>
-                    <th>
-                        <center>Prix Unitaire ({{ ucfirst($chec->devise) }}) </center>
-                    </th>
-                    <th>
-                        <center>Prix total ({{ ucfirst($chec->devise) }})</center>
-                    </th>
+                    <th><center>Unité</center>  </th>
+                    <th><center>Quantité </center></th>
+                    <th><center>Frequence </center></th>
+                    <th><center>Prix Unitaire ({{ ucfirst($chec->devise) }}) </center></th>
+                    <th><center>Prix total ({{ ucfirst($chec->devise) }})</center></th>
                 </tr>
             </thead>
             <tbody>

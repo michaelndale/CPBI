@@ -30,8 +30,15 @@ class AchatLocationController extends Controller
               <td>' . date('d.m.Y', strtotime($rs->created_at)) . '</td>
               <td>
               <center>
-              <a href="#" id="' . $rs->id . '" class="text-primary mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_DepatmentModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-              <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteachat" title="Supprimer"><i class="far fa-trash-alt"></i></a>
+                 <div class="btn-group me-2 mb-2 mb-sm-0">
+                  <a  data-bs-toggle="dropdown" aria-expanded="false">
+                       <i class="mdi mdi-dots-vertical ms-2"></i>
+                  </a>
+                  <div class="dropdown-menu">
+                     
+                      <a class="dropdown-item text-white mx-1 deleteachat"  id="' . $rs->id . '"  href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
+                  </div>
+               </div>
                 </center>
                 </td>
             </tr>';

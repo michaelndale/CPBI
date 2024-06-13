@@ -9,16 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 class CarburantController extends Controller
 {
-   
 
-    public function allcaburent()
-    {
-      $folder = Carburant::orderBy('libelle', 'ASC')->get();
-      $output = '';
-      if ($folder->count() > 0) {
-        $nombre = 1;
-        foreach ($folder as $rs) {
-          $output .= '<tr>
+  public function allcaburent()
+  {
+    $folder = Carburant::orderBy('libelle', 'ASC')->get();
+    $output = '';
+    if ($folder->count() > 0) {
+      $nombre = 1;
+      foreach ($folder as $rs) {
+        $output .= '<tr>
                 <td class="align-middle ps-3 name">' . $nombre . '</td>
                 <td>' . ucfirst($rs->libelle) . '</td>
                 <td>
@@ -35,12 +34,12 @@ class CarburantController extends Controller
                   </center>
                 </td>
               </tr>';
-          $nombre++;
-        }
-  
-        echo $output;
-      } else {
-        echo ' <tr>
+        $nombre++;
+      }
+
+      echo $output;
+    } else {
+      echo ' <tr>
           <td colspan="3">
           <center>
             <h6 style="margin-top:1% ;color:#c0c0c0"> 
@@ -49,42 +48,40 @@ class CarburantController extends Controller
           </center>
           </td>
           </tr>';
-      }
     }
+  }
 
-    public function storecarburent(Request $request)
-    {
-      try {
-        $title = $request->libellec;
-        $check = Carburant::where('libelle', $title)->first();
-        if ($check) {
-          return response()->json([
-            'status' => 201,
-          ]);
-        } else {
-
-          $type = new Carburant();
-          
-          $type->libelle = $request->libellec;
-          $type->userid = Auth::id();
-          $type->save();
-
-          return response()->json([
-            'status' => 200,
-          ]);
-
-        }
-      } catch (Exception $e) {
+  public function storecarburent(Request $request)
+  {
+    try {
+      $title = $request->libellec;
+      $check = Carburant::where('libelle', $title)->first();
+      if ($check) {
         return response()->json([
-          'status' => 202,
+          'status' => 201,
+        ]);
+      } else {
+
+        $type = new Carburant();
+
+        $type->libelle = $request->libellec;
+        $type->userid = Auth::id();
+        $type->save();
+
+        return response()->json([
+          'status' => 200,
         ]);
       }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
     }
-
+  }
 
   // edit an folder ajax request
   public function editcarburent(Request $request)
-  { 
+  {
     $id = $request->id;
     $type = Carburant::find($id);
     return response()->json($type);

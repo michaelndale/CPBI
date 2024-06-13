@@ -77,8 +77,8 @@ class DjaController extends Controller
           </td>
           <td> ' . $datas->numerodjas . '  </td>
           <td > ' . $datas->numerodap . ' </td>
-          <td> <input type="checkbox" ' . $ov . ' class="form-check-input" />  </td>
-          <td><input type="checkbox" ' . $jus . ' class="form-check-input" /></td>
+          <td> <input type="checkbox" ' . $ov . ' class="form-check-input" disabled />  </td>
+          <td><input type="checkbox" ' . $jus . ' class="form-check-input" disabled /></td>
         
           <td> ' .date('d-m-Y', strtotime($datas->created_at)).'  </td>
           <td> ' .ucfirst($datas->user_prenom) . ' </td>

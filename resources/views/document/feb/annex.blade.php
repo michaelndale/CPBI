@@ -6,6 +6,15 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+            @if ($dataFe->bc==1 || $dataFe->facture==1 || $dataFe->om==1 || $dataFe->nec==1 || $dataFe->fpdevis==1 || $dataFe->rm==1 || $dataFe->tdr==1 || $dataFe->bv==1 || $dataFe->recu==1 || $dataFe->ar==1 || $dataFe->be==1 || $dataFe->apc==1 )
+            <div class="alert alert-info alert-dismissible fade show mb-0" role="alert">
+                        <i class="mdi mdi-alert-circle-outline me-2"></i>
+                        
+                        Pour continuer le processus d'ajout du document en annexe. <BR>Assurez-vous d'avoir le  document à votre disposition.
+                        <BR>Vous pouvez le prendre en photo ou le scanner et l'envoyer en format (IMAGE, PDF, WORD, EXCEL, POWERPOINT).
+
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 <form id="annexeForm" autocomplete="off" method="POST" >
                     @method('post')
                     @csrf 
@@ -106,6 +115,20 @@
                 <button type="submit" class="btn btn-primary" id="addannexbtn" name="addannexbtn"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
             </div>
             </form>
+            @else
+
+<div class="alert alert-info alert-dismissible fade show mb-0" role="alert">
+    <i class="mdi mdi-alert-circle-outline me-2"></i>
+    Aucun document n'a été précisé comme étant joint à cette FEB lors de sa création. <br>
+    Sinon, veuillez <a href="{{ route('showfeb', $cryptedId ) }}"><i class="fa fa-edit"></i> modifier la FEB </a>
+    pour continuer le processus d'ajout du document en annexe. <BR>Assurez-vous de cocher la case correspondant au document que vous avez à votre disposition.
+    <BR><BR>Vous pouvez le prendre en photo ou le scanner et l'envoyer en format (IMAGE, PDF, WORD, EXCEL, POWERPOINT).
+
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+@endif
+        </div>
         </div>
     </div>
 </div>

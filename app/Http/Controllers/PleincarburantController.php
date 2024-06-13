@@ -46,9 +46,17 @@ class PleincarburantController extends Controller
             
               <td>' . date('d.m.Y', strtotime($car->created_at)) . '</td>
               <td>
-                <center>
-                    <a href="#" id="' . $car->id . '" class="text-primary mx-1 editvehicule" data-bs-toggle="modal" data-bs-target="#edit_vehiculeModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-                    <a href="#" id="' . $car->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
+                   <center>
+                 <div class="btn-group me-2 mb-2 mb-sm-0">
+                  <a  data-bs-toggle="dropdown" aria-expanded="false">
+                       <i class="mdi mdi-dots-vertical ms-2"></i>
+                  </a>
+                  <div class="dropdown-menu">
+                    
+                      <a class="dropdown-item text-white mx-1 deleteEntretient"  id="' . $car->id . '"  href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
+                  </div>
+               </div>
+              
                 </center>
               </td>
             </tr>';

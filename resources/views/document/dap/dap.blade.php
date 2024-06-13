@@ -120,13 +120,13 @@
     <header id="page-header">
         <div style="display: flex; justify-content: center;">
      
-            <table style="width:100%; margin-top:-40px; ">
+            <table style="width:90%; margin-top:-35px; " align="center">
                 <tr>
-                    <td  style="width:6%">
+                    <td  style="width:6%"align="right">
                         <img src="element/logo/logo.png" alt="logo" height="40px" />
                     </td>
-                    <td>
-                        <font size="29px">{{ $infoglo->entete }}</font>
+                    <td align ="center">
+                        <font size="25px">{{ $infoglo->entete }}</font>
                     </td>
                 </tr>
                 <tr>
@@ -151,7 +151,7 @@
 
     <div class="main-content content-after-header " id="main-content">
         <H3>
-            <center> Demande d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodp }}/{{ date('Y')}} </center>
+            <center> Demande d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodp }}</center>
         </H3>
         <div class="col-sm-12">
             <table style=" width:100%" class="table table-striped table-sm fs--1 mb-0" id="mytable">
@@ -171,39 +171,41 @@
                 </tr>
 
                 <tr>
-                    <td>Taux execution globale du projet: {{ $pourcetage_globale }}%  </td>
-                    <td> Compte bancaire(BQ) : {{ $datadap->comptabiliteb }} ; Banque : {{ $datadap->banque }}</td>
-                </tr>
-
-                <tr>
-                    <td>Créé par : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }} </td>
-                    <td>Relicat budgetaire :{{ number_format($relicat, 0, ',', ' ') . ' ' }} {{ $devise }} </td>
-                </tr>
-
-             
-                <tr style="margin:0px; padding:0px; border:0px; background-color:white">
-                    <td >
-                        <table>
+                    <td> 
+                    <table style="margin:0px; padding:0px;">
                             <td style="margin:0px; padding:0px; border:0px; background-color:white; width:28%">
                                  <label title="OV"> &nbsp; Moyen de Paiement : OV </label> </td>
-                            <td style="margin:0px; padding:0px; border:0px; background-color:white; width:5%">
-                                <input type="checkbox"  readonly @if($datadap->ov==1) checked  @else  @endif />
+                            <td style="margin:0px; padding:0px; border:0px; background-color:white; width:10%">
+                                <input type="checkbox" class="form-check-input"   @if($datadap->ov==1) checked  @else  @endif />
                             </td>
                             <td style="margin:0px; padding:0px; border:0px; background-color:white"> &nbsp; &nbsp; &nbsp; &nbsp; Cheque: {{ $datadap->cho }}</td>
                             <td style="margin:0px; padding:0px; border:0px; background-color:white">&nbsp; &nbsp; &nbsp; &nbsp; Etabli au nom : {{ $datadap->	paretablie }}</td>
                         </table>
                     </td>
-                    <td>  Devise : {{ $devise }} </td>
+                    <td> Compte bancaire: {{ $datadap->comptabiliteb }} ; Banque : {{ $datadap->banque }}</td>
+                </tr>
+
+                <tr>
+                    <td>Créé par : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }} </td>
+                    <td> Budget initial  : {{ number_format($budget, 0, ',', ' ') . ' ' }} {{ $devise }}  | Relicat budgetaire :{{ number_format($relicat, 0, ',', ' ') . ' ' }} {{ $devise }} </td>
+                </tr>
+
+             
+                <tr style="margin:0px; padding:0px; border:0px; background-color:white">
+                    <td >
+                    Créé le {{ date('d-m-Y', strtotime($datadap->created_at))  }}
+                    </td>
+                    <td> Taux execution globale du projet: {{ $pourcetage_globale }}%  </td>
                 </tr>
             </table>
 
-            <h5> <u>Synthese sur l'utilisation dea fonds demandes(Vr details sur FB en avance)</u></h5>
+            <font size="12px"> <u>Synthese sur l'utilisation de fonds demandes(Vr details sur FB en annexe)</u></font>
             <table style=" width:100%" class="table table-striped table-sm fs--1 mb-0" id="mytable">
                 <thead>
                     <tr>
                         <th width="13%">Numéro du FEB </th>
                         <th width="60%">Activité </th>
-                        <th>Montant total </th>
+                        <th>  <center>Montant total  </center> </th>
                         <th> <center>T.E / L & S.L</center> </th>
                     </tr>
                 </thead><!-- end thead -->
@@ -227,9 +229,12 @@
 
                                     $sommelign = DB::table('elementfebs')
                                     ->where('grandligne',  $datafebElements->ligne_bugdetaire)
+                                    ->where('numero', '<=', $datafebElements->numerofeb)
+                                    
                                     ->sum('montant');
 
                                     $sommelignpourcentage = round(($sommelign * 100) /  $somme_ligne_principale, 2);
+
 
 
                                     $totoglobale += $totoSUM;
@@ -242,7 +247,8 @@
                         <td>{{ $datafebElements->numerofeb }}</td>
                         <td>{{ $datafebElements->descriptionf }}</td>
 
-                        <td align="right">
+                        <td align="center">
+                        <center>
                             @php
                             $totoSUM = DB::table('elementfebs')
                             ->orderBy('id', 'DESC')
@@ -250,63 +256,98 @@
                             ->sum('montant');
                             @endphp
                             {{ number_format($totoSUM, 0, ',', ' ')  }}
-
+                        </center>
                         </td>
                         <td align="center">{{ $sommelignpourcentage }} % </td>
                     </tr>
                     @endforeach
-                    <tr style=" background-color: #040895;">
-                        <td style="color:white" colspan="2" align="center"> Total général </td>
-                        <td align="right" style="color:white"> {{ number_format($totoglobale, 0, ',', ' ')  }}</td>
+                    <tr>
+                        <td  colspan="2" align="center"> Total général </td>
+                        <td align="center"> <center> {{ number_format($totoglobale, 0, ',', ' ')  }} </center> </td>
                         <td></td>
                     </tr>
                 </tbody>
             </table>
 
-            <br>
+          
+
+            @if($datadap->justifier==1)
+                           
+
+                            <u>Synthese sur les avances </u>
+                            <table style=" width:100%" class="table table-striped table-sm fs--1 mb-0" id="mytable">
+                                <tr>
+                                    <td colspan="4"> Ce montant est-il une avance ? 
+                                                    &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" class="form-check-input" @if($datadap->justifier==1) checked  @endif > 
+                                                    &nbsp; &nbsp; &nbsp; Non <input type="checkbox" class="form-check-input" @if($datadap->justifier==0) checked  @endif ></td>
+                                </tr>
+                                @foreach ($datafebElement as $datafebElements)
+                                    
+                              
+                                <tr>
+                                    <td> Numéro FEB : {{ $datafebElements->numerofeb }} </td>
+                                    <td> Montant de l'Avance : {{ number_format($datafebElements->montantavance, 0, ',', ' ');  }} </td>
+                                    <td> Durée avance : {{ $datafebElements->duree_avance }}   Jours</td>
+                                    <td> Description : {{ $datafebElements->descriptionn }}</td>
+                                </tr>
+                                @endforeach
+                                <tr>
+                                    <td colspan="4"> Fonds reçus par : {{ ucfirst($fond_reussi->nom) }}  {{ ucfirst($fond_reussi->prenom) }} </td>
+                                </tr>
+                            </table>
+
+                            @endif
+
+                            <br>
 
 
             <table class="table table-striped table-sm fs--1 mb-0" id="mytable">
 
                 <tr>
                     <td colspan="3"><b> Vérification et Approbation de la Demande de paiement </b></td>
-
                 </tr>
                 <tr>
                     <td> <b> Demande établie par</b>
                         <small>(Chef de Composante/Projet/Section) : {{ ucfirst($Demandeetablie->nom) }} {{ ucfirst($Demandeetablie->prenom) }} </small>
-                        @if ($datadap->demandeetablie_signe==1) <br>
-                        <center> <img src="{{  $Demandeetablie->signature }}" width="100px" /> <br>
-                            {{ date('d-m-Y', strtotime($datadap->demandeetablie_signe_date)) }}
-                        </center>
-                        @endif 
                     </td>
 
                     <td> <b> Vérifiée par </b>
                         <small>(Chef Comptable) : {{ ucfirst($chefcomptable->nom) }} {{ ucfirst($chefcomptable->prenom) }} </small>
-                        @if ($datadap->verifierpar_signe==1) <br>
-                        <center>
-                            <img src="{{  $chefcomptable->signature }}" width="100px" />
-                            <br>
-                            {{ date('d-m-Y', strtotime($datadap->verifierpar_signe_date)) }}
-                        </center>
-
-                        @endif 
-                         
                     </td>
 
 
                     <td> <b> Approuvée par </b>
                         <small>(Chef de Service) :
-                            {{ ucfirst($chefservice->nom) }} {{ ucfirst($chefservice->prenom) }} <br>
-                            @if ($datadap->approuverpar_signe==1)
-                            <center> <img src="{{  $chefservice->signature }}" width="100px" /><br>
-                                {{ date('d-m-Y', strtotime($datadap->approuverpar_signe_date)) }}
-                                @endif
-                            </center>
+                        {{ ucfirst($chefservice->nom) }} {{ ucfirst($chefservice->prenom) }}
                     </td>
 
 
+                </tr>
+                <tr>
+                    <td>
+                    @if ($datadap->demandeetablie_signe==1) 
+                        <center> <img src="{{  $Demandeetablie->signature }}" width="100px" />
+                        {{ $datadap->demandeetablie_signe_date }} 
+                        </center>
+                        @endif 
+                    </td>
+                    <td>
+                        @if ($datadap->verifierpar_signe==1)
+                            <center>
+                                <img src="{{  $chefcomptable->signature }}" width="100px" />
+                                <br>
+                            {{ $datadap->verifierpar_signe_date }} 
+                            </center>
+                        @endif 
+
+                    </td>
+                    <td>
+                        @if ($datadap->approuverpar_signe==1)
+                            <center> <img src="{{  $chefservice->signature }}" width="100px" />
+                                {{  $datadap->approuverpar_signe_date }}
+                            </center>
+                        @endif
+                    </td>
                 </tr>
 
 
@@ -317,54 +358,48 @@
 
                 <tr>
                     <td colspan="2"> <b> Autorisaction de paiement</b> </td>
-                    <td> Autorisé le {{ $datadap->dateautorisation }}</td>
-
+                    <td> Autorisé le {{ $datadap->dateautorisation }} </td>
                 </tr>
-
+                <tr>
+                    <td>
+                        Responsable Administratif et Financier :
+                        {{ ucfirst($responsable->nom) }} {{ ucfirst($responsable->prenom) }}
+                    </td>
+                    <td>
+                        Chef des Programmes : {{ ucfirst($chefprogramme->nom) }} {{ ucfirst($chefprogramme->prenom) }} 
+                    </td>
+                    <td>
+                        Secrétaire Général de la CEPBU : {{ ucfirst($secretaire->nom) }} {{ ucfirst($secretaire->prenom) }}
+                    </td>
                 </tr>
 
                 <tr>
-
                     <td>
-                        Responsable Administratif et Financier :
-
-
-                        {{ ucfirst($responsable->nom) }} {{ ucfirst($responsable->prenom) }} <br>
-                        @if ($datadap->responsable_signe==1)
+                    @if ($datadap->responsable_signe==1)
                         <center>
                             <img src="{{ $responsable->signature }}" width="100px" />
                         </center>
                         @endif
-
                     </td>
                     <td>
-                        Chef des Programmes : {{ ucfirst($chefprogramme->nom) }} {{ ucfirst($chefprogramme->prenom) }} <br>
-                        @if ($datadap->chefprogramme_signe==1)
-                        <br>
+                    @if ($datadap->chefprogramme_signe==1)
                         <center>
-                            <img src="{{ $chefprogramme->signature }}" width="100px" />
+                            <img src="{{ $chefprogramme->signature }}" width="100px"/>
                         </center>
                         @endif
-
                     </td>
                     <td>
-                        Secrétaire Général de la CEPBU : {{ ucfirst($secretaire->nom) }} {{ ucfirst($secretaire->prenom) }} <br>
-                        @if ($datadap->secretaure_general_signe==1)
+                    @if ($datadap->secretaure_general_signe==1)
                         <center>
                             <img src="{{ $secretaire->signature }}" width="100px" />
                         </center>
                         @endif
-
-
                     </td>
-
-
-
                 </tr>
 
 
                 <tr>
-                    <td colspan="4"><b>Observations/Instructions du SG : </b> <br>
+                    <td colspan="3"><b>Observations/Instructions du SG : </b> <br>
                         {{ $datadap->observation }}
                     </td>
                 </tr>

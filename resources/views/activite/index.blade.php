@@ -22,25 +22,11 @@
       <div class="row">
         <div class="col-lg-12" style="margin:auto">
           <div class="card">
-            <div class="table-responsive">
-              <table class="table table-bordered  table-striped table-sm fs--1 mb-0" id="show_all_activite">
-                <thead>
-
-                  <tr style="background-color:#82E0AA">
-                    <th>N<sup>o</sup></th>
-                    <th>
-                      <center>Code</center>
-                    </th>
-                    <th>Ligne et sous ligne budgetaire </th>
-                    <th>Activité <span style="margin-left: 40%;">Montant total des activités: </span>
-                    </th>
-
-
-
-
-                  </tr>
-
-                </thead>
+          <div class="table-responsive" id="table-container" style="overflow-y: auto;">
+             <div id="tableExample2">
+    <div class="table-responsive" id="table-container" style="overflow-y: auto;">
+        <table class="table table-striped table-sm fs--1 mb-0" id="show_all_activite">
+          
                 <tbody>
                   <tr>
                     <td colspan="8">
@@ -62,6 +48,25 @@
 </div>
 
 @include('activite.modale')
+
+
+
+
+<script>
+    function adjustTableHeight() {
+        var windowHeight = window.innerHeight;
+        var tableContainer = document.getElementById('table-container');
+        
+        // Ajustez la hauteur du conteneur du tableau en fonction de la hauteur de l'écran, moins une marge (par exemple, 200px)
+        tableContainer.style.height = (windowHeight - 200) + 'px';
+    }
+
+    // Appelez la fonction lorsque la page est chargée
+    window.onload = adjustTableHeight;
+
+    // Appelez la fonction lorsque la fenêtre est redimensionnée
+    window.onresize = adjustTableHeight;
+</script>
 
 <script>
   $(function() {

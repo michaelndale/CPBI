@@ -173,7 +173,7 @@ class RallongebudgetController extends Controller
           ->where('rallongebudgets.compteid', $datas->id)
           ->sum('rallongebudgets.budgetactuel');
 
-        if ($somme_budget_ligne != 0) {
+        //if ($somme_budget_ligne != 0) {
           $output .= '
                   <tr style="background-color:#F5F5F5">
                       <td><b>' . $nombre . '</b></td>
@@ -263,7 +263,7 @@ class RallongebudgetController extends Controller
                       </tr>';
           }
           $nombre++;
-        }
+        //}
       }
       $output .= '</tbody></table>';
     }

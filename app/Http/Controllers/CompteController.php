@@ -101,8 +101,12 @@ class CompteController extends Controller
   {
     $ID = session()->get('id');
     $services = Compte::where('compteid', 0)
-      ->where('projetid', $ID)
-      ->get();
+    ->where('projetid', $ID)
+    ->join('users', 'comptes.userid', '=', 'users.id')
+    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->select('comptes.*', 'personnels.prenom as personnel_prenom')
+    ->get();
+
 
     $output = '';
     $nombre = 1;
@@ -113,24 +117,30 @@ class CompteController extends Controller
                   <td class="align-middle ps-3 name"><b>' . $nombre . '</b></td>
                   <td><b>' . ucfirst($rs->numero) . '</b></td>
                   <td><b>' . ucfirst($rs->libelle) . '</b></td>
+                  <td><b>' . ucfirst($rs->personnel_prenom) . '</b></td>
+                  <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
                   <td align="center" style="width:13%">
                   <div class="btn-group me-2 mb-2 mb-sm-0">
                       <a  data-bs-toggle="dropdown" aria-expanded="false">
                           <i class="mdi mdi-dots-vertical ms-2"></i>
                       </a>
                       <div class="dropdown-menu">
-                          <a class="dropdown-item text-primary mx-1 savesc" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte" title="Modifier le compte"><i class="fa fa-plus-circle"></i> Ajouter une sous ligne</a>
-                          <a class="dropdown-item text-primary mx-1 editsc" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#EditModalSousCompte" title="Ajouter sous compte"><i class="far fa-edit"></i> Modifier la ligne</a>
+                          <a class="dropdown-item  mx-1 savesc" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte" title="Modifier le compte"><i class="fa fa-plus-circle"></i> Ajouter une sous ligne</a>
+                          <a class="dropdown-item  mx-1 editsc" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#EditModalSousCompte" title="Ajouter sous compte"><i class="far fa-edit"></i> Modifier la ligne</a>
                           <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
                       </div>
                   </div>
                   </td>
               </tr>';
 
-        $sous_comptes = Compte::where('compteid', $rs->id)
-          ->where('souscompteid', 0)
-          ->where('projetid', $ID)
-          ->get();
+              $sous_comptes = Compte::where('compteid', $rs->id)
+              ->where('souscompteid', 0)
+              ->where('projetid', $ID)
+              ->join('users', 'comptes.userid', '=', 'users.id')
+              ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+              ->select('comptes.*',  'personnels.prenom as personnel_prenom')
+              ->get();
+          
 
         $ndale = 1;
         foreach ($sous_comptes as $sc) {
@@ -138,13 +148,15 @@ class CompteController extends Controller
                       <td class="align-left" style="background-color:#F5F5F5"></td>
                       <td>' . ucfirst($sc->numero) . '</td>
                       <td>' . ucfirst($sc->libelle) . '</td>
+                      <td><b>' . ucfirst($rs->personnel_prenom) . '</b></td>
+                      <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
                       <td align="center">
                       <div class="btn-group me-2 mb-2 mb-sm-0">
                           <a  data-bs-toggle="dropdown" aria-expanded="false">
                               <i class="mdi mdi-dots-vertical ms-2"></i>
                           </a>
                           <div class="dropdown-menu">
-                              <a class="dropdown-item text-primary mx-1 editsc" id="' . $sc->id . '"  data-bs-toggle="modal" data-bs-target="#EditModalSousCompte" title="Ajouter sous compte"><i class="far fa-edit"></i> Modifier la ligne</a>
+                              <a class="dropdown-item  mx-1 editsc" id="' . $sc->id . '"  data-bs-toggle="modal" data-bs-target="#EditModalSousCompte" title="Ajouter sous compte"><i class="far fa-edit"></i> Modifier la ligne</a>
                               <a class="dropdown-item text-danger mx-1 deleteIcon"  id="'.$sc->id.'"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
                           </div>
                       </div>
@@ -161,6 +173,8 @@ class CompteController extends Controller
                           <td class="align-middle ps-3 name">' . $nombre . '.' . $ndale . '.' . $nd . '</td>
                           <td>' . ucfirst($ssc->numero) . '</td>
                           <td>' . ucfirst($ssc->libelle) . '</td>
+                          <td><b>' . ucfirst($rs->personnel_prenom) . '</b></td>
+                          <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
                           <td>
                               <center>
                                   <a href="#" id="' . $ssc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i></a>

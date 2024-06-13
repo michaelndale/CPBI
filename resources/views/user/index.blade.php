@@ -35,6 +35,8 @@
                     <th> Nom & prénom </th>
                     <th> Identifiant </th>
                     <th>Profile</th>
+                    <th>Créé par</th>
+                    <th>Créé le</th>
                     <th><center>Signature</center></th>
                     <th>Action</th>
                   </tr>
@@ -42,10 +44,24 @@
                 </thead>
                 <tbody >
                   @foreach ($user as $use)
+                  @php
+            $userid = $use->userid;
+            $getuser = \DB::table('users')
+                ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+                ->select('personnels.prenom as user_prenom')
+                ->where('users.id', $userid)
+                ->first();
+
+            $signature = $use->signature;
+            $imagePath = public_path($signature);
+        @endphp
+
                   <tr>
                     <td> {{ $use->nom }} {{ $use->prenom }}</td>
                     <td> {{ $use->identifiant }} </td>
                     <td> {{ $use->fonction }}</td>
+                    <td> {{ ucfirst( $getuser->user_prenom) }}</td>
+                    <td> {{date('d-m-Y', strtotime($use->created_at)) }}</td>
                     <td>
                       <center>
                        @php

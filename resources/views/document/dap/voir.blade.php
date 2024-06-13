@@ -1,6 +1,8 @@
 @extends('layout/app')
 @section('page-content')
-
+@php
+$cryptedId = Crypt::encrypt($datadap->id);
+@endphp
 <div class="main-content">
     <div class="page-content">
         <div class="container-fluid">
@@ -10,7 +12,7 @@
                         <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> Le details de la DAP (N° {{ $datadap->numerodp  }} ) </h4>
                         <div class="page-title-right" >
 
-                            @if($datadap->signale==1)
+                            @if($datadap->signaledap==1)
                             <div class="spinner-grow text-danger " role="status" style=" 
                         width: 0.9rem; /* Définissez la largeur */
                         height: 0.9rem; /* Définissez la hauteur */" title="Signaler le DAP en cas d'erreur ">
@@ -19,17 +21,18 @@
                             @endif
 
 
-                            <button type="button" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal" data-febid="{{ $datadap->id ? $datadap->id : '' }}" title="Signaler le DAP en cas d'erreur ">
+                            <button type="button" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal" data-dapid="{{ $datadap->id ? $datadap->id : '' }}" title="Signaler le DAP en cas d'erreur ">
                                 <i class="fab fa-telegram-plane ms-1"></i> Signalé DAP
                             </button>
 
+                            @include('document.dap.message')
                             &nbsp; &nbsp;
 
 
                             <div class="btn-toolbar float-end" role="toolbar">
                                 <div class="btn-group me-2 mb-2 mb-sm-0">
-                                    <a href=" {{ route('generate-pdf-dap',$datadap->id ) }}" class="btn btn-primary waves-light waves-effect" title="Générer PDF "><i class="fa fa-print"></i> </a>
-                                    <a href="" class="btn btn-primary waves-light waves-effect" title="Modifier le DAP"><i class="fa fa-edit"></i> </a>
+                                    <a href="{{ route('generate-pdf-dap',$datadap->id ) }}" class="btn btn-primary waves-light waves-effect" title="Générer PDF "><i class="fa fa-print"></i> </a>
+                                    <a href="{{ route('showdap', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect" title="Modifier le DAP"><i class="fa fa-edit"></i> </a>
                                     <a href="{{ route('listdap') }}" class="btn btn-primary waves-light waves-effect" title="Liste de DAP "><i class="fa fa-list"></i></a>
                                 </div>
                             </div>
@@ -42,34 +45,30 @@
             <div class="card">
                 <div class="card-body">
                     <div class="invoice-title">
-                        <center>
+                       
                             <div class="text-muted">
-                                <table style=" width:100%">
+                            <table class="table  table-sm fs--1 mb-0 ">
                                     <tr>
-                                        <td style=" width:10% ;"> <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="50" /> </td>
-
+                                        <td style=" width:10% ;" align="right"> 
+                                            <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="50" /> </td>
                                         <td>
                                             <center>
-                                                <p class="mb-1">
+                                            <p class="mb-1">
                                                 <h3>{{ $dateinfo->entete }}</h3>
-
                                             </center>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">
-                                            <hr>
-                                            <center>
-
-                                                <center>{{ $dateinfo->sousentete }}</center>
-
-                                            </center>
+                                            <center>{{ $dateinfo->sousentete }}</center>
                                         </td>
                                     </tr>
                                 </table>
+
+
                             </div>
                     </div>
-                    <hr class="my-4">
+                  <br>
                     <div class="row">
                         <H5>
                             <center> Demande d'Autorisation de Paiement (DAP) N° {{ $datadap->numerodp }}/{{ date('Y')}} </center>
@@ -92,19 +91,8 @@
                                 </tr>
 
                                 <tr>
-                                    <td> Taux d’exécution globale du projet: {{ $pourcetage_globale }}%   </td>
-                                    <td> Compte bancaire(BQ) : {{ $datadap->comptabiliteb }} ; Banque : {{ $datadap->banque }}</td>
-                                </tr>
-
-                                <tr>
-                                    <td>  Créé par : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }}  </td>
-                                    <td>  Budget initial  : {{ number_format( $budget, 0, ',', ' ') . ' ' }} {{ $devise }}  </td>
-                                </tr>
-
-                               
-                                <tr>
-                                    <td>
-                                        <table>
+                                    <td> 
+                                    <table>
                                             <td>
                                                 <label title="OV"> &nbsp; Moyen de Paiement : OV </label>
                                             </td>
@@ -114,17 +102,27 @@
                                             <td> &nbsp; &nbsp; &nbsp; &nbsp; Cheque: {{ $datadap->cho }} ; Etabli au nom : {{ $datadap->	paretablie }}</td>
                                         </table>
                                     </td>
-                                    <td> Relicat budgetaire : {{ number_format( $solde_comptable, 0, ',', ' ') . ' ' }} {{ $devise }} </td>
+                                    <td> Compte bancaire : {{ $datadap->comptabiliteb }} ; Banque : {{ $datadap->banque }}</td>
+                                </tr>
+
+                                <tr>
+                                    <td>  Créé par : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }}  </td>
+                                    <td>  Budget initial  : {{ number_format( $budget, 0, ',', ' ') . ' ' }} {{ $devise }}  |
+                                         Relicat budgetaire : {{ number_format( $solde_comptable, 0, ',', ' ') . ' ' }} {{ $devise }} </td>
+                                </tr>
+
+                               
+                                <tr>
+                                    <td>
+                                    Créé le {{ date('d-m-Y', strtotime($datadap->created_at))  }}
+                                    </td>
+                                    <td>  Taux d’exécution globale du projet: {{ $pourcetage_globale }}%   </td>
                                 </tr>
 
                             </table>
-
-
-                            <h6> <u>Synthese sur l'utilisation dea fonds demandes(Vr details sur FB en avance)</u></h6>
-
-
-
-                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered  ">
+                            <br>
+                            <font size="2px"> <u>Synthese sur l'utilisation des fonds demandes(Vr details sur FB en annexe)</u></font>
+                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
                                 <thead>
                                     <tr>
                                         <th width="13%">Numéro du FEB </th>
@@ -153,6 +151,8 @@
 
                                     $sommelign = DB::table('elementfebs')
                                     ->where('grandligne',  $datafebElements->ligne_bugdetaire)
+                                    ->where('numero', '<=', $datafebElements->numerofeb)
+                                    
                                     ->sum('montant');
 
                                     $sommelignpourcentage = round(($sommelign * 100) /  $somme_ligne_principale, 2);
@@ -191,10 +191,34 @@
                                 </tbody>
                             </table>
 
+                            @if($datadap->justifier==1)
                             <br>
 
+                            <u>Synthese sur les avances </u>
+                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+                                <tr>
+                                    <td colspan="4"> Ce montant est-il une avance ? 
+                                                    &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" class="form-check-input" @if($datadap->justifier==1) checked  @endif  disabled> 
+                                                    &nbsp; &nbsp; &nbsp; Non <input type="checkbox" class="form-check-input" @if($datadap->justifier==0) checked  @endif  disabled ></td>
+                                </tr>
+                                @foreach ($datafebElement as $datafebElements)
+                                    
+                              
+                                <tr>
+                                    <td> Numéro FEB : {{ $datafebElements->numerofeb }} </td>
+                                    <td> Montant de l'Avance : {{ number_format($datafebElements->montantavance, 0, ',', ' ');  }} </td>
+                                    <td> Durée avance : {{ $datafebElements->duree_avance }}   Jours</td>
+                                    <td> Description : {{ $datafebElements->descriptionn }}</td>
+                                </tr>
+                                @endforeach
+                                <tr>
+                                    <td colspan="4"> Fonds reçus par : {{ ucfirst($fond_reussi->nom) }}  {{ ucfirst($fond_reussi->prenom) }} </td>
+                                </tr>
+                            </table>
 
+                            @endif
 
+                            <br>
                             <form method="POST" action="{{ route('updatesignaturedap') }}">
 
                                 @method('post')
@@ -207,11 +231,10 @@
                                     </tr>
 
                                     <tr>
-                                        <td width="60%">Demande etablie par : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }} <br>
-                                            Chef de Composante/Projet/Section <br>
+                                        <td width="60%">
+                                            Demande etablie par :<small>(Chef de Composante/Projet/Section)</small>
+                                             <br>
                                             Noms: {{ ucfirst($Demandeetablie->nom) }} {{ ucfirst($Demandeetablie->prenom) }}
-
-
                                         </td>
 
                                         <td width="25%">
@@ -222,7 +245,7 @@
 
 
                                                 @if(Auth::user()->id == $datadap->demandeetablie )
-                                                <input class="form-check-input" type="checkbox" name="demandeetabliesignature" {{ $datadap->demandeetablie_signe=="1"? 'checked':'' }}>
+                                                <input class="form-check-input" type="checkbox" name="demandeetabliesignature" {{ $datadap->demandeetablie_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                                 @endif
 
                                                 <input type="hidden" name="clone_demandeetabliesignature" value="{{ $datadap->demandeetablie_signe }}" />
@@ -238,15 +261,21 @@
 
                                             </center>
                                         </td>
-                                        <td width="15%">Date : {{ $datadap->demandeetablie_signe_date }}
-                                            <input type="hidden" value="{{ $datadap->demandeetablie_signe_date }}" name="dated">
+                                        <td width="15%">Date 
+                                        @if(Auth::user()->id == $datadap->demandeetablie )
+                                            <input type="text" value="{{ $datadap->demandeetablie_signe_date }}" name="dated" >
+                                        @else
+                                           
+                                            <input type="hidden" value="{{ $datadap->demandeetablie_signe_date }}" name="dated_an">
+                                            {{ $datadap->demandeetablie_signe_date }}
+                                        @endif
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <td>
-                                            Vérifiée par : <br>
-                                            Chef de Comptable <br>
+                                            Vérifiée par : (<small>  Chef de Comptable   </small> ) 
+                                           <br>
                                             Noms: {{ ucfirst($verifierpar->nom) }} {{ ucfirst($verifierpar->prenom) }}
 
 
@@ -256,7 +285,7 @@
                                             <center>Signature
                                                 <!-- poser signature -->
                                                 @if(Auth::user()->id == $datadap->verifierpar )
-                                                <input class="form-check-input" type="checkbox" name="verifierparsignature" {{ $datadap->verifierpar_signe=="1"? 'checked':'' }}>
+                                                <input class="form-check-input" type="checkbox" name="verifierparsignature" {{ $datadap->verifierpar_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                                 @endif
                                                 <br>
 
@@ -268,14 +297,22 @@
                                             </center>
 
                                         </td>
-                                        <td>Date : {{ $datadap->verifierpar_signe_date }}
-                                            <input type="hidden" value="{{ $datadap->verifierpar_signe_date }}" name="datev">
+                                        <td>Date :  
+                                        @if(Auth::user()->id == $datadap->verifierpar )
+                                            <input type="hidde" value="{{ $datadap->verifierpar_signe_date }}" name="datev" >
+                                           
+                                        @else
+                                        
+                                          <input type="hidden" value="{{ $datadap->verifierpar_signe_date }}" name="datev_an" >
+                                            {{ $datadap->verifierpar_signe_date }}
+                                        @endif
+                                       
                                         </td>
                                     </tr>
 
                                     <tr>
-                                        <td>Approuveee par : <br>
-                                            Chef de Service <br>
+                                        <td>Approuveee par : <small> (Chef de Service)</small> <br>
+                                          
                                             Noms: {{ ucfirst($approuverpar->nom) }} {{ ucfirst($approuverpar->prenom) }} </td>
 
                                         <td>
@@ -283,7 +320,7 @@
                                                 Signature
                                                 <!-- poser signature -->
                                                 @if(Auth::user()->id == $datadap->approuverpar)
-                                                <input class="form-check-input" type="checkbox" name="approuverparsignature" {{ $datadap->approuverpar_signe=="1"? 'checked':'' }}>
+                                                <input class="form-check-input" type="checkbox" name="approuverparsignature" {{ $datadap->approuverpar_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                                 @endif
 
                                                 <input type="hidden" name="clone_approuverparsignature" value="{{ $datadap->approuverpar_signe }}" />
@@ -297,8 +334,18 @@
 
 
                                         </td>
-                                        <td>Date : {{ $datadap->approuverpar_signe_date }} <input type="hidden" value="{{ $datadap->approuverpar_signe_date }}" name="datea"></td>
-                                    </tr>
+                                        <td>Date : 
+                                        @if(Auth::user()->id == $datadap->approuverpar)
+                                            <input type="hidde" value="{{ $datadap->approuverpar_signe_date }}" name="datea" ></td>
+                                        @else
+                                            {{ $datadap->approuverpar_signe_date }}
+                                            <input type="hidden" value="{{ $datadap->approuverpar_signe_date }}" name="datea_an" >
+                                            {{ $datadap->approuverpar_signe_date }}
+                                         @endif
+                                        </td>
+                                       
+                                   
+                                        </tr>
 
                                 </table>
                                 <br>
@@ -329,7 +376,7 @@
                                                 Responsable Administratif et Financier
                                                 <!-- poser signature -->
                                                 @if(Auth::user()->id == $datadap->responsable)
-                                                <input class="form-check-input" type="checkbox" name="responsablesignature" {{ $datadap->responsable_signe=="1"? 'checked':'' }}>
+                                                <input class="form-check-input" type="checkbox" name="responsablesignature" {{ $datadap->responsable_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                                 @endif
                                                 <input type="hidden" name="clone_responsablesignature" value="{{ $datadap->responsable_signe }}" />
 
@@ -350,7 +397,7 @@
                                                 Chef des Programmes
                                                 <!-- POser signature -->
                                                 @if(Auth::user()->id == $datadap->chefprogramme)
-                                                <input class="form-check-input" type="checkbox" name="chefprogrammesignature" {{ $datadap->chefprogramme_signe=="1"? 'checked':'' }}>
+                                                <input class="form-check-input" type="checkbox" name="chefprogrammesignature" {{ $datadap->chefprogramme_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                                 @endif
                                                 <input type="hidden" name="clone_chefprogrammesignature" value="{{ $datadap->chefprogramme_signe }}" />
 
@@ -371,7 +418,7 @@
                                         <td colspan="2" align="center">Secretaire General de la CEPBU
 
                                             @if(Auth::user()->id == $datadap->secretaire)
-                                            <input class="form-check-input" type="checkbox" name="secretairesignature" {{ $datadap->secretaure_general_signe=="1"? 'checked':'' }}>
+                                            <input class="form-check-input" type="checkbox" name="secretairesignature" {{ $datadap->secretaure_general_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                             @endif
                                             <br>
 

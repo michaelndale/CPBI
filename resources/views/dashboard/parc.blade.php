@@ -53,7 +53,7 @@
         
         
                             <div class="col-lg-4">
-                                <a href="">
+                                <a href="{{ route('entretient') }}">
                                 <div class="card bg-success text-white-50">
                                     <div class="card-body">
                                     <center>
@@ -70,7 +70,7 @@
                             <div class="row">
         
                             <div class="col-lg-4">
-                            <a href="">
+                            <a href="{{ route('entretient') }}">
                                 <div class="card bg-info text-white-50">
                                     <div class="card-body">
                                     <center>

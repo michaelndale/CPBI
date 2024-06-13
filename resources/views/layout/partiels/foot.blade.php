@@ -1,38 +1,34 @@
 
 
 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="myLargeModalLabel"><i class="fa fa-list"></i> Tâches à faire en attente </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" >
+      <div class="modal-body">
+        <div id="tableExample2">
+          <div class="table-responsive">
+            <table class="table table-striped table-sm fs--1 mb-0">
+              <thead>
+                <tr>
+                  <th class="sort border-top "><b> # </b></center>
+                  </th>
+                  <th class="sort border-top" data-sort="Document"><b>Document</b></th>
+                  <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> DOC </b></th>
+                  <th class="sort border-top" data-sort="Date Doc"><b>Date FEB </b></th>
+                  <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
+                  <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
+                  <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
+                </tr>
+              </thead>
+              <tbody id="footernotification">
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-
-      <div id="tableExample2" >
-              <div class="table-responsive">
-                <table class="table table-striped table-sm fs--1 mb-0" >
-                  <thead>
-                    <tr>
-                      <th class="sort border-top "><b> # </b></center></th>
-                      <th class="sort border-top" data-sort="Document"><b>Document</b></th>
-                      <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> DOC </b></th>
-                      <th class="sort border-top" data-sort="Date Doc"><b>Date FEB </b></th>
-                      <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
-                      <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
-                      <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
-                      
-                    </tr>
-                  </thead>
-
-
-                  <tbody id="footernotification" >
-                  </tbody>
-                </table>
-              </div>
-      </div>
-        
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -72,8 +68,6 @@
     </div>
   </div>
 </div>
-</div>
-
 
 
 <div class="modal fade" id="EditPersonnelModal" tabindex="-1" aria-hidden="true">
@@ -142,8 +136,6 @@
     </form>
   </div>
 </div>
-
-
 
 
 <div class="modal fade" id="editMotdepasseModal" tabindex="-1" aria-hidden="true">
@@ -242,8 +234,6 @@
   </div>
 </div>
 
-
-
 <div class="modal fade" id="editsignatureModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <form id="EditsignatureForm" autocomplete="off" enctype='multipart/form-data'>
@@ -280,7 +270,6 @@
 <div class="progress">
   <div id="progress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
 </div>
-
 
 
 
@@ -513,31 +502,27 @@
   fetchnotification();
 
   function fetchnotification() {
-      $.ajax({
-        url: "{{ route('allnotification') }}",
-        method: 'get',
-        success: function(reponse) {
-          $("#allnotification").html(reponse);
-          $("#footernotification").html(reponse);
-        }
-      });
-    }
-
+    $.ajax({
+      url: "{{ route('allnotification') }}",
+      method: 'get',
+      success: function(reponse) {
+        $("#allnotification").html(reponse);
+        $("#footernotification").html(reponse);
+      }
+    });
+  }
 </script>
 <!-- Right bar overlay-->
-<div class="rightbar-overlay"></div>
+
 <!-- JAVASCRIPT -->
 <script src="{{ asset('element/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/metismenu/metisMenu.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/simplebar/simplebar.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/node-waves/waves.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-
 <script src="{{ asset('element/assets/js/app.js') }}"></script>
-
 <!-- Sweet Alerts js -->
 <script src="{{ asset('element/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
-
 <!-- Sweet alert init js-->
 <script src="{{ asset('element/assets/js/pages/sweet-alerts.init.js') }}"></script>
 
@@ -561,35 +546,35 @@
 
 
 <script>
-    var offlineMessage = document.getElementById("message");
-    var isConnected = false;
-    var connectionAttempts = 0;
-    var maxConnectionAttempts = 5; // Maximum de tentatives de connexion
+  var offlineMessage = document.getElementById("message");
+  var isConnected = false;
+  var connectionAttempts = 0;
+  var maxConnectionAttempts = 5; // Maximum de tentatives de connexion
 
-    // Fonction pour vérifier l'état de la connexion
-    function checkConnection() {
-        // Ici, vous devrez implémenter votre logique pour vérifier l'état de la connexion
-        // Par exemple, vous pouvez utiliser AJAX pour envoyer une requête à un serveur et vérifier la réponse.
-        // Pour cet exemple, nous supposerons que la connexion est rétablie aléatoirement.
-        isConnected = Math.random() < 0.5; // 50% de chance de connexion réussie
+  // Fonction pour vérifier l'état de la connexion
+  function checkConnection() {
+    // Ici, vous devrez implémenter votre logique pour vérifier l'état de la connexion
+    // Par exemple, vous pouvez utiliser AJAX pour envoyer une requête à un serveur et vérifier la réponse.
+    // Pour cet exemple, nous supposerons que la connexion est rétablie aléatoirement.
+    isConnected = Math.random() < 0.5; // 50% de chance de connexion réussie
 
-        if (isConnected) {
-            // Si la connexion est rétablie, masquer le message
-            offlineMessage.style.display = "none";
-            connectionAttempts = 0; // Réinitialiser le compteur de tentatives
-        } else {
-            // Si la connexion n'est pas rétablie, afficher le message
-            offlineMessage.style.display = "block";
-            connectionAttempts++;
-            if (connectionAttempts >= maxConnectionAttempts) {
-                // Si le nombre maximal de tentatives est atteint, arrêter la vérification de la connexion
-                clearInterval(connectionCheckInterval);
-            }
-        }
+    if (isConnected) {
+      // Si la connexion est rétablie, masquer le message
+      offlineMessage.style.display = "none";
+      connectionAttempts = 0; // Réinitialiser le compteur de tentatives
+    } else {
+      // Si la connexion n'est pas rétablie, afficher le message
+      offlineMessage.style.display = "block";
+      connectionAttempts++;
+      if (connectionAttempts >= maxConnectionAttempts) {
+        // Si le nombre maximal de tentatives est atteint, arrêter la vérification de la connexion
+        clearInterval(connectionCheckInterval);
+      }
     }
+  }
 
-    // Vérifier périodiquement l'état de la connexion
-    var connectionCheckInterval = setInterval(checkConnection, 5000); // Vérifier toutes les 5 secondes
+  // Vérifier périodiquement l'état de la connexion
+  var connectionCheckInterval = setInterval(checkConnection, 5000); // Vérifier toutes les 5 secondes
 </script>
 
 

@@ -239,9 +239,12 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
 
             </button>
-            <div class="dropdown-menu dropdown-menu-end " style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 72px);" data-popper-placement="bottom-end">
+            <div class="dropdown-menu dropdown-menu-end " style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 72px); " data-popper-placement="bottom-end">
 
               <!-- item-->
+
+           
+
               <a href="javascript:void(0);" class="dropdown-item notify-item editpersonnel" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#EditPersonnelModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
                   <i class="fa fa-user-edit"></i> Moi
               </a>
@@ -257,6 +260,16 @@ $documentNombre = $dap_nombre + $fab_nombre ;
               <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
                   <i class="fa fa-edit"></i> Modifier signature
               </a>
+
+              <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
+                  <i class="fa fa-edit"></i> Preference menu
+              </a>
+              
+              <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
+                  <i class="fa fa-edit"></i> Donne FeedBack
+              </a>
+
+             
 
               <!-- <a href="javascript:void(0);" class="dropdown-item notify-item">
                 <i class="fa fa-edit"></i> Fermer la session
@@ -362,7 +375,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
                 <i class="fas fa-feather"></i>
-                <span>Outils projets</span>
+                <span>Outils généraux</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
 
@@ -443,11 +456,11 @@ $documentNombre = $dap_nombre + $fab_nombre ;
               <ul class="sub-menu" aria-expanded="false">
                 <li><a href="{{ route('parc') }}">Accueil</a></li>
               
-                <li><a href="{{ route('vehicule') }}">Véhicule</a></li>
-                <li><a href="{{ route('carburents') }}">Carburents</a></li>
-                <li><a href="#">Entretiens</a></li>
-                <li><a href="#">Réparations</a></li>
-                <li><a href="#">Editions</a></li>
+                <li><a href="{{ route('vehicule') }}">Véhicules</a></li>
+                <li><a href="{{ route('carburents') }}">Carburants</a></li>
+                <li><a href="{{ route('entretient') }}">Entretiens & Réparations</a></li>
+                <li><a href="{{ route('carnet_bord') }}">Carnet de bord</a></li>
+                <!-- <li><a href="#">Editions</a></li> -->
                 <li><a href="{{ route('outilspa') }}">Outils gestions</a></li>
               </ul>
             </li>

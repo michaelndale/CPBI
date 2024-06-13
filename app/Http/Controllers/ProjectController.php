@@ -164,6 +164,7 @@ class ProjectController extends Controller
         session()->put('devise', $check->devise);
         session()->put('budget', $check->budget);
         session()->put('periode', $check->periode);
+        session()->put('lead', $check->lead);
     
         // Récupération des informations de l'utilisateur responsable du projet
         $user = DB::table('users')

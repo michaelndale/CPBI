@@ -45,9 +45,9 @@
 
 
         <div id="tableExample2">
-          <div class="table-responsive">
-            <table class="table table-striped table-sm fs--1 mb-0">
-              <thead>
+        <div class="table-responsive" id="table-container" style="overflow-y: auto;">
+        <table class="table table-striped table-sm fs--1 mb-0">
+            <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
                 <tr>
                   <th class="sort border-top ">
                     <center><b>Actions</b></center>
@@ -57,10 +57,12 @@
                   <th class="sort border-top "> <center> <b>N<sup>o</sup>  FEB </b></center> </th>
                   <th class="sort border-top "> <b>Lieu </b></th>
                   <th class="sort border-top "><center> <b>OV  </b></center></th>
-                  <th class="sort border-top "> <b>CHO </b></th>
+                  <th class="sort border-top "> <b>Cheque </b></th>
                   <th class="sort border-top "> <b>Compte bancaire </b></th>
+                  <th class="sort border-top "> <b>Banque </b></th>
                   <th class="sort border-top "> <b>Etabli au nom</b></th>
-                  <th class="sort border-top "> <center><b>DJA (Justifier) </b></center></th>
+                  <th class="sort border-top "> <center><b> Justifier </b></center></th>
+                  <th class="sort border-top "> <center><b> Non Justifier </b></center></th>
                   <th class="sort border-top "> <center><b> Créé le. </b></center></th>
                   <th class="sort border-top "> <b> Créé par </b></th>
                 </tr>
@@ -69,7 +71,7 @@
 
               <tbody class="show_all" id="show_all">
                 <tr>
-                  <td colspan="11">
+                  <td colspan="13">
                     <h5 class="text-center text-secondery my-5">
                       @include('layout.partiels.load')
                   </td>
@@ -99,6 +101,22 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
+
+<script>
+    function adjustTableHeight() {
+        var windowHeight = window.innerHeight;
+        var tableContainer = document.getElementById('table-container');
+        
+        // Ajustez la hauteur du conteneur du tableau en fonction de la hauteur de l'écran, moins une marge (par exemple, 200px)
+        tableContainer.style.height = (windowHeight - 200) + 'px';
+    }
+
+    // Appelez la fonction lorsque la page est chargée
+    window.onload = adjustTableHeight;
+
+    // Appelez la fonction lorsque la fenêtre est redimensionnée
+    window.onresize = adjustTableHeight;
+</script>
 
    
 <script> 

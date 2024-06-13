@@ -27,7 +27,7 @@
                     <th>Nom affiché</th>
                     <th>Créé par</th>
                     <th>Créé le</th>
-                    <th>Action</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="show_all">
@@ -40,6 +40,10 @@
                 </tbody>
                 </tbody>
               </table>
+
+              <br>
+              <br>
+              <br>
             </div>
           </div>
         </div>

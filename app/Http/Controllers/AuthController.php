@@ -235,7 +235,7 @@ class AuthController extends Controller
                       session()->put('fonction', $datauser->fonction);
                       session()->put('avatar', $datauser->avatar);
                       session()->put('signature', $datauser->signature);
-  
+
                       return response()->json([1]);
                   case 'Bloqué':
                       return response()->json([2]);
