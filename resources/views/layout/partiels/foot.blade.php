@@ -4,7 +4,7 @@
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="myLargeModalLabel"><i class="fa fa-list"></i> Tâches à faire en attente </h5>
+        <h5 class="modal-title"><i class="fa fa-list"></i> Tâches à faire en attente </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -13,22 +13,21 @@
             <table class="table table-striped table-sm fs--1 mb-0">
               <thead>
                 <tr>
-                  <th class="sort border-top "><b> # </b></center>
-                  </th>
+                  <th class="sort border-top"><b>#</b></th>
                   <th class="sort border-top" data-sort="Document"><b>Document</b></th>
-                  <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> DOC </b></th>
-                  <th class="sort border-top" data-sort="Date Doc"><b>Date FEB </b></th>
+                  <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> DOC</b></th>
+                  <th class="sort border-top" data-sort="Date Doc"><b>Date FEB</b></th>
                   <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
                   <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
                   <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
                 </tr>
               </thead>
               <tbody id="footernotification">
+                <!-- Contenu du tableau à ajouter dynamiquement -->
               </tbody>
             </table>
           </div>
         </div>
-
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -515,6 +514,7 @@
 <!-- Right bar overlay-->
 
 <!-- JAVASCRIPT -->
+ 
 <script src="{{ asset('element/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/metismenu/metisMenu.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/simplebar/simplebar.min.js') }}"></script>

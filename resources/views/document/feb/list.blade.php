@@ -467,48 +467,76 @@
     $(document).on('click', '.deleteIcon', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
+      let numero = $(this).data('numero');
       let csrf = '{{ csrf_token() }}';
-      Swal.fire({
-        title: 'Êtes-vous sûr ?',
-        text: "FEB est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ?  ",
 
+      Swal.fire({
+        title: 'Supprimer le FEB ?',
+        html: "<p class='swal-text'>Cette action entraînera la suppression du  <b> FEB Numéro: " + numero + "</b>  </p><p class='swal-text'><i class='fa fa-info-circle' style='color: red;'></i> Cette action entraînera également la suppression de les élements du FEB dans le DAP, DJA associés aux FEB.</p>",
         showCancelButton: true,
         confirmButtonColor: 'green',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Oui, Supprimer !',
-        cancelButtonText: 'Annuller'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          $.ajax({
-            url: "{{ route('deletefeb') }}",
-            method: 'delete',
-            data: {
-              id: id,
-              _token: csrf
-            },
-            success: function(response) {
-
-              if (response.status == 200) {
-                toastr.success("FEB supprimer avec succès !", "Suppression");
-                fetchAllfeb();
-                Sommefeb();
+        cancelButtonText: 'Annuler',
+        allowOutsideClick: false,
+        customClass: {
+          content: 'swal-custom-content'
+        },
+        preConfirm: () => {
+          return new Promise((resolve) => {
+            $.ajax({
+              url: "{{ route('deletefeb') }}",
+              method: 'delete',
+              data: {
+                id: id,
+                _token: csrf
+              },
+              success: function(response) {
+                if (response.status == 200) {
+                  toastr.info("Suppression en cours...", "Suppression");
+                  // Attendre un court délai pour que l'utilisateur voie le message
+                  setTimeout(() => {
+                    resolve(response); // Résoudre la promesse avec la réponse de la requête AJAX
+                  }, 1500); // Temps en millisecondes avant de résoudre la promesse
+                } else {
+                  let errorMessage = response.message || "Erreur lors de la suppression du FEB.";
+                  toastr.error(errorMessage, "Erreur");
+                  if (response.error) {
+                    toastr.error("Erreur: " + response.error, "Erreur");
+                  }
+                  if (response.exception) {
+                    toastr.error("Exception: " + response.exception, "Erreur");
+                  }
+                  resolve(response); // Résoudre même en cas d'erreur pour débloquer la modal
+                }
+              },
+              error: function(xhr, status, error) {
+                let errorMsg = xhr.responseJSON ? xhr.responseJSON.message : "Erreur de réseau. Veuillez réessayer.";
+                toastr.error(errorMsg, "Erreur");
+                if (xhr.responseJSON && xhr.responseJSON.exception) {
+                  toastr.error("Exception: " + xhr.responseJSON.exception, "Erreur");
+                }
+                resolve({
+                  status: 500,
+                  message: errorMsg,
+                  error: error,
+                  exception: xhr.responseJSON ? xhr.responseJSON.exception : "Aucune exception détaillée disponible"
+                }); // Résoudre en cas d'erreur réseau pour débloquer la modal
               }
-
-              if (response.status == 205) {
-                toastr.error("Vous n'avez pas l'accreditation de supprimer ce FEB!", "Erreur");
-              }
-
-              if (response.status == 202) {
-                toastr.error("Erreur d'execution !", "Erreur");
-              }
-              fetchAllfeb();
-              Sommefeb();
-
-            }
+            });
           });
         }
-      })
+      }).then((result) => {
+        if (result.isConfirmed && result.value && result.value.status == 200) {
+          toastr.success("FEB supprimé avec succès !", "Suppression");
+          fetchAllfeb();
+          Sommefeb();
+        }
+      });
     });
+
+
+
 
     $(document).on('click', '.desactiversignale', function(e) {
       e.preventDefault();
@@ -516,7 +544,7 @@
       let csrf = '{{ csrf_token() }}';
       Swal.fire({
         title: 'Êtes-vous sûr ?',
-        text: "Vous etes sur le point de desactiver le signale ?  ",
+        text: "Vous êtes sur le point de désactiver le signal ",
 
         showCancelButton: true,
         confirmButtonColor: 'green',
@@ -599,5 +627,13 @@
 
   });
 </script>
+
+
+<style>
+  .swal-custom-content .swal-text {
+    font-size: 14px;
+    /* Ajustez la taille selon vos besoins */
+  }
+</style>
 
 @endsection

@@ -13,15 +13,15 @@
         </div>
         <div class="modal-body">
           <div class="row g-3">
-            <!--  <div class="col-sm-6 col-lg-12 col-xl-12">
+             <div class="col-sm-6 col-lg-12 col-xl-12">
           <label class="text-1000 fw-bold mb-2">Rubrique du projet</label>
           <div class="row g-2">
             <div class="col">
               
-              <input  class="form-control" type="text" placeholder="Enter code" value="{{ Session::get('title') }}" readonly disabled  style="background-color:#F5F5F5" />
+              <input  class="form-control" type="text" placeholder="Enter code" value="{{ Session::get('title') }}" readonly disabled  style="border:none; background-color:#F5F5F5" />
             </div>     
             </div>
-        </div>  -->
+        </div>  
 
             <input id="projetid" name="projetid" type="hidden" value="{{ Session::get('id') }}" />
 
@@ -41,7 +41,7 @@
 
             <div class="col-sm-6 col-lg-12 col-xl-8">
 
-              <label class="text-1000 fw-bold mb-2">Sous compte</label>
+              <label class="text-1000 fw-bold mb-2">Sous compte (Ligne)</label>
               <select class="form-select scomptef" id="scomptef" name="scomptef" type="text" placeholder="Entrer intitulé du compte" required>
                 <option disabled="true" selected="true"> -- Sélectionner sous compte -- </option>
               </select>
@@ -52,18 +52,7 @@
               <label class="text-1000 fw-bold mb-2">Budget </label>
               <input class="form-control" id="budgetactuel" name="budgetactuel" type="number" min="0" placeholder="Budget" required />
             </div>
-            <hr>
-
-            <div class="col-sm-6 col-lg-12 col-xl-12">
-              <center>
-                <label class="text-1000 fw-bold mb-2">Type du budgét : &nbsp; &nbsp; &nbsp; </label>
-                @foreach ($typebudget as $index => $typebudgets)
-                <input id="budgetactuel{{ $index }}" name="typeprojet" type="radio" value="{{ $typebudgets->id }}" @if($index==0) checked @endif required /> {{ $typebudgets->titre }} &nbsp; &nbsp;
-                @endforeach
-              </center>
-
-
-            </div>
+          
             <hr>
 
             <div id="cacheMoi">
@@ -140,10 +129,9 @@
 </div>
 <!-- fin -->
 
+<!-- Revision budgetaire -->
 
-
-
-
+<!-- fin -->
 
 <!-- modif -->
 <div class="modal fade" id="EditDealModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="EditDealModal" aria-hidden="true">

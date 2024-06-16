@@ -2,13 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
+use App\Models\Affectation;
+use App\Models\Bonpetitcaisse;
 use App\Models\Compte;
+use App\Models\dap;
 use App\Models\Devise;
+use App\Models\Dja;
+use App\Models\Elementboncaisse;
+use App\Models\Elementdap;
+use App\Models\Elementdjas;
+use App\Models\Elementfeb;
+use App\Models\Elementplanoperationnel;
+use App\Models\Feb;
+use App\Models\Feuilletemps;
 use App\Models\Folder;
 use App\Models\Historique;
 use App\Models\Notification;
 use App\Models\Personnel;
+use App\Models\Planoperationnel;
 use App\Models\Project;
+use App\Models\Rallongebudget;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Session;
@@ -50,6 +64,8 @@ class ProjectController extends Controller
       session()->forget('numeroprojet');
       session()->forget('ligneid');
       session()->forget('devise');
+      session()->forget('lead');
+      
 
       return redirect()->route('dashboard')->with('success', 'Très bien! le projet  est bien fermer');
       
@@ -149,7 +165,11 @@ class ProjectController extends Controller
         $key = Crypt::decrypt($key);
         
         // Recherche du projet correspondant
-        $check = Project::find($key);
+        $check = Project::where('projects.id', $key)
+                ->join('users', 'projects.userid', '=', 'users.id')
+                 ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+                  ->select('projects.*', 'projects.id as idpr', 'personnels.nom', 'personnels.prenom', 'personnels.fonction' )
+                  ->first();
     
         // Si le projet n'existe pas, redirection avec un message d'erreur
         if (!$check) {
@@ -157,14 +177,17 @@ class ProjectController extends Controller
         }
     
         // Mise à jour de la session avec les informations du projet
-        session()->put('id', $check->id);
-        session()->put('title', $check->title);
-        session()->put('numeroprojet', $check->numeroprojet);
-        session()->put('ligneid', $check->ligneid);
-        session()->put('devise', $check->devise);
-        session()->put('budget', $check->budget);
-        session()->put('periode', $check->periode);
-        session()->put('lead', $check->lead);
+      session()->put([
+              'id' => $check->idpr,
+              'title' => $check->title,
+              'numeroprojet' => $check->numeroprojet,
+              'ligneid' => $check->ligneid,
+              'devise' => $check->devise,
+              'budget' => $check->budget,
+              'periode' => $check->periode,
+              'lead' => $check->lead,
+          ]);
+
     
         // Récupération des informations de l'utilisateur responsable du projet
         $user = DB::table('users')
@@ -214,6 +237,7 @@ class ProjectController extends Controller
       session()->put('devise', $check->devise);
       session()->put('budget', $check->budget);
       session()->put('periode', $check->periode);
+      session()->put('lead', $check->lead);
 
       $act = DB::table('activities')
             ->orderby('id','DESC')
@@ -287,6 +311,7 @@ class ProjectController extends Controller
           session()->put('devise', $project->devise);
           session()->put('budget', $project->budget);
           session()->put('periode', $project->periode);
+          session()->put('lead', $project->lead);
           
           return back()->with('success', 'Très bien! le projet  est bien modifier');
       } else {
@@ -322,25 +347,60 @@ class ProjectController extends Controller
 
     public function deleteprojet(Request $request)
     {
-      try {
-      $emp = Project::find($request->id);
-      if ($emp->userid == Auth::id()) {
-        $id = $request->id;
-        Project::destroy($id);
-          return response()->json([
-            'status' => 200,
-          ]);
-      } else {
-        return response()->json([
-          'status' => 205,
-        ]);
-      }
-      } catch (Exception $e) {
-      return response()->json([
-        'status' => 202,
-      ]);
-      }
+        DB::beginTransaction();
+    
+        try {
+            $emp = Project::find($request->id);
+    
+            if ($emp && $emp->userid == Auth::id()) {
+                $id = $request->id;
+    
+                // Supprimer le projet
+                Project::destroy($id);
+    
+                // Supprimer les autres éléments associés
+                Compte::where('projetid', $id)->delete();
+                Rallongebudget::where('projetid', $id)->delete();
+                Activity::where('projectid', $id)->delete();
+                Feb::where('projetid', $id)->delete();
+                Elementfeb::where('projetids', $id)->delete();
+                Dap::where('projetiddap', $id)->delete();
+                Elementdap::where('projetidda', $id)->delete();
+                Dja::where('projetiddja', $id)->delete();
+                Elementdjas::where('projetiddjas', $id)->delete();
+                Bonpetitcaisse::where('projetid', $id)->delete();
+                Elementboncaisse::where('projetid', $id)->delete();
+                Affectation::where('projectid', $id)->delete();
+                Planoperationnel::where('projetid', $id)->delete();
+                Elementplanoperationnel::where('projetref', $id)->delete();
+                Feuilletemps::where('projetid', $id)->delete();
+    
+                DB::commit();
+    
+                return response()->json([
+                    'status' => 200,
+                ]);
+            } else {
+                DB::rollBack();
+                return response()->json([
+                    'status' => 205,
+                    'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer ce projet. Veuillez contacter le créateur du projet pour procéder à la suppression.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 500,
+                'message' => 'Erreur lors de la suppression du projet.',
+                'error' => $e->getMessage(), // Message d'erreur de l'exception
+                'exception' => (string) $e // Détails de l'exception convertis en chaîne
+            ]);
+        }
     }
+    
+    
+    
+    
 
     
     

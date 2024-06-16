@@ -67,14 +67,14 @@ class FebController extends Controller
         $recu = $datas->recu ? "checked" : "";
         $rm = $datas->rm ? "checked" : "";
 
-        if($datas->signale==1){
-          $message=' <div class="spinner-grow text-danger " role="status" style=" 
+        if ($datas->signale == 1) {
+          $message = ' <div class="spinner-grow text-danger " role="status" style=" 
           width: 0.5rem; /* Définissez la largeur */
           height: 0.5rem; /* Définissez la hauteur */">
           <span class="sr-only">Loading...</span>
         </div>';
-        }else{
-          $message=' '; 
+        } else {
+          $message = ' ';
         }
 
         $cryptedId = Crypt::encrypt($datas->id);
@@ -82,43 +82,43 @@ class FebController extends Controller
         $output .= '
             <tr>
                 <td>
-                    <center>'. $message.'
+                    <center>' . $message . '
                      
                         <div class="btn-group me-2 mb-2 mb-sm-0">
                             <a  data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="mdi mdi-dots-vertical ms-2"></i> Options
                             </a>
                             <div class="dropdown-menu">
-                                <a href="feb/'.$cryptedId.'/view" class="dropdown-item mx-1" id="' . $datas->id . '">
+                                <a href="feb/' . $cryptedId . '/view" class="dropdown-item mx-1" id="' . $datas->id . '">
                                     <i class="fas fa-eye"></i> Voir 
                                 </a>
-                                <a href="feb/'.$cryptedId.'/showannex" class="dropdown-item mx-1" id="' . $datas->id . '">
+                                <a href="feb/' . $cryptedId . '/showannex" class="dropdown-item mx-1" id="' . $datas->id . '">
                                 <i class="fas fa-paperclip"></i> Attachez les annex
                             </a>
-                                <a href="feb/'.$cryptedId.'/edit" class="dropdown-item mx-1" id="' . $datas->id . '" title="Modifier">
+                                <a href="feb/' . $cryptedId . '/edit" class="dropdown-item mx-1" id="' . $datas->id . '" title="Modifier">
                                     <i class="far fa-edit"></i> Modifier
                                 </a>
-                                <a href="feb/'.$datas->id.'/generate-pdf-feb" class="dropdown-item mx-1">
+                                <a href="feb/' . $datas->id . '/generate-pdf-feb" class="dropdown-item mx-1">
                                     <i class="fa fa-print"></i> Générer PDF
                                 </a>
-                                <a class="dropdown-item desactiversignale" id="'.$datas->id.'" href="#">
+                                <a class="dropdown-item desactiversignale" id="' . $datas->id . '" href="#">
                                 <i class="fas fa-random"></i> Desactiver le signale
                             </a>
-                                <a class="dropdown-item text-white mx-1 deleteIcon" id="'.$datas->id.'" href="#" style="background-color:red">
+                                <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datas->id . '" data-numero="' . $datas->numerofeb. '" href="#" style="background-color:red">
                                     <i class="far fa-trash-alt"></i> Supprimer
                                 </a>
                             </div>
                         </div>
                     </center>
                 </td>
-                <td align="center">  <a href="feb/'.$cryptedId.'/view" class="dropdown-item mx-1" id="' . $datas->id . '"><b>'. $datas->numerofeb . '</b></a></td>
+                <td align="center">  <a href="feb/' . $cryptedId . '/view" class="dropdown-item mx-1" id="' . $datas->id . '"><b>' . $datas->numerofeb . '</b></a></td>
                 <td  align="right"  >' . $sommefeb .  '</td>
                 <td align="center">' . $datas->periode . '</td>
                 <td align="center"><input type="checkbox" ' . $facture . ' class="form-check-input"   disabled /></td>
                 <td align="center"><input type="checkbox" ' . $om . ' class="form-check-input"  disabled /></td>
                 <td align="center"><input type="checkbox" ' . $bc . ' class="form-check-input"  disabled /></td>
                 <td align="center"><input type="checkbox" ' . $nec . ' class="form-check-input"  disabled /></td>
-                <td align="center"><input type="checkbox" ' . $fp. ' class="form-check-input"   disabled /></td>
+                <td align="center"><input type="checkbox" ' . $fp . ' class="form-check-input"   disabled /></td>
                 <td align="center"><input type="checkbox" ' . $recu . ' class="form-check-input"  disabled  /></td>
                 <td align="center"><input type="checkbox" ' . $rm . ' class="form-check-input"  disabled /></td>
                 <td align="center">' . date('d-m-Y', strtotime($datas->datefeb)) . '</td>
@@ -150,205 +150,205 @@ class FebController extends Controller
 
   public function notificationdoc()
   {
-      $documents = collect([]);
-  
-      // Jointure pour obtenir les informations des utilisateurs dans documentacce
-      $documentacce = DB::table('febs')
-          ->join('users', 'febs.userid', '=', 'users.id')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->join('projects', 'febs.projetid', '=', 'projects.id')
-          ->where('acce', Auth::id())
-          ->where('acce_signe', 0)
-          ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-          ->get();
-  
-      // Ajouter le type de document
-      $documentacce->each(function($item) {
-          $item->document_type = 'feb';
+    $documents = collect([]);
+
+    // Jointure pour obtenir les informations des utilisateurs dans documentacce
+    $documentacce = DB::table('febs')
+      ->join('users', 'febs.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'febs.projetid', '=', 'projects.id')
+      ->where('acce', Auth::id())
+      ->where('acce_signe', 0)
+      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
+
+    // Ajouter le type de document
+    $documentacce->each(function ($item) {
+      $item->document_type = 'feb';
+    });
+
+    // Jointure pour obtenir les informations des utilisateurs dans documentcompte
+    $documentcompte = DB::table('febs')
+      ->join('users', 'febs.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'febs.projetid', '=', 'projects.id')
+      ->where('comptable', Auth::id())
+      ->where('comptable_signe', 0)
+      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
+
+    // Ajouter le type de document
+    $documentcompte->each(function ($item) {
+      $item->document_type = 'feb';
+    });
+
+    // Jointure pour obtenir les informations des utilisateurs dans documentchefcomposent
+    $documentchefcomposent = DB::table('febs')
+      ->join('users', 'febs.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'febs.projetid', '=', 'projects.id')
+      ->where('chefcomposante', Auth::id())
+      ->where('chef_signe', 0)
+      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
+
+    // Ajouter le type de document
+    $documentchefcomposent->each(function ($item) {
+      $item->document_type = 'feb';
+    });
+
+    $documents_dap = collect([]);
+
+    $dap_demandeetablie = DB::table('daps')
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('demandeetablie', Auth::id())
+      ->where('demandeetablie_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
+
+    // Ajouter le type de document
+    $dap_demandeetablie->each(function ($item) {
+      $item->document_type = 'dap';
+    });
+
+    // Jointure pour obtenir les informations des utilisateurs dans dap_verifier
+    $dap_verifier = DB::table('daps')
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('verifierpar', Auth::id())
+      ->where('verifierpar_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
+
+    // Ajouter le type de document
+    $dap_verifier->each(function ($item) {
+      $item->document_type = 'dap';
+    });
+
+    // Jointure pour obtenir les informations des utilisateurs dans dap_approuverpar
+    $dap_approuverpar = DB::table('daps')
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('approuverpar', Auth::id())
+      ->where('approuverpar_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
+
+    // Ajouter le type de document
+    $dap_approuverpar->each(function ($item) {
+      $item->document_type = 'dap';
+    });
+
+    // Jointure pour obtenir les informations des utilisateurs dans dap_responsable
+    $dap_responsable = DB::table('daps')
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('responsable', Auth::id())
+      ->where('responsable_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
+
+    // Ajouter le type de document
+    $dap_responsable->each(function ($item) {
+      $item->document_type = 'dap';
+    });
+
+    // Jointure pour obtenir les informations des utilisateurs dans dap_secretaire
+    $dap_secretaire = DB::table('daps')
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('secretaire', Auth::id())
+      ->where('secretaure_general_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
+
+    // Ajouter le type de document
+    $dap_secretaire->each(function ($item) {
+      $item->document_type = 'dap';
+    });
+
+    // Jointure pour obtenir les informations des utilisateurs dans dap_chefprogramme
+    $dap_chefprogramme = DB::table('daps')
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('chefprogramme', Auth::id())
+      ->where('chefprogramme_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
+
+    // Ajouter le type de document
+    $dap_chefprogramme->each(function ($item) {
+      $item->document_type = 'dap';
+    });
+
+    $documents = $documents->concat($documentacce)
+      ->concat($documentcompte)
+      ->concat($documentchefcomposent);
+
+    $dap_documents = $documents_dap->concat($dap_demandeetablie)
+      ->concat($dap_verifier)
+      ->concat($dap_approuverpar)
+      ->concat($dap_responsable)
+      ->concat($dap_secretaire)
+      ->concat($dap_chefprogramme);
+
+    $all_documents = $documents->concat($dap_documents);
+
+    $output = '';
+    $nombre = 1;
+
+    if ($all_documents->count() > 0) {
+      // Grouper par numéro de projet et titre
+      $groupedDocuments = $all_documents->groupBy(function ($item) {
+        return $item->numeroprojets . ' : ' . $item->projet;
       });
-  
-      // Jointure pour obtenir les informations des utilisateurs dans documentcompte
-      $documentcompte = DB::table('febs')
-          ->join('users', 'febs.userid', '=', 'users.id')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->join('projects', 'febs.projetid', '=', 'projects.id')
-          ->where('comptable', Auth::id())
-          ->where('comptable_signe', 0)
-          ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-          ->get();
-  
-      // Ajouter le type de document
-      $documentcompte->each(function($item) {
-          $item->document_type = 'feb';
-      });
-  
-      // Jointure pour obtenir les informations des utilisateurs dans documentchefcomposent
-      $documentchefcomposent = DB::table('febs')
-          ->join('users', 'febs.userid', '=', 'users.id')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->join('projects', 'febs.projetid', '=', 'projects.id')
-          ->where('chefcomposante', Auth::id())
-          ->where('chef_signe', 0)
-          ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-          ->get();
-  
-      // Ajouter le type de document
-      $documentchefcomposent->each(function($item) {
-          $item->document_type = 'feb';
-      });
-  
-      $documents_dap = collect([]);
-  
-      $dap_demandeetablie = DB::table('daps')
-          ->join('users', 'daps.userid', '=', 'users.id')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-          ->where('demandeetablie', Auth::id())
-          ->where('demandeetablie_signe', 0)
-          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-          ->get();
-  
-      // Ajouter le type de document
-      $dap_demandeetablie->each(function($item) {
-          $item->document_type = 'dap';
-      });
-  
-      // Jointure pour obtenir les informations des utilisateurs dans dap_verifier
-      $dap_verifier = DB::table('daps')
-          ->join('users', 'daps.userid', '=', 'users.id')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-          ->where('verifierpar', Auth::id())
-          ->where('verifierpar_signe', 0)
-          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-          ->get();
-  
-      // Ajouter le type de document
-      $dap_verifier->each(function($item) {
-          $item->document_type = 'dap';
-      });
-  
-      // Jointure pour obtenir les informations des utilisateurs dans dap_approuverpar
-      $dap_approuverpar = DB::table('daps')
-          ->join('users', 'daps.userid', '=', 'users.id')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-          ->where('approuverpar', Auth::id())
-          ->where('approuverpar_signe', 0)
-          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-          ->get();
-  
-      // Ajouter le type de document
-      $dap_approuverpar->each(function($item) {
-          $item->document_type = 'dap';
-      });
-  
-      // Jointure pour obtenir les informations des utilisateurs dans dap_responsable
-      $dap_responsable = DB::table('daps')
-          ->join('users', 'daps.userid', '=', 'users.id')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-          ->where('responsable', Auth::id())
-          ->where('responsable_signe', 0)
-          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-          ->get();
-  
-      // Ajouter le type de document
-      $dap_responsable->each(function($item) {
-          $item->document_type = 'dap';
-      });
-  
-      // Jointure pour obtenir les informations des utilisateurs dans dap_secretaire
-      $dap_secretaire = DB::table('daps')
-          ->join('users', 'daps.userid', '=', 'users.id')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-          ->where('secretaire', Auth::id())
-          ->where('secretaure_general_signe', 0)
-          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-          ->get();
-  
-      // Ajouter le type de document
-      $dap_secretaire->each(function($item) {
-          $item->document_type = 'dap';
-      });
-  
-      // Jointure pour obtenir les informations des utilisateurs dans dap_chefprogramme
-      $dap_chefprogramme = DB::table('daps')
-          ->join('users', 'daps.userid', '=', 'users.id')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-          ->where('chefprogramme', Auth::id())
-          ->where('chefprogramme_signe', 0)
-          ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-          ->get();
-  
-      // Ajouter le type de document
-      $dap_chefprogramme->each(function($item) {
-          $item->document_type = 'dap';
-      });
-  
-      $documents = $documents->concat($documentacce)
-          ->concat($documentcompte)
-          ->concat($documentchefcomposent);
-  
-      $dap_documents = $documents_dap->concat($dap_demandeetablie)
-          ->concat($dap_verifier)
-          ->concat($dap_approuverpar)
-          ->concat($dap_responsable)
-          ->concat($dap_secretaire)
-          ->concat($dap_chefprogramme);
-  
-      $all_documents = $documents->concat($dap_documents);
-  
-      $output = '';
-      $nombre = 1;
-  
-      if ($all_documents->count() > 0) {
-          // Grouper par numéro de projet et titre
-          $groupedDocuments = $all_documents->groupBy(function($item) {
-              return $item->numeroprojets . ' : ' . $item->projet;
-          });
-  
-          foreach ($groupedDocuments as $projet => $docs) {
-              $output .= '<tr><td colspan="7"><b>' . ucfirst($projet) . '</b></td></tr>';
-              foreach ($docs as $doc) {
-                  $cryptedIDoc = Crypt::encrypt($doc->id);
-  
-                  if (isset($doc->datelimite) && !empty($doc->datelimite)) {
-                      $datelimite = date('d-m-Y', strtotime($doc->datelimite));
-                  } else {
-                      $datelimite = 'Pas de date limite';
-                  }
-  
-                  $output .= '<tr>
+
+      foreach ($groupedDocuments as $projet => $docs) {
+        $output .= '<tr><td colspan="7"><b>' . ucfirst($projet) . '</b></td></tr>';
+        foreach ($docs as $doc) {
+          $cryptedIDoc = Crypt::encrypt($doc->id);
+
+
+          $datefeb = !empty($doc->datefeb) ? date('d-m-Y', strtotime($doc->datefeb)) : '-';
+          $dateautorisation = !empty($doc->dateautorisation) ? date('d-m-Y', strtotime($doc->dateautorisation)) : '-';
+          $createdAt = !empty($doc->created_at) ? date('d-m-Y', strtotime($doc->created_at)) : '-';
+          $datelimite = !empty($doc->datelimite) ? date('d-m-Y', strtotime($doc->datelimite)) : '-';
+
+          $output .= '<tr>
                           <td>' . $nombre . '</td>
-                          <td>' . ($doc->document_type === 'feb' ? 'FEB' : 'DAP') . '</td>
-                          <td><a href="' . ($doc->document_type === 'feb' ? route('key.viewFeb', $cryptedIDoc) : route('viewdap', $cryptedIDoc)) . '"><b><u>' . ucfirst($doc->document_type === 'feb' ? $doc->numerofeb : $doc->numerodp) . '/' . date('Y') . ' <i class="fas fa-external-link-alt"></i> </u></b></a></td>
-                          <td>' . date('d-m-Y', strtotime($doc->datefeb ?? $doc->dateautorisation)) . '</td>
-                          <td>' . date('d-m-Y', strtotime($doc->created_at)) . '</td>
-                          <td>' . $datelimite . '</td>
-                          <td>' . ucfirst($doc->user_nom) . ' ' . ucfirst($doc->user_prenom) . '</td>
+                         <td>' . ($doc->document_type === 'feb' ? 'FEB' : 'DAP') . '</td>
+        <td ><a href="' . ($doc->document_type === 'feb' ? route('key.viewFeb', $cryptedIDoc) : route('viewdap', $cryptedIDoc)) . '"><b><u>' . ucfirst($doc->document_type === 'feb' ? $doc->numerofeb : $doc->numerodp) . '/' . date('Y') . ' <i class="fas fa-external-link-alt"></i> </u></b></a></td>
+        <td >' . ($datefeb ?? $dateautorisation) . '</td>
+        <td>' . $createdAt . '</td>
+        <td >' . $datelimite . '</td>
+        <td>' . ucfirst($doc->user_nom) . ' ' . ucfirst($doc->user_prenom) . '</td>
                       </tr>';
-  
-                  $nombre++;
-              }
-          }
+
+          $nombre++;
+        }
       }
-  
-      if ($output === '') {
-          $output = '<tr>
+    }
+
+    if ($output === '') {
+      $output = '<tr>
               <td colspan="7">
               <center>
                   <h6 style="color:red">Aucun document trouvé</h6>
               </center>
               </td>
           </tr>';
-      }
-  
-      return $output;
+    }
+
+    return $output;
   }
-  
+
   public function Sommefeb()
   {
     $devise = session()->get('devise');
@@ -438,7 +438,7 @@ class FebController extends Controller
         ]);
       }
 
-    
+
 
       if ($check) {
         return response()->json([
@@ -536,36 +536,36 @@ class FebController extends Controller
   public function Updatestore(Request $request)
   {
     DB::beginTransaction();
-    
+
     try {
       $IDP = session()->get('id');
-      
-     
+
+
       $activityTwo = Elementdap::where('referencefeb', $request->febid)->get();
 
       // Vérifier si des éléments existent
       if ($activityTwo->isNotEmpty()) {
-          // Mettre à jour les éléments FEB existants
-          foreach ($activityTwo as $element) {
-              $element->update([
-                  'ligneided' => $request->ligneid,
-    
-              ]);
-          }
-      } 
+        // Mettre à jour les éléments FEB existants
+        foreach ($activityTwo as $element) {
+          $element->update([
+            'ligneided' => $request->ligneid,
+
+          ]);
+        }
+      }
 
       $activityTree = Elementdjas::where('febid', $request->febid)->get();
 
       // Vérifier si des éléments existent
       if ($activityTree->isNotEmpty()) {
-          // Mettre à jour les éléments FEB existants
-          foreach ($activityTree as $elementTree) {
-            $elementTree->update([
-                  'ligneid' => $request->ligneid,
-    
-              ]);
-          }
-      } 
+        // Mettre à jour les éléments FEB existants
+        foreach ($activityTree as $elementTree) {
+          $elementTree->update([
+            'ligneid' => $request->ligneid,
+
+          ]);
+        }
+      }
 
       $activity = Feb::find($request->febid);
 
@@ -611,7 +611,7 @@ class FebController extends Controller
       $activity->chefcomposante = $request->chefcomposante;
       $activity->descriptionf = $request->descriptionf;
       $activity->beneficiaire = $request->beneficiaire;
-      $activity->sous_ligne_bugdetaire	 = $request->ligneid;
+      $activity->sous_ligne_bugdetaire   = $request->ligneid;
       $activity->update();
 
       $dataToUpdate = [];
@@ -844,7 +844,7 @@ class FebController extends Controller
 
           // Construire la sortie HTML pour chaque élément sélectionné
           $output .= '<input type="hidden" name="febid[]" value="' . $datas->id . '" />';
-          $output .= '<input type="hidden" name="ligneid[]" value="'.$datas->sous_ligne_bugdetaire.'" />';
+          $output .= '<input type="hidden" name="ligneid[]" value="' . $datas->sous_ligne_bugdetaire . '" />';
           $output .= '<tr>';
           $output .= '<td width="10%"> Numéro FEB : ' . $datas->numerofeb . '</td>';
           $output .= '<td width="20%"> Montant de l\'Avance <input type="number" min="0" name="montantavance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
@@ -879,136 +879,136 @@ class FebController extends Controller
   }
   public function list()
   {
-      // Récupérer l'ID de la session
-      $ID = session()->get('id');
-      
-      // Vérifier si l'ID de la session n'est pas défini
-      if (!$ID) {
-          // Rediriger vers la route nommée 'dashboard'
-          return redirect()->route('dashboard');
-      }
-  
-      // Si l'ID de la session est défini, continuer avec le reste de la fonction
-      $title = "FEB";
-      $compte =  DB::table('comptes')
-          ->where('comptes.projetid', $ID)
-          ->where('compteid', '=', 0)
-          ->get();
-  
-      $beneficaire = Beneficaire::orderBy('libelle')->get();
-  
-      $personnel = DB::table('users')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-          ->orderBy('nom', 'ASC')
-          ->get();
-  
-      $activite = DB::table('activities')
-          ->orderBy('id', 'DESC')
-          ->where('projectid', $ID)
-          ->get();
-  
-      return view(
-          'document.feb.list',
-          [
-              'title' => $title,
-              'activite' => $activite,
-              'personnel' => $personnel,
-              'compte' => $compte,
-              'beneficaire' => $beneficaire
-          ]
-      );
+    // Récupérer l'ID de la session
+    $ID = session()->get('id');
+
+    // Vérifier si l'ID de la session n'est pas défini
+    if (!$ID) {
+      // Rediriger vers la route nommée 'dashboard'
+      return redirect()->route('dashboard');
+    }
+
+    // Si l'ID de la session est défini, continuer avec le reste de la fonction
+    $title = "FEB";
+    $compte =  DB::table('comptes')
+      ->where('comptes.projetid', $ID)
+      ->where('compteid', '=', 0)
+      ->get();
+
+    $beneficaire = Beneficaire::orderBy('libelle')->get();
+
+    $personnel = DB::table('users')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+      ->orderBy('nom', 'ASC')
+      ->get();
+
+    $activite = DB::table('activities')
+      ->orderBy('id', 'DESC')
+      ->where('projectid', $ID)
+      ->get();
+
+    return view(
+      'document.feb.list',
+      [
+        'title' => $title,
+        'activite' => $activite,
+        'personnel' => $personnel,
+        'compte' => $compte,
+        'beneficaire' => $beneficaire
+      ]
+    );
   }
-  
+
   public function show($key)
   {
-      $title = 'FEB';
-      $key = Crypt::decrypt($key);
-      $check = Feb::findOrFail($key);
-  
-      $idl = $check->sous_ligne_bugdetaire;
-      $id_gl = $check->ligne_bugdetaire;
-      $idfeb = $check->id;
-      $numero_classe_feb = $check->numerofeb;
-   
-      $datElement = Elementfeb::where('febid', $idfeb)->get();
-      
-      $IDB = $check->projetid;
-      $chec = Project::findOrFail($IDB);
-      $budget = $chec->budget;
-  
-      $somme_ligne_principale = DB::table('rallongebudgets')
-          ->where('compteid', $id_gl)
-          ->sum('budgetactuel');
-  
-      $onebeneficaire = Beneficaire::find($check->beneficiaire);
-  
-      $sommeallfeb = DB::table('elementfebs')
-          ->where('numero', '<=', $numero_classe_feb)
-          ->where('projetids', $IDB)
-          ->sum('montant');
-  
-      $dataLigne = Compte::find($idl);
-  
-      $sommelign = DB::table('elementfebs')
-          ->where('grandligne', $id_gl)
-          ->where('numero', '<=', $numero_classe_feb)
-          ->where('projetids', $IDB)
-          ->sum('montant');
-  
-      $sommelignpourcentage = $somme_ligne_principale ? round(($sommelign * 100) / $somme_ligne_principale, 2) : 0;
-  
-      $sommefeb = DB::table('elementfebs')
-          ->where('febid', $idfeb)
-          ->where('projetids', $IDB)
-          ->sum('montant');
-  
-      $POURCENTAGE_GLOGALE = $budget ? round(($sommeallfeb * 100) / $budget, 2) : 0;
-  
-      $createur = DB::table('users')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('personnels.nom', 'personnels.prenom', 'users.id as useridp')
-          ->where('users.id', $check->userid)
-          ->first();
-  
-      $etablienom = DB::table('users')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
-          ->where('users.id', $check->acce)
-          ->first();
-  
-      $comptable_nom = DB::table('users')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
-          ->where('users.id', $check->comptable)
-          ->first();
-  
-      $checcomposant_nom = DB::table('users')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
-          ->where('users.id', $check->chefcomposante)
-          ->first();
-  
-      $dateinfo = Identification::all();
-  
-      return view('document.feb.voir', [
-          'title' => $title,
-          'dataFeb' => $check,
-          'dataprojets' => $chec,
-          'dataLigne' => $dataLigne,
-          'sommelignpourcentage' => $sommelignpourcentage,
-          'datElement' => $datElement,
-          'sommefeb' => $sommefeb,
-          'etablienom' => $etablienom,
-          'comptable_nom' => $comptable_nom,
-          'checcomposant_nom' => $checcomposant_nom,
-          'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE,
-          'dateinfo' => $dateinfo,
-          'createur' => $createur,
-          'onebeneficaire' => $onebeneficaire,
-      ]);
+    $title = 'FEB';
+    $key = Crypt::decrypt($key);
+    $check = Feb::findOrFail($key);
+
+    $idl = $check->sous_ligne_bugdetaire;
+    $id_gl = $check->ligne_bugdetaire;
+    $idfeb = $check->id;
+    $numero_classe_feb = $check->numerofeb;
+
+    $datElement = Elementfeb::where('febid', $idfeb)->get();
+
+    $IDB = $check->projetid;
+    $chec = Project::findOrFail($IDB);
+    $budget = $chec->budget;
+
+    $somme_ligne_principale = DB::table('rallongebudgets')
+      ->where('compteid', $id_gl)
+      ->sum('budgetactuel');
+
+    $onebeneficaire = Beneficaire::find($check->beneficiaire);
+
+    $sommeallfeb = DB::table('elementfebs')
+      ->where('numero', '<=', $numero_classe_feb)
+      ->where('projetids', $IDB)
+      ->sum('montant');
+
+    $dataLigne = Compte::find($idl);
+
+    $sommelign = DB::table('elementfebs')
+      ->where('grandligne', $id_gl)
+      ->where('numero', '<=', $numero_classe_feb)
+      ->where('projetids', $IDB)
+      ->sum('montant');
+
+    $sommelignpourcentage = $somme_ligne_principale ? round(($sommelign * 100) / $somme_ligne_principale, 2) : 0;
+
+    $sommefeb = DB::table('elementfebs')
+      ->where('febid', $idfeb)
+      ->where('projetids', $IDB)
+      ->sum('montant');
+
+    $POURCENTAGE_GLOGALE = $budget ? round(($sommeallfeb * 100) / $budget, 2) : 0;
+
+    $createur = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'users.id as useridp')
+      ->where('users.id', $check->userid)
+      ->first();
+
+    $etablienom = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
+      ->where('users.id', $check->acce)
+      ->first();
+
+    $comptable_nom = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+      ->where('users.id', $check->comptable)
+      ->first();
+
+    $checcomposant_nom = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+      ->where('users.id', $check->chefcomposante)
+      ->first();
+
+    $dateinfo = Identification::all();
+
+    return view('document.feb.voir', [
+      'title' => $title,
+      'dataFeb' => $check,
+      'dataprojets' => $chec,
+      'dataLigne' => $dataLigne,
+      'sommelignpourcentage' => $sommelignpourcentage,
+      'datElement' => $datElement,
+      'sommefeb' => $sommefeb,
+      'etablienom' => $etablienom,
+      'comptable_nom' => $comptable_nom,
+      'checcomposant_nom' => $checcomposant_nom,
+      'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE,
+      'dateinfo' => $dateinfo,
+      'createur' => $createur,
+      'onebeneficaire' => $onebeneficaire,
+    ]);
   }
-  
+
   public function showannex($key)
   {
 
@@ -1024,148 +1024,148 @@ class FebController extends Controller
 
   public function showonefeb($idf)
   {
-      $title = 'FEB';
-  
-      if (!session()->has('id')) {
-          return redirect()->route('dashboard');
-      }
-  
-      $budget = session()->get('budget');
-      $IDB = session()->get('id');
-      $idf = Crypt::decrypt($idf);
-  
-      $dataJosonfeb = DB::table('febs')
-          ->leftJoin('comptes', 'febs.sous_ligne_bugdetaire', '=', 'comptes.id')
-          ->select('febs.*', 'febs.id as idfb', 'comptes.id as idc', 'comptes.numero as numeroc', 'comptes.libelle as libellec')
-          ->where('febs.id', $idf)
-          ->first();
-  
-      if (!$dataJosonfeb) {
-          return redirect()->route('dashboard')->with('error', 'Pas de FEB disponible');
-      }
-  
-      $idl = $dataJosonfeb->sous_ligne_bugdetaire;
-      $idfeb = $dataJosonfeb->id;
-      $ID = session()->get('id');
-  
-      $compte = DB::table('comptes')
-          ->where('comptes.projetid', $ID)
-          ->where('compteid', '=', 0)
-          ->get();
-  
-      $personnel = DB::table('users')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-          ->where('fonction', '!=', 'Chauffeur')
-          ->orderBy('nom', 'ASC')
-          ->get();
-  
-      $dataLigne = Compte::where('id', $idl)->first();
-  
-      // Calcul des sommes et pourcentages
-      $sommelign = DB::table('elementfebs')
-          ->where('eligne', $idl)
-          ->sum('montant');
-      $sommelignpourcentage = $budget ? round(($sommelign * 100) / $budget) : 0;
-  
-      $sommefeb = DB::table('elementfebs')
-          ->where('febid', $idfeb)
-          ->sum('montant');
-  
-      $datafebs = DB::table('elementfebs')
-          ->orderBy('id', 'DESC')
-          ->where('projetids', $ID)
-          ->sum('montant');
-  
-      $POURCENTAGE_GLOGALE = $budget ? round(($datafebs * 100) / $budget) : 0;
-  
-      // Récupération des noms des responsables
-      $etablienom = DB::table('users')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-          ->where('users.id', $dataJosonfeb->acce)
-          ->first();
-  
-      $comptable_nom = DB::table('users')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id', 'users.id as userid')
-          ->where('users.id', $dataJosonfeb->comptable)
-          ->first();
-  
-      $checcomposant_nom = DB::table('users')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-          ->where('users.id', $dataJosonfeb->chefcomposante)
-          ->first();
-  
-      // Récupération des éléments du FEB
-      $datElement = DB::table('elementfebs')
-          ->leftJoin('activities', 'elementfebs.libellee', '=', 'activities.id')
-          ->leftJoin('comptes', 'elementfebs.eligne', '=', 'comptes.id')
-          ->select('elementfebs.*', 'elementfebs.id as idef', 'activities.id as ida', 'activities.titre as titrea', 'comptes.libelle as lignetitre')
-          ->where('febid', $idfeb)
-          ->get();
-  
-      $datElementgene = DB::table('elementfebs')
-          ->leftJoin('activities', 'elementfebs.libellee', '=', 'activities.id')
-          ->select('elementfebs.*', 'elementfebs.id as idef', 'activities.id as ida', 'activities.titre as titrea')
-          ->where('febid', $idfeb)
-          ->first();
-  
-      $activiteligne = $datElementgene ? Activity::where('compteidr', $dataJosonfeb->sous_ligne_bugdetaire)->get() : collect();
+    $title = 'FEB';
 
-      $all_activitis= Activity::where('compteidr', $dataJosonfeb->sous_ligne_bugdetaire)->get() ;
-      
-      $beneficaire = Beneficaire::orderBy('libelle')->get();
+    if (!session()->has('id')) {
+      return redirect()->route('dashboard');
+    }
 
-      $onebeneficaire = Beneficaire::where('id', $dataJosonfeb->beneficiaire)->first();
-  
-      return view('document.feb.edit', [
-          'title' => $title,
-          'dataFe' => $dataJosonfeb,
-          'dataLigne' => $dataLigne,
-          'sommelignpourcentage' => $sommelignpourcentage,
-          'datElement' => $datElement,
-          'sommefeb' => $sommefeb,
-          'etablienom' => $etablienom,
-          'comptable_nom' => $comptable_nom,
-          'checcomposant_nom' => $checcomposant_nom,
-          'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE,
-          'personnel' => $personnel,
-          'compte' => $compte,
-          'datElementgene' => $datElementgene,
-          'activiteligne' => $activiteligne,
-          'beneficaire' => $beneficaire,
-          'onebeneficaire' => $onebeneficaire,
-          'all_activitis' => $all_activitis
-      ]);
+    $budget = session()->get('budget');
+    $IDB = session()->get('id');
+    $idf = Crypt::decrypt($idf);
+
+    $dataJosonfeb = DB::table('febs')
+      ->leftJoin('comptes', 'febs.sous_ligne_bugdetaire', '=', 'comptes.id')
+      ->select('febs.*', 'febs.id as idfb', 'comptes.id as idc', 'comptes.numero as numeroc', 'comptes.libelle as libellec')
+      ->where('febs.id', $idf)
+      ->first();
+
+    if (!$dataJosonfeb) {
+      return redirect()->route('dashboard')->with('error', 'Pas de FEB disponible');
+    }
+
+    $idl = $dataJosonfeb->sous_ligne_bugdetaire;
+    $idfeb = $dataJosonfeb->id;
+    $ID = session()->get('id');
+
+    $compte = DB::table('comptes')
+      ->where('comptes.projetid', $ID)
+      ->where('compteid', '=', 0)
+      ->get();
+
+    $personnel = DB::table('users')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+      ->where('fonction', '!=', 'Chauffeur')
+      ->orderBy('nom', 'ASC')
+      ->get();
+
+    $dataLigne = Compte::where('id', $idl)->first();
+
+    // Calcul des sommes et pourcentages
+    $sommelign = DB::table('elementfebs')
+      ->where('eligne', $idl)
+      ->sum('montant');
+    $sommelignpourcentage = $budget ? round(($sommelign * 100) / $budget) : 0;
+
+    $sommefeb = DB::table('elementfebs')
+      ->where('febid', $idfeb)
+      ->sum('montant');
+
+    $datafebs = DB::table('elementfebs')
+      ->orderBy('id', 'DESC')
+      ->where('projetids', $ID)
+      ->sum('montant');
+
+    $POURCENTAGE_GLOGALE = $budget ? round(($datafebs * 100) / $budget) : 0;
+
+    // Récupération des noms des responsables
+    $etablienom = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+      ->where('users.id', $dataJosonfeb->acce)
+      ->first();
+
+    $comptable_nom = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id', 'users.id as userid')
+      ->where('users.id', $dataJosonfeb->comptable)
+      ->first();
+
+    $checcomposant_nom = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+      ->where('users.id', $dataJosonfeb->chefcomposante)
+      ->first();
+
+    // Récupération des éléments du FEB
+    $datElement = DB::table('elementfebs')
+      ->leftJoin('activities', 'elementfebs.libellee', '=', 'activities.id')
+      ->leftJoin('comptes', 'elementfebs.eligne', '=', 'comptes.id')
+      ->select('elementfebs.*', 'elementfebs.id as idef', 'activities.id as ida', 'activities.titre as titrea', 'comptes.libelle as lignetitre')
+      ->where('febid', $idfeb)
+      ->get();
+
+    $datElementgene = DB::table('elementfebs')
+      ->leftJoin('activities', 'elementfebs.libellee', '=', 'activities.id')
+      ->select('elementfebs.*', 'elementfebs.id as idef', 'activities.id as ida', 'activities.titre as titrea')
+      ->where('febid', $idfeb)
+      ->first();
+
+    $activiteligne = $datElementgene ? Activity::where('compteidr', $dataJosonfeb->sous_ligne_bugdetaire)->get() : collect();
+
+    $all_activitis = Activity::where('compteidr', $dataJosonfeb->sous_ligne_bugdetaire)->get();
+
+    $beneficaire = Beneficaire::orderBy('libelle')->get();
+
+    $onebeneficaire = Beneficaire::where('id', $dataJosonfeb->beneficiaire)->first();
+
+    return view('document.feb.edit', [
+      'title' => $title,
+      'dataFe' => $dataJosonfeb,
+      'dataLigne' => $dataLigne,
+      'sommelignpourcentage' => $sommelignpourcentage,
+      'datElement' => $datElement,
+      'sommefeb' => $sommefeb,
+      'etablienom' => $etablienom,
+      'comptable_nom' => $comptable_nom,
+      'checcomposant_nom' => $checcomposant_nom,
+      'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE,
+      'personnel' => $personnel,
+      'compte' => $compte,
+      'datElementgene' => $datElementgene,
+      'activiteligne' => $activiteligne,
+      'beneficaire' => $beneficaire,
+      'onebeneficaire' => $onebeneficaire,
+      'all_activitis' => $all_activitis
+    ]);
   }
-  
-  
+
+
 
   public function update(Request $request)
   {
-      try {
-          if (!empty($request->accesignature) || !empty($request->comptablesignature) || !empty($request->chefsignature)) {
-              $emp = Feb::find($request->febid);
-  
-              $accesignature = !empty($request->accesignature) ? 1 : $request->clone_accesignature;
-              $comptablesignature = !empty($request->comptablesignature) ? 1 : $request->clone_comptablesignature;
-              $chefsignature = !empty($request->chefsignature) ? 1 : $request->clone_chefsignature;
-  
-              $emp->acce_signe = $accesignature;
-              $emp->comptable_signe = $comptablesignature;
-              $emp->chef_signe = $chefsignature;
-  
-              $emp->update();
-  
-              return back()->with('success', 'Très bien! La signature a bien été enregistrée');
-          } else {
-              return back()->with('failed', 'Vous devez cocher au moins une case pour enregistrer la signature.');
-          }
-      } catch (Exception $e) {
-          return back()->with('failed', 'Échec ! La signature n\'a pas été créée');
+    try {
+      if (!empty($request->accesignature) || !empty($request->comptablesignature) || !empty($request->chefsignature)) {
+        $emp = Feb::find($request->febid);
+
+        $accesignature = !empty($request->accesignature) ? 1 : $request->clone_accesignature;
+        $comptablesignature = !empty($request->comptablesignature) ? 1 : $request->clone_comptablesignature;
+        $chefsignature = !empty($request->chefsignature) ? 1 : $request->clone_chefsignature;
+
+        $emp->acce_signe = $accesignature;
+        $emp->comptable_signe = $comptablesignature;
+        $emp->chef_signe = $chefsignature;
+
+        $emp->update();
+
+        return back()->with('success', 'Très bien! La signature a bien été enregistrée');
+      } else {
+        return back()->with('failed', 'Vous devez cocher au moins une case pour enregistrer la signature.');
       }
+    } catch (Exception $e) {
+      return back()->with('failed', 'Échec ! La signature n\'a pas été créée');
+    }
   }
 
   public function generatePDFfeb($id)
@@ -1185,14 +1185,14 @@ class FebController extends Controller
     $budget = $chec->budget;
 
     $somme_ligne_principale = DB::table('rallongebudgets')
-    ->where('compteid', $id_gl)
-    ->sum('budgetactuel');
+      ->where('compteid', $id_gl)
+      ->sum('budgetactuel');
 
 
     $sommeallfeb = DB::table('elementfebs')
-    ->where('numero', '<=', $numero_classe_feb)
-    ->where('projetids', $IDB)
-    ->sum('montant');
+      ->where('numero', '<=', $numero_classe_feb)
+      ->where('projetids', $IDB)
+      ->sum('montant');
     $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
 
     $sommelign = DB::table('elementfebs')
@@ -1202,7 +1202,7 @@ class FebController extends Controller
       ->sum('montant');
     $sommelignpourcentage = round(($sommelign * 100) / $somme_ligne_principale, 2);
 
-    
+
     $sommefeb = DB::table('elementfebs')
       ->where('febid', $idfeb)
       ->sum('montant');
@@ -1222,7 +1222,7 @@ class FebController extends Controller
       ->where('febs.id', $id)
       ->first();
 
-    
+
 
     $onebeneficaire = Beneficaire::where('id', $datafeb->beneficiaire)->first();
 
@@ -1294,7 +1294,7 @@ class FebController extends Controller
     $pdf->setPaper('A4', 'landscape'); // Format A4 en mode paysage
 
     // Nom du fichier PDF téléchargé avec numéro FEB et date actuelle
-    $fileName = 'FEB_NUM_'. $datafeb->numerofeb .'.pdf';
+    $fileName = 'FEB_NUM_' . $datafeb->numerofeb . '.pdf';
 
     // Télécharge le PDF
     return $pdf->download($fileName);
@@ -1414,47 +1414,47 @@ class FebController extends Controller
     return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
   }
 
+ 
+
+
   public function delete(Request $request)
   {
-
-    try {
-
-      $emp = Feb::find($request->id);
-      if ($emp->userid == Auth::id()) {
-        $id = $request->id;
-
-
-        $his = new Historique;
-        $function = "Suppression";
-        $operation = "Suppression FEB";
-        $link = 'feb';
-        $his->fonction = $function;
-        $his->operation = $operation;
-        $his->userid = Auth()->user()->id;
-        $his->link = $link;
-        $his->save();
+      DB::beginTransaction();
+  
+      try {
 
         $id = $request->id;
-        Feb::destroy($id);
+        $emp = Feb::find($request->id);
+         
+          if ($emp && $emp->userid == Auth::id()) {
+              $id = $request->id;
+  
+              Feb::destroy($id);
+              Elementfeb::where('febid', '=', $id)->get();
+              Elementdap::where('referencefeb', $id)->delete();
+              Elementdjas::where('febid', $id)->delete();
 
-        $elements = Elementfeb::where('febid', '=', $id)->get();
-        foreach ($elements as $element) {
-          $element->delete();
-        }
-
-        return response()->json([
-          'status' => 200,
-        ]);
-      } else {
-        return response()->json([
-          'status' => 205,
-        ]);
+              DB::commit();
+  
+              return response()->json([
+                  'status' => 200,
+              ]);
+          } else {
+              DB::rollBack();
+              return response()->json([
+                  'status' => 205,
+                  'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le FEB. Veuillez contacter le créateur  pour procéder à la suppression.'
+              ]);
+          }
+      } catch (\Exception $e) {
+          DB::rollBack();
+          return response()->json([
+              'status' => 500,
+              'message' => 'Erreur lors de la suppression du FEB.',
+              'error' => $e->getMessage(), // Message d'erreur de l'exception
+              'exception' => (string) $e // Détails de l'exception convertis en chaîne
+          ]);
       }
-    } catch (Exception $e) {
-      return response()->json([
-        'status' => 202,
-      ]);
-    }
   }
 
   public function desacctiveSignale(Request $request)
@@ -1466,10 +1466,10 @@ class FebController extends Controller
       if ($emp->userid == Auth::id()) {
         $id = $request->id;
 
-       
+
         $emp->signale = 2;
         $emp->update();
-        
+
 
         return response()->json([
           'status' => 200,
@@ -1499,7 +1499,7 @@ class FebController extends Controller
     return response()->json(['exists' => $feb]);
   }
 
-  
+
 
   public function updatannex(Request $request)
   {
@@ -1513,134 +1513,158 @@ class FebController extends Controller
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->boncommande->move(public_path('projet/bomcommande/'), $imageName);
         $boncommande = 'projet/bomcommande/' . $imageName;
-    }
-    
-    if (!empty($request->facture)) {
+      }
+
+      if (!empty($request->facture)) {
         $originalName = $request->facture->getClientOriginalName();
         $timestamp = time();
         $extension = $request->facture->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->facture->move(public_path('projet/facture/'), $imageName);
         $facture = 'projet/facture/' . $imageName;
-    }
-    
-    if (!empty($request->ordreM)) {
+      }
+
+      if (!empty($request->ordreM)) {
         $originalName = $request->ordreM->getClientOriginalName();
         $timestamp = time();
         $extension = $request->ordreM->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->ordreM->move(public_path('projet/ordremission/'), $imageName);
         $ordremission = 'projet/ordremission/' . $imageName;
-    }
-    
-    if (!empty($request->url_pva)) {
+      }
+
+      if (!empty($request->url_pva)) {
         $originalName = $request->url_pva->getClientOriginalName();
         $timestamp = time();
         $extension = $request->url_pva->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->url_pva->move(public_path('projet/pva/'), $imageName);
         $pva = 'projet/pva/' . $imageName;
-    }
-    
-    if (!empty($request->factureP)) {
+      }
+
+      if (!empty($request->factureP)) {
         $originalName = $request->factureP->getClientOriginalName();
         $timestamp = time();
         $extension = $request->factureP->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->factureP->move(public_path('projet/facture_proformat/'), $imageName);
         $factureProformat = 'projet/facture_proformat/' . $imageName;
-    }
-    
-    if (!empty($request->rapportM)) {
+      }
+
+      if (!empty($request->rapportM)) {
         $originalName = $request->rapportM->getClientOriginalName();
         $timestamp = time();
         $extension = $request->rapportM->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->rapportM->move(public_path('projet/rapport_mission/'), $imageName);
         $rapport_mission = 'projet/rapport_mission/' . $imageName;
-    }
-    
-    if (!empty($request->termeR)) {
+      }
+
+      if (!empty($request->termeR)) {
         $originalName = $request->termeR->getClientOriginalName();
         $timestamp = time();
         $extension = $request->termeR->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->termeR->move(public_path('projet/terme_reference/'), $imageName);
         $terme_reference = 'projet/terme_reference/' . $imageName;
-    }
-    
-    if (!empty($request->bordereauV)) {
+      }
+
+      if (!empty($request->bordereauV)) {
         $originalName = $request->bordereauV->getClientOriginalName();
         $timestamp = time();
         $extension = $request->bordereauV->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->bordereauV->move(public_path('projet/bordereau_versement/'), $imageName);
         $bordereau_versement = 'projet/bordereau_versement/' . $imageName;
-    }
-    
-    if (!empty($request->recu)) {
+      }
+
+      if (!empty($request->recu)) {
         $originalName = $request->recu->getClientOriginalName();
         $timestamp = time();
         $extension = $request->recu->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->recu->move(public_path('projet/recu/'), $imageName);
         $recu = 'projet/recu/' . $imageName;
-    }
-    
-    if (!empty($request->auccuseR)) {
+      }
+
+      if (!empty($request->auccuseR)) {
         $originalName = $request->auccuseR->getClientOriginalName();
         $timestamp = time();
         $extension = $request->auccuseR->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->auccuseR->move(public_path('projet/accuse_reception/'), $imageName);
         $accuse_reception = 'projet/accuse_reception/' . $imageName;
-    }
-    
-    if (!empty($request->bordereauE)) {
+      }
+
+      if (!empty($request->bordereauE)) {
         $originalName = $request->bordereauE->getClientOriginalName();
         $timestamp = time();
         $extension = $request->bordereauE->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->bordereauE->move(public_path('projet/bordereau_expediction/'), $imageName);
         $bordereau_expediction = 'projet/bordereau_expediction/' . $imageName;
-    }
-    
-    if (!empty($request->appelP)) {
+      }
+
+      if (!empty($request->appelP)) {
         $originalName = $request->appelP->getClientOriginalName();
         $timestamp = time();
         $extension = $request->appelP->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->appelP->move(public_path('projet/appel_cfk/'), $imageName);
         $appel_cfk = 'projet/appel_cfk/' . $imageName;
-    }
-    
+      }
+
 
 
 
 
       $UpAnnex = Feb::find($request->febid);
 
-      if (!empty($request->boncommande)) { $UpAnnex->url_bon_commande =  $boncommande;  }
-      if (!empty($request->facture))     { $UpAnnex->url_facture =  $facture;  }
-      if (!empty($request->ordreM))      { $UpAnnex->url_ordre_mission=  $ordremission ;  }
-      if (!empty($request->url_pva))      { $UpAnnex->url_pva=  $pva ;  }
-      if (!empty($request->factureP))    { $UpAnnex->url_factureProformat= $factureProformat ;  }
-      if (!empty($request->rapportM))    { $UpAnnex->url_rapport_mission=  $rapport_mission ;  }
-      if (!empty($request->termeR))      { $UpAnnex->url_terme_reference=   $terme_reference ;  }
-      if (!empty($request->bordereauV))  { $UpAnnex->url_bordereau_versement =  $bordereau_versement  ;  }
-      if (!empty($request->recu))        { $UpAnnex->url_recu =  $recu  ;  }
-      if (!empty($request->auccuseR))    { $UpAnnex->url_accusse_reception =  $accuse_reception ;  }
-      if (!empty($request->bordereauE))  { $UpAnnex->url_bordereau_expediction = $bordereau_expediction ;  }
-      if (!empty($request->appelP))      { $UpAnnex->url_appel_cfk  =  $appel_cfk  ;  }
+      if (!empty($request->boncommande)) {
+        $UpAnnex->url_bon_commande =  $boncommande;
+      }
+      if (!empty($request->facture)) {
+        $UpAnnex->url_facture =  $facture;
+      }
+      if (!empty($request->ordreM)) {
+        $UpAnnex->url_ordre_mission =  $ordremission;
+      }
+      if (!empty($request->url_pva)) {
+        $UpAnnex->url_pva =  $pva;
+      }
+      if (!empty($request->factureP)) {
+        $UpAnnex->url_factureProformat = $factureProformat;
+      }
+      if (!empty($request->rapportM)) {
+        $UpAnnex->url_rapport_mission =  $rapport_mission;
+      }
+      if (!empty($request->termeR)) {
+        $UpAnnex->url_terme_reference =   $terme_reference;
+      }
+      if (!empty($request->bordereauV)) {
+        $UpAnnex->url_bordereau_versement =  $bordereau_versement;
+      }
+      if (!empty($request->recu)) {
+        $UpAnnex->url_recu =  $recu;
+      }
+      if (!empty($request->auccuseR)) {
+        $UpAnnex->url_accusse_reception =  $accuse_reception;
+      }
+      if (!empty($request->bordereauE)) {
+        $UpAnnex->url_bordereau_expediction = $bordereau_expediction;
+      }
+      if (!empty($request->appelP)) {
+        $UpAnnex->url_appel_cfk  =  $appel_cfk;
+      }
 
-      $UpAnnex->update(); 
+      $UpAnnex->update();
 
-      DB::commit(); 
+      DB::commit();
       return response()->json([
         'status' => 200,
       ]);
     } catch (Exception $e) {
-      DB::rollBack(); 
+      DB::rollBack();
       return response()->json([
         'status' => 202,
       ]);
@@ -1660,124 +1684,148 @@ class FebController extends Controller
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->boncommande->move(public_path('projet/bomcommande/'), $imageName);
         $boncommande = 'projet/bomcommande/' . $imageName;
-    }
-    
-    if (!empty($request->facture)) {
+      }
+
+      if (!empty($request->facture)) {
         $originalName = $request->facture->getClientOriginalName();
         $timestamp = time();
         $extension = $request->facture->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->facture->move(public_path('projet/facture/'), $imageName);
         $facture = 'projet/facture/' . $imageName;
-    }
-    
-    if (!empty($request->ordreM)) {
+      }
+
+      if (!empty($request->ordreM)) {
         $originalName = $request->ordreM->getClientOriginalName();
         $timestamp = time();
         $extension = $request->ordreM->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->ordreM->move(public_path('projet/ordremission/'), $imageName);
         $ordremission = 'projet/ordremission/' . $imageName;
-    }
-    
-    if (!empty($request->url_pva)) {
+      }
+
+      if (!empty($request->url_pva)) {
         $originalName = $request->url_pva->getClientOriginalName();
         $timestamp = time();
         $extension = $request->url_pva->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->url_pva->move(public_path('projet/pva/'), $imageName);
         $pva = 'projet/pva/' . $imageName;
-    }
-    
-    if (!empty($request->factureP)) {
+      }
+
+      if (!empty($request->factureP)) {
         $originalName = $request->factureP->getClientOriginalName();
         $timestamp = time();
         $extension = $request->factureP->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->factureP->move(public_path('projet/facture_proformat/'), $imageName);
         $factureProformat = 'projet/facture_proformat/' . $imageName;
-    }
-    
-    if (!empty($request->rapportM)) {
+      }
+
+      if (!empty($request->rapportM)) {
         $originalName = $request->rapportM->getClientOriginalName();
         $timestamp = time();
         $extension = $request->rapportM->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->rapportM->move(public_path('projet/rapport_mission/'), $imageName);
         $rapport_mission = 'projet/rapport_mission/' . $imageName;
-    }
-    
-    if (!empty($request->termeR)) {
+      }
+
+      if (!empty($request->termeR)) {
         $originalName = $request->termeR->getClientOriginalName();
         $timestamp = time();
         $extension = $request->termeR->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->termeR->move(public_path('projet/terme_reference/'), $imageName);
         $terme_reference = 'projet/terme_reference/' . $imageName;
-    }
-    
-    if (!empty($request->bordereauV)) {
+      }
+
+      if (!empty($request->bordereauV)) {
         $originalName = $request->bordereauV->getClientOriginalName();
         $timestamp = time();
         $extension = $request->bordereauV->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->bordereauV->move(public_path('projet/bordereau_versement/'), $imageName);
         $bordereau_versement = 'projet/bordereau_versement/' . $imageName;
-    }
-    
-    if (!empty($request->recu)) {
+      }
+
+      if (!empty($request->recu)) {
         $originalName = $request->recu->getClientOriginalName();
         $timestamp = time();
         $extension = $request->recu->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->recu->move(public_path('projet/recu/'), $imageName);
         $recu = 'projet/recu/' . $imageName;
-    }
-    
-    if (!empty($request->auccuseR)) {
+      }
+
+      if (!empty($request->auccuseR)) {
         $originalName = $request->auccuseR->getClientOriginalName();
         $timestamp = time();
         $extension = $request->auccuseR->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->auccuseR->move(public_path('projet/accuse_reception/'), $imageName);
         $accuse_reception = 'projet/accuse_reception/' . $imageName;
-    }
-    
-    if (!empty($request->bordereauE)) {
+      }
+
+      if (!empty($request->bordereauE)) {
         $originalName = $request->bordereauE->getClientOriginalName();
         $timestamp = time();
         $extension = $request->bordereauE->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->bordereauE->move(public_path('projet/bordereau_expediction/'), $imageName);
         $bordereau_expediction = 'projet/bordereau_expediction/' . $imageName;
-    }
-    
-    if (!empty($request->appelP)) {
+      }
+
+      if (!empty($request->appelP)) {
         $originalName = $request->appelP->getClientOriginalName();
         $timestamp = time();
         $extension = $request->appelP->getClientOriginalExtension(); // Conserver l'extension correcte
         $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
         $request->appelP->move(public_path('projet/appel_cfk/'), $imageName);
         $appel_cfk = 'projet/appel_cfk/' . $imageName;
-    }
-    
+      }
 
-      if (!empty($request->boncommande)) { $UpAnnex->url_bon_commande =  $boncommande;  }
-      if (!empty($request->facture))     { $UpAnnex->url_facture =  $facture;  }
-      if (!empty($request->ordreM))      { $UpAnnex->url_ordre_mission=  $ordremission ;  }
-      if (!empty($request->url_pva))      { $UpAnnex->url_pva=  $pva ;  }
-      if (!empty($request->factureP))    { $UpAnnex->url_factureProformat= $factureProformat ;  }
-      if (!empty($request->rapportM))    { $UpAnnex->url_rapport_mission=  $rapport_mission ;  }
-      if (!empty($request->termeR))      { $UpAnnex->url_terme_reference=   $terme_reference ;  }
-      if (!empty($request->bordereauV))  { $UpAnnex->url_bordereau_versement =  $bordereau_versement  ;  }
-      if (!empty($request->recu))        { $UpAnnex->url_recu =  $recu  ;  }
-      if (!empty($request->auccuseR))    { $UpAnnex->url_accusse_reception =  $accuse_reception ;  }
-      if (!empty($request->bordereauE))  { $UpAnnex->url_bordereau_expediction = $bordereau_expediction ;  }
-      if (!empty($request->appelP))      { $UpAnnex->url_appel_cfk  =  $appel_cfk  ;  }
 
-      $UpAnnex->update(); 
+      if (!empty($request->boncommande)) {
+        $UpAnnex->url_bon_commande =  $boncommande;
+      }
+      if (!empty($request->facture)) {
+        $UpAnnex->url_facture =  $facture;
+      }
+      if (!empty($request->ordreM)) {
+        $UpAnnex->url_ordre_mission =  $ordremission;
+      }
+      if (!empty($request->url_pva)) {
+        $UpAnnex->url_pva =  $pva;
+      }
+      if (!empty($request->factureP)) {
+        $UpAnnex->url_factureProformat = $factureProformat;
+      }
+      if (!empty($request->rapportM)) {
+        $UpAnnex->url_rapport_mission =  $rapport_mission;
+      }
+      if (!empty($request->termeR)) {
+        $UpAnnex->url_terme_reference =   $terme_reference;
+      }
+      if (!empty($request->bordereauV)) {
+        $UpAnnex->url_bordereau_versement =  $bordereau_versement;
+      }
+      if (!empty($request->recu)) {
+        $UpAnnex->url_recu =  $recu;
+      }
+      if (!empty($request->auccuseR)) {
+        $UpAnnex->url_accusse_reception =  $accuse_reception;
+      }
+      if (!empty($request->bordereauE)) {
+        $UpAnnex->url_bordereau_expediction = $bordereau_expediction;
+      }
+      if (!empty($request->appelP)) {
+        $UpAnnex->url_appel_cfk  =  $appel_cfk;
+      }
 
-      DB::commit(); 
+      $UpAnnex->update();
+
+      DB::commit();
       return redirect()->back()->with('success', 'Mises ajour reussi .');
     } catch (Exception $e) {
       return redirect()->back()->with('danger', 'Erreur de mises ajours ');
@@ -1791,7 +1839,7 @@ class FebController extends Controller
 
       $lead = session()->get('lead');
       $emp = Elementfeb::find($request->id);
-      if ($emp->userid == Auth::id() || $emp->userid = $lead ) {
+      if ($emp->userid == Auth::id() || $emp->userid = $lead) {
         $id = $request->id;
 
 
@@ -1824,5 +1872,4 @@ class FebController extends Controller
       ]);
     }
   }
-
 }

@@ -202,9 +202,12 @@ Route::middleware('auth')->group(function () {
         Route::delete('/deleteGc', [CompteController::class, 'deleteall'])->name('deleteGc');
 
         Route::get('/ShowCompte', [CompteController::class, 'addsc'])->name('ShowCompte');
+        Route::get('/ShowCompteGrand', [CompteController::class, 'addscr'])->name('ShowCompteGrand');
+        Route::get('/editGc', [CompteController::class, 'edit'])->name('editGc');
         Route::get('/editGc', [CompteController::class, 'edit'])->name('editGc');
         Route::post('/updateGc', [CompteController::class, 'update'])->name('updateGc');
         Route::post('/updatecompte', [CompteController::class, 'updatecompte'])->name('updatecompte');
+        Route::post('/updateGrandcompte', [CompteController::class, 'updateGrandcompte'])->name('updateGrandcompte');
         
     });
 

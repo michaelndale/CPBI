@@ -5,56 +5,82 @@
   .hidden-link {
     display: none;
   }
+
   /* Style de la classe difference */
   .difference {
     /* Ajoutez votre style pour différencier visuellement la cellule */
     background-color: #ffcccc;
     /* Par exemple, couleur de fond différente */
   }
-  /* Positionnement du drapeau à côté de la cellule différence */
 </style>
-
 <div class="main-content">
+  <br>
   <div class="content">
-    <div class="card-header p-4 border-bottom border-300 bg-soft">
-      <div class="row g-3 justify-content-between align-items-end">
-        <div class="col-12 col-md">
-          <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Budgétisation <a href=""><i class="ri-refresh-line"></i></a> </h4>
+    <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
+      <div class="card-header p-4 border-bottom border-300 bg-soft">
+        <div class="row g-3 justify-content-between align-items-end">
+          <div class="col-12 col-md">
+            <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Budgétisation </h4>
+          </div>
+          <div class="col col-md-auto">
+            <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>
+            @if($projetdatat->autorisation == 1)
+            <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle"></span> Ajouter le budget </a>
+            @endif
+          </div>
         </div>
-
-        @if($projetdatat->autorisation == 1)
-
-        <div class="col col-md-auto">
-          <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter le budget </a>
-        </div>
-        @endif
-
       </div>
-    </div>
-    <div class="card-body">
-      <div class="card">
-
-        <div class="float-end d-none d-md-inline-block">
-          <div class="table-responsive">
 
 
-            <div id="show_all_rallonge" class="scrollme">
-              <center>
-                <br><br><br><br> @include('layout.partiels.load') <br><br><br><br>
-              </center>
+   
+
+
+
+
+      
+      <div class="card-body p-0"  id="table-container" style="overflow-y: auto;">
+        <div class="card">
+          <div class="float-end d-none d-md-inline-block" style="position: sticky; top: 0; background-color: white; z-index: 1;">
+            <div class="table-responsive">
+              <div id="show_all_rallonge" class="scrollme">
+                <center>
+                  <br><br><br><br> @include('layout.partiels.load') <br><br><br><br>
+                </center>
+              </div>
+              <br><br><br><br>
             </div>
           </div>
         </div>
-        <br> <br> <br>
       </div>
-    </div> <br> <br> <br> <br> <br> <br>
+    </div>
   </div>
+</div>
+</div>
+<br> <br>  <br> <br>
 
 
   @include('rallonge.modale')
 
 
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+
+<script>
+    function adjustTableHeight() {
+        var windowHeight = window.innerHeight;
+        var tableContainer = document.getElementById('table-container');
+        
+        // Ajustez la hauteur du conteneur du tableau en fonction de la hauteur de l'écran, moins une marge (par exemple, 200px)
+        tableContainer.style.height = (windowHeight - 200) + 'px';
+    }
+
+    // Appelez la fonction lorsque la page est chargée
+    window.onload = adjustTableHeight;
+
+    // Appelez la fonction lorsque la fenêtre est redimensionnée
+    window.onresize = adjustTableHeight;
+</script>
 
   <script>
     function toggleUrldocInput(checkbox) {
@@ -232,92 +258,92 @@
 
       // Revision ajax request
       $("#editrevisionform").submit(function(e) {
-      e.preventDefault();
-      const fd = new FormData(this);
-      
-      $("#revisionbtn").html('<i class="fas fa-spinner fa-spin"></i>');
-      document.getElementById("revisionbtn").disabled = true;
+        e.preventDefault();
+        const fd = new FormData(this);
 
-      $.ajax({
-        url: "{{ route('updaterallonge') }}",
-        method: 'post',
-        data: fd,
-        cache: false,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-          if (response.status == 200) {
-            fetchAllrallonge();
-            toastr.success("Très bien! Le budget a été bien modifié.", "Modification");
-            $("#revisionbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            $("#editrevisionform")[0].reset();
-            $("#revisionModal").modal('hide');
-            document.getElementById("revisionbtn").disabled = false;
+        $("#revisionbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+        document.getElementById("revisionbtn").disabled = true;
 
-          }
+        $.ajax({
+          url: "{{ route('updaterallonge') }}",
+          method: 'post',
+          data: fd,
+          cache: false,
+          contentType: false,
+          processData: false,
+          dataType: 'json',
+          success: function(response) {
+            if (response.status == 200) {
+              fetchAllrallonge();
+              toastr.success("Très bien! Le budget a été bien modifié.", "Modification");
+              $("#revisionbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              $("#editrevisionform")[0].reset();
+              $("#revisionModal").modal('hide');
+              document.getElementById("revisionbtn").disabled = false;
 
-          if (response.status == 202) {
-            toastr.error("Échec ! Le budget n'a pas été modifié.", "Erreur");
-            $("#revisionbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            $("#revisionModal").modal('show');
-            document.getElementById("revisionbtn").disabled = false;
-          }
-
-          if (response.status == 205) {
-            toastr.error("Attention ! Vous ne devez pas dépasser le montant du budget global.", "Erreur");
-            $("#revisionbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            $("#revisionModal").modal('show');
-            document.getElementById("revisionbtn").disabled = false;
-          }
-
-        }
-      });
-    });
-
-    $(document).on('click', '.deleterevision', function(e) {
-      e.preventDefault();
-      let id = $(this).attr('id');
-      let csrf = '{{ csrf_token() }}';
-      Swal.fire({
-        title: 'Êtes-vous sûr ?',
-        text: "Une ligne budgétaire est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ? ",
-        showCancelButton: true,
-        confirmButtonColor: 'green',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Oui, Supprimer !'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          $.ajax({
-            url: "{{ route('deleteligne') }}",
-            method: 'delete',
-            data: {
-              id: id,
-              _token: csrf
-            },
-            success: function(response) {
-              if (response.status == 200) {
-                fetchAllrallonge();
-                toastr.success("Ligne budgétaire supprimée avec succès.", "Succès");
-               
-              } else if (response.status == 201) {
-                toastr.error("Vous n'avez pas l'autorisation de supprimer cette ligne budgétaire.", "Erreur");
-              } else {
-                toastr.error("Une erreur est survenue lors de la suppression du ligne budgétaaire.", "Erreur");
-              }
-            },
-            error: function(xhr, status, error) {
-              toastr.error("Une erreur est survenue lors de la suppression de la ligne budgétaire.", "Erreur");
-              console.error(xhr.responseText);
             }
-          });
-        }
+
+            if (response.status == 202) {
+              toastr.error("Échec ! Le budget n'a pas été modifié.", "Erreur");
+              $("#revisionbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              $("#revisionModal").modal('show');
+              document.getElementById("revisionbtn").disabled = false;
+            }
+
+            if (response.status == 205) {
+              toastr.error("Attention ! Vous ne devez pas dépasser le montant du budget global.", "Erreur");
+              $("#revisionbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              $("#revisionModal").modal('show');
+              document.getElementById("revisionbtn").disabled = false;
+            }
+
+          }
+        });
       });
-    });
+
+      $(document).on('click', '.deleterevision', function(e) {
+        e.preventDefault();
+        let id = $(this).attr('id');
+        let csrf = '{{ csrf_token() }}';
+        Swal.fire({
+          title: 'Êtes-vous sûr ?',
+          text: "Une ligne budgétaire est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ? ",
+          showCancelButton: true,
+          confirmButtonColor: 'green',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Oui, Supprimer !'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $.ajax({
+              url: "{{ route('deleteligne') }}",
+              method: 'delete',
+              data: {
+                id: id,
+                _token: csrf
+              },
+              success: function(response) {
+                if (response.status == 200) {
+                  fetchAllrallonge();
+                  toastr.success("Ligne budgétaire supprimée avec succès.", "Succès");
+
+                } else if (response.status == 201) {
+                  toastr.error("Vous n'avez pas l'autorisation de supprimer cette ligne budgétaire.", "Erreur");
+                } else {
+                  toastr.error("Une erreur est survenue lors de la suppression du ligne budgétaaire.", "Erreur");
+                }
+              },
+              error: function(xhr, status, error) {
+                toastr.error("Une erreur est survenue lors de la suppression de la ligne budgétaire.", "Erreur");
+                console.error(xhr.responseText);
+              }
+            });
+          }
+        });
+      });
 
       fetchAllrallonge();
 
-      function fetchAllrallonge(){
+      function fetchAllrallonge() {
         $.ajax({
           url: "{{ route('fetchRallonge') }}",
           method: 'get',
