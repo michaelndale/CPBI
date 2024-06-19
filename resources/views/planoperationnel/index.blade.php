@@ -1,7 +1,7 @@
 @extends('layout/app')
 @section('page-content')
 <div class="main-content">
-  <div class="content">
+  <div class="page-content">
     <div class="card-header p-4 border-bottom border-300 bg-soft">
       <div class="row g-3 justify-content-between align-items-end">
         <div class="col-12 col-md">

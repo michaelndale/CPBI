@@ -1,131 +1,215 @@
-{{-- new vehicule modal --}}
+{{-- new element modal --}}
+<div class="modal fade" id="addDealModal" tabindex="-1" role="dialog" aria-labelledby="addDealModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <form id="addform" autocomplete="off">
+                @method('post')
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalScrollableTitle"> Nouvelle carnet de bord.</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                            <label class="text-1000 fw-bold mb-2">Service </label>
+                            <select class="form-control" id="service" name="service"  required />
+                              <option disabled="true" selected="true">Séléctionner la service</option>
+                              @foreach ($service as $services)
+                                <option value="{{ $services->id }}">{{ $services->title }}</option>
+                              @endforeach
+                            </select>
+                        </div>
 
-<div class="modal fade" id="entretientModal" tabindex="-1" role="dialog" aria-labelledby="entretientModalTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="entretientModalTitle"> Enregistrement des entretiens</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form class="row g-3 mb-6" method="POST" id="addEntretienForm">
-          @method('post')
-          @csrf
-          <div class="row">
-            <div class="col-sm-12 col-lg-12 col-xl-3">
-              <label class="text-1000 fw-bold mb-2" title="Identifiant unique du véhicule."> Vécule</label>
-              <select class="form-select" id="vehiculeid" name="vehiculeid" type="text" required>
-                <option disabled="true" selected="true" value=""> -- Sélectionner le véhicule -- </option>
-                @forelse ($vehicule as $vehicules)
-                <option value="{{$vehicules->matricule }}"> {{ ucfirst($vehicules->matricule) }}</option>
-                @empty
-                <option disabled="true" selected="true">--Aucun Vécule--</option>
-                @endforelse
-              </select>
-            </div>
+                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                            <label class="text-1000 fw-bold mb-2">Véhicule </label>
+                            <select class="form-control" id="vehicule" name="vehicule"  required />
+                              <option disabled="true" selected="true">Séléctionner le véhicule</option>
+                              @foreach ($vehicule as $vehicules)
+                                <option value="{{ $vehicules->matricule }}">{{ $vehicules->matricule }}</option>
+                              @endforeach
+                            </select>
+                        </div>
 
-            <div class="col-sm-12 col-lg-12 col-xl-3">
-              <label class="text-1000 fw-bold mb-2" title="Nature de l'entretien (révision, réparation, changement de pièces, etc.).">Type d'entretien </label>
-              <input class="form-control" id="type_entretien" name="type_entretien" type="text" placeholder="Type d'entretien " required />
-            </div>
+                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                            <label class="text-1000 fw-bold mb-2">Chef de mission </label>
+                            <select class="form-control" id="chefmission" name="chefmission" required />
+                              <option disabled="true" selected="true">Séléctionner le chef de mission</option>
+                              @foreach ($personnel as $personnels)
+                                <option value="{{ $personnels->userid }}">{{ ucfirst($personnels->nom) }} {{ ucfirst($personnels->prenom) }}</option>
+                              @endforeach
+                            </select>
+                        </div>
 
-            <div class="col-sm-12 col-lg-12 col-xl-2">
-              <label class="text-1000 fw-bold mb-2"  title=" Kilométrage du véhicule au moment de l'entretien.">Kilométrage </label>
-              <input class="form-control" id="kilometrage"  name="kilometrage" type="number" placeholder="Kilométrage " required />
-            </div>
+                        <div class="col-sm-6 col-lg-12 col-xl-8">
+                            <label class="text-1000 fw-bold mb-2"> Programme, Projet ou Unité</label>
+                            <select class="form-select" id="projetid" name="projetid"  placeholder="Entrer projet" required>
+                                <option disabled="true" selected="true" value=""> -- Sélectionner l'option -- </option>
+                                @forelse ($projet as $projets)
+                                <option value="{{ $projets->id }}"> {{ ucfirst($projets->title) }}</option>
+                                @empty
+                                <option disabled="true" selected="true">--Aucun projet--</option>
+                                @endforelse
 
-            <div class="col-sm-12 col-lg-12 col-xl-2">
-              <label class="text-1000 fw-bold mb-2" title="Nom e du garage ou de l'atelier qui a effectué l'entretien.">Garage / Fournisseur </label>
-              <select class="form-select" id="fournisseur" name="fournisseur" type="text" required>
-                <option disabled="true" selected="true" value="">Garaga/fournisseur</option>
-                @forelse ($founisseurs as $founisseur)
-                <option value="{{$founisseur->id }}"> {{ ucfirst($founisseur->nom) }}</option>
-                @empty
-                <option disabled="true" selected="true">--Aucun--</option>
-                @endforelse
-              </select>
-            </div>
+                            </select>
+                        </div>
+                        
+                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                            <label class="text-1000 fw-bold mb-2">Ituneraire </label>
+                            <input class="form-control" id="ituneraire" name="ituneraire" type="text" placeholder="Ituneraire" required />
+                        </div>
 
-            <div class="col-sm-12 col-lg-12 col-xl-2">
-              <label class="text-1000 fw-bold mb-2" title="Date à laquelle l'entretien a eu lieu.">Date de l'entretien </label>
-              <input class="form-control" id="datejour" name="datejour" type="date" required />
-            </div>
+                        <div class="col-sm-4 col-lg-12 col-xl-9">
+                            <label class="text-1000 fw-bold mb-2">Object de la mission</label>
+                            <input class="form-control" id="object" name="object" type="text"  placeholder="Object de la mission" required />
+                        </div>
 
-            <div class="col-sm-12 col-lg-12 col-xl-12">
-              <label class="text-1000 fw-bold mb-2" title="Description détaillée des travaux réalisés.">Description des travaux effectués</label>
-              <textarea class="form-control " id="description" name="description" type="text" required></textarea>
-            </div>
-            <BR>
-            <hr>
-            <div class="table-responsive">
-              <table class="table table-striped table-sm fs--1 mb-0" id="tableEstimate">
-                <thead style="background-color:#3CB371; color:white">
-                  <tr>
-                    <th style="width:80px; color:white"><b>Num<span class="text-danger">*</span></b></th>
-                    <th style=" color:white"> <b> Description (Articles ou pieces)<span class="text-danger">*</span></b></th>
-                    <th style="width:150px;  color:white"><b>Unité<span class="text-danger">*</span></b></th>
-                    <th style="width:100px ;  color:white"><b>Q<sup>té <span class="text-danger">*</span></b></sup></th>
-                    <th style="width:130px;  color:white"><b>P.U<span class="text-danger">*</span> </b></th>
-                    <th style="width:150px;  color:white"><b>P.T<span class="text-danger">*</span></b></th>
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Date jour</label>
+                            <input class="form-control" id="datejour" name="datejour" type="date" required />
+                        </div>
 
-                    <th> </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><input style="width:100%" type="number" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="1"></td>
-                    <td><input style="width:100%" type="text" id="libelle" name="libelle[]" class="form-control form-control-sm" required></td>
-                    <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm unit_price" required></td>
-                    <td><input style="width:100%" type="text" id="qty" name="qty[]" class="form-control form-control-sm qty" required></td>
-                    <td><input style="width:100%" type="number" id="pu" name="pu[]" min="0" class="form-control form-control-sm pu" required></td>
-                    <td><input style="width:100%" type="number" min="0" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
 
-                    <td><a href="javascript:void(0)" class="text-primary font-18" title="Add" id="addBtn"><i class="fa fa-plus-circle"></i></a></td>
-                  </tr>
-                  <tr>
-                </tbody>
-              </table>
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2"> Kilometrage parcourus</label>
+                            <input class="form-control" id="kilometrage" name="kilometrage" type="text" placeholder="kilometrage" required />
+                        </div>
 
-              <table class="table table-striped table-sm fs--1 mb-0">
-                <tfoot style="background-color:#c0c0c0">
-                  <tr>
-                    <td colspan="6">Coût total de l'entretien</td>
-                    <td align="right"><span class="total-global">0.00 {{ Session::get('devise') }} </span></td>
-                    <td></td>
-                  </tr>
-                </tfoot>
-              </table>
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Carburant littre</label>
+                            <input class="form-control" id="carburant" name="carburant" type="text" placeholder="Carburant littre" required />
+                        </div>
+                      
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Index de depart</label>
+                            <input class="form-control" id="indexdepart" name="indexdepart" type="text"  placeholder="Index de depart" required />
+                        </div>
 
-              <input type="hidden" id="couttotal" name="couttotal" value="0.00">
-            </div>
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Index de retour</label>
+                            <input class="form-control" id="indexretour" name="indexretour" type="text"  placeholder="Index de retour" required />
+                        </div>
 
-            <hr>
-            <h6> Programmer le prochain entretien </h6>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger waves-effect" data-bs-dismiss="modal"><i class="fa fa-times-circle"></i> Fermer </button>
+                    <button type="submit" id="btnsave" name="btnsave" class="btn btn-primary waves-effect waves-light"> <i class="fa fa-check-circle"></i> Save changes</button>
+                </div>
 
-            <div class="col-sm-12 col-lg-12 col-xl-5">
-              <label class="text-1000 fw-bold mb-2" title="Nature du prochain entretien.">Type d'entretien prévu </label>
-              <input class="form-control" id="type_entretient_prochaine" name="type_entretient_prochaine" type="text" placeholder="Type d'entretien" />
-            </div>
+            </form>
 
-            <div class="col-sm-12 col-lg-12 col-xl-2">
-              <label class="text-1000 fw-bold mb-2" title="Date prévue pour le prochain entretien.">Date prévue </label>
-              <input class="form-control" id="date_entretient_prochaine" name="date_entretient_prochaine" type="date" />
-            </div>
 
-            <div class="col-sm-12 col-lg-12 col-xl-5">
-              <label class="text-1000 fw-bold mb-2" title="DEcription du prochain entretien.">Dentretien prévu </label>
-              <input class="form-control" id="description_entretient_prochaine" name="description_entretient_prochaine" type="text" placeholder="Description" />
-            </div>
-
-          </div>
-      </div>
-      <div class="modal-footer">
-        <button type="submit" class="btn btn-primary" id="addentretientbtn" name="addentretientbtn"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
-      </div>
-      </form>
-    </div>
-  </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
 </div>
+{{-- Fin vehicule --}}
 
 
+{{-- edit element modal --}}
+<div class="modal fade" id="EditDealModal" tabindex="-1" role="dialog" aria-labelledby="EditDealModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <form id="Editform" autocomplete="off">
+                @method('post')
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalScrollableTitle"> Modification du carnet de bord.</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                        <input class="form-control" id="idc" name="idc" type="hidden"  required />
+                            <label class="text-1000 fw-bold mb-2">Service </label>
+                            <select class="form-control" id="cservice" name="cservice"  required />
+                              <option disabled="true" selected="true">Séléctionner la service</option>
+                              @foreach ($service as $services)
+                                <option value="{{ $services->id }}">{{ $services->title }}</option>
+                              @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                            <label class="text-1000 fw-bold mb-2">Véhicule </label>
+                            <select class="form-control" id="cvehicule" name="cvehicule"  required />
+                              <option disabled="true" selected="true">Séléctionner le véhicule</option>
+                              @foreach ($vehicule as $vehicules)
+                                <option value="{{ $vehicules->matricule }}">{{ $vehicules->matricule }}</option>
+                              @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                            <label class="text-1000 fw-bold mb-2">Chef de mission </label>
+                            <select class="form-control" id="cchefmission" name="cchefmission" required />
+                              <option disabled="true" selected="true">Séléctionner le chef de mission</option>
+                              @foreach ($personnel as $personnels)
+                                <option value="{{ $personnels->userid }}">{{ ucfirst($personnels->nom) }} {{ ucfirst($personnels->prenom) }}</option>
+                              @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6 col-lg-12 col-xl-8">
+                            <label class="text-1000 fw-bold mb-2"> Programme, Projet ou Unité</label>
+                            <select class="form-select" id="cprojetid" name="cprojetid"  placeholder="Entrer projet" required>
+                                <option disabled="true" selected="true" value=""> -- Sélectionner l'option -- </option>
+                                @forelse ($projet as $projets)
+                                <option value="{{ $projets->id }}"> {{ ucfirst($projets->title) }}</option>
+                                @empty
+                                <option disabled="true" selected="true">--Aucun projet--</option>
+                                @endforelse
+
+                            </select>
+                        </div>
+                        
+                        <div class="col-sm-4 col-lg-12 col-xl-4">
+                            <label class="text-1000 fw-bold mb-2">Ituneraire </label>
+                            <input class="form-control" id="cituneraire" name="cituneraire" type="text" placeholder="Ituneraire" required />
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 col-xl-9">
+                            <label class="text-1000 fw-bold mb-2">Object de la mission</label>
+                            <input class="form-control" id="cobject" name="cobject" type="text"  placeholder="Object de la mission" required />
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Date jour</label>
+                            <input class="form-control" id="cdatejour" name="cdatejour" type="date" required />
+                        </div>
+
+
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2"> Kilometrage parcourus</label>
+                            <input class="form-control" id="ckilometrage" name="ckilometrage" type="text" placeholder="kilometrage" required />
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Carburant littre</label>
+                            <input class="form-control" id="ccarburant" name="ccarburant" type="text" placeholder="Carburant littre" required />
+                        </div>
+                      
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Index de depart</label>
+                            <input class="form-control" id="cindexdepart" name="cindexdepart" type="text"  placeholder="Index de depart" required />
+                        </div>
+
+                        <div class="col-sm-4 col-lg-12 col-xl-3">
+                            <label class="text-1000 fw-bold mb-2">Index de retour</label>
+                            <input class="form-control" id="cindexretour" name="cindexretour" type="text"  placeholder="Index de retour" required />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger waves-effect" data-bs-dismiss="modal"><i class="fa fa-times-circle"></i> Fermer </button>
+                    <button type="submit" id="cbtnsave" name="cbtnsave" class="btn btn-primary waves-effect waves-light"> <i class="fa fa-check-circle"></i> Save changes</button>
+                </div>
+
+            </form>
+
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 {{-- Fin vehicule --}}

@@ -59,6 +59,16 @@ class DapController extends Controller
   
               $justifier = $datadaps->justifier == 1 ? "checked" : "";
               $nonjustifier = $datadaps->justifier == 0 ? "checked" : "";
+
+              if ($datadaps->signaledap == 1) {
+                $message = ' <div class="spinner-grow text-danger " role="status" style=" 
+                width: 0.5rem; /* Définissez la largeur */
+                height: 0.5rem; /* Définissez la hauteur */">
+                <span class="sr-only">Loading...</span>
+              </div>';
+              } else {
+                $message = ' ';
+              }
   
               $numerofeb = DB::table('febs')
                   ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
@@ -69,7 +79,7 @@ class DapController extends Controller
               $output .= '
                   <tr>
                       <td>
-                          <center>
+                           <center>' . $message . '
                               <div class="btn-group me-2 mb-2 mb-sm-0">
                                   <a data-bs-toggle="dropdown" aria-expanded="false">
                                       <i class="mdi mdi-dots-vertical ms-2"></i> Options
@@ -78,7 +88,8 @@ class DapController extends Controller
                                       <a href="dap/' . $cryptedId . '/view" class="dropdown-item mx-1 voirIcon"><i class="far fa-eye"></i> Voir</a>
                                       <a href="dap/' . $cryptedId . '/edit" class="dropdown-item mx-1 editIcon" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
                                       <a href="dap/' . $datadaps->id . '/generate-pdf-dap" class="dropdown-item mx-1"><i class="fa fa-print"> </i> Générer PDF</a>
-                                      <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datadaps->id . '" href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
+                                      <a class="dropdown-item desactiversignale" id="' .$datadaps->id . '" href="#"><i class="fas fa-random"></i> Désactiver le signal ?</a>
+                                      <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datadaps->id . '" data-numero="' . $datadaps->numerodp . '"href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
                                   </div>
                               </div>
                           </center>
@@ -321,7 +332,6 @@ class DapController extends Controller
     $personnel = DB::table('users')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-      ->orWhere('fonction', '!=', 'Chauffeur')
       ->orderBy('nom', 'ASC')
       ->get();
 
@@ -490,70 +500,52 @@ class DapController extends Controller
 
   public function delete(Request $request)
   {
-    DB::beginTransaction();
+      DB::beginTransaction();
+  
+      try {
 
-    try {
-      // Trouver l'enregistrement dap par ID
-      $dap = dap::find($request->id);
+        $id = $request->id;
+        $emp =   dap::find($id);
 
-      // Vérifier si l'enregistrement dap existe
-      if (!$dap) {
-        return response()->json([
-          'status' => 404,
-          'message' => 'DAP not found',
-        ]);
+         
+          if ($emp && $emp->userid == Auth::id()) {
+          
+
+               // Trouver tous les enregistrements Elementdap associés au dap
+              $elements = Elementdap::where('dapid', $id)->get();
+              // Collecter les ids des Feb à mettre à jour
+              $febIds = $elements->pluck('referencefeb')->toArray();
+              // Mettre à jour les enregistrements Feb en une seule fois
+              Feb::whereIn('id', $febIds)->update(['statut' => 0]);
+  
+              dap::destroy($id);
+               // Trouver tous les enregistrements Elementdap associés au dap
+              Elementdap::where('dapid', $id)->delete();
+              Elementdjas::where('idddap', $id)->delete();
+
+              Dja::where('numerodap',$id)->delete();
+
+              DB::commit();
+  
+              return response()->json([
+                  'status' => 200,
+              ]);
+          } else {
+              DB::rollBack();
+              return response()->json([
+                  'status' => 205,
+                  'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le DAP. Veuillez contacter le créateur  pour procéder à la suppression.'
+              ]);
+          }
+      } catch (\Exception $e) {
+          DB::rollBack();
+          return response()->json([
+              'status' => 500,
+              'message' => 'Erreur lors de la suppression du DAP.',
+              'error' => $e->getMessage(), // Message d'erreur de l'exception
+              'exception' => (string) $e // Détails de l'exception convertis en chaîne
+          ]);
       }
-
-      // Vérifier si l'utilisateur est autorisé à supprimer cet enregistrement
-      if ($dap->userid != Auth::id()) {
-        return response()->json([
-          'status' => 403,
-          'message' => 'Unauthorized action',
-        ]);
-      }
-
-      // Créer un nouvel enregistrement dans l'historique
-      $historique = new Historique();
-      $historique->fonction = "Suppression";
-      $historique->operation = "Suppression Dap et djas";
-      $historique->userid = Auth::id();
-      $historique->link = 'dap';
-      $historique->save();
-
-      // Trouver tous les enregistrements Elementdap associés au dap
-      $elements = Elementdap::where('dapid', $request->id)->get();
-
-      // Collecter les ids des Feb à mettre à jour
-      $febIds = $elements->pluck('referencefeb')->toArray();
-
-      // Mettre à jour les enregistrements Feb en une seule fois
-      Feb::whereIn('id', $febIds)->update(['statut' => 0]);
-
-      // Supprimer les enregistrements Elementdap
-      Elementdap::where('dapid', $request->id)->delete();
-
-      // Supprimer les enregistrements Elementdjas
-
-      Elementdjas::where('idddap', $request->id)->delete();
-
-      Dja::where('numerodap', $request->id)->delete();
-
-      // Supprimer l'enregistrement dap
-      $dap->delete();
-
-      DB::commit();
-
-      return response()->json([
-        'status' => 200,
-      ]);
-    } catch (Exception $e) {
-      DB::rollBack();
-
-      return response()->json([
-        'status' => 500,
-        'message' => 'Internal Server Error',
-      ]);
-    }
   }
 
   public function show($idd)
@@ -982,529 +974,591 @@ class DapController extends Controller
   }
 
   public function getFebDetails(Request $request)
-{
+  {
+      
+    $id = $request->input('id');
+      $dataFeb = $check = Feb::findOrFail($id);
+
+      // Récupérer les ID et les détails associés
+      $idl = $check->sous_ligne_bugdetaire;
+      $id_gl = $check->ligne_bugdetaire;
+      $idfeb = $check->id;
+      $numero_classe_feb =  $check->numerofeb;
+
+      $datElement = Elementfeb::where('febid', $idfeb)->get();
+
+      $IDB = $check->projetid;
+      $project = Project::findOrFail($IDB);
+      $budget = $project->budget;
+
+      $somme_ligne_principale = DB::table('rallongebudgets')
+          ->where('compteid', $id_gl)
+          ->sum('budgetactuel');
+
+      $onebeneficaire = Beneficaire::find($check->beneficiaire);
+
+      $sommeallfeb = DB::table('elementfebs')
+          ->where('numero', '<=', $numero_classe_feb)
+          ->where('projetids', $IDB)
+          ->sum('montant');
+
+      $dataLigne = Compte::find($idl);
+
     
-  $id = $request->input('id');
-    $dataFeb = $check = Feb::findOrFail($id);
 
-    // Récupérer les ID et les détails associés
-    $idl = $check->sous_ligne_bugdetaire;
-    $id_gl = $check->ligne_bugdetaire;
-    $idfeb = $check->id;
-    $numero_classe_feb =  $check->numerofeb;
+          $sommelign = DB::table('elementfebs')
+          ->where('grandligne', $id_gl)
+          ->where('numero', '<=', $numero_classe_feb)
+          ->where('projetids', $IDB)
+          ->sum('montant');
 
-    $datElement = Elementfeb::where('febid', $idfeb)->get();
+      $sommelignpourcentage = round(($sommelign * 100) / $somme_ligne_principale, 2);
 
-    $IDB = $check->projetid;
-    $project = Project::findOrFail($IDB);
-    $budget = $project->budget;
+      $sommefeb = DB::table('elementfebs')
+          ->where('febid', $idfeb)
+          ->where('projetids', $IDB)
+          ->sum('montant');
 
-    $somme_ligne_principale = DB::table('rallongebudgets')
-        ->where('compteid', $id_gl)
-        ->sum('budgetactuel');
+      $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
 
-    $onebeneficaire = Beneficaire::find($check->beneficiaire);
+      // Récupérer les informations sur l'utilisateur
+      $createur = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'users.id as useridp')
+          ->where('users.id', $check->userid)
+          ->first();
 
-    $sommeallfeb = DB::table('elementfebs')
-        ->where('numero', '<=', $numero_classe_feb)
-        ->where('projetids', $IDB)
-        ->sum('montant');
+      $etablienom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
+          ->where('users.id', $check->acce)
+          ->first();
 
-    $dataLigne = Compte::find($idl);
+      $comptable_nom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+          ->where('users.id', $check->comptable)
+          ->first();
 
-   
+      $checcomposant_nom = DB::table('users')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+          ->where('users.id', $check->chefcomposante)
+          ->first();
 
-        $sommelign = DB::table('elementfebs')
-        ->where('grandligne', $id_gl)
-        ->where('numero', '<=', $numero_classe_feb)
-        ->where('projetids', $IDB)
-        ->sum('montant');
+      // Initialiser la variable de sortie
+      $output = '';
 
-    $sommelignpourcentage = round(($sommelign * 100) / $somme_ligne_principale, 2);
+      if ($dataFeb) {
+          $datElementFeb = Elementfeb::where('febid', $id)->get();
+          $n = 1;
+          $sommefeb = 0;
 
-    $sommefeb = DB::table('elementfebs')
-        ->where('febid', $idfeb)
-        ->where('projetids', $IDB)
-        ->sum('montant');
+          // Créer l'en-tête du tableau
+          $output .= '
+              <div class="row">
+                  <h5><center>FICHE D’EXPRESSION DES BESOINS (FEB) N° ' . $dataFeb->numerofeb . '
+                  <a href="' . route('generate-pdf-feb', $dataFeb->id) . '" class="btn btn-primary waves-light waves-effect" title="Générer PDF">
+                  <i class="fa fa-print"></i> 
+                </a></center>
+                  </h5>
+                  <div class="col-sm-12">
+                      <table class="table table-bordered table-sm fs--1 mb-0">
+                          <tr>
+                              <td>Composante/ Projet/Section: ' . ucfirst($project->title) . '</td>
+                              <td>Période: ' . $dataFeb->periode . '</td>
+                          </tr>
+                          <tr>
+                              <td style="width:50%">Activité: ' . $dataFeb->descriptionf . '</td>
+                              <td>Date FEB: ' . date('d-m-Y', strtotime($dataFeb->datefeb)) . '</td>
+                          </tr>
+                          <tr>
+                              <td>Code: ' . $dataLigne->numero . ' Ligne budgétaire: ' . $dataLigne->libelle . '</td>
+                              <td>';
 
-    $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
+          // Créer la section des cases à cocher avec les descriptions dans les titres
+          $output .= '<label title="Bon de commande">';
 
-    // Récupérer les informations sur l'utilisateur
-    $createur = DB::table('users')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->select('personnels.nom', 'personnels.prenom', 'users.id as useridp')
-        ->where('users.id', $check->userid)
-        ->first();
-
-    $etablienom = DB::table('users')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
-        ->where('users.id', $check->acce)
-        ->first();
-
-    $comptable_nom = DB::table('users')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
-        ->where('users.id', $check->comptable)
-        ->first();
-
-    $checcomposant_nom = DB::table('users')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
-        ->where('users.id', $check->chefcomposante)
-        ->first();
-
-    // Initialiser la variable de sortie
-    $output = '';
-
-    if ($dataFeb) {
-        $datElementFeb = Elementfeb::where('febid', $id)->get();
-        $n = 1;
-        $sommefeb = 0;
-
-        // Créer l'en-tête du tableau
-        $output .= '
-            <div class="row">
-                <h5><center>FICHE D’EXPRESSION DES BESOINS (FEB) N° ' . $dataFeb->numerofeb . '
-                <a href="' . route('generate-pdf-feb', $dataFeb->id) . '" class="btn btn-primary waves-light waves-effect" title="Générer PDF">
-                <i class="fa fa-print"></i> 
-              </a></center>
-                </h5>
-                <div class="col-sm-12">
-                    <table class="table table-bordered table-sm fs--1 mb-0">
-                        <tr>
-                            <td>Composante/ Projet/Section: ' . ucfirst($project->title) . '</td>
-                            <td>Période: ' . $dataFeb->periode . '</td>
-                        </tr>
-                        <tr>
-                            <td style="width:50%">Activité: ' . $dataFeb->descriptionf . '</td>
-                            <td>Date FEB: ' . date('d-m-Y', strtotime($dataFeb->datefeb)) . '</td>
-                        </tr>
-                        <tr>
-                            <td>Code: ' . $dataLigne->numero . ' Ligne budgétaire: ' . $dataLigne->libelle . '</td>
-                            <td>';
-
-        // Créer la section des cases à cocher avec les descriptions dans les titres
-        $output .= '<label title="Bon de commande">';
-
-        $bc_ur = $dataFeb->url_bon_commande;
-        $imagePath_bc = public_path($bc_ur);
+          $bc_ur = $dataFeb->url_bon_commande;
+          $imagePath_bc = public_path($bc_ur);
+          
+          $output .= '<label title="Bon de commande">';
+          if (file_exists($imagePath_bc)) {
+              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($bc_ur) . '"> BC:</a>';
+          } else {
+              $output .= 'BC ';
+          }
+          $output .= '</label>';
+          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->bc == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+          
+          $facture_ur = $dataFeb->url_facture;
+          $imagePath_facture = public_path($facture_ur);
+          
+          $output .= '<label title="Facture">';
+          if (file_exists($imagePath_facture)) {
+              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($facture_ur) . '"> Facture:</a>';
+          } else {
+              $output .= 'Facture ';
+          }
+          $output .= '</label>';
+          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->facture == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+          
+          $om_ur = $dataFeb->url_ordre_mission;
+          $imagePath_om = public_path($om_ur);
+          
+          $output .= '<label title="Ordre de mission">';
+          if (file_exists($imagePath_om)) {
+              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($om_ur) . '"> O.M:</a>';
+          } else {
+              $output .= 'O.M ';
+          }
+          $output .= '</label>';
+          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->om == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+          
+          $pva_ur = $dataFeb->url_pva;
+          $imagePath_pva = public_path($pva_ur);
+          
+          $output .= '<label title="Procès-verbal d\'analyse">';
+          if (file_exists($imagePath_pva)) {
+              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($pva_ur) . '">  P.V.A:</a>';
+          } else {
+              $output .= 'P.V.A ';
+          }
+          $output .= '</label>';
+          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->nec == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+          
+          $fpdevis_ur = $dataFeb->url_fpdevis;
+          $imagePath_fpdevis = public_path($fpdevis_ur);
+          
+          $output .= '<label title="Dévis/Liste">';
+          if (file_exists($imagePath_fpdevis)) {
+              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($fpdevis_ur) . '"> Dévis/Liste:</a>';
+          } else {
+              $output .= 'Dévis/Liste ';
+          }
+          $output .= '</label>';
         
-        $output .= '<label title="Bon de commande">';
-        if (file_exists($imagePath_bc)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($bc_ur) . '"> BC:</a>';
+          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->fpdevis == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+          
+
+          $fp_ur = $dataFeb->url_fp;
+          $imagePath_fp = public_path($fp_ur);
+          
+          $output .= '<label title="Facture proformat">';
+          if (file_exists($imagePath_fp)) {
+              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($fp_ur) . '"> FP :</a>';
+          } else {
+              $output .= 'FP:';
+          }
+          $output .= '</label>';
+        
+          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->fp == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+          
+
+
+          $rm_ur = $dataFeb->url_rm;
+          $imagePath_rm = public_path($rm_ur);
+          
+          $output .= '<label title="Rapport de mission">';
+          if (file_exists($imagePath_rm)) {
+              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($rm_ur) . '"> R.M:</a>';
+          } else {
+              $output .= 'R.M ';
+          }
+          $output .= '</label>';
+          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->rm == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+          
+          $tdr_ur = $dataFeb->url_tdr;
+          $imagePath_tdr = public_path($tdr_ur);
+          
+          $output .= '<label title="Termes de Référence">';
+          if (file_exists($imagePath_tdr)) {
+              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($tdr_ur) . '"> T.D.R:</a>';
+          } else {
+              $output .= 'T.D.R ';
+          }
+          $output .= '</label>';
+          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->tdr == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+          
+          $bv_ur = $dataFeb->url_bv;
+          $imagePath_bv = public_path($bv_ur);
+          
+          $output .= '<label title="Bordereau de versement">';
+          if (file_exists($imagePath_bv)) {
+              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($bv_ur) . '"> B.V:</a>';
+          } else {
+              $output .= 'B.V ';
+          }
+          $output .= '</label>';
+          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->bv == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+          
+
+
+          $recu_ur = $dataFeb->url_recu;
+          $imagePath_recu = public_path($recu_ur);
+          
+          $output .= '<label title="Reçu">';
+          if (file_exists($imagePath_recu)) {
+              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($recu_ur) . '"> Reçu:</a>';
+          } else {
+              $output .= 'Reçu ';
+          }
+          $output .= '</label>';
+          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->recu == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+          
+          $ar_ur = $dataFeb->url_ar;
+          $imagePath_ar = public_path($ar_ur);
+          
+          $output .= '<label title="Accusé de réception">';
+          if (file_exists($imagePath_ar)) {
+              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($ar_ur) . '"> A.R:</a>';
+          } else {
+              $output .= 'A.R ';
+          }
+          $output .= '</label>';
+          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->ar == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+          
+          $be_ur = $dataFeb->url_be;
+          $imagePath_be = public_path($be_ur);
+          
+          $output .= '<label title="Bordereau d\'expédition">';
+          if (file_exists($imagePath_be)) {
+            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($be_ur) . '"> B.E:</a>';
         } else {
-            $output .= 'BC ';
+            $output .= 'B.E ';
         }
         $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->bc == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-        
-        $facture_ur = $dataFeb->url_facture;
-        $imagePath_facture = public_path($facture_ur);
-        
-        $output .= '<label title="Facture">';
-        if (file_exists($imagePath_facture)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($facture_ur) . '"> Facture:</a>';
-        } else {
-            $output .= 'Facture ';
-        }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->facture == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-        
-        $om_ur = $dataFeb->url_ordre_mission;
-        $imagePath_om = public_path($om_ur);
-        
-        $output .= '<label title="Ordre de mission">';
-        if (file_exists($imagePath_om)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($om_ur) . '"> O.M:</a>';
-        } else {
-            $output .= 'O.M ';
-        }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->om == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-        
-        $pva_ur = $dataFeb->url_pva;
-        $imagePath_pva = public_path($pva_ur);
-        
-        $output .= '<label title="Procès-verbal d\'analyse">';
-        if (file_exists($imagePath_pva)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($pva_ur) . '">  P.V.A:</a>';
-        } else {
-            $output .= 'P.V.A ';
-        }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->nec == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-        
-        $fpdevis_ur = $dataFeb->url_fpdevis;
-        $imagePath_fpdevis = public_path($fpdevis_ur);
-        
-        $output .= '<label title="Dévis/Liste">';
-        if (file_exists($imagePath_fpdevis)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($fpdevis_ur) . '"> Dévis/Liste:</a>';
-        } else {
-            $output .= 'Dévis/Liste ';
-        }
-        $output .= '</label>';
-       
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->fpdevis == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-        
+        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->be == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
 
-        $fp_ur = $dataFeb->url_fp;
-        $imagePath_fp = public_path($fp_ur);
-        
-        $output .= '<label title="Facture proformat">';
-        if (file_exists($imagePath_fp)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($fp_ur) . '"> FP :</a>';
+        // Vérification pour Appel à la participation à la construction au CFK
+        $apc_ur = $dataFeb->url_appel_cfk;
+        $imagePath_apc = public_path($apc_ur);
+
+        $output .= '<label title="Appel à la participation à la construction au CFK">';
+        if (file_exists($imagePath_apc)) {
+            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($apc_ur) . '"> A.P.C:</a>';
         } else {
-            $output .= 'FP:';
+            $output .= 'A.P.C ';
         }
         $output .= '</label>';
-       
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->fp == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-        
+        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->apc == 1 ? 'checked' : '') . ' />';
+
+          
+        $ra_ur = $dataFeb->url_ra;
+        $imagePath_ra = public_path($ra_ur);
+
+        $output .= '<label title="Rapport d\'activites">';
+        if (file_exists($imagePath_ra)) {
+            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($ra_ur) . '"> R.A:</a>';
+        } else {
+            $output .= 'R.A';
+        }
+        $output .= '</label>';
+        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->ra == 1 ? 'checked' : '') . ' />';
+
+          
+
+        $autres_ur = $dataFeb->url_autres;
+        $imagePath_autres = public_path($autres_ur);
+
+        $output .= '<label title="Autres">';
+        if (file_exists($imagePath_autres)) {
+            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($autres_ur) . '"> Autres :</a>';
+        } else {
+            $output .= 'Autres';
+        }
+        $output .= '</label>';
+        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->autres== 1 ? 'checked' : '') . ' />';
+
+          
 
 
-        $rm_ur = $dataFeb->url_rm;
-        $imagePath_rm = public_path($rm_ur);
-        
-        $output .= '<label title="Rapport de mission">';
-        if (file_exists($imagePath_rm)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($rm_ur) . '"> R.M:</a>';
-        } else {
-            $output .= 'R.M ';
-        }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->rm == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-        
-        $tdr_ur = $dataFeb->url_tdr;
-        $imagePath_tdr = public_path($tdr_ur);
-        
-        $output .= '<label title="Termes de Référence">';
-        if (file_exists($imagePath_tdr)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($tdr_ur) . '"> T.D.R:</a>';
-        } else {
-            $output .= 'T.D.R ';
-        }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->tdr == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-        
-        $bv_ur = $dataFeb->url_bv;
-        $imagePath_bv = public_path($bv_ur);
-        
-        $output .= '<label title="Bordereau de versement">';
-        if (file_exists($imagePath_bv)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($bv_ur) . '"> B.V:</a>';
-        } else {
-            $output .= 'B.V ';
-        }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->bv == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-        
 
+          $output .= '</td>
+                          </tr>
+                          <tr>
+                              <td>Taux d’exécution globale de la ligne et sous ligne budgétaire: ' . $sommelignpourcentage . ' %</td>
+                              <td>Taux d’exécution globale sur le projet: ' . $POURCENTAGE_GLOGALE . ' %</td>
+                          </tr>
+                          <tr>
+                              <td>Créé par: ' . $createur->nom . ' ' . $createur->prenom . '</td>
+                              <td>Bénéficiaire: ' . ($onebeneficaire->libelle ?? '') . '</td>
+                          </tr>
+                      </table>
+                  </div>
+              </div>';
 
-        $recu_ur = $dataFeb->url_recu;
-        $imagePath_recu = public_path($recu_ur);
-        
-        $output .= '<label title="Reçu">';
-        if (file_exists($imagePath_recu)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($recu_ur) . '"> Reçu:</a>';
-        } else {
-            $output .= 'Reçu ';
-        }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->recu == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-        
-        $ar_ur = $dataFeb->url_ar;
-        $imagePath_ar = public_path($ar_ur);
-        
-        $output .= '<label title="Accusé de réception">';
-        if (file_exists($imagePath_ar)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($ar_ur) . '"> A.R:</a>';
-        } else {
-            $output .= 'A.R ';
-        }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->ar == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-        
-        $be_ur = $dataFeb->url_be;
-        $imagePath_be = public_path($be_ur);
-        
-        $output .= '<label title="Bordereau d\'expédition">';
-        if (file_exists($imagePath_be)) {
-          $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($be_ur) . '"> B.E:</a>';
+          // Ajouter les éléments de la FEB
+          $output .= '
+              <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+                  <thead style="background-color:#3CB371; color:white">
+                      <tr>
+                          <th style="color:white"><b>N<sup>o</sup></b></th>
+                          <th style="color:white"><b>Désignation des activités de la ligne</b></th>
+                          <th style="color:white"><b>Description</b></th>
+                          <th style="color:white"><b><center>Unité</center></b></th>
+                          <th style="color:white"><b><center>Quantité</center></b></th>
+                          <th style="color:white"><color:white"><b><center>Fréquence</center></b></th>
+                          <th style="color:white"><b><center>Prix Unitaire</center></b></th>
+                          <th style="color:white"><b><center>Prix Total</center></b></th>
+                      </tr>
+                  </thead>
+                  <tbody>';
+
+          foreach ($datElementFeb as $data) {
+              $activite = DB::table('activities')->where('id', $data->libellee)->first();
+              $titreActivite = $activite ? ucfirst($activite->titre) : '';
+
+              $sommefeb += $data->montant;
+
+              $output .= '
+                  <tr>
+                      <td style="width:3%">' . $n . '</td>
+                      <td style="width:40%">' . $titreActivite . '</td>
+                      <td style="width:10%">' . ucfirst($data->libelle_description) . '</td>
+                      <td style="width:10%" align="center">' . $data->unite . '</td>
+                      <td style="width:8%" align="center">' . $data->quantite . '</td>
+                      <td style="width:8%" align="center">' . $data->frequence . '</td>
+                      <td style="width:10%" align="center">' . number_format($data->pu, 0, ',', ' ') . '</td>
+                      <td style="width:20%" align="center">' . number_format($data->montant, 0, ',', ' ') . '</td>
+                  </tr>';
+              $n++;
+          }
+
+          // Ajouter la ligne de total
+          $output .= '
+                  <tr>
+                      <td colspan="7"><b>Total général</b></td>
+                      <td align="center"><b>' . number_format($sommefeb, 0, ',', ' ') . '</b></td>
+                  </tr>
+                  </tbody>
+              </table>';
+
+          // Ajouter la section de signature
+          $output .= '
+              <table style="width:100%; margin:auto">
+                  <tr>
+                      <td>
+                          <center>
+                              <u>Etablie par (AC/CE/CS)</u> :
+                              <br>
+                              ' . ucfirst($etablienom->nom) . ' ' . ucfirst($etablienom->prenom) . '
+                              <br>';
+
+          if ($dataFeb->acce_signe == 1) {
+              $output .= '
+                              <br>
+                              <img src="' . asset($etablienom->signature) . '" width="200px" />';
+          } else {
+              $output .= '<p>Signature non disponible</p>';
+          }
+
+          $output .= '
+                          </center>
+                      </td>
+                      <td>
+                          <center>
+                              <u>Vérifiée par (Comptable)</u> :
+                              <br>
+                              ' . $comptable_nom->nom . ' ' . $comptable_nom->prenom . '
+                              <br>';
+
+          if ($dataFeb->comptable_signe == 1) {
+              $output .= '
+                              <br>
+                              <img src="' . asset($comptable_nom->signature) . '" width="200px" />';
+          } else {
+              $output .= '<p>Signature non disponible</p>';
+          }
+
+          $output .= '
+                          </center>
+                      </td>
+                      <td>
+                          <center>
+                              <u>Approuvée par (Chef de Composante/Projet/Section)</u> :
+                              <br>
+                              ' . $checcomposant_nom->nom . ' ' . $checcomposant_nom->prenom . '
+                              <br>';
+
+          if ($dataFeb->chef_signe == 1) {
+              $output .= '
+                              <br>
+                              <img src="' . asset($checcomposant_nom->signature) . '" width="200px" />';
+          } else {
+              $output .= '<p>Signature non disponible</p>';
+          }
+
+          $output .= '
+                          </center>
+                      </td>
+                  </tr>
+              </table>';
       } else {
-          $output .= 'B.E ';
+          $output .= '
+              <tr>
+                  <td colspan="8">
+                      <h5 class="text-center text-secondary my-5">
+                          <center>Ceci est vide !</center>
+                      </h5>
+                  </td>
+              </tr>';
       }
-      $output .= '</label>';
-      $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->be == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
 
-      // Vérification pour Appel à la participation à la construction au CFK
-      $apc_ur = $dataFeb->url_appel_cfk;
-      $imagePath_apc = public_path($apc_ur);
+      // Retourne la réponse JSON contenant le code HTML généré
+      return response()->json($output);
+  }
 
-      $output .= '<label title="Appel à la participation à la construction au CFK">';
-      if (file_exists($imagePath_apc)) {
-          $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($apc_ur) . '"> A.P.C:</a>';
-      } else {
-          $output .= 'A.P.C ';
-      }
-      $output .= '</label>';
-      $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->apc == 1 ? 'checked' : '') . ' />';
+  public function fetchAllsignaledap($dapid)
+  {
+      $signale = Sigaledap::where('dapid', $dapid)
+          ->orderBy('id', 'ASC')
+          ->join('users', 'sigaledaps.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('sigaledaps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'users.avatar as avatar')
+          ->get();
 
-        
-      $ra_ur = $dataFeb->url_ra;
-      $imagePath_ra = public_path($ra_ur);
+      $output = '';
 
-      $output .= '<label title="Rapport d\'activites">';
-      if (file_exists($imagePath_ra)) {
-          $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($ra_ur) . '"> R.A:</a>';
-      } else {
-          $output .= 'R.A';
-      }
-      $output .= '</label>';
-      $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->ra == 1 ? 'checked' : '') . ' />';
-
-        
-
-      $autres_ur = $dataFeb->url_autres;
-      $imagePath_autres = public_path($autres_ur);
-
-      $output .= '<label title="Autres">';
-      if (file_exists($imagePath_autres)) {
-          $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($autres_ur) . '"> Autres :</a>';
-      } else {
-          $output .= 'Autres';
-      }
-      $output .= '</label>';
-      $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->autres== 1 ? 'checked' : '') . ' />';
-
-        
-
-
-
-        $output .= '</td>
-                        </tr>
-                        <tr>
-                            <td>Taux d’exécution globale de la ligne et sous ligne budgétaire: ' . $sommelignpourcentage . ' %</td>
-                            <td>Taux d’exécution globale sur le projet: ' . $POURCENTAGE_GLOGALE . ' %</td>
-                        </tr>
-                        <tr>
-                            <td>Créé par: ' . $createur->nom . ' ' . $createur->prenom . '</td>
-                            <td>Bénéficiaire: ' . ($onebeneficaire->libelle ?? '') . '</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>';
-
-        // Ajouter les éléments de la FEB
-        $output .= '
-            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
-                <thead style="background-color:#3CB371; color:white">
-                    <tr>
-                        <th style="color:white"><b>N<sup>o</sup></b></th>
-                        <th style="color:white"><b>Désignation des activités de la ligne</b></th>
-                        <th style="color:white"><b>Description</b></th>
-                        <th style="color:white"><b><center>Unité</center></b></th>
-                        <th style="color:white"><b><center>Quantité</center></b></th>
-                        <th style="color:white"><color:white"><b><center>Fréquence</center></b></th>
-                        <th style="color:white"><b><center>Prix Unitaire</center></b></th>
-                        <th style="color:white"><b><center>Prix Total</center></b></th>
-                    </tr>
-                </thead>
-                <tbody>';
-
-        foreach ($datElementFeb as $data) {
-            $activite = DB::table('activities')->where('id', $data->libellee)->first();
-            $titreActivite = $activite ? ucfirst($activite->titre) : '';
-
-            $sommefeb += $data->montant;
-
-            $output .= '
-                <tr>
-                    <td style="width:3%">' . $n . '</td>
-                    <td style="width:40%">' . $titreActivite . '</td>
-                    <td style="width:10%">' . ucfirst($data->libelle_description) . '</td>
-                    <td style="width:10%" align="center">' . $data->unite . '</td>
-                    <td style="width:8%" align="center">' . $data->quantite . '</td>
-                    <td style="width:8%" align="center">' . $data->frequence . '</td>
-                    <td style="width:10%" align="center">' . number_format($data->pu, 0, ',', ' ') . '</td>
-                    <td style="width:20%" align="center">' . number_format($data->montant, 0, ',', ' ') . '</td>
-                </tr>';
-            $n++;
-        }
-
-        // Ajouter la ligne de total
-        $output .= '
-                <tr>
-                    <td colspan="7"><b>Total général</b></td>
-                    <td align="center"><b>' . number_format($sommefeb, 0, ',', ' ') . '</b></td>
-                </tr>
-                </tbody>
-            </table>';
-
-        // Ajouter la section de signature
-        $output .= '
-            <table style="width:100%; margin:auto">
-                <tr>
-                    <td>
-                        <center>
-                            <u>Etablie par (AC/CE/CS)</u> :
-                            <br>
-                            ' . ucfirst($etablienom->nom) . ' ' . ucfirst($etablienom->prenom) . '
-                            <br>';
-
-        if ($dataFeb->acce_signe == 1) {
-            $output .= '
-                            <br>
-                            <img src="' . asset($etablienom->signature) . '" width="200px" />';
-        } else {
-            $output .= '<p>Signature non disponible</p>';
-        }
-
-        $output .= '
-                        </center>
-                    </td>
-                    <td>
-                        <center>
-                            <u>Vérifiée par (Comptable)</u> :
-                            <br>
-                            ' . $comptable_nom->nom . ' ' . $comptable_nom->prenom . '
-                            <br>';
-
-        if ($dataFeb->comptable_signe == 1) {
-            $output .= '
-                            <br>
-                            <img src="' . asset($comptable_nom->signature) . '" width="200px" />';
-        } else {
-            $output .= '<p>Signature non disponible</p>';
-        }
-
-        $output .= '
-                        </center>
-                    </td>
-                    <td>
-                        <center>
-                            <u>Approuvée par (Chef de Composante/Projet/Section)</u> :
-                            <br>
-                            ' . $checcomposant_nom->nom . ' ' . $checcomposant_nom->prenom . '
-                            <br>';
-
-        if ($dataFeb->chef_signe == 1) {
-            $output .= '
-                            <br>
-                            <img src="' . asset($checcomposant_nom->signature) . '" width="200px" />';
-        } else {
-            $output .= '<p>Signature non disponible</p>';
-        }
-
-        $output .= '
-                        </center>
-                    </td>
-                </tr>
-            </table>';
-    } else {
-        $output .= '
-            <tr>
-                <td colspan="8">
-                    <h5 class="text-center text-secondary my-5">
-                        <center>Ceci est vide !</center>
-                    </h5>
-                </td>
-            </tr>';
-    }
-
-    // Retourne la réponse JSON contenant le code HTML généré
-    return response()->json($output);
-}
-
-
- 
-public function fetchAllsignaledap($dapid)
-{
-    $signale = Sigaledap::where('dapid', $dapid)
-        ->orderBy('id', 'ASC')
-        ->join('users', 'sigaledaps.userid', '=', 'users.id')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->select('sigaledaps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'users.avatar as avatar')
-        ->get();
-
-    $output = '';
-
-    if ($signale->count() > 0) {
-        foreach ($signale as $rs) {
-            if ($rs->userid == $rs->notisid) {
-                $output .= '
-                    <li class="right" >
-                        <div class="conversation-list">
-                            <div class="chat-avatar">
-                                <img src="' . asset($rs->avatar) . '" alt="avatar">
-                            </div>
-                            <div class="ctext-wrap">
-                                <div class="conversation-name">' . ucfirst($rs->user_nom) . ' ' . ucfirst($rs->user_prenom) . '</div>
-                                <div class="ctext-wrap-content">
-                                    <p class="mb-0">' . ucfirst($rs->message) . '</p>
-                                </div>
-                                <p class="chat-time mb-0"><i class="mdi mdi-clock-outline align-middle me-1"></i> ' .date(' H:i:s d-m-Y', strtotime($rs->created_at)) . '</p>
-                            </div>
-                        </div>
-                    </li>';
-            } else {
-                $output .= '
-                    <li data-simplebar>
-                        <div class="conversation-list">
-                            <div class="chat-avatar">
-                                <img src="' . asset($rs->avatar) . '" alt="avatar">
-                            </div>
-                            <div class="ctext-wrap">
-                                <div class="conversation-name">' . ucfirst($rs->user_nom) . ' ' . ucfirst($rs->user_prenom) . '</div>
-                                <div class="ctext-wrap-content">
-                                    <p class="mb-0">' . ucfirst($rs->message) . '</p>
-                                </div>
-                                <p class="chat-time mb-0"><i class="mdi mdi-clock-outline me-1"></i> ' .date(' H:i:s d-m-Y', strtotime($rs->created_at)) . '</p>
-                            </div>
-                        </div>
-                    </li>';
+      if ($signale->count() > 0) {
+          foreach ($signale as $rs) {
+            if ($rs->userid ==  Auth::id()) {
+              $supprimerMOi =  '<a class="dropdown-item text-danger mx-1 deleteMessageSend" id="' . $rs->id . '" href="#" ><i class="far fa-trash-alt"></i> Supprimer</a>';
+            }else{
+              $supprimertoi =  '<a class="dropdown-item text-danger mx-1 deleteMessageSend" id="' . $rs->id . '" href="#" ><i class="far fa-trash-alt"></i> Supprimer</a>';
             }
-        }
-    } else {
-        $output = '<li>No data available</li>';
-    }
+              if ($rs->userid == $rs->notisid) {
+                  $output .= '
+                      <li class="right" >
+                          <div class="conversation-list">
+                              <div class="chat-avatar">
+                                  <img src="' . asset($rs->avatar) . '" alt="avatar">
+                              </div>
+                              <div class="ctext-wrap">
+                                  <div class="conversation-name">' . ucfirst($rs->user_nom) . ' ' . ucfirst($rs->user_prenom) . '</div>
+                                  
+                                  <div class="ctext-wrap-content">
+                                  
+                                      <p class="mb-0">' . ucfirst($rs->message) . '</p>
+                                  </div>
+                                  <p class="chat-time mb-0">
+                                  <i class="mdi mdi-clock-outline align-middle me-1"></i> ' .date(' H:i:s d-m-Y', strtotime($rs->created_at)) . ' 
+                                    '.@$supprimerMOi.'
+                                  </p>
+                              </div>
+                          </div>
+                      </li>';
+              } else {
+                  $output .= '
+                      <li data-simplebar>
+                          <div class="conversation-list">
+                              <div class="chat-avatar">
+                                  <img src="' . asset($rs->avatar) . '" alt="avatar">
+                              </div>
+                              <div class="ctext-wrap">
+                                  <div class="conversation-name">' . ucfirst($rs->user_nom) . ' ' . ucfirst($rs->user_prenom) . '</div>
+                                  <div class="ctext-wrap-content">
+                                      <p class="mb-0">' . ucfirst($rs->message) . '
+                                      </p>
+                                  </div>
+                                  <p class="chat-time mb-0"><i class="mdi mdi-clock-outline me-1"></i> ' .date(' H:i:s d-m-Y', strtotime($rs->created_at)) . '
+                                  '.@$supprimertoi.'
+                                  </p>
+                              </div>
+                          </div>
+                      </li>';
+              }
+          }
+      } else {
+          $output = '<li>No data available</li>';
+      }
 
-    return $output;
-}
-public function storeSignaleDap(Request $request)
-{
-    DB::beginTransaction(); // Démarre la transaction
+      return $output;
+  }
+
+  public function storeSignaleDap(Request $request)
+  {
+      DB::beginTransaction(); // Démarre la transaction
+
+      try {
+          $signale = new Sigaledap();
+          $signale->userid = Auth()->user()->id;
+          $signale->notisid = $request->createdaps;
+          $signale->dapid = $request->dapids;
+          $signale->message = $request->messagesignale;
+
+          $do = $signale->save();
+
+          if($do){
+              $checkfeb = Dap::find($request->dapids);
+              $checkfeb->signaledap = 1;
+              $checkfeb->update();
+
+              DB::commit(); // Valide la transaction si tout réussit
+
+              return response()->json([
+                  'status' => 200,
+                  'dapid' => $request->dapids,
+              ]);
+          }
+      } catch (Exception $e) {
+          DB::rollback(); // Annule la transaction en cas d'erreur
+          return response()->json([
+              'status' => 202,
+              'error' => $e->getMessage(), // Retourne l'erreur spécifique
+          ]);
+      }
+  }
+
+  public function desacctiveSignale(Request $request)
+  {
 
     try {
-        $signale = new Sigaledap();
-        $signale->userid = Auth()->user()->id;
-        $signale->notisid = $request->createdaps;
-        $signale->dapid = $request->dapids;
-        $signale->message = $request->messagesignale;
 
-        $do = $signale->save();
-
-        if($do){
-            $checkfeb = Dap::find($request->dapids);
-            $checkfeb->signaledap = 1;
-            $checkfeb->update();
-
-            DB::commit(); // Valide la transaction si tout réussit
-
-            return response()->json([
-                'status' => 200,
-                'dapid' => $request->dapids,
-            ]);
-        }
-    } catch (Exception $e) {
-        DB::rollback(); // Annule la transaction en cas d'erreur
+      $emp = dap::find($request->id);
+      if ($emp->userid == Auth::id()) {
+        
+        $id = $request->id;
+        $emp->signaledap = 2;
+        $emp->update();
+        
         return response()->json([
-            'status' => 202,
-            'error' => $e->getMessage(), // Retourne l'erreur spécifique
+          'status' => 200,
         ]);
+      } else {
+        return response()->json([
+          'status' => 205,
+        ]);
+      }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
     }
-}
+  }
+
+  public function deleteSignale(Request $request)
+  {
+    try {
+
+      $emp = Sigaledap::find($request->id);
+      if ($emp->userid == Auth::id()) {
+        $id = $request->id;
+        Sigaledap::destroy($id);
+        return response()->json([
+          'status' => 200,
+        ]);
+      } else {
+        return response()->json([
+          'status' => 205,
+        ]);
+      }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
+  }
   
   
 }

@@ -85,7 +85,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
             <!-- end page title -->
 
             <div class="row">
-            <!--
+                <!--
                 <div class="col-lg-12">
                     <div class="card border border-danger">
                         <div class="card-header bg-transparent border-danger">
@@ -357,7 +357,8 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                             <table class="table table-striped table-sm fs--1 mb-0">
                                 <thead>
                                     <tr>
-                                        <th class="sort border-top "><b> # </b></center></th>
+                                        <th class="sort border-top "><b> # </b></center>
+                                        </th>
                                         <th class="sort border-top" data-sort="Document"><b>Document</b></th>
                                         <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> DOC</b></th>
                                         <th class="sort border-top" data-sort="Date Doc"><b>Date FEB </b></th>
@@ -379,6 +380,43 @@ $documentNombre = $dap_nombre + $fab_nombre ;
         </div><!-- /.modal-dialog -->
     </div>
     @endif
+    @if(session('modal_message'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: 'Accès refusé',
+                text: "Vous n'avez pas l'accréditation nécessaire. Contactez le chef du projet pour être affecté.",
+                icon: 'error',
+                confirmButtonColor: '#28a745', // Couleur verte pour le bouton
+                confirmButtonText: 'OK',
+                allowOutsideClick: false, // Empêche la fermeture en cliquant à l'extérieur
+                customClass: {
+                    popup: 'swal2-small', // Classe CSS pour la boîte de dialogue
+                    title: 'swal2-title-small', // Classe CSS pour le titre
+                    content: 'swal2-content-small' // Classe CSS pour le contenu
+                }
+            });
+        });
+    </script>
+    <style>
+        /* Dans votre fichier CSS */
+        .swal2-small {
+            font-size: 14px;
+            /* Taille de police générale */
+        }
+
+        .swal2-title-small {
+            font-size: 18px;
+            /* Taille de police du titre */
+        }
+
+        .swal2-content-small {
+            font-size: 16px;
+            /* Taille de police du contenu */
+        }
+    </style>
+    @endif
+
 
     <script>
         $(document).ready(function() {

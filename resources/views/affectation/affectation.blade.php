@@ -31,14 +31,17 @@
                     <tr>
                       <td class="align-middle ps-3">
                         
-                        <input class="form-check-input" name="personnel[]" type="checkbox" value="{{ $members->personnelid }}" 
+                        <input class="form-check-input" name="personnel[]" type="checkbox" value="{{ $members->userid }}" 
                         @php 
                         if(isset($existe)){
                           foreach ($existe as $existes): 
+
                           $proj=$existes->projectid;
                           $memb= $existes->memberid;
+
                           $sessionprojec= Session::get('id');
-                          if($proj== $sessionprojec && $memb== $members->personnelid):
+
+                          if($proj== $sessionprojec && $memb== $members->userid):
                           echo "checked";
                           endif ;
                           endforeach;

@@ -2,7 +2,6 @@
 @section('page-content')
 <div class="main-content">
   <div class="page-content">
-    <div class="container-fluid">
       <div class="row">
         <div class="col-12" style="margin:auto">
           <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -23,7 +22,7 @@
 
             <div class="mail-list mt-4">
               <div class="d-flex justify-content-between align-items-center">
-                <p class="text-uppercase fs--2 text-600 mb-2 fw-bold"><i class="fa fa-folder-open"></i> Classeur </p>
+                <p class="text-uppercase fs--2 text-600 mb-2 fw-bold" ><i class="fa fa-folder-open" style="color:yellow"></i> Classeur </p>
 
               </div>
               <ul class="nav flex-column border-top fs--1 vertical-nav mb-4">

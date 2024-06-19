@@ -76,13 +76,8 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                                                 </td>
 
                                                                 <td> Compte bancaire
-                                                                    <input type="text" value="{{ $datadap->comptabiliteb }}" class="form-control form-control-sm" name="comptebanque" id="comptebanque" style="width: 100%" readonly>
+                                                                    <input type="text" value="{{ $datadap->comptabiliteb }}" class="form-control form-control-sm" name="comptebanque" id="comptebanque" style="width: 100%">
                                                                 </td>
-
-
-
-
-
 
                                                                 <td> Numéro cheque:
                                                                     <input type="text" name="ch" id="ch" value="{{ $datadap->cho }}" class="form-control form-control-sm">
@@ -103,7 +98,7 @@ $cryptedId = Crypt::encrypt($datadap->id);
 
                                                                 <td> Banque :
                                                                     <select type="text" class="form-control form-control-sm" name="banque" id="banque">
-                                                                        <option  value="{{ $datadap->banque }}"> {{ $datadap->banque }}</option>
+                                                                        <option value="{{ $datadap->banque }}"> {{ $datadap->banque }}</option>
                                                                         @foreach ($banque as $banques)
                                                                         <option value="{{ $banques->libelle }}">{{ ucfirst($banques->libelle) }}</option>
                                                                         @endforeach

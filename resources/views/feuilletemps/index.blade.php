@@ -60,10 +60,6 @@
 <br><br> <br><br> <br><br> <br><br>
 </div>
 
-
-
-
-
 <div class="modal fade" id="myFeuilleModalLabel" tabindex="-1" role="dialog" aria-labelledby="myFeuilleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
@@ -156,9 +152,7 @@
 
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-
+</div>
 
 <div class="modal fade" id="EditFeuilleModalLabel" tabindex="-1" role="dialog" aria-labelledby="EditFeuilleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">

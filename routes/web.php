@@ -160,7 +160,7 @@ Route::middleware('auth')->group(function () {
         Route::get('shomesignature/{id}', [AuthController::class, 'shomesignature'])->name('shomesignature');
         Route::post('/updatsignatureuser', [AuthController::class, 'updatsignatureuser'])->name('updatsignatureuser');
         Route::post('/verifier-identifiant', [AuthController::class, 'verifierIdentifiant'])->name('verifier.identifiant');
-
+        Route::post('/update-theme', [AuthController::class, 'updateThme'])->name('update-theme');
 
         //  Route::put('signature/{id}', [AuthController::class, 'updateSignature'])->name('signatureUs');
     });
@@ -308,6 +308,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/storesignalefeb', [SignalefebController::class, 'storeSignaleFeb'])->name('storesignalefeb');
         
         Route::post('/storeAnnexe', [FebController::class, 'updatannex'])->name('storeAnnexe');
+        Route::delete('/supprimerlesignalefeb', [SignalefebController::class, 'deleteSignale'])->name('supprimerlesignalefeb');
         
     });
 
@@ -350,7 +351,8 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/dap/fetchAllsignaledap/{dapid?}', [DapController::class, 'fetchAllsignaledap'])->name('fetchAllsignaledap');
         Route::post('/storesignaledap', [DapController::class, 'storeSignaleDap'])->name('storesignaledap');
-        
+        Route::delete('/desactiverlesignaledap', [DapController::class, 'desacctiveSignale'])->name('desactiverlesignaledap');
+        Route::delete('/supprimerlesignaledap', [DapController::class, 'deleteSignale'])->name('supprimerlesignaledap');
     });
 
     Route::prefix('dja')->group(function () {
@@ -422,8 +424,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('carnet_bord')->group(function () {
         Route::get('/', [CarnetbordController::class, 'index'])->name('carnet_bord');
         Route::get('/show_carnet', [CarnetbordController::class, 'fetchAll'])->name('all_carnet');
-        Route::post('/storeCarnet', [CarnetbordController::class, 'store'])->name('store_carnet');
-        Route::delete('/deleteCarnet', [CarnetbordController::class, 'deleteProgramme'])->name('delete_carnet');
+        Route::post('/storeCarnet', [CarnetbordController::class, 'store'])->name('storeCarnet');
+        Route::delete('/deleteCarnet', [CarnetbordController::class, 'delete'])->name('delete_carnet');
+        Route::get('/showCarnet', [CarnetbordController::class, 'showCarnet'])->name('showCarnet');
+        Route::post('/updateCarnet', [CarnetbordController::class, 'updateCarnet'])->name('updateCarnet'); 
     });
 
 
@@ -562,5 +566,11 @@ Route::middleware('auth')->group(function () {
     }); */
 
     //FIN RH
+
+    // web.php (routes file)
+Route::get('/error-page', function () {
+    return view('error-page');
+})->name('errorPage');
+
 
 });

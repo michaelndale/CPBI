@@ -102,7 +102,7 @@ class FebController extends Controller
                                     <i class="fa fa-print"></i> Générer PDF
                                 </a>
                                 <a class="dropdown-item desactiversignale" id="' . $datas->id . '" href="#">
-                                <i class="fas fa-random"></i> Desactiver le signale
+                                <i class="fas fa-random"></i>  Désactiver le signal ?
                             </a>
                                 <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datas->id . '" data-numero="' . $datas->numerofeb. '" href="#" style="background-color:red">
                                     <i class="far fa-trash-alt"></i> Supprimer
@@ -569,6 +569,7 @@ class FebController extends Controller
 
       $activity = Feb::find($request->febid);
 
+      $bc = $request->has('bc') ? 1 : 0;
       $om = $request->has('om') ? 1 : 0;
       $facture = $request->has('facture') ? 1 : 0;
       $fpdevis = $request->has('fpdevis') ? 1 : 0;
@@ -590,7 +591,7 @@ class FebController extends Controller
       $activity->periode = $request->periode;
       $activity->datefeb = $request->datefeb;
       $activity->datelimite = $request->datelimite;
-      $activity->be = $be;
+      $activity->bc = $bc;
       $activity->facture = $facture;
       $activity->om = $om;
       $activity->fpdevis = $fpdevis;
@@ -877,6 +878,7 @@ class FebController extends Controller
 
     return $output;
   }
+  
   public function list()
   {
     // Récupérer l'ID de la session
@@ -1141,8 +1143,6 @@ class FebController extends Controller
     ]);
   }
 
-
-
   public function update(Request $request)
   {
     try {
@@ -1206,10 +1206,6 @@ class FebController extends Controller
     $sommefeb = DB::table('elementfebs')
       ->where('febid', $idfeb)
       ->sum('montant');
-
-
-
-
 
     // Instancie Dompdf
     $dompdf = new Dompdf();
@@ -1414,9 +1410,6 @@ class FebController extends Controller
     return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
   }
 
- 
-
-
   public function delete(Request $request)
   {
       DB::beginTransaction();
@@ -1498,8 +1491,6 @@ class FebController extends Controller
 
     return response()->json(['exists' => $feb]);
   }
-
-
 
   public function updatannex(Request $request)
   {
@@ -1615,6 +1606,25 @@ class FebController extends Controller
       }
 
 
+      if (!empty($request->ra)) {
+        $originalName = $request->ra->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->ra->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->ra->move(public_path('projet/ra/'), $imageName);
+        $ra = 'projet/ra/' . $imageName;
+      }
+
+      if (!empty($request->autres)) {
+        $originalName = $request->autres->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->autres->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->autres->move(public_path('projet/autres/'), $imageName);
+        $autres = 'projet/autres/' . $imageName;
+      }
+
+
 
 
 
@@ -1656,6 +1666,16 @@ class FebController extends Controller
       if (!empty($request->appelP)) {
         $UpAnnex->url_appel_cfk  =  $appel_cfk;
       }
+
+      if (!empty($request->ra)) {
+        $UpAnnex->url_ra  =  $ra;
+      }
+
+      if (!empty($request->appelP)) {
+        $UpAnnex->url_autres  =  $autres;
+      }
+
+
 
       $UpAnnex->update();
 
@@ -1785,6 +1805,24 @@ class FebController extends Controller
         $appel_cfk = 'projet/appel_cfk/' . $imageName;
       }
 
+      if (!empty($request->ra)) {
+        $originalName = $request->ra->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->ra->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->ra->move(public_path('projet/ra/'), $imageName);
+        $ra = 'projet/ra/' . $imageName;
+      }
+
+      if (!empty($request->autres)) {
+        $originalName = $request->autres->getClientOriginalName();
+        $timestamp = time();
+        $extension = $request->ra->getClientOriginalExtension(); // Conserver l'extension correcte
+        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+        $request->autres->move(public_path('projet/autres/'), $imageName);
+        $autres = 'projet/autres/' . $imageName;
+      }
+
 
       if (!empty($request->boncommande)) {
         $UpAnnex->url_bon_commande =  $boncommande;
@@ -1821,6 +1859,13 @@ class FebController extends Controller
       }
       if (!empty($request->appelP)) {
         $UpAnnex->url_appel_cfk  =  $appel_cfk;
+      }
+      if (!empty($request->ra)) {
+        $UpAnnex->url_ra  =  $ra;
+      }
+
+      if (!empty($request->appelP)) {
+        $UpAnnex->url_autres  =  $autres;
       }
 
       $UpAnnex->update();

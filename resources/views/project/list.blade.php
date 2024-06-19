@@ -102,7 +102,47 @@
 
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+@if(session('modal_message'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: 'Accès refusé',
+                text: "Vous n'avez pas l'accréditation nécessaire. Contactez le chef du projet pour être affecté.",
+                icon: 'error',
+                confirmButtonColor: '#28a745', // Couleur verte pour le bouton
+                confirmButtonText: 'OK',
+                allowOutsideClick: false, // Empêche la fermeture en cliquant à l'extérieur
+                customClass: {
+                    popup: 'swal2-small', // Classe CSS pour la boîte de dialogue
+                    title: 'swal2-title-small', // Classe CSS pour le titre
+                    content: 'swal2-content-small' // Classe CSS pour le contenu
+                }
+            });
+        });
+    </script>
+    <style>
+        /* Dans votre fichier CSS */
+        .swal2-small {
+            font-size: 14px;
+            /* Taille de police générale */
+        }
 
+        .swal2-title-small {
+            font-size: 18px;
+            /* Taille de police du titre */
+        }
+
+        .swal2-content-small {
+            font-size: 16px;
+            /* Taille de police du contenu */
+        }
+    </style>
+    @endif
+
+
+
+</script>
 
 
 

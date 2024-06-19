@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <title> {{ @$title }} | {{ config('app.name') }}</title>
@@ -92,7 +93,7 @@
         }
 
         /* Exemple de CSS */
-        
+
 
         h1,
         h2,
@@ -103,22 +104,20 @@
 
 
         #message {
-    display: none;
-    position: fixed;
-    top: 10%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  
-    padding: 10px;
-    border: 1px solid Crimson;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    z-index: 9999;
-    background-color: Crimson;
-    width: 30%;
-    border-radius: 10px; /* Ajout du border-radius */
-}
+            display: none;
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
 
+            padding: 10px;
+            border: 1px solid Crimson;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+            background-color: Crimson;
+            width: 30%;
+            border-radius: 10px;
+            /* Ajout du border-radius */
+        }
     </style>
-
-
 </head>

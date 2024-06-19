@@ -14,8 +14,7 @@
   }
 </style>
 <div class="main-content">
-  <br>
-  <div class="content">
+  <div class="page-content">
     <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
       <div class="card-header p-4 border-bottom border-300 bg-soft">
         <div class="row g-3 justify-content-between align-items-end">

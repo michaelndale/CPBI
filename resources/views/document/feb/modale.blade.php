@@ -18,11 +18,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
                 <form class="row g-3 mb-6" method="POST" id="addfebForm">
                     @method('post')
                     @csrf
-
                     <div id="tableExample2">
                         <div class="table-responsive">
                             <table class="table table-striped table-sm fs--1 mb-0">
@@ -41,12 +39,8 @@
                                         </td>
                                     </tr>
                                     <tr>
-
-                                        <td class="align-middle ps-3 name">Ligne budgétaire:  <span class="text-danger">*</span></td>
+                                        <td class="align-middle ps-3 name">Ligne budgétaire: <span class="text-danger">*</span></td>
                                         <td class="align-middle email" colspan="15">
-
-
-
                                             <select class="form-control  form-control-sm ligneid" id="referenceid" name="referenceid" required>
                                                 <option disabled="true" selected="true" value="">Sélectionner la ligne budgétaire</option>
                                                 @foreach ($compte as $comptes)
@@ -58,38 +52,21 @@
                                                     @foreach($res as $re)
                                                     <option value="{{ $comptes->id }} - {{ $re->id }}"> {{ $re->numero }}. {{ $re->libelle }} </option>
                                                     @endforeach
-
                                                 </optgroup>
                                                 @endforeach
-
                                             </select>
                                             <div id="showcondition">
-
                                             </div>
-
-
-
-
                                         </td>
-
-
-
-                                    </tr>
-                                    <tr>
-
                                     </tr>
 
-                                    </tr>
                                     <tr>
                                         <td class="align-middle ps-3 name">Activités <span class="text-danger">*</span></td>
                                         <td colspan="8">
                                             <input type="text" class="form-control form-control-sm" name="descriptionf" id="descriptionf" required>
                                         </td>
-
                                         <td class="align-middle ps-3 name">Bénéficiaire </td>
                                         <td colspan="8">
-
-
                                             <select class="form-control  form-control-sm" id="beneficiaire" name="beneficiaire">
                                                 <option disabled="true" selected="true" value="">--Sélectionner bénéficiaire--</option>';
                                                 @foreach ($beneficaire as $beneficaires)
@@ -97,20 +74,15 @@
                                                 @endforeach
                                             </select>
                                         </td>
-
-
-
                                     </tr>
                                     <tr>
                                         <td class="align-middle ps-3 name" colspan="1"></td>
-
                                         <td class="align-middle ps-3 name" colspan="3">
                                             Numéro du fiche FEB<span class="text-danger">*</span> <br>
                                             <input type="number" name="numerofeb" id="numerofeb" class="form-control form-control-sm" style="width: 100% ;">
                                             <smal id="numerofeb_error" name="numerofeb_error" class="text text-danger"> </smal>
                                             <smal id="numerofeb_info" class="text text-primary"> </smal>
                                         </td>
-
                                         <td class="align-middle ps-3 name">Période:<span class="text-danger">*</span><br>
                                             <select type="text" class="form-control form-control-sm" name="periode" id="periode" style="width: 100%" required>
                                                 @php
@@ -120,19 +92,14 @@
                                                     @endfor
                                             </select>
                                         </td>
-
                                         <td class="align-middle ps-3 name"> Date du dossier FEB:<span class="text-danger">*</span><br>
                                             <input type="date" class="form-control form-control-sm" name="datefeb" id="datefeb" style="width: 100%" required>
                                         </td>
-
                                         <td class="align-middle ps-3 name"> Date limite:<span class="text-danger">*</span><br>
                                             <input type="date" class="form-control form-control-sm" name="datelimite" id="datelimite" style="width: 100%">
                                         </td>
-
                                         <td class="align-middle ps-3 name"> <br> </td>
-
                                         <td class="align-middle ps-3 name"> <br></td>
-
                                         <td class="align-middle ps-3 name"> <br> </td>
                                         <td class="align-middle ps-3 name"> <br></td>
                                         <td class="align-middle ps-3 name"> <br></td>
@@ -140,19 +107,14 @@
                                         <td class="align-middle ps-3 name"> <br> </td>
                                         <td class="align-middle ps-3 name"> <br> </td>
                                         <td class="align-middle ps-3 name"> <br> </td>
-
-
-
                                     </tr>
                                     <tr>
                                         <td class="align-middle ps-3 name" colspan="1"></td>
-
                                         <td class="align-middle ps-3 name" style="width:4%">
                                             <center><label title="Bon de commande">B.C</label><br>
                                                 <input type="checkbox" class="form-check-input" name="bc" id="bc">
                                             </center>
                                         </td>
-
                                         <td class="align-middle ps-3 name" style="width:5%">
                                             <center><label>Facture </label> <br>
                                                 <input type="checkbox" class="form-check-input" name="facture" id="facture">
@@ -176,39 +138,31 @@
                                                 <input type="checkbox" class="form-check-input" name="fp" id="fp">
                                             </center>
                                         </td>
-
-                                      
-
                                         <td class="align-middle ps-3 name" style="width:4%">
-                                            <center><label >Devis/Liste</label> <br>
+                                            <center><label>Devis/Liste</label> <br>
                                                 <input type="checkbox" class="form-check-input" name="fpdevis" id="fpdevis">
                                             </center>
                                         </td>
-
                                         <td class="align-middle ps-3 name" style="width:4%">
                                             <center><label title="Rapport de mission">R.M</label> <br>
                                                 <input type="checkbox" class="form-check-input" name="rm" id="rm">
                                             </center>
                                         </td>
-
                                         <td class="align-middle ps-3 name" style="width:4%">
                                             <center><label title="Terme de référence">T.D.R</label> <br>
                                                 <input type="checkbox" class="form-check-input" name="tdr" id="tdr">
                                             </center>
                                         </td>
-
                                         <td class="align-middle ps-3 name" style="width:4%">
                                             <center><label title="Bordereau de versement">B.V</label> <br>
                                                 <input type="checkbox" class="form-check-input" name="bv" id="bv">
                                             </center>
                                         </td>
-
                                         <td class="align-middle ps-3 name" style="width:4%">
                                             <center><label title="Reçu">Reçu</label> <br>
                                                 <input type="checkbox" class="form-check-input" name="recu" id="recu">
                                             </center>
                                         </td>
-
                                         <td class="align-middle ps-3 name" style="width:4%">
                                             <center><label title="Accussé de reception">A.R</label> <br>
                                                 <input type="checkbox" class="form-check-input" name="ar" id="ar">
@@ -220,33 +174,25 @@
                                                 <input type="checkbox" class="form-check-input" name="br" id="br">
                                             </center>
                                         </td>
-
                                         <td class="align-middle ps-3 name" style="width:4%">
                                             <center><label title="Appel à la participation à la construction du CFK">A.P.C</label> <br>
                                                 <input type="checkbox" class="form-check-input" name="apc" id="apc">
                                             </center>
                                         </td>
-
                                         <td class="align-middle ps-3 name" style="width:4%">
                                             <center><label title="Rapport d'activités">R.A</label> <br>
                                                 <input type="checkbox" class="form-check-input" name="ra" id="ra">
                                             </center>
                                         </td>
-
                                         <td class="align-middle ps-3 name" style="width:4%">
                                             <center><label title="Autres document">Autres</label> <br>
                                                 <input type="checkbox" class="form-check-input" name="autres" id="autres">
                                             </center>
                                         </td>
-
                                     </tr>
                                 </tbody>
                             </table>
-
                             <hr>
-
-
-
                             <div class="table-responsive">
                                 <table class="table table-striped table-sm fs--1 mb-0" id="tableEstimate">
                                     <thead style="background-color:#3CB371; color:white">
@@ -282,12 +228,8 @@
 
                                             <td><a href="javascript:void(0)" class="text-primary font-18" title="Add" id="addBtn"><i class="fa fa-plus-circle"></i></a></td>
                                         </tr>
-
-                                        <tr>
-
                                     </tbody>
                                 </table>
-
                                 <table class="table table-striped table-sm fs--1 mb-0">
                                     <tfoot style="background-color:#c0c0c0">
                                         <tr>
@@ -297,14 +239,10 @@
                                         </tr>
                                     </tfoot>
                                 </table>
-
                                 <hr>
-
                             </div>
-
                             <div class="table-repsonsive">
                                 <span id="error"></span>
-
                                 <table class="table table-striped table-sm fs--1 mb-0">
                                     <tr>
                                     <tr>
@@ -320,9 +258,6 @@
                                                 <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                                 @endforeach
                                             </select>
-
-
-
                                         </td>
                                         <td>
                                             <select type="text" class="form-control form-control-sm" name="comptable" id="comptable" required>
@@ -340,9 +275,6 @@
                                                 @endforeach
                                             </select>
                                         </td>
-
-
-                                    </tr>
                                     </tr>
                                 </table>
                             </div>

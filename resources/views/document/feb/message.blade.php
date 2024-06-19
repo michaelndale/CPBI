@@ -105,6 +105,50 @@ $(function() {
         });
     });
 
+    $(document).on('click', '.deleteMessageSend', function(e) {
+            e.preventDefault();
+            let id = $(this).attr('id');
+            let csrf = '{{ csrf_token() }}';
+            Swal.fire({
+                title: 'Êtes-vous sûr ?',
+                text: "Vous êtes sur le point de supprimer le signal ",
+
+                showCancelButton: true,
+                confirmButtonColor: 'green',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui, Supprimer !',
+                cancelButtonText: 'Annuller'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('supprimerlesignalefeb') }}",
+                        method: 'delete',
+                        data: {
+                            id: id,
+                            _token: csrf
+                        },
+                        success: function(response) {
+
+                            if (response.status == 200) {
+                                toastr.success("Signale supprimer succès !", "Suppression");
+                                fetchAllsignalefeb(febid);
+                            }
+
+                            if (response.status == 205) {
+                                toastr.error("Vous n'avez pas l'accreditation de supprimer le signale du FEB!", "Erreur");
+                            }
+
+                            if (response.status == 202) {
+                                toastr.error("Erreur d'execution !", "Erreur");
+                            }
+                            fetchAllsignalefeb(febid);
+
+                        }
+                    });
+                }
+            })
+        });
+
     // Fonction pour récupérer les signalements FEB
     function fetchAllsignalefeb(febid) {
         $.ajax({

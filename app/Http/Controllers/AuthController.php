@@ -229,13 +229,6 @@ class AuthController extends Controller
   
               switch ($user->statut) {
                   case 'Activé':
-                      $datauser = Personnel::find($user->personnelid);
-                      session()->put('nomauth', $datauser->nom);
-                      session()->put('prenomauth', $datauser->prenom);
-                      session()->put('fonction', $datauser->fonction);
-                      session()->put('avatar', $datauser->avatar);
-                      session()->put('signature', $datauser->signature);
-
                       return response()->json([1]);
                   case 'Bloqué':
                       return response()->json([2]);
@@ -482,6 +475,20 @@ class AuthController extends Controller
       $activeUsers = User::where('last_activity', '>=', Carbon::now()->subMinutes(10))->get();
       return view('active-users.active-users', compact('activeUsers','title'));
   }
+
+  public function updateThme(Request $request)
+    {
+        
+        // Récupère l'utilisateur authentifié
+        $user = User::find($request->useridtheme);
+        $user->menu = $request->menuoption;
+        $user->update();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Préférence de menu mise à jour avec succès!'
+        ]);
+    }
 
 
   public function logout()

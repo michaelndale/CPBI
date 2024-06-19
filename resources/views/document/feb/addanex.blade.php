@@ -132,8 +132,22 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                     <label class="text-1000 fw-bold mb-2">Appel a la participation a la construction au CFK</label>
                                     <input class="form-control" name="appelP" id="appelP" type="file" />
                                 </div>
+                                @endif
+
+                                @if ($dataFeb->ra==1)
+                                    <div class="col-sm-12 col-md-12">
+                                        <label class="text-1000 fw-bold mb-2">Rapport d'activités (R.A)</label>
+                                        <input class="form-control" name="ra" id="ra" type="file" />
+                                    </div>
+                                @endif
+
+                                @if ($dataFeb->autres==1)
+                                    <div class="col-sm-12 col-md-12">
+                                        <label class="text-1000 fw-bold mb-2">Autres document</label>
+                                        <input class="form-control" name="autres" id="autres" type="file" />
+                                    </div>
+                                @endif
                             </div>
-                            @endif
                     </div>
 
                     <div class="modal-footer">

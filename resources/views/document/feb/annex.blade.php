@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalScrollableTitle"> Ajouter le piece justificatif</h5>
+                <h5 class="modal-title" id="exampleModalScrollableTitle"> Attachée les pièces justificatives.</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -103,11 +103,26 @@
 
                     @if ($dataFe->apc==1)
                         <div class="col-sm-12 col-md-12">
-                            <label class="text-1000 fw-bold mb-2">Appel a la participation a la construction au CFK</label>
+                            <label class="text-1000 fw-bold mb-2">Appel a la participation a la construction au CFKAppel à la participation à la construction du CFK</label>
                             <input class="form-control" name="appelP" id="appelP" type="file" />
                         </div>
                     
                     @endif
+
+                    @if ($dataFe->ra==1)
+                        <div class="col-sm-12 col-md-12">
+                            <label class="text-1000 fw-bold mb-2">Rapport d'activités (R.A)</label>
+                            <input class="form-control" name="ra" id="ra" type="file" />
+                        </div>
+                    @endif
+
+                    @if ($dataFe->autres==1)
+                        <div class="col-sm-12 col-md-12">
+                            <label class="text-1000 fw-bold mb-2">Autres document</label>
+                            <input class="form-control" name="autres" id="autres" type="file" />
+                        </div>
+                    @endif
+
                     </div>
             </div>
             <div class="modal-footer">

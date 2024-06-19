@@ -1,5 +1,11 @@
 <body data-sidebar="colored" id="contenu">
 @php
+
+// Récupérer les données du profil de l'utilisateur
+$personnelData = DB::table('personnels')
+                  ->where('id',Auth::user()->personnelid)
+                  ->first();
+
   $avatar = Auth::user()->avatar;
  
 $documentacce= DB::table('febs')
@@ -227,10 +233,10 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
               @if(file_exists($imagePath))
                   <img class="rounded-circle header-profile-user" src="../../{{ $avatar }}" alt="{{ ucfirst(Auth::user()->identifiant) }}"  style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
-                  <br> <small> {{ ucfirst(Session::get('prenomauth')) }} </small>
+                  <br> <small> {{ ucfirst($personnelData->prenom ) }} </small>
                   @else
                   <img class="rounded-circle header-profile-user" src="{{ $defaultAvatar }}" alt="{{ ucfirst(Auth::user()->identifiant) }}"  style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
-                  <br> <small> {{ ucfirst(Session::get('prenomauth')) }} </small>
+                  <br> <small> {{ ucfirst($personnelData->prenom ) }}  </small>
                   @endif
 
 
@@ -261,14 +267,14 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                   <i class="fa fa-edit"></i> Modifier signature
               </a>
 
-              <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
+              <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editthemeModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
                   <i class="fa fa-edit"></i> Preference menu
               </a>
               
-              <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
+              <!-- <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
                   <i class="fa fa-edit"></i> Donne FeedBack
-              </a>
-
+              </a> -->
+ 
              
 
               <!-- <a href="javascript:void(0);" class="dropdown-item notify-item">
@@ -316,11 +322,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
               @if ( $documentNombre != 0)
 
-              <audio autoplay>
-              <source src="{{ asset('notification/son.mp3') }}" type="audio/mpeg">
-                Votre navigateur ne supporte pas l'élément audio.
-            </audio>
-
+              
            
 
               <a href="#" class="waves-effect" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
@@ -333,7 +335,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
             <li>
               <a href="{{ route('dashboard') }}" class="waves-effect">
                 <i class="fas fa-home"></i>
-                <span>Tableau de bord</span>
+                <span>Tableau de bord {{ Session::get('menu') }} </span>
               </a>
             </li>
 
@@ -439,7 +441,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                 <span>Archivage</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{ route('archivage') }}">Archive</a></li>
+                <li><a href="{{ route('archivage') }}">Document</a></li>
                 <li><a href="{{ route('classeur') }}">Classeur</a></li>
                 <li><a href="{{ route('etiquette') }}">Etiquette</a></li>
               </ul>

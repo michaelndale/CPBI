@@ -48,14 +48,14 @@ class AffectationController extends Controller
 
     $member = DB::table('personnels')
       ->join('users', 'personnels.id', '=', 'users.personnelid')
-      ->select('users.*', 'personnels.*', 'users.personnelid as personnelid')
+      ->select('personnels.nom', 'personnels.prenom','users.id as userid')
       ->get();
 
 
 
 
     $existe = DB::table('affectations')
-      ->join('users', 'affectations.memberid', '=', 'users.personnelid')
+      ->join('users', 'affectations.memberid', '=', 'users.id')
       ->select('affectations.*')
       ->where('affectations.projectid', $idp)
       ->get();

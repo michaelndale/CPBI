@@ -1,5 +1,3 @@
-
-
 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
@@ -137,6 +135,46 @@
 </div>
 
 
+<div class="modal fade" id="editthemeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <form id="EditThemeForm" autocomplete="off">
+      @method('post')
+      @csrf
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            <i class="fa fa-user-edit"></i> Preference Menu
+          </h5>
+          <button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close">
+            <span class="fas fa-times fs--1"></span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="form-check form-check-inline">
+              <input id="useridtheme" name="useridtheme" type="hidden" value="{{ Auth::user()->id }}" />
+              
+              <input class="form-check-input" type="radio" name="menuoption" id="menuoption" value="0" @if(Auth::user()->menu === 0) checked @endif >
+              <label class="form-check-label" for="verticalMenu">Menu vertical</label>
+              <br>
+
+              <input class="form-check-input" type="radio" name="menuoption" id="menuoption" value="1"  @if(Auth::user()->menu === 1) checked @endif >
+              <label class="form-check-label" for="horizontalMenu">Menu horizontal</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" name="addNDPbtn" id="addNDPbtn" class="btn btn-primary">Sauvegarder</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+
 <div class="modal fade" id="editMotdepasseModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <form id="EditNDPForm" autocomplete="off">
@@ -270,6 +308,32 @@
   <div id="progress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
 </div>
 
+
+<script>
+$(document).ready(function() {
+    $('#EditThemeForm').on('submit', function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: "{{ route('update-theme') }}",
+            data: $(this).serialize(),
+            success: function(response) {
+                if(response.success) {
+                    toastr.success(response.message);
+                    window.location.reload();
+                    $('#editthemeModal').modal('hide');
+                } else {
+                  toastr.error('Une erreur est survenue.');
+                }
+            },
+            error: function(response) {
+              toastr.error('Une erreur est survenue.');
+            }
+        });
+    });
+});
+</script>
 
 
 
@@ -514,7 +578,7 @@
 <!-- Right bar overlay-->
 
 <!-- JAVASCRIPT -->
- 
+
 <script src="{{ asset('element/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/metismenu/metisMenu.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/simplebar/simplebar.min.js') }}"></script>
