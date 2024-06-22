@@ -141,8 +141,8 @@ class DapController extends Controller
     $ID = session()->get('id');
     $numero = $request->numerodap;
     $dap = Dap::where('numerodp', $numero)
-      ->where('projetiddap', $ID)
-      ->exists();
+            ->where('projetiddap', $ID)
+            ->exists();
     return response()->json(['exists' => $dap]);
   }
 
@@ -262,12 +262,9 @@ class DapController extends Controller
   {
     try {
 
-
-
       $IDpp = session()->get('id');
       $dap = dap::where('id', $request->dapid)->first();
-      $dja = Dja::where('numerodjas', $request->numerodap)->where('projetiddja', $IDpp)->first(); // change apres service
-
+      $dja = Dja::where('numerodjas', $request->anciant_numerodjas)->where('projetiddja', $IDpp)->first(); // change apres service
 
       if (!$dap  && !$dja) {
         return back()->with('failed', 'DAP non trouvé.');
@@ -277,7 +274,7 @@ class DapController extends Controller
         return back()->with('failed', 'Vous n\'avez pas l\'accreditation de modifier le DAP dont vous n\'etes pas le createur.');
       }
 
-    
+  
       $ov = $request->has('ov') ? 1 : 0;
 
       $dap->numerodp = $request->numerodap;
@@ -427,8 +424,10 @@ class DapController extends Controller
         }
         if ($request->has('secretairesignature')) {
           $secretaure_general_signe = 1;
+          $datesecretaire = date('Y-m-d');
         } else {
           $secretaure_general_signe = $request->clone_secretairesignature;
+          $datesecretaire = $request->ancient_date_autorisation;
         }
 
         $emp->demandeetablie_signe = $demandeetabliesignature;
@@ -441,6 +440,7 @@ class DapController extends Controller
         $emp->responsable_signe = $responsablesignature;
         $emp->chefprogramme_signe = $chefprogrammesignature;
         $emp->secretaure_general_signe = $secretaure_general_signe;
+        $emp->dateautorisation = $datesecretaire;
 
 
         $do = $emp->update();

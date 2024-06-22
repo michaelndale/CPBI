@@ -344,7 +344,7 @@ $cryptedId = Crypt::encrypt($dataFe->id);
 
                                                     <input style="width:100%" type="hidden" id="idelements" name="idelements[]" class="form-control form-control-sm" value="{{ $datElements->idef }}">
                                                     <input style="width:100%" type="hidden" id="referencefeb" name="referencefeb[]" class="form-control form-control-sm" value="{{ $datElements->febid }}">
-                                                    <input style="width:100%" type="" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="{{ $ndale }}">
+                                                    <input style="width:100%; border:none;" type="" id="numerodetail" name="numerodetail[]" value="{{ $ndale }}" readonly>
                                                 </td>
 
 
@@ -356,26 +356,19 @@ $cryptedId = Crypt::encrypt($dataFe->id);
                                                         <option value="{{ $activitelignes->id }}"> {{ $activitelignes->titre }}</option>
                                                         @endforeach
                                                     </select>
-
-
-
                                                 </td>
                                                 <td>
-
                                                     <input style="width:100%" value="{{ $datElements->libelle_description }}" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required>
                                                     <input value="{{ $datElements->id }}" type="hidden" id="libelle_description_id" name="libelle_description_id[]">
                                                 </td>
-                                                <td><input style="width:100%" value="{{ $datElements->unite }}" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm unit_price" required min="1"> </td>
+                                                <td><input style="width:100%" value="{{ $datElements->unite }}" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm unit_price" required > </td>
                                                 <td><input style="width:100%" value="{{ $datElements->quantite }}" type="text" id="qty" name="qty[]" class="form-control form-control-sm qty" required min="1"></td>
                                                 <td><input style="width:100%" value="{{ $datElements->frequence }}" type="text" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency" required min="1"></td>
-                                                <td><input style="width:100%" value="{{ $datElements->pu }}" type="text" id="pu" name="pu[]" class="form-control form-control-sm pu" required min="1"></td>
+                                                <td><input style="width:100%" value="{{ $datElements->pu }}" type="number" id="pu" name="pu[]" class="form-control form-control-sm pu" required min="1"></td>
                                                 <td><input style="width:100%" value="{{ $datElements->montant }}" type="text" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
-                                                <td><a href="{{ route('deleteelementsfeb', $datElements->idef) }}" id="{{ $datElements->idef }}" class="text-danger font-18 deleteIcon" title="Supprimer la ligne"><i class="far fa-trash-alt"></i></a></td>
-
+                                                <td style="width:3%;"><a href="{{ route('deleteelementsfeb', $datElements->idef) }}" id="{{ $datElements->idef }}" class="text-danger font-18 deleteIcon" title="Supprimer la ligne"><i class="far fa-trash-alt"></i></a></td>
                                             </tr>
-                                            <tr>
-
-                                            </tr>
+                                           
                                             @php
                                             $ndale++;
                                             @endphp
@@ -409,6 +402,9 @@ $cryptedId = Crypt::encrypt($dataFe->id);
                                                     <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                                     @endforeach
                                                 </select>
+                                                <input type="hidden" name="acce_signe" id="acce_signe" value="{{ $dataFe->acce_signe }}" />
+
+                                                <input type="hidden" name="ancien_acce" id="ancien_acce" value="{{ $dataFe->acce }}" />
                                             </td>
                                             <td>
                                                 <select type="text" class="form-control form-control-sm" name="comptable" id="comptable" required>
@@ -417,6 +413,8 @@ $cryptedId = Crypt::encrypt($dataFe->id);
                                                     <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                                     @endforeach
                                                 </select>
+                                                <input type="hidden" name="comptable_signe" id="comptable_signe" value="{{ $dataFe->comptable_signe }}" />
+                                                <input type="hidden" name="ancien_comptable" id="ancien_comptable" value="{{ $dataFe->comptable }}" />
                                             </td>
                                             <td>
                                                 <select type="text" class="form-control form-control-sm" name="chefcomposante" id="chefcomposante" required>
@@ -425,6 +423,8 @@ $cryptedId = Crypt::encrypt($dataFe->id);
                                                     <option value="{{ $chefcompables->userid }}">{{ $chefcompables->nom }} {{ $chefcompables->prenom }}</option>
                                                     @endforeach
                                                 </select>
+                                                <input type="hidden" name="chef_signe" id="chef_signe" value="{{ $dataFe->chef_signe }}" />
+                                                <input type="hidden" name="ancien_chefcomposante" id="ancien_chefcomposante" value="{{ $dataFe->chefcomposante }}" />
                                             </td>
                                         </tr>
                                         </tr>
@@ -468,7 +468,7 @@ $cryptedId = Crypt::encrypt($dataFe->id);
         // Ajouter une nouvelle ligne au tableau
         $("#tableEstimate tbody").append(`
         <tr>
-            <td><input style="width:100%" type="number" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="${rowIdx}" ></td>
+            <td><input style="width:100%" type="number" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="${rowIdx}" readonly></td>
             <td> 
                <select class="form-control form-control-sm" name="libelleid[]" id="libelleid" required>
                <option> Aucun</option>
@@ -481,7 +481,7 @@ $cryptedId = Crypt::encrypt($dataFe->id);
             <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm" required ></td>
             <td><input style="width:100%" type="text" id="qty" name="qty[]" class="form-control form-control-sm qty" required min="1"></td>
             <td><input style="width:100%" type="text" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency" required  min="1"></td>
-            <td><input style="width:100%" type="text" id="pu" name="pu[]" class="form-control form-control-sm pu" required  min="1"></td>
+            <td><input style="width:100%" type="number" id="pu" name="pu[]" class="form-control form-control-sm pu" required  min="1"></td>
             <td><input style="width:100%" type="text" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly required></td>
             <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
         </tr>

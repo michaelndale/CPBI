@@ -8,6 +8,7 @@
       <div class="modal-body">
         <div id="tableExample2">
           <div class="table-responsive">
+          <input type="text" class="form-control" placeholder="Recherche par numéro , Activité...">
             <table class="table table-striped table-sm fs--1 mb-0">
               <thead>
                 <tr>
@@ -308,6 +309,23 @@
   <div id="progress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
 </div>
 
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var audio = document.getElementById('notificationAudio');
+            // Try to play the audio
+            var playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // Automatic playback started!
+                    console.log('Audio is playing automatically.');
+                }).catch(error => {
+                    // Auto-play was prevented
+                    console.log('Playback prevented. User interaction required.');
+                });
+            }
+        });
+    </script>
+
 
 <script>
 $(document).ready(function() {
@@ -576,6 +594,7 @@ $(document).ready(function() {
   }
 </script>
 <!-- Right bar overlay-->
+<div class="rightbar-overlay"></div>
 
 <!-- JAVASCRIPT -->
 

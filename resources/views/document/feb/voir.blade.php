@@ -299,8 +299,8 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                                 Activité:
                                                 {{ $dataFeb->descriptionf }}
                                             </td>
-                                            <td><label title="le calcul du taux  progressif en fonction des numéros de FEB de cette ligne et sous ligne (Formulaire d'Engagement Budgétaire) qui est inférieur ou égal au numéro de FEB en cours.">Taux d’exécution de la ligne et ses sous lignes: {{ $sommelignpourcentage }}% </label><br>
-                                                <label title="le calcul du taux progressif en fonction des numéros de FEB de tout le projet encours (Formulaire d'Engagement Budgétaire) qui est inférieur ou égal au numéro de FEB en cours.">Taux d’exécution globale du projet: {{ $POURCENTAGE_GLOGALE }} % </label>
+                                            <td><label title="le calcul du taux  progressif en fonction des numéros de FEB de cette ligne et sous ligne (Formulaire d'Engagement Budgétaire) qui est inférieur ou égal au numéro de FEB en cours.">Taux d’exécution de la ligne et de ses sous-lignes budgétaires: {{ $sommelignpourcentage }}% </label><br>
+                                                <label title="le calcul du taux progressif en fonction des numéros de FEB de tout le projet encours (Formulaire d'Engagement Budgétaire) qui est inférieur ou égal au numéro de FEB en cours.">Taux d’exécution global du projet: {{ $POURCENTAGE_GLOGALE }} % </label>
                                             </td>
                                         </tr>
                                         <tr>
@@ -425,10 +425,6 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
 
 
 
-                                                            @if ($dataFeb->acce_signe==1)
-                                                            <br>
-                                                            <img src="{{ asset($etablienom->signature) }}" width="200px" />
-                                                            @endif
                                                         </center>
 
                                                     </td>
@@ -444,11 +440,8 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                                             <input class="form-check-input" type="checkbox" name="comptablesignature" id="comptablesignature" {{ $dataFeb->comptable_signe=="1"? 'checked':'' }} style="border:2px solid red"> <small>Cochez pour Poser la signature</small>
                                                             @endif
                                                             <input type="hidden" name="clone_comptablesignature" value="{{ $dataFeb->comptable_signe }}" />
-                                                            <br>
+                                                           
 
-                                                            @if ($dataFeb->comptable_signe==1)
-                                                            <img src="{{ asset($comptable_nom->signature) }}" width="200px" />
-                                                            @endif
                                                         </center>
 
                                                     </td>
@@ -464,7 +457,32 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                                             <input class="form-check-input" type="checkbox" id="chefsignature" name="chefsignature" {{ $dataFeb->chef_signe=="1"? 'checked':'' }} style="border:2px solid red"> <small>Cochez pour Poser la signature</small>
                                                             @endif
                                                             <input type="hidden" name="clone_chefsignature" value="{{ $dataFeb->chef_signe }}" />
-                                                            <br>
+                                                           
+                                                          
+                                                        </center>
+
+                                                    </td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td>
+                                                        <center>
+                                                            @if ($dataFeb->acce_signe==1)
+                                                            <img src="{{ asset($etablienom->signature) }}" width="200px" />
+                                                            @endif
+                                                        </center>
+                                                    </td>
+                                                    <td>
+                                                        <center>
+                                                            @if ($dataFeb->comptable_signe==1)
+                                                            <img src="{{ asset($comptable_nom->signature) }}" width="200px" />
+                                                            @endif
+                                                        </center>
+                                                    </td>
+
+                                                    <td>
+                                                        <center>
                                                             @if ($dataFeb->chef_signe==1)
                                                             <img src="{{  asset($checcomposant_nom->signature) }}" width="200px" />
                                                             @endif
@@ -472,6 +490,8 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
 
                                                     </td>
                                                 </tr>
+
+
                                             </table>
                                         </table>
                                         <hr>

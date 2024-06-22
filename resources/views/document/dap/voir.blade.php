@@ -363,9 +363,9 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                             Autorise le : {{ date('d-m-Y', strtotime($datadap->dateautorisation))  }}
                                             @endif
 
-                                            <a href="javascript:void(0);" class="dropdown-item notify-item editpersonnel" data-bs-toggle="modal" data-bs-target="#EditdateModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
+                                           <!-- <a href="javascript:void(0);" class="dropdown-item notify-item editpersonnel" data-bs-toggle="modal" data-bs-target="#EditdateModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
                                                     <small><i class="fa fa-edit"></i> Modifier la date </small>
-                                            </a>
+                                            </a> -->
 
 
                                         </td>
@@ -419,11 +419,12 @@ $cryptedId = Crypt::encrypt($datadap->id);
 
                                             @if(Auth::user()->id == $datadap->secretaire)
                                             <input class="form-check-input" type="checkbox" name="secretairesignature" {{ $datadap->secretaure_general_signe=="1"? 'checked':'' }} style="border:2px solid red">
+
                                             @endif
                                             <br>
 
                                             <input type="hidden" name="clone_secretairesignature" value="{{ $datadap->secretaure_general_signe }}" />
-
+                                            <input type="hidden" name="ancient_date_autorisation" value="{{ $datadap->dateautorisation }}" />
 
                                             {{ ucfirst($secretaire->nom) }} {{ ucfirst($secretaire->prenom) }}
 
@@ -527,7 +528,7 @@ $cryptedId = Crypt::encrypt($datadap->id);
     </div>
 </div>
 
-<div class="modal fade" id="EditdateModal" tabindex="-1" aria-hidden="true">
+<!-- <div class="modal fade" id="EditdateModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <form method="POST" action="{{ route('updateautorisactiondap') }}">
 
@@ -546,7 +547,7 @@ $cryptedId = Crypt::encrypt($datadap->id);
 
                         <div class="col-sm-12 col-md-12">
 
-                            <input class="form-control" name="dateau" type="date" required="required" placeholder="Identifiant" />
+                            <input class="form-control" name="dateau" type="date" required="required"  />
 
 
 
@@ -564,7 +565,7 @@ $cryptedId = Crypt::encrypt($datadap->id);
             </div>
         </form>
     </div>
-</div>
+</div>  -->
 
 
 @include('document.dap.modale_feb')

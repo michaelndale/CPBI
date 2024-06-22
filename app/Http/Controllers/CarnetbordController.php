@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\DB;
 
 class CarnetbordController extends Controller
 {
-    public function index()
+  public function index()
   {
-   
+
     $title = 'Carnet de bord';
 
     $vehicule = Vehicule::all();
@@ -25,10 +25,10 @@ class CarnetbordController extends Controller
     $service = Service::all();
     $projet = Project::all();
     $personnel = DB::table('users')
-    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-    ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-    ->orderBy('nom', 'ASC')
-    ->get();
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+      ->orderBy('nom', 'ASC')
+      ->get();
 
     return view(
       'carnet_bord.index',
@@ -50,7 +50,7 @@ class CarnetbordController extends Controller
       ->leftjoin('projects', 'carnetbords.projetid', 'projects.id')
       ->join('users', 'carnetbords.userid', '=', 'users.id')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('carnetbords.*', 'projects.title as projec_title','services.title as service_name', 'personnels.prenom as user_prenom')
+      ->select('carnetbords.*', 'projects.title as projec_title', 'services.title as service_name', 'personnels.prenom as user_prenom')
       ->get();
 
     $output = '';
@@ -59,12 +59,12 @@ class CarnetbordController extends Controller
       $nombre = 1;
       foreach ($entretien as $rs) {
         $chef_mission = DB::table('users')
-        ->leftjoin('personnels', 'personnels.id', 'users.personnelid')
-        ->select('users.*', 'personnels.nom', 'users.id as idu', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
-        ->where('users.id', $rs->chefmission)
-        ->first();
+          ->leftjoin('personnels', 'personnels.id', 'users.personnelid')
+          ->select('users.*', 'personnels.nom', 'users.id as idu', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
+          ->where('users.id', $rs->chefmission)
+          ->first();
 
-        $nom = $chef_mission->nom.' '.$chef_mission->prenom;
+        $nom = $chef_mission->nom . ' ' . $chef_mission->prenom;
         $cryptedId = Crypt::encrypt($rs->id);
         $output .= '
             <tr>
@@ -127,15 +127,15 @@ class CarnetbordController extends Controller
       $carnet->itineraire = $request->ituneraire;
       $carnet->objectmission = $request->object;
       $carnet->chefmission = $request->chefmission;
-      $carnet->projetid = $request->projetid ;
-      $carnet->index_depart = $request->indexdepart ;
+      $carnet->projetid = $request->projetid;
+      $carnet->index_depart = $request->indexdepart;
       $carnet->index_retour = $request->indexretour;
       $carnet->kms_parcourus = $request->kilometrage;
       $carnet->carburant_littre = $request->carburant;
       $carnet->datejour = $request->datejour;
       $carnet->userid             = Auth::id();
       $carnet->save();
-  
+
       // Confirmer la transaction
       DB::commit();
       // Répondre avec succès
@@ -160,57 +160,80 @@ class CarnetbordController extends Controller
     return response()->json($ft);
   }
 
-   // update  request
-   public function updateCarnet(Request $request)
-   {
-     try {
- 
-       $carnet = Carnetbord::find($request->idc);
-       $carnet->numero_plaque = $request->cvehicule;
+  // update  request
+  public function updateCarnet(Request $request)
+  {
+    try {
+
+      $carnet = Carnetbord::find($request->idc);
+      $carnet->numero_plaque = $request->cvehicule;
       $carnet->service_id = $request->cservice;
       $carnet->itineraire = $request->cituneraire;
       $carnet->objectmission = $request->cobject;
       $carnet->chefmission = $request->cchefmission;
-      $carnet->projetid = $request->cprojetid ;
-      $carnet->index_depart = $request->cindexdepart ;
+      $carnet->projetid = $request->cprojetid;
+      $carnet->index_depart = $request->cindexdepart;
       $carnet->index_retour = $request->cindexretour;
       $carnet->kms_parcourus = $request->ckilometrage;
       $carnet->carburant_littre = $request->ccarburant;
       $carnet->datejour = $request->cdatejour;
-       $carnet->update();
-       return response()->json([
-         'status' => 200,
-       ]);
-     } catch (Exception $e) {
- 
-       return response()->json([
-         'status' => 202,
-       ]);
-     }
-   }
- 
-   // supresseion
-   public function delete(Request $request)
-   {
-     try {
-       $carnet = Carnetbord::find($request->id);
-       if ($carnet->userid == Auth::id()) {
-         $id = $request->id;
-         Carnetbord::destroy($id);
-         return response()->json([
-           'status' => 200,
-         ]);
-       } else {
-         return response()->json([
-           'status' => 205,
-         ]);
-       }
-     } catch (Exception $e) {
-       return response()->json([
-         'status' => 202,
-       ]);
-     }
-   }
+      $carnet->update();
+      return response()->json([
+        'status' => 200,
+      ]);
+    } catch (Exception $e) {
 
-  
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
+  }
+
+  // supresseion
+  public function delete(Request $request)
+  {
+    try {
+      $carnet = Carnetbord::find($request->id);
+      if ($carnet->userid == Auth::id()) {
+        $id = $request->id;
+        Carnetbord::destroy($id);
+        return response()->json([
+          'status' => 200,
+        ]);
+      } else {
+        return response()->json([
+          'status' => 205,
+        ]);
+      }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
+  }
+
+  public function voir($key){
+
+    $title = 'Voir Carnet de bord';
+    $key = Crypt::decrypt($key);
+
+    $carnet = Carnetbord::orderBy('id', 'DESC')
+      ->leftjoin('services', 'carnetbords.service_id', 'services.id')
+      ->leftjoin('projects', 'carnetbords.projetid', 'projects.id')
+      ->join('users', 'carnetbords.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('carnetbords.*', 'projects.title as projec_title', 'services.title as service_name', 'personnels.prenom as user_prenom')
+      ->where('carnetbords.id' , $key)
+      ->first();
+
+    $chef_mission = DB::table('users')
+      ->leftjoin('personnels', 'personnels.id', 'users.personnelid')
+      ->select('users.*', 'personnels.nom', 'users.id as idu', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
+      ->where('users.id', $carnet->chefmission)
+      ->first();
+
+    
+
+
+  }
 }

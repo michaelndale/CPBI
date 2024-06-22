@@ -45,7 +45,9 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                                                 <tr>
                                                                     <td style="width:120px"> Numéro dap </br>
                                                                         <input type="hidden" value="{{ $datadap->iddape }}" id="dapid" name="dapid" class="form-control form-control-sm" required>
-                                                                        <input type="text" value="{{ $datadap->numerodp }}" id="numerodap" name="numerodap" class="form-control form-control-sm" style="background-color:#c0c0c0">
+                                                                        
+                                                                        <input type="hidden" value="{{ $datadap->numerodp }}" id="anciant_numerodjas" name="anciant_numerodjas" class="form-control form-control-sm" style="background-color:#c0c0c0">
+                                                                        <input type="text" value="{{ $datadap->numerodp }}" id="numerodap" name="numerodap" class="form-control form-control-sm" >
                                                                     </td>
                                                                     <td style="width:300px"> Service <br>
                                                                         <select type="text" name="serviceid" id="serviceid" style="width: 100%" class="form-control form-control-sm" required>

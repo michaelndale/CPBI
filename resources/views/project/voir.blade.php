@@ -24,7 +24,7 @@
                 $IDPJ= Session::get('id');
                 $cryptedId = Crypt::encrypt($IDPJ);
                 @endphp
-                <a href="{{ route('key.viewProject', $cryptedId ) }}" class="btn btn-primary" title="Actualiser"><i class="fas fa-redo-alt"></i> </a>
+                <a href="{{ route('key.viewProject', $cryptedId ) }}" class="btn btn-primary" type="button" title="Actualiser"><i class="fas fa-redo-alt"></i>  </a>
                 <button class="btn btn-primary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="fa fa-random"></i> Actions <i class="mdi mdi-dots-vertical align-middle font-size-16"></i>
                 </button>
@@ -35,15 +35,15 @@
                   </li>
                   <li>
                     <a class="dropdown-item" href="{{ route('gestioncompte') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
-                      Ligne budgetaire</a>
+                      Ligne budgétaire</a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="{{ route('rallongebudget') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
-                      Budget</a>
+                      Budgét</a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="{{ route('activity') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
-                      Activites</a>
+                      Activitées</a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="{{ route('listfeb') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
@@ -91,13 +91,12 @@
         <div class="col-xl-7">
           <div class="card">
             <div class="card-header">
-              <h5 class="card-title mb-0"> <i class="fa fa-info-circle"></i> Information sur le projet </h5>
+              <h5 class="card-title mb-0"> <i class="fa fa-info-circle"></i> Information du projet </h5>
             </div>
             <div class="card-body">
               <div class="col-12 col-xl-12 col-xxl-12 pe-xl-0">
                 <div class="mb-12 mb-xl-12">
                   <div class="row gx-0 gx-sm-12">
-
                     <div class="col-12">
                       <table class="lh-sm">
                         <tbody>
@@ -200,13 +199,11 @@
         <div class="col-xl-5">
           <div class="card">
             <div class="card-header">
-              <h5 class="card-title mb-0"><i class="fa fa-edit"></i> Description</h5>
+              <h5 class="card-title mb-0"><i class="fa fa-info-circle"></i> Description du projet </h5>
             </div>
             <div class="card-body pt-0 pb-3">
               <div id="overview-chart" data-colors='["#1f58c7"]' class="apex-charts" dir="ltr"></div>
               <p class="text-800 mb-4">{{ $dataProject->description }} </p>
-
-
             </div>
           </div>
 

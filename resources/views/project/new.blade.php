@@ -131,29 +131,14 @@
 
           if (response.status == 200) {
             toastr.success("Creation projet avec succès !", "Enregistrement");
-
-            $("#addProjectForm")[0].reset();
-            $("#addProjectbtn").text('Enregistrer');
-
             var key = response.lastid;
-
             var url = key + '/view';
-
             window.location.href = url;
-
           }
           if (response.status == 201) {
             toastr.info("Vous ne pouvez pas enregitrer le project deux fois !", "Attention");
-
           }
-
-          if (response.status == 202) {
-            toastr.error("Erreur d'execution, verifier votre internet", "Attention ");
-
-          }
-
           document.getElementById("connectBtn").disabled = false;
-
         }
    
       });

@@ -36,24 +36,20 @@ class ProjectController extends Controller
   public function new()
   {
     $title = 'New project';
-    $active = 'Project';
     $members = DB::table('users')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
       ->orderBy('nom', 'ASC')
       ->get();
-
     $Folder = Folder::all();
     $devise = Devise::all();
-    $compte = Compte::where('compteid', '=', NULL)->get();
+  
     return view(
       'project.new',
       [
         'title' => $title,
         'dataMember' => $members,
         'dataFolder' => $Folder,
-        'active' => $active,
-        'compte' => $compte,
         'devise' => $devise
       ]
     );
@@ -81,7 +77,6 @@ class ProjectController extends Controller
           // Vérification de l'existence du projet
           $numero = $request->numeroProjet;
           $check = Project::where('numeroprojet', $numero)->first();
-  
           if ($check) {
               return response()->json([
                   'status' => 201,
@@ -162,7 +157,12 @@ class ProjectController extends Controller
   public function list()
   {
     $title = "List project";
-    $data = Project::orderBy('id', 'DESC')->get();
+    $data = DB::table('projects')
+    ->join('users', 'projects.lead', '=', 'users.id')
+    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->select('projects.*', 'projects.id as idpr', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+    ->get();
+
     $active = 'Project';
     return view(
       'project.list',

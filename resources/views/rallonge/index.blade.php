@@ -22,20 +22,13 @@
             <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Budgétisation </h4>
           </div>
           <div class="col col-md-auto">
-            <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>
-            @if($projetdatat->autorisation == 1)
-            <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle"></span> Ajouter le budget </a>
-            @endif
+              <a href="javascript::;" id="fetchDataLink"> <span class="fa fa-sync-alt"></span> Actualiser</a>
+              @if($projetdatat->autorisation == 1)
+              <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle"></span> Ajouter le budget </a>
+              @endif
           </div>
         </div>
       </div>
-
-
-   
-
-
-
-
       
       <div class="card-body p-0"  id="table-container" style="overflow-y: auto;">
         <div class="card">

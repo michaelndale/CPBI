@@ -1,23 +1,25 @@
 @extends('layout/app')
 @section('page-content')
-<div class="main-content">
-  <br>
 
-  <div class="content">
+<div class="main-content">
+  <div class="page-content">
     <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
       <div class="card-header p-4 border-bottom border-300 bg-soft">
         <div class="row g-3 justify-content-between align-items-end">
           <div class="col-12 col-md">
-            <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Demande et Justification d'Avance "DJA" </h4>
+            <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Demande et Justification d'Avance "DJA"  </h4>
           </div>
-          <!-- <div class="col col-md-auto">
-            <a href="javascript:void()" ><span class="me-2" data-feather="plus-circle"></span> <i class="fa fa-plus-circle"></i> Nouvel justification</a></nav>
-            </div>  -->
+          <div class="col col-md-auto">
 
+            <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>
+
+
+            <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addfebModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle"></span> Nouvel fiche FEB</a>
+
+          </div>
         </div>
       </div>
       <div class="card-body p-0">
-
         <div id="tableExample2">
           <div class="table-responsive">
             <table class="table table-striped table-sm fs--1 mb-0 table-bordere" style="background-color:#c0c0c0">

@@ -6,13 +6,11 @@
       <div class="card-header p-4 border-bottom border-300 bg-soft">
         <div class="row g-3 justify-content-between align-items-end">
           <div class="col-12 col-md">
-            <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> LIGNE BUDGÉTAIRE </h4>
+            <h4 class="card-title mb-0"> <i class="fa fa-list"></i> Ligne budgétaire </h4>
           </div>
           <div class="col col-md-auto">
-
             <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>
             <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter la ligne budgétaire </a>
-
           </div>
         </div>
       </div>
@@ -23,17 +21,13 @@
             <table class="table table-striped table-sm fs--1 mb-0">
               <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
                 <tr style="background-color:#82E0AA">
-
                   <th style="width:5%">Compte</th>
-                  <th style="width:45%">Postes Budgetaires</th>
+                  <th style="width:45%">Postes Budgétaires</th>
                   <th>Type du budgét</th>
                   <th>Type Coût </th>
                   <th>Créé par</th>
                   <th>Créé le</th>
-                  <th>
-                    <center>Actions</center>
-                  </th>
-
+                  <th> <center>Actions</center></th>
                 </tr>
               </thead>
               <tbody id="show_all_compte">

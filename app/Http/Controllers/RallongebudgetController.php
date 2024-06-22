@@ -17,6 +17,10 @@ class RallongebudgetController extends Controller
 {
   public function index()
   {
+
+    if (!session()->has('id')) {
+      return redirect()->route('dashboard');
+    }
     // Récupération des valeurs de la session
     $IDP = session()->get('id');
     $devise = session()->get('devise');
@@ -53,8 +57,6 @@ class RallongebudgetController extends Controller
      
     ]);
   }
-
-
 
   public function fetchAll()
   {
@@ -154,15 +156,15 @@ class RallongebudgetController extends Controller
               // Vérifier si le type de budget contient des éléments
               $containsElements = false;
               foreach ($data as $datas) {
-                  $somme_budget_ligne = DB::table('rallongebudgets')
-                      ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
-                      ->where('rallongebudgets.projetid', $IDP)
-                      ->where('rallongebudgets.compteid', $datas->id)
-                      ->where('comptes.cle_type_projet', $cle_id_type_projet)
-                      ->sum('rallongebudgets.budgetactuel');
+                $somme_budget_ligne = DB::table('rallongebudgets')
+                ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
+                ->where('rallongebudgets.projetid', $IDP)
+                ->where('rallongebudgets.compteid', $datas->id)
+                ->where('comptes.cle_type_projet', $cle_id_type_projet)
+                ->sum('rallongebudgets.budgetactuel');
   
-                  if ($somme_budget_ligne > 0) {
-                      $containsElements = true;
+                if ($somme_budget_ligne !== null) {
+                        $containsElements = true;
                       break;
                   }
               }
@@ -327,10 +329,6 @@ class RallongebudgetController extends Controller
       return $output;
   }
   
-
-  
-
-
   // insert a new rallongement request
   public function store(Request $request)
   {
@@ -392,7 +390,6 @@ class RallongebudgetController extends Controller
     }
   }
 
-
   public function storesc(Rallongebudget $gl, Request $request)
   {
     $gl->projetid = $request->cid;
@@ -443,7 +440,6 @@ class RallongebudgetController extends Controller
   }
 
 
-
   // SHOW ELEMENT
   public function showrallonge(Request $request)
   {
@@ -481,7 +477,6 @@ class RallongebudgetController extends Controller
     }
   }
 
-
   // edit an service ajax request
   public function addsc(Request $request)
   {
@@ -501,7 +496,6 @@ class RallongebudgetController extends Controller
       'status' => 200,
     ]);
   }
-
 
   public function findSousCompte(Request $request)
   {
@@ -574,7 +568,6 @@ class RallongebudgetController extends Controller
       ]);
     }
   }
-
 
   public function deleteall(Request $request)
   {

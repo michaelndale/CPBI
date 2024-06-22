@@ -221,7 +221,7 @@
                 success: function(response) {
                     if (response.status == 200) {
                         toastr.success("Carnet de bord modifier avec succès !", "Modification");
-                        fetchAllft();
+                        show_carnet();
                         $("#cbtnsave").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
                         $("#EditDealModal").modal('hide');
                         document.getElementById("cbtnsave").disabled = false;

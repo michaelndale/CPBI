@@ -278,8 +278,8 @@
                 </td>
                 
                 <td>
-                    <label title="le calcul du taux progressif en fonction du numéro de FEB (Formulaire d'Engagement Budgétaire) qui est inférieur ou égal au numéro de FEB en cours.">Taux d’exécution de la ligne et ses sous lignes:   {{ $sommelignpourcentage }}% </label><br> 
-                    Taux d’exécution globale du projet: {{ $POURCENTAGE_GLOGALE }}% 
+                    <label title="le calcul du taux progressif en fonction du numéro de FEB (Formulaire d'Engagement Budgétaire) qui est inférieur ou égal au numéro de FEB en cours.">Taux d’exécution de la ligne et de ses sous-lignes budgétaires:   {{ $sommelignpourcentage }}% </label><br> 
+                    Taux d’exécution global du projet: {{ $POURCENTAGE_GLOGALE }}% 
 
                 </td>
             </tr>
@@ -332,11 +332,11 @@
                     <td style="width:10%">
                         <center> {{ $datelementfebs->frequence }} </center>
                     </td>
-                    <td style="width:15%">
-                        <center> {{ number_format($datelementfebs->pu,0, ',', ' ') }} </center>
+                    <td style="width:15%;text-align: right">
+                        {{ number_format($datelementfebs->pu,0, ',', ' ') }} 
                     </td>
-                    <td style="width:20%">
-                        <center> {{ number_format($datelementfebs->montant,0, ',', ' ') }} </center>
+                    <td style="width:20%; text-align: right">
+                        {{ number_format($datelementfebs->montant,0, ',', ' ') }} 
                     </td>
                 </tr>
                 @php
@@ -348,10 +348,10 @@
                 <td colspan="7">
                   <b> Total général </b> 
                 </td>
-                <td>
-                    <center>
+                <td style="text-align: right";> 
+                   
                      <b> {{ number_format($sommefeb,0, ',', ' ') }} </b>
-                    </center>
+                    
                     </h5>
                 </td>
             </tr>

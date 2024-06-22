@@ -49,7 +49,6 @@ class FebController extends Controller
       ->get();
 
     $output = '';
-
     if ($data->isNotEmpty()) {
       foreach ($data as $datas) {
         $sommefeb = DB::table('elementfebs')
@@ -151,7 +150,6 @@ class FebController extends Controller
   public function notificationdoc()
   {
     $documents = collect([]);
-
     // Jointure pour obtenir les informations des utilisateurs dans documentacce
     $documentacce = DB::table('febs')
       ->join('users', 'febs.userid', '=', 'users.id')
@@ -536,20 +534,15 @@ class FebController extends Controller
   public function Updatestore(Request $request)
   {
     DB::beginTransaction();
-
     try {
       $IDP = session()->get('id');
-
-
       $activityTwo = Elementdap::where('referencefeb', $request->febid)->get();
-
       // Vérifier si des éléments existent
       if ($activityTwo->isNotEmpty()) {
         // Mettre à jour les éléments FEB existants
         foreach ($activityTwo as $element) {
           $element->update([
             'ligneided' => $request->ligneid,
-
           ]);
         }
       }
@@ -562,7 +555,6 @@ class FebController extends Controller
         foreach ($activityTree as $elementTree) {
           $elementTree->update([
             'ligneid' => $request->ligneid,
-
           ]);
         }
       }
@@ -586,6 +578,33 @@ class FebController extends Controller
       $autres = $request->has('autres') ? 1 : 0;
       $petitcaisse = $request->alimentation;
       $fp = $request->has('fp') ? 1 : 0;
+
+      if($request->acce==$request->ancien_acce){ 
+        $acce_signe= $request->acce_signe;
+      }
+      else
+      {  
+        $acce_signe=0;
+      }
+
+
+      if($request->comptable==$request->ancien_comptable){ 
+        $comptable_signe= $request->comptable_signe;
+      }
+      else
+      {  
+        $comptable_signe=0;
+      }
+
+
+      if($request->chefcomposante==$request->ancien_chefcomposante){ 
+        $chef_signe= $request->chef_signe;
+      }
+      else
+      {  
+        $chef_signe=0;
+      }
+
 
       $activity->numerofeb = $request->numerofeb;
       $activity->periode = $request->periode;
@@ -613,6 +632,13 @@ class FebController extends Controller
       $activity->descriptionf = $request->descriptionf;
       $activity->beneficiaire = $request->beneficiaire;
       $activity->sous_ligne_bugdetaire   = $request->ligneid;
+
+      //signature
+
+      $activity->acce_signe   =  $acce_signe;
+      $activity->comptable_signe   =  $comptable_signe;
+      $activity->chef_signe   =  $chef_signe;
+
       $activity->update();
 
       $dataToUpdate = [];
@@ -633,7 +659,6 @@ class FebController extends Controller
               'libellee' => $request->libelleid[$key],
               'tperiode' => $request->periode,
               'numero' => $request->numerofeb
-
             ];
           }
         } else {
@@ -1459,10 +1484,8 @@ class FebController extends Controller
       if ($emp->userid == Auth::id()) {
         $id = $request->id;
 
-
         $emp->signale = 2;
         $emp->update();
-
 
         return response()->json([
           'status' => 200,
@@ -1478,7 +1501,6 @@ class FebController extends Controller
       ]);
     }
   }
-
 
   public function checkfeb(Request $request)
   {
@@ -1917,4 +1939,6 @@ class FebController extends Controller
       ]);
     }
   }
+
+
 }

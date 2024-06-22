@@ -79,29 +79,9 @@ $documentNombre = $dap_nombre + $fab_nombre ;
     <header id="page-topbar">
       <div class="navbar-header">
         <div class="d-flex">
-          <!-- LOGO -->
-          <div class="navbar-brand-box">
-            <a href="{{ route('dashboard') }}" class="logo logo-dark">
-              <span class="logo-sm">
-                <img src="{{ asset('element/assets/images/logo-sm-dark.png') }}" alt="logo-sm-dark" height="24">
-              </span>
-              <span class="logo-lg">
-                <img src="{{ asset('element/assets/images/logo-dark.png') }}" alt="logo-dark" height="25">
-              </span>
-            </a>
-
-            <a href="{{ route('dashboard') }}" class="logo logo-light">
-              <span class="logo-sm">
-                <img src="{{ asset('element/assets/images/logo-sm-light.png') }}" alt="logo-sm-light" height="24">
-              </span>
-              <span class="logo-lg">
-                <img src="{{ asset('element/assets/images/logo-light.png') }}" alt="logo-light" height="25">
-              </span>
-            </a>
-          </div>
-
-          <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">
-            <i class="ri-menu-2-line align-middle"></i>
+         
+          <button type="button" class="btn btn-sm px-3 font-size-20 header-item waves-effect" id="vertical-menu-btn">
+           <b><i class="ri-menu-2-line align-middle"></i> CEPBU</b> 
           </button>
 
           <!-- Projet session et recherche-->
@@ -245,51 +225,32 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
 
             </button>
-            <div class="dropdown-menu dropdown-menu-end " style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 72px); " data-popper-placement="bottom-end">
-
-              <!-- item-->
-
-           
-
-              <a href="javascript:void(0);" class="dropdown-item notify-item editpersonnel" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#EditPersonnelModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
-                  <i class="fa fa-user-edit"></i> Moi
+          <div class="dropdown-menu dropdown-menu-end " style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 72px); " data-popper-placement="bottom-end">
+          <a href="javascript:void(0);" class="dropdown-item notify-item editpersonnel" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#EditPersonnelModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
+                  <i class="ri-user-settings-line "></i> Moi
               </a>
-
               <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editMotdepasseModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
-                  <i class="fa fa-edit"></i> Modifier le mot de passe
+                  <i class="ri-user-follow-line "></i> Modifier le mot de passe
               </a>
-
               <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editprofileModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
-                  <i class="fa fa-edit"></i> Modifier profile
+                  <i class="ri-user-received-2-line "></i> Modifier profile
               </a>
-
               <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
-                  <i class="fa fa-edit"></i> Modifier signature
+                  <i class="ri-pen-nib-fill "></i> Modifier signature
               </a>
-
               <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editthemeModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
-                  <i class="fa fa-edit"></i> Preference menu
+                  <i class="ri-contrast-fill"></i> Preference menu
               </a>
-              
-              <!-- <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
-                  <i class="fa fa-edit"></i> Donne FeedBack
-              </a> -->
- 
-             
-
-              <!-- <a href="javascript:void(0);" class="dropdown-item notify-item">
-                <i class="fa fa-edit"></i> Fermer la session
-              </a> -->
-
+              <!--<a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
+                      <i class="fa fa-edit"></i> Donne FeedBack
+                  </a> <a href="javascript:void(0);" class="dropdown-item notify-item">
+                    <i class="fa fa-edit"></i> Fermer la session
+                  </a> 
+              -->
               <a href="javascript:void(0);" class="dropdown-item notify-item" data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" role="button" aria-expanded="false"> <span class="me-2" data-feather="log-out" title="Déconnectez-vous en cliquant sur l'icône.">
                   <i class="fas fa-sign-out-alt"></i> Déconnexion
               </a>
-
-              <!-- item-->
-
-
-
-            </div>
+             
 
           </div>
 
@@ -316,20 +277,18 @@ $documentNombre = $dap_nombre + $fab_nombre ;
           <!-- Left Menu Start -->
           <ul class="metismenu list-unstyled" id="side-menu">
             <li class="menu-title">Menu</li>
-
-            <li>
-             
-
+            
               @if ( $documentNombre != 0)
-
-              
-           
-
-              <a href="#" class="waves-effect" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
+              <audio autoplay>
+                    <source src="{{ asset('notification/son.mp3') }}" type="audio/mpeg">
+                    Votre navigateur ne supporte pas l'élément audio.
+                </audio>
+              <li class="nav-item">
+                <a href="#" class="waves-effect" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
                 <i class="fas fa-file-signature"></i><span class="badge rounded-pill bg-danger float-end">{{ $documentNombre }}</span>
                 <span>Documents</span>
               </a>
-            </li>
+              </li>
             @endif
 
             <li>
