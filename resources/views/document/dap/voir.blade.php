@@ -212,7 +212,12 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                 </tr>
                                 @endforeach
                                 <tr>
-                                    <td colspan="4"> Fonds reçus par : {{ ucfirst($fond_reussi->nom) }}  {{ ucfirst($fond_reussi->prenom) }} </td>
+                                    <td colspan="4"> Fonds reçus par : 
+                                    @if(isset($fond_reussi->nom) && !empty($fond_reussi->nom) && isset($fond_reussi->prenom) && !empty($fond_reussi->prenom))
+                                            {{ ucfirst($fond_reussi->nom) }} {{ ucfirst($fond_reussi->prenom) }}
+                                        @endif
+
+                                    </td>
                                 </tr>
                             </table>
 

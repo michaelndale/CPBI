@@ -27,16 +27,11 @@
                                 <tbody class="list">
                                     <tr>
                                         <td class="align-middle ps-3 name" style="width:15%">Composante/ Projet/Section</td>
-                                        <td class="align-middle email" colspan="8">
+                                        <td class="align-middle email" colspan="15">
                                             <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
                                             <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
                                         </td>
-                                        <td colspan="7">
-                                            Ceci est pour alimenter la petite caisse ?
-                                            Oui <input type="radio" class="form-check-input" id="alimentantionOui" name="alimentation" value="1">
-                                            &nbsp;&nbsp;&nbsp;
-                                            Non <input type="radio" class="form-check-input" id="alimentantionNon" name="alimentation" value="0" checked>
-                                        </td>
+                                        
                                     </tr>
                                     <tr>
                                         <td class="align-middle ps-3 name">Ligne budgétaire: <span class="text-danger">*</span></td>

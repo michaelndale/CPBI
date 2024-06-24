@@ -8,13 +8,18 @@
       <div class="modal-body">
         <div id="tableExample2">
           <div class="table-responsive">
-          <input type="text" class="form-control" placeholder="Recherche par numéro , Activité...">
-            <table class="table table-striped table-sm fs--1 mb-0">
+          <div class="input-group mb-3">
+  <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+  <input type="text" name="recherche" id="recherche" class="form-control" placeholder="Recherche par numéro, document, date, initiateur...">
+</div>
+
+             <table class="table table-bordered table-striped table-sm fs--1 mb-0">
               <thead>
                 <tr>
                   <th class="sort border-top"><b>#</b></th>
                   <th class="sort border-top" data-sort="Document"><b>Document</b></th>
-                  <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> DOC</b></th>
+                  <th class="sort border-top" data-sort="febnum"><b><center>N<sup>o</sup> DOC</center></b></th>
+                  <th class="sort border-top" data-sort="montant"><b><center>Montant</center></b></th>
                   <th class="sort border-top" data-sort="Date Doc"><b>Date FEB</b></th>
                   <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
                   <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
@@ -580,6 +585,18 @@ $(document).ready(function() {
 
   });
 
+  document.getElementById('recherche').addEventListener('keyup', function() {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll('#footernotification tr');
+
+    rows.forEach(row => {
+      let text = row.textContent.toLowerCase();
+      row.style.display = text.includes(filter) ? '' : 'none';
+    });
+  });
+
+
+
   fetchnotification();
 
   function fetchnotification() {
@@ -587,7 +604,6 @@ $(document).ready(function() {
       url: "{{ route('allnotification') }}",
       method: 'get',
       success: function(reponse) {
-        $("#allnotification").html(reponse);
         $("#footernotification").html(reponse);
       }
     });

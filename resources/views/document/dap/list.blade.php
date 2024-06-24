@@ -70,9 +70,7 @@
                   <th class="sort border-top ">
                     <center><b> Justifier </b></center>
                   </th>
-                  <th class="sort border-top ">
-                    <center><b> Non Justifier </b></center>
-                  </th>
+                
                   <th class="sort border-top ">
                     <center><b> Créé le. </b></center>
                   </th>

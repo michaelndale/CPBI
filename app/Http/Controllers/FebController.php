@@ -148,154 +148,169 @@ class FebController extends Controller
   }
 
   public function notificationdoc()
-  {
+{
     $documents = collect([]);
-    // Jointure pour obtenir les informations des utilisateurs dans documentacce
+    $userId = Auth::id();
+
+    // Fonction pour récupérer le montant total des FEB
+    function getTotalFeb($febId)
+    {
+        return DB::table('elementfebs')
+            ->where('febid', $febId)
+            ->sum('montant');
+    }
+
+    // Fonction pour récupérer le montant total des DAP en fonction de plusieurs FEB
+    function getTotalDap($dapId)
+    {
+        $febIds = DB::table('elementdaps') // Suppose que vous avez une table de liaison entre DAP et FEB
+            ->where('dapid', $dapId)
+            ->pluck('referencefeb');
+        
+        return DB::table('elementfebs')
+            ->whereIn('febid', $febIds)
+            ->sum('montant');
+    }
+
+    // Récupération des documents FEB
     $documentacce = DB::table('febs')
-      ->join('users', 'febs.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->join('projects', 'febs.projetid', '=', 'projects.id')
-      ->where('acce', Auth::id())
-      ->where('acce_signe', 0)
-      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-      ->get();
+        ->join('users', 'febs.userid', '=', 'users.id')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->join('projects', 'febs.projetid', '=', 'projects.id')
+        ->where('acce', $userId)
+        ->where('acce_signe', 0)
+        ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+        ->get();
 
-    // Ajouter le type de document
     $documentacce->each(function ($item) {
-      $item->document_type = 'feb';
+        $item->document_type = 'feb';
+        $item->total = getTotalFeb($item->id);
     });
 
-    // Jointure pour obtenir les informations des utilisateurs dans documentcompte
     $documentcompte = DB::table('febs')
-      ->join('users', 'febs.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->join('projects', 'febs.projetid', '=', 'projects.id')
-      ->where('comptable', Auth::id())
-      ->where('comptable_signe', 0)
-      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-      ->get();
+        ->join('users', 'febs.userid', '=', 'users.id')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->join('projects', 'febs.projetid', '=', 'projects.id')
+        ->where('comptable', $userId)
+        ->where('comptable_signe', 0)
+        ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+        ->get();
 
-    // Ajouter le type de document
     $documentcompte->each(function ($item) {
-      $item->document_type = 'feb';
+        $item->document_type = 'feb';
+        $item->total = getTotalFeb($item->id);
     });
 
-    // Jointure pour obtenir les informations des utilisateurs dans documentchefcomposent
     $documentchefcomposent = DB::table('febs')
-      ->join('users', 'febs.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->join('projects', 'febs.projetid', '=', 'projects.id')
-      ->where('chefcomposante', Auth::id())
-      ->where('chef_signe', 0)
-      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-      ->get();
+        ->join('users', 'febs.userid', '=', 'users.id')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->join('projects', 'febs.projetid', '=', 'projects.id')
+        ->where('chefcomposante', $userId)
+        ->where('chef_signe', 0)
+        ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+        ->get();
 
-    // Ajouter le type de document
     $documentchefcomposent->each(function ($item) {
-      $item->document_type = 'feb';
+        $item->document_type = 'feb';
+        $item->total = getTotalFeb($item->id);
     });
 
     $documents_dap = collect([]);
 
     $dap_demandeetablie = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-      ->where('demandeetablie', Auth::id())
-      ->where('demandeetablie_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-      ->get();
+        ->join('users', 'daps.userid', '=', 'users.id')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+        ->where('demandeetablie', $userId)
+        ->where('demandeetablie_signe', 0)
+        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+        ->get();
 
-    // Ajouter le type de document
     $dap_demandeetablie->each(function ($item) {
-      $item->document_type = 'dap';
+        $item->document_type = 'dap';
+        $item->total = getTotalDap($item->id);
     });
 
-    // Jointure pour obtenir les informations des utilisateurs dans dap_verifier
     $dap_verifier = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-      ->where('verifierpar', Auth::id())
-      ->where('verifierpar_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-      ->get();
+        ->join('users', 'daps.userid', '=', 'users.id')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+        ->where('verifierpar', $userId)
+        ->where('verifierpar_signe', 0)
+        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+        ->get();
 
-    // Ajouter le type de document
     $dap_verifier->each(function ($item) {
-      $item->document_type = 'dap';
+        $item->document_type = 'dap';
+        $item->total = getTotalDap($item->id);
     });
 
-    // Jointure pour obtenir les informations des utilisateurs dans dap_approuverpar
     $dap_approuverpar = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-      ->where('approuverpar', Auth::id())
-      ->where('approuverpar_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-      ->get();
+        ->join('users', 'daps.userid', '=', 'users.id')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+        ->where('approuverpar', $userId)
+        ->where('approuverpar_signe', 0)
+        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+        ->get();
 
-    // Ajouter le type de document
     $dap_approuverpar->each(function ($item) {
-      $item->document_type = 'dap';
+        $item->document_type = 'dap';
+        $item->total = getTotalDap($item->id);
     });
 
-    // Jointure pour obtenir les informations des utilisateurs dans dap_responsable
     $dap_responsable = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-      ->where('responsable', Auth::id())
-      ->where('responsable_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-      ->get();
+        ->join('users', 'daps.userid', '=', 'users.id')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+        ->where('responsable', $userId)
+        ->where('responsable_signe', 0)
+        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+        ->get();
 
-    // Ajouter le type de document
     $dap_responsable->each(function ($item) {
-      $item->document_type = 'dap';
+        $item->document_type = 'dap';
+        $item->total = getTotalDap($item->id);
     });
 
-    // Jointure pour obtenir les informations des utilisateurs dans dap_secretaire
     $dap_secretaire = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-      ->where('secretaire', Auth::id())
-      ->where('secretaure_general_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-      ->get();
+        ->join('users', 'daps.userid', '=', 'users.id')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+        ->where('secretaire', $userId)
+        ->where('secretaure_general_signe', 0)
+        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+        ->get();
 
-    // Ajouter le type de document
     $dap_secretaire->each(function ($item) {
-      $item->document_type = 'dap';
+        $item->document_type = 'dap';
+        $item->total = getTotalDap($item->id);
     });
 
-    // Jointure pour obtenir les informations des utilisateurs dans dap_chefprogramme
     $dap_chefprogramme = DB::table('daps')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-      ->where('chefprogramme', Auth::id())
-      ->where('chefprogramme_signe', 0)
-      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-      ->get();
+        ->join('users', 'daps.userid', '=', 'users.id')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+        ->where('chefprogramme', $userId)
+        ->where('chefprogramme_signe', 0)
+        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+        ->get();
 
-    // Ajouter le type de document
     $dap_chefprogramme->each(function ($item) {
-      $item->document_type = 'dap';
+        $item->document_type = 'dap';
+        $item->total = getTotalDap($item->id);
     });
 
     $documents = $documents->concat($documentacce)
-      ->concat($documentcompte)
-      ->concat($documentchefcomposent);
+        ->concat($documentcompte)
+        ->concat($documentchefcomposent);
 
     $dap_documents = $documents_dap->concat($dap_demandeetablie)
-      ->concat($dap_verifier)
-      ->concat($dap_approuverpar)
-      ->concat($dap_responsable)
-      ->concat($dap_secretaire)
-      ->concat($dap_chefprogramme);
+        ->concat($dap_verifier)
+        ->concat($dap_approuverpar)
+        ->concat($dap_responsable)
+        ->concat($dap_secretaire)
+        ->concat($dap_chefprogramme);
 
     $all_documents = $documents->concat($dap_documents);
 
@@ -303,49 +318,48 @@ class FebController extends Controller
     $nombre = 1;
 
     if ($all_documents->count() > 0) {
-      // Grouper par numéro de projet et titre
-      $groupedDocuments = $all_documents->groupBy(function ($item) {
-        return $item->numeroprojets . ' : ' . $item->projet;
-      });
+        // Group documents by project number and title
+        $groupedDocuments = $all_documents->groupBy(function ($item) {
+            return $item->numeroprojets . ' : ' . $item->projet;
+        });
 
-      foreach ($groupedDocuments as $projet => $docs) {
-        $output .= '<tr><td colspan="7"><b>' . ucfirst($projet) . '</b></td></tr>';
-        foreach ($docs as $doc) {
-          $cryptedIDoc = Crypt::encrypt($doc->id);
+        foreach ($groupedDocuments as $projet => $docs) {
+            $output .= '<tr><td colspan="8"><b>' . ucfirst($projet) . '</b></td></tr>';
+            foreach ($docs as $doc) {
+                $cryptedIDoc = Crypt::encrypt($doc->id);
 
+                $datefeb = !empty($doc->datefeb) ? date('d-m-Y', strtotime($doc->datefeb)) : '-';
+                $dateautorisation = !empty($doc->dateautorisation) ? date('d-m-Y', strtotime($doc->dateautorisation)) : '-';
+                $createdAt = !empty($doc->created_at) ? date('d-m-Y', strtotime($doc->created_at)) : '-';
+                $datelimite = !empty($doc->datelimite) ? date('d-m-Y', strtotime($doc->datelimite)) : '-';
 
-          $datefeb = !empty($doc->datefeb) ? date('d-m-Y', strtotime($doc->datefeb)) : '-';
-          $dateautorisation = !empty($doc->dateautorisation) ? date('d-m-Y', strtotime($doc->dateautorisation)) : '-';
-          $createdAt = !empty($doc->created_at) ? date('d-m-Y', strtotime($doc->created_at)) : '-';
-          $datelimite = !empty($doc->datelimite) ? date('d-m-Y', strtotime($doc->datelimite)) : '-';
+                $output .= '<tr>
+                    <td>' . $nombre . '</td>
+                    <td>' . ($doc->document_type === 'feb' ? 'FEB' : 'DAP') . '</td>
+                    <td align="right"> <a href="'.($doc->document_type === 'feb' ? route('key.viewFeb', $cryptedIDoc) : route('viewdap', $cryptedIDoc)) . '"><b><u>' . ucfirst($doc->document_type === 'feb' ? $doc->numerofeb : $doc->numerodp) . '/' . date('Y') . ' <i class="fas fa-external-link-alt"></i></u></b></a></td>
+                    <td align="right"><b>' . number_format($doc->total, 0, ',', ' ') . '</b></td>
+                    <td>' . ($datefeb ?? $dateautorisation) . '</td>
+                    <td>' . $createdAt . '</td>
+                    <td>' . $datelimite . '</td>
+                    <td>' . ucfirst($doc->user_nom) . ' ' . ucfirst($doc->user_prenom) . '</td>
+                </tr>';
 
-          $output .= '<tr>
-                          <td>' . $nombre . '</td>
-                         <td>' . ($doc->document_type === 'feb' ? 'FEB' : 'DAP') . '</td>
-        <td ><a href="' . ($doc->document_type === 'feb' ? route('key.viewFeb', $cryptedIDoc) : route('viewdap', $cryptedIDoc)) . '"><b><u>' . ucfirst($doc->document_type === 'feb' ? $doc->numerofeb : $doc->numerodp) . '/' . date('Y') . ' <i class="fas fa-external-link-alt"></i> </u></b></a></td>
-        <td >' . ($datefeb ?? $dateautorisation) . '</td>
-        <td>' . $createdAt . '</td>
-        <td >' . $datelimite . '</td>
-        <td>' . ucfirst($doc->user_nom) . ' ' . ucfirst($doc->user_prenom) . '</td>
-                      </tr>';
-
-          $nombre++;
+                $nombre++;
+            }
         }
-      }
-    }
-
-    if ($output === '') {
-      $output = '<tr>
-              <td colspan="7">
-              <center>
-                  <h6 style="color:red">Aucun document trouvé</h6>
-              </center>
-              </td>
-          </tr>';
+    } else {
+        $output = '<tr>
+            <td colspan="7" style="background-color:rgba(255,0,0,0)">
+            <center>
+                <h6 style="color:red">Aucun document trouvé</h6>
+            </center>
+            </td>
+        </tr>';
     }
 
     return $output;
-  }
+}
+
 
   public function Sommefeb()
   {
@@ -457,7 +471,7 @@ class FebController extends Controller
         $apc = $request->has('apc') ? 1 : 0;
         $ra = $request->has('ra') ? 1 : 0;
         $autres = $request->has('autres') ? 1 : 0;
-        $petitcaisse = $request->alimentation;
+  
         $fp = $request->has('fp') ? 1 : 0;
 
         $activity = new Feb();
@@ -484,7 +498,6 @@ class FebController extends Controller
         $activity->ra = $ra;
         $activity->fp = $fp;
         $activity->autres = $autres;
-        $activity->petitcaisse = $petitcaisse;
         $activity->acce = $request->acce;
         $activity->comptable = $request->comptable;
         $activity->chefcomposante = $request->chefcomposante;

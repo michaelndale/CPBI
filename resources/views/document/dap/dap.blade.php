@@ -187,7 +187,7 @@
 
                 <tr>
                     <td>Créé par : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }} </td>
-                    <td> Budget initial  : {{ number_format($budget, 0, ',', ' ') . ' ' }} {{ $devise }}  | Relicat budgetaire :{{ number_format($relicat, 0, ',', ' ') . ' ' }} {{ $devise }} </td>
+                    <td> Budgét initial  : {{ number_format($budget, 0, ',', ' ') . ' ' }} {{ $devise }}  | Relicat budgetaire :{{ number_format($relicat, 0, ',', ' ') . ' ' }} {{ $devise }} </td>
                 </tr>
 
              
@@ -195,7 +195,7 @@
                     <td >
                     Créé le {{ date('d-m-Y', strtotime($datadap->created_at))  }}
                     </td>
-                    <td> Taux execution globale du projet: {{ $pourcetage_globale }}%  </td>
+                    <td> Taux d’exécution global du projet: {{ $pourcetage_globale }}%  </td>
                 </tr>
             </table>
 
@@ -247,8 +247,8 @@
                         <td>{{ $datafebElements->numerofeb }}</td>
                         <td>{{ $datafebElements->descriptionf }}</td>
 
-                        <td align="center">
-                        <center>
+                        <td style="text-align: right;">
+                        
                             @php
                             $totoSUM = DB::table('elementfebs')
                             ->orderBy('id', 'DESC')
@@ -256,14 +256,14 @@
                             ->sum('montant');
                             @endphp
                             {{ number_format($totoSUM, 0, ',', ' ')  }}
-                        </center>
+                       
                         </td>
-                        <td align="center">{{ $sommelignpourcentage }} % </td>
+                        <td style="text-align: center;">{{ $sommelignpourcentage }} % </td>
                     </tr>
                     @endforeach
                     <tr>
-                        <td  colspan="2" align="center"> Total général </td>
-                        <td align="center"> <center> {{ number_format($totoglobale, 0, ',', ' ')  }} </center> </td>
+                        <td  colspan="2" style="text-align: center;"><b> Total général </b>  </td>
+                        <td style="text-align: right;"><b>{{ number_format($totoglobale, 0, ',', ' ')  }} </b>  </td>
                         <td></td>
                     </tr>
                 </tbody>
@@ -358,7 +358,11 @@
 
                 <tr>
                     <td colspan="2"> <b> Autorisaction de paiement</b> </td>
-                    <td> Autorisé le {{ $datadap->dateautorisation }} </td>
+                    <td> Autorisé le 
+                    @if(!empty($datadap->dateautorisation))
+                        {{   date('d-m-Y', strtotime($datadap->dateautorisation )) }}
+                    @endif
+                         </td>
                 </tr>
                 <tr>
                     <td>

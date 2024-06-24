@@ -78,7 +78,7 @@
                                     </td>
 
                                     <td> Solde comptable dd(Sc):
-                                        <input type="text" min="0" class="form-control form-control-sm" name="soldecompte" value="{{ $somfeb }}" style="background-color:#c0c0c0">
+                                        <input type="text" min="0" class="form-control form-control-sm" name="soldecompte" value="{{ $somfeb }}" style="background-color:#c0c0c0" disabled>
                                     </td>
 
                                     <td> Numéro cheque:
@@ -204,22 +204,17 @@
                                     </td>
                                 </tr>
 
-                            </table>
-
-                            <hr>
-
-                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+                          
 
                                 <tr>
-                                    <td colspan="4"><b> Autorisaction de paiement</b></td>
+                                    <td colspan="3"><b> Autorisaction de paiement</b></td>
 
                                 </tr>
 
                                 </tr>
 
                                 <tr>
-                                    <td aligne="center">Autorisé le <center> <input class="form-control form-control-sm" id="basic-form-dob" type="date" id="datesecretairegenerale" name="datesecretairegenerale" /></center>
-                                    </td>
+                                   
                                     <td>
                                         Responsable Administratif et Financier : <br>
                                         <select type="text" class="form-control form-control-sm" name="resposablefinancier" id="resposablefinancier" required>
@@ -251,12 +246,6 @@
                                     </td>
                                 </tr>
 
-
-                                <tr>
-                                    <td colspan="4"><b>Observations/Instructions du SG : </b> <br>
-                                        <textarea class="form-control form-control-sm" name="observation" id="observation">-</textarea>
-                                    </td>
-                                </tr>
                             </table>
 
                         </div>

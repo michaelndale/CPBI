@@ -354,14 +354,21 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
                     <div id="tableExample2">
                         <div class="table-responsive">
-                            <table class="table table-striped table-sm fs--1 mb-0">
+                        <div class="input-group mb-3">
+  <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+  <input type="text" name="recherche" id="recherche" class="form-control" placeholder="Recherche par numéro, document, date, initiateur...">
+</div>
+
+                        
+                            <table class="table table-bordered table-striped table-sm fs--1 mb-0">
                                 <thead>
                                     <tr>
                                         <th class="sort border-top "><b> # </b></center>
                                         </th>
                                         <th class="sort border-top" data-sort="Document"><b>Document</b></th>
-                                        <th class="sort border-top" data-sort="febnum"><b>N<sup>o</sup> DOC</b></th>
-                                        <th class="sort border-top" data-sort="Date Doc"><b>Date FEB </b></th>
+                                        <th class="sort border-top" data-sort="febnum"><b><center>N<sup>o</sup> DOC</center></b></th>
+                                        <th class="sort border-top" data-sort="montant"><b><center>Montant</center></b></th>
+                                        <th class="sort border-top" data-sort="Date Doc"><b>Date FEB</b></th>
                                         <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
                                         <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
                                         <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
@@ -369,7 +376,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                                 </thead>
 
 
-                                <tbody id="allnotification">
+                                <tbody id="footernotification">
                                 </tbody>
                             </table>
                         </div>

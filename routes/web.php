@@ -353,6 +353,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/storesignaledap', [DapController::class, 'storeSignaleDap'])->name('storesignaledap');
         Route::delete('/desactiverlesignaledap', [DapController::class, 'desacctiveSignale'])->name('desactiverlesignaledap');
         Route::delete('/supprimerlesignaledap', [DapController::class, 'deleteSignale'])->name('supprimerlesignaledap');
+        Route::delete('/deleteelementsdap', [DapController::class, 'deleteElement'])->name('deleteelementsdap');
+        
     });
 
     Route::prefix('dja')->group(function () {

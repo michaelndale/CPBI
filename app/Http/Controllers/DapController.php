@@ -111,9 +111,9 @@ class DapController extends Controller
                       <td><span title="' . $datadaps->cho . '">' . (strlen($datadaps->cho) > 8 ? substr($datadaps->cho, 0, 8) . '...' : $datadaps->cho) . '</span></td>
                       <td align="right" >' . $datadaps->comptabiliteb  . '</td>
                       <td align="left">' . $datadaps->banque . '</td>
-                      <td><span title="' . $datadaps->paretablie . '">' . (strlen($datadaps->paretablie) > 8 ? substr($datadaps->paretablie, 0, 8) . '...' : $datadaps->paretablie) . '</span></td>
-                      <td align="center"><input type="checkbox" ' . $justifier . ' class="form-check-input" disabled /></td>
-                      <td align="center"><input type="checkbox" ' . $nonjustifier . ' class="form-check-input" disabled /></td>
+                      <td><span title="' . $datadaps->paretablie . '">' . (strlen($datadaps->paretablie) > 15 ? substr($datadaps->paretablie, 0, 8) . '...' : $datadaps->paretablie) . '</span></td>
+                      <td align="center"><input type="checkbox" ' .$justifier . ' class="form-check-input" disabled /></td>
+                    
                       <td align="center">' . date('d-m-Y', strtotime($datadaps->created_at)) . '</td>
                       <td align="left">' . ucfirst($datadaps->user_prenom) . '</td>
                   </tr>
@@ -167,7 +167,6 @@ class DapController extends Controller
       $dap->comptabiliteb = $request->comptebanque;
       $dap->ov = $ov;
       $dap->cho = $request->ch;
-      $dap->soldecompte = $request->soldecompte;
       $dap->demandeetablie = $request->demandeetablie;
       $dap->verifierpar = $request->verifier;
       $dap->approuverpar = $request->approuver;
@@ -176,8 +175,7 @@ class DapController extends Controller
       $dap->chefprogramme = $request->chefprogramme;
       $dap->paretablie = $request->paretablie;
       $dap->banque = $request->banque;
-      $dap->observation = $request->observation;
-
+     
       if ($justifier == 1) {
         $dap->beneficiaire = $request->filled('beneficiaire') ? $request->beneficiaire : NULL;
       }
@@ -194,20 +192,20 @@ class DapController extends Controller
           $existingDapE = Elementdap::where('referencefeb', $febid)->first();
 
           if (!$existingDapE) {
-            $dapE = new Elementdap();
-            $dapE->dapid = $IDdap;
-            $dapE->numerodap = $request->numerodap;
-            $dapE->referencefeb = $febid;
-            $dapE->projetidda = $request->projetid;
+            $existingDapE = new Elementdap();
+            $existingDapE->dapid = $IDdap;
+            $existingDapE->numerodap = $request->numerodap;
+            $existingDapE->referencefeb = $febid;
+            $existingDapE->projetidda = $request->projetid;
 
             if ($justifier == 1) {
-              $dapE->ligneided = $request->ligneid[$key] ?? null;
-              $dapE->montantavance = $request->montantavance[$key] ?? null;
-              $dapE->duree_avance = $request->duree_avance[$key] ?? null;
-              $dapE->descriptionn = $request->descriptionel[$key] ?? null;
+              $existingDapE->ligneided = $request->ligneid[$key] ?? null;
+              $existingDapE->montantavance = $request->montantavance[$key] ?? null;
+              $existingDapE->duree_avance = $request->duree_avance[$key] ?? null;
+              $existingDapE->descriptionn = $request->descriptionel[$key] ?? null;
             }
 
-            $dapE->save();
+            $existingDapE->save();
 
             // Mettre à jour le statut de l'élément Feb correspondant
             $element = Feb::where('id', $febid)->first();
@@ -260,51 +258,163 @@ class DapController extends Controller
   // insert a new employee ajax request
   public function updatestore(Request $request)
   {
-    try {
-
-      $IDpp = session()->get('id');
-      $dap = dap::where('id', $request->dapid)->first();
-      $dja = Dja::where('numerodjas', $request->anciant_numerodjas)->where('projetiddja', $IDpp)->first(); // change apres service
-
-      if (!$dap  && !$dja) {
-        return back()->with('failed', 'DAP non trouvé.');
-      }
-
-      if ($dap->userid != Auth::id()) {
-        return back()->with('failed', 'Vous n\'avez pas l\'accreditation de modifier le DAP dont vous n\'etes pas le createur.');
-      }
-
+      try {
+          // Début de la transaction
+          DB::beginTransaction();
   
-      $ov = $request->has('ov') ? 1 : 0;
+          $IDpp = session()->get('id');
+          $dap = Dap::where('id', $request->dapid)->first();
+          $dja = Dja::where('numerodap', $request->dapid)->where('projetiddja', $IDpp)->first(); // Changer après service
+  
+          // Vérifier si les enregistrements DAP et DJA existent
+          if (!$dap || !$dja) {
+              return back()->with('failed', 'DAP non trouvé.');
+          }
+  
+          // Vérifier si l'utilisateur a le droit de modifier le DAP
+          if ($dap->userid != Auth::id()) {
+              return back()->with('failed', 'Vous n\'avez pas l\'accréditation pour modifier ce DAP.');
+          }
 
-      $dap->numerodp = $request->numerodap;
-      $dap->serviceid = $request->serviceid;
-      $dap->lieu = $request->lieu;
-      $dap->comptabiliteb = $request->comptebanque;
-      $dap->ov = $ov;
-      $dap->cho = $request->ch;
-      $dap->dateautorisation = $request->datesecretairegenerale;
-      $dap->demandeetablie = $request->demandeetablie;
-      $dap->verifierpar = $request->verifier;
-      $dap->approuverpar = $request->approuver;
-      $dap->responsable = $request->resposablefinancier;
-      $dap->secretaire = $request->secretairegenerale;
-      $dap->chefprogramme = $request->chefprogramme;
-      $dap->observation = $request->observation;
-      $dap->paretablie = $request->paretablie;
-      $dap->banque = $request->banque;
-      $dap->update();
+          if($request->demandeetablie==$request->ancien_demandeetablie){ 
+            $demandeetablie= $request->demandeetablie_signe;
+          }
+          else
+          {  
+            $demandeetablie=0;
+          }
+    
+          if($request->verifier==$request->ancien_verifierpar){ 
+            $verifier= $request->verifierpar_signe;
+          }
+          else
+          {  
+            $verifier=0;
+          }
 
-      $dja->numerodap = $request->dapid;
-      $dja->numeroov = $ov;
-      $dja->update();
+          if($request->approuver==$request->approuverpar_signe){ 
+            $approuver= $request->ancien_approuverpar;
+          }
+          else
+          {  
+            $approuver=0;
+          }
 
-      return back()->with('success', 'Mises à jour effectuées avec succès.');
-    } catch (Exception $e) {
-      return back()->with('failed', 'Échec ! ' . $e->getMessage());
-    }
+          if($request->resposablefinancier==$request->responsable_signe){ 
+            $resposablefinancier= $request->ancien_responsable;
+          }
+          else
+          {  
+            $resposablefinancier=0;
+          }
+
+          if($request->secretairegenerale==$request->secretaire_signe){ 
+            $secretairegenerale= $request->ancien_secretaire;
+          }
+          else
+          {  
+            $secretairegenerale=0;
+          }
+
+          if($request->chefprogramme==$request->chefprogramme_signe){ 
+            $chefprogramme= $request->ancien_chefprogramme;
+          }
+          else
+          {  
+            $chefprogramme=0;
+          }
+
+
+          $justifier = $request->has('justifier') ? 1 : 0;
+          $nonjustifier = $request->has('nonjustifier') ? 1 : 0;
+    
+    
+    
+    
+  
+          // Mettre à jour les champs du DAP
+          $dap->numerodp = $request->numerodap;
+          $dap->serviceid = $request->serviceid;
+          $dap->lieu = $request->lieu;
+          $dap->comptabiliteb = $request->comptebanque;
+          $dap->ov = $request->has('ov') ? 1 : 0;
+          $dap->cho = $request->ch;
+         
+          $dap->demandeetablie = $request->demandeetablie;
+          $dap->verifierpar = $request->verifier;
+          $dap->approuverpar = $request->approuver;
+          $dap->responsable = $request->resposablefinancier;
+          $dap->secretaire = $request->secretairegenerale;
+          $dap->chefprogramme = $request->chefprogramme;
+          $dap->observation = $request->observation;
+          $dap->paretablie = $request->paretablie;
+          $dap->banque = $request->banque;
+
+          $dap->demandeetablie_signe = $demandeetablie;
+          $dap->verifierpar_signe = $verifier;
+          $dap->approuverpar_signe = $approuver;
+          $dap->responsable_signe =$resposablefinancier;
+          $dap->chefprogramme_signe =$secretairegenerale;
+          $dap->secretaure_general_signe =$chefprogramme;
+          if ($justifier == 1) {
+            $dap->beneficiaire = $request->filled('beneficiaire') ? $request->beneficiaire : NULL;
+          }
+          $dap->justifier = $justifier;
+          $dap->nonjustifier = $nonjustifier;
+
+          $dap->update();
+  
+          // Mettre à jour les champs du DJA
+          $dja->numerodjas = $request->numerodap;
+          $dja->numerodap = $request->dapid;
+          $dja->numeroov = $dap->ov;
+          $dja->justifie = $justifier;
+         
+          $dja->update();
+
+          if ($request->has('febid')) {
+            foreach ($request->febid as $key => $febid) {
+              // Vérifier si un enregistrement avec la même référencefeb existe déjà
+              $existingDapE = Elementdap::where('referencefeb', $febid)->first();
+    
+              if ($existingDapE) {
+              
+                $existingDapE->dapid = $request->dapid;
+                $existingDapE->numerodap = $request->numerodap;
+                $existingDapE->referencefeb = $febid;
+               
+    
+                if ($justifier == 1) {
+                  $existingDapE->ligneided = $request->ligneid[$key] ?? null;
+                  $existingDapE->montantavance = $request->montantavance[$key] ?? null;
+                  $existingDapE->duree_avance = $request->duree_avance[$key] ?? null;
+                  $existingDapE->descriptionn = $request->descriptionel[$key] ?? null;
+                }else{
+               
+                  $existingDapE->montantavance = null;
+                  $existingDapE->duree_avance =  null;
+                  $existingDapE->descriptionn =  null;
+                }
+    
+                $existingDapE->update();
+    
+                // Mettre à jour le statut de l'élément Feb correspondant
+               
+              }
+            }
+          }
+  
+          // Valider la transaction
+          DB::commit();
+  
+          return back()->with('success', 'Mises à jour effectuées avec succès.');
+      } catch (Exception $e) {
+          // En cas d'erreur, annuler la transaction
+          DB::rollBack();
+          return back()->with('failed', 'Échec ! ' . $e->getMessage());
+      }
   }
-
+  
   public function list()
   {
     // Récupérer les valeurs de la session
@@ -688,10 +798,11 @@ class DapController extends Controller
 
     $idd = Crypt::decrypt($idd);
 
+   
+
     $datadap = DB::table('daps')
       ->join('services', 'daps.serviceid', 'services.id')
       ->join('projects', 'daps.projetiddap', 'projects.id')
-
       ->select('daps.*', 'daps.id as iddape', 'services.id as idss', 'services.title as titres', 'projects.budget as montantprojet', 'projects.devise as devise', 'daps.userid as iduser')
       ->where('daps.id', $idd)
       ->first();
@@ -700,18 +811,34 @@ class DapController extends Controller
     $ID = $datadap->projetiddap;
     $devise  = $datadap->devise;
 
+
+    $fond_reussi = DB::table('users')
+    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
+    ->Where('users.id', $datadap->beneficiaire)
+    ->first();
+
+
+  
+
+   // dd($fond_reussi);
+
     $title = "Modification DAP";
     $service = Service::all();
 
     $banque = Banque::all();
 
-    $compte = Compte::where('compteid', '=', NULL)->get();
+   
+    $compte =  DB::table('comptes')
+    ->where('comptes.projetid', $ID)
+    ->where('compteid', '=', 0)
+    ->get();
     // utilisateur
     $personnel = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
-      ->orderBy('nom', 'ASC')
-      ->get();
+    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+    ->orderBy('nom', 'ASC')
+    ->get();
 
 
     $initiateur = DB::table('users')
@@ -735,8 +862,6 @@ class DapController extends Controller
       ->SUM('montant');
 
     $somfeb =  $budget - $somfeb;
-
-
 
     $elementdaps_feb  = DB::table('febs')
       ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
@@ -793,6 +918,14 @@ class DapController extends Controller
       ->where('statut', 0)
       ->get();
 
+      $elementfeb = DB::table('febs')
+      ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
+      ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire')
+      ->where('elementdaps.dapid', $datadap->id)
+      ->get();
+
+     
+
 
     return view(
       'document.dap.edit',
@@ -814,8 +947,10 @@ class DapController extends Controller
         'chefprogramme' => $chefprogramme,
         'initiateur' => $initiateur,
         'feb' => $feb, 
-        'banque' => $banque
-
+        'banque' => $banque,
+        'fond_reussi' => $fond_reussi,
+        'elementfeb' => $elementfeb
+        
       ]
     );
   }
@@ -1559,6 +1694,53 @@ class DapController extends Controller
       ]);
     }
   }
+
+  public function deleteElement(Request $request)
+  {
+      DB::beginTransaction();
+  
+      try {
+          $id = $request->id;
+  
+          // Vérifier s'il existe des enregistrements Elementdap associés au dap
+          $elements = Elementdap::where('referencefeb', $id)->get();
+  
+          // Supprimer les enregistrements Feb si des éléments sont trouvés
+          if ($elements->isNotEmpty()) {
+              // Collecter les IDs des Feb à mettre à jour
+              $febIds = $elements->pluck('referencefeb')->toArray();
+              // Mettre à jour les enregistrements Feb en une seule fois
+              Feb::whereIn('id', $febIds)->update(['statut' => 0]);
+  
+              // Supprimer les enregistrements associés dans Elementdap et Elementdjas
+              Elementdap::where('referencefeb', $id)->delete();
+              Elementdjas::where('febid', $id)->delete();
+  
+              DB::commit();
+  
+              return response()->json([
+                  'status' => 200,
+                  'message' => 'Élément supprimé avec succès.'
+              ]);
+          } else {
+              // Si aucun élément trouvé, ne pas bloquer l'opération, simplement retourner un message d'avertissement
+              DB::rollBack();
+              return response()->json([
+                  'status' => 404,
+                  'message' => 'Aucun élément trouvé à supprimer.'
+              ]);
+          }
+      } catch (\Exception $e) {
+          DB::rollBack();
+          return response()->json([
+              'status' => 500,
+              'message' => 'Erreur lors de la suppression de l\'élément.',
+              'error' => $e->getMessage(), // Message d'erreur de l'exception
+              'exception' => (string) $e // Détails de l'exception convertis en chaîne
+          ]);
+      }
+  }
+  
   
   
 }
