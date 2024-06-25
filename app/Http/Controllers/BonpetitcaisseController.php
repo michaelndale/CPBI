@@ -35,7 +35,7 @@ class BonpetitcaisseController extends Controller
             ->get();
 
         return view(
-            'document.bonpetitcaise.index',
+            'bonpetitecaisse.compte',
             [
                 'title' => $title,
                 'compte' => $compte,

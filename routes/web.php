@@ -18,6 +18,7 @@ use App\Http\Controllers\CatactivityController;
 use App\Http\Controllers\CategoriebeneficiaireController;
 use App\Http\Controllers\ClasseurController;
 use App\Http\Controllers\CompteController;
+use App\Http\Controllers\ComptepetitecaisseController;
 use App\Http\Controllers\DapController;
 use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\DeviseController;
@@ -379,6 +380,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [BonpetitcaisseController::class, 'index'])->name('bpc');
         Route::get('/liste_bpc', [BonpetitcaisseController::class, 'list'])->name('liste_bpc');
         Route::post('/storebpc', [BonpetitcaisseController::class, 'store'])->name('storebpc');
+    });
+
+    Route::prefix('comptepetitcaisse')->group(function () {
+        Route::get('/', [ComptepetitecaisseController::class, 'index'])->name('cpc');
+        Route::get('/liste_cpc', [ComptepetitecaisseController::class, 'fetchAll'])->name('liste_cpc');
+        Route::post('/storecpc', [ComptepetitecaisseController::class, 'store'])->name('storecpc');
+        Route::delete('/deletecpc', [ComptepetitecaisseController::class, 'delete'])->name('deletecpc');
     });
 
     Route::prefix('ftd')->group(function () {

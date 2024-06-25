@@ -14,7 +14,8 @@
       <div class="card-header p-4 border-bottom border-300 bg-soft">
         <div class="row g-3 justify-content-between align-items-end">
           <div class="col-12 col-md">
-            <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Fiche d'Expression des Besoins "FEB" </h4>
+          <h4 class="card-title mb-0"> <i class="mdi mdi-book-open-page-variant-outline"></i> Fiche d'Expression des Besoins "FEB"  </h4>
+           
           </div>
           <div class="col col-md-auto">
 
@@ -46,7 +47,7 @@
 
         <div id="tableExample2">
         <div class="table-responsive" id="table-container" style="overflow-y: auto;">
-        <table class="table table-striped table-sm fs--1 mb-0">
+        <table class="table table-bordered table-striped table-sm fs--1 mb-0">
             <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
                 <tr>
                   <th class="sort border-top ">

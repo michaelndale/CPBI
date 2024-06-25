@@ -27,7 +27,12 @@
                 </tr>
               </thead>
               <tbody id="footernotification">
-                <!-- Contenu du tableau à ajouter dynamiquement -->
+              <tr>
+                  <td colspan="8">
+                    <h5 class="text-center text-secondery my-5">
+                      @include('layout.partiels.load')
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>

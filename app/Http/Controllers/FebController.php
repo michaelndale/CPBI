@@ -111,7 +111,7 @@ class FebController extends Controller
                     </center>
                 </td>
                 <td align="center">  <a href="feb/' . $cryptedId . '/view" class="dropdown-item mx-1" id="' . $datas->id . '"><b>' . $datas->numerofeb . '</b></a></td>
-                <td  align="right"  >' . $sommefeb .  '</td>
+                <td  align="right"><b>'.$sommefeb.'</b></td>
                 <td align="center">' . $datas->periode . '</td>
                 <td align="center"><input type="checkbox" ' . $facture . ' class="form-check-input"   disabled /></td>
                 <td align="center"><input type="checkbox" ' . $om . ' class="form-check-input"  disabled /></td>
@@ -589,7 +589,7 @@ class FebController extends Controller
       $apc = $request->has('apc') ? 1 : 0;
       $ra = $request->has('ra') ? 1 : 0;
       $autres = $request->has('autres') ? 1 : 0;
-      $petitcaisse = $request->alimentation;
+
       $fp = $request->has('fp') ? 1 : 0;
 
       if($request->acce==$request->ancien_acce){ 
@@ -638,7 +638,7 @@ class FebController extends Controller
       $activity->ra = $ra;
       $activity->fp = $fp;
       $activity->autres = $autres;
-      $activity->petitcaisse = $petitcaisse;
+    
       $activity->comptable = $request->comptable;
       $activity->acce = $request->acce;
       $activity->chefcomposante = $request->chefcomposante;

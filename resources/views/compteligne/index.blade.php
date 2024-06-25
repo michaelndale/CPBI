@@ -18,7 +18,7 @@
 
         <div id="tableExample2">
           <div class="table-responsive" id="table-container" style="overflow-y: auto;">
-            <table class="table table-striped table-sm fs--1 mb-0">
+            <table class="table table-bordered table-striped table-sm fs--1 mb-0">
               <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
                 <tr style="background-color:#82E0AA">
                   <th style="width:5%">Compte</th>
@@ -377,6 +377,8 @@
   // Appelez la fonction lorsque la fenêtre est redimensionnée
   window.onresize = adjustTableHeight;
 </script>
+
+
 <script>
   $(function() {
     // Add Compte ajax 

@@ -368,7 +368,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                                         <th class="sort border-top" data-sort="Document"><b>Document</b></th>
                                         <th class="sort border-top" data-sort="febnum"><b><center>N<sup>o</sup> DOC</center></b></th>
                                         <th class="sort border-top" data-sort="montant"><b><center>Montant</center></b></th>
-                                        <th class="sort border-top" data-sort="Date Doc"><b>Date FEB</b></th>
+                                        <th class="sort border-top" data-sort="Date Doc"><b>Date Doc</b></th>
                                         <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
                                         <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
                                         <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
@@ -377,6 +377,12 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
 
                                 <tbody id="footernotification">
+                                <tr>
+                                <td colspan="8">
+                                    <h5 class="text-center text-secondery my-5">
+                                    @include('layout.partiels.load')
+                                </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>

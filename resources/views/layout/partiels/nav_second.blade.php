@@ -361,7 +361,22 @@
                   <a href="{{ route('listfeb') }}" class="dropdown-item">FEB</a>
                   <a href="{{ route('listdap') }}" class="dropdown-item">DAP</a>
                   <a href="{{ route('listdja') }}" class="dropdown-item">DJA</a>
-                  <a href="{{ route('bpc') }}" class="dropdown-item">Bon de Petite Caisse</a>
+
+                  <div class="dropdown">
+                    <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-invoice" role="button">
+                      Petite caisse<div class="arrow-down"></div>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="topnav-invoice">
+                      <a href="{{ route('cpc') }}" class="dropdown-item">Compte Petite caisse</a>
+                      <a href="{{ route('user') }}" class="dropdown-item">FEB Petit caisse</a>
+                      <a href="{{ route('fonction')}}" class="dropdown-item">DJA Petite caisse</a>
+                      <a href="{{ route('bpc') }}" class="dropdown-item">Bon petite caisse</a>
+                      <a href="{{ route('fonction')}}" class="dropdown-item">Rapport petite caisse</a>
+                    </div>
+                  </div>
+
+
+                  <a href="{{ route('affectation') }}" class="dropdown-item">Emprunt</a>
                   <a href="{{ route('affectation') }}" class="dropdown-item">Intervenants</a>
                   <a href="{{ route('rapportcumule') }}" class="dropdown-item">Rapport commule</a>
                   <a href="{{ route('planoperationnel') }}" class="dropdown-item">Plan d'action</a>
@@ -382,6 +397,10 @@
                   <a href="{{ route('list_project') }}" class="dropdown-item">Tout les projets</a>
                 </div>
               </li>
+
+             
+
+              
 
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button">

@@ -18,7 +18,9 @@
       <div class="card-header p-4 border-bottom border-300 bg-soft">
         <div class="row g-3 justify-content-between align-items-end">
           <div class="col-12 col-md">
-            <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Demande d'Autorisation de Paiement "DAP" </h4>
+          <h4 class="card-title mb-0"> <i class="mdi mdi-book-open-page-variant-outline"></i> Demande d'Autorisation de Paiement "DAP"  </h4>
+          
+
           </div>
           <div class="col col-md-auto">
 
@@ -46,7 +48,7 @@
 
         <div id="tableExample2">
           <div class="table-responsive" id="table-container" style="overflow-y: auto;">
-            <table class="table table-striped table-sm fs--1 mb-0">
+            <table class="table table-bordered table-striped table-sm fs--1 mb-0">
               <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
                 <tr>
                   <th class="sort border-top ">
@@ -59,21 +61,14 @@
                   <th class="sort border-top ">
                     <center> <b>N<sup>o</sup> FEB </b></center>
                   </th>
+                  <th class="sort border-top "> <b><center>Montant</center> </b></th>
                   <th class="sort border-top "> <b>Lieu </b></th>
-                  <th class="sort border-top ">
-                    <center> <b>OV </b></center>
-                  </th>
-                  <th class="sort border-top "> <b>Cheque </b></th>
-                  <th class="sort border-top "> <b>Compte bancaire </b></th>
-                  <th class="sort border-top "> <b>Banque </b></th>
-                  <th class="sort border-top "> <b>Etabli au nom</b></th>
-                  <th class="sort border-top ">
-                    <center><b> Justifier </b></center>
-                  </th>
-                
-                  <th class="sort border-top ">
-                    <center><b> Créé le. </b></center>
-                  </th>
+                  <th class="sort border-top"> <b>Cheque </b></th>
+                  <th class="sort border-top"> <b>Compte bancaire </b></th>
+                  <th class="sort border-top"> <b>Banque </b></th>
+                  <th class="sort border-top"> <b>Etabli au nom</b></th>
+                  <th class="sort border-top"> <center><b> Justifier </b></center> </th>
+                  <th class="sort border-top "> <center><b> Créé le. </b></center> </th>
                   <th class="sort border-top "> <b> Créé par </b></th>
                 </tr>
               </thead>

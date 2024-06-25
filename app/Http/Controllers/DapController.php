@@ -43,8 +43,8 @@ class DapController extends Controller
       $ID = session()->get('id');
   
       $datadap = DB::table('daps')
-          ->join('users', 'daps.userid', '=', 'users.id')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->leftJoin('users', 'daps.userid', '=', 'users.id')
+          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
           ->select('daps.*', 'personnels.prenom as user_prenom')
           ->where('daps.projetiddap', $ID)
           ->orderBy('daps.numerodp', 'asc')
@@ -59,27 +59,29 @@ class DapController extends Controller
   
               $justifier = $datadaps->justifier == 1 ? "checked" : "";
               $nonjustifier = $datadaps->justifier == 0 ? "checked" : "";
-
+  
               if ($datadaps->signaledap == 1) {
-                $message = ' <div class="spinner-grow text-danger " role="status" style=" 
-                width: 0.5rem; /* Définissez la largeur */
-                height: 0.5rem; /* Définissez la hauteur */">
-                <span class="sr-only">Loading...</span>
-              </div>';
+                  $message = ' <div class="spinner-grow text-danger " role="status" style=" 
+                  width: 0.5rem; /* Définissez la largeur */
+                  height: 0.5rem; /* Définissez la hauteur */">
+                  <span class="sr-only">Loading...</span>
+                </div>';
               } else {
-                $message = ' ';
+                  $message = ' ';
               }
   
               $numerofeb = DB::table('febs')
-                  ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
+                  ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
                   ->where('elementdaps.dapid', $datadaps->id)
                   ->get();
   
               $cryptedId = Crypt::encrypt($datadaps->id);
+              $totalMontant = $this->getTotalDap($datadaps->id); // Récupérer le montant total pour chaque DAP
+              
               $output .= '
                   <tr>
                       <td>
-                           <center>' . $message . '
+                          <center>' . $message . '
                               <div class="btn-group me-2 mb-2 mb-sm-0">
                                   <a data-bs-toggle="dropdown" aria-expanded="false">
                                       <i class="mdi mdi-dots-vertical ms-2"></i> Options
@@ -87,9 +89,9 @@ class DapController extends Controller
                                   <div class="dropdown-menu">
                                       <a href="dap/' . $cryptedId . '/view" class="dropdown-item mx-1 voirIcon"><i class="far fa-eye"></i> Voir</a>
                                       <a href="dap/' . $cryptedId . '/edit" class="dropdown-item mx-1 editIcon" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
-                                      <a href="dap/' . $datadaps->id . '/generate-pdf-dap" class="dropdown-item mx-1"><i class="fa fa-print"> </i> Générer PDF</a>
+                                      <a href="dap/' . $cryptedId . '/generate-pdf-dap" class="dropdown-item mx-1"><i class="fa fa-print"> </i> Générer PDF</a>
                                       <a class="dropdown-item desactiversignale" id="' .$datadaps->id . '" href="#"><i class="fas fa-random"></i> Désactiver le signal ?</a>
-                                      <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datadaps->id . '" data-numero="' . $datadaps->numerodp . '"href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
+                                      <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datadaps->id . '" data-numero="' . $datadaps->numerodp . '" href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
                                   </div>
                               </div>
                           </center>
@@ -106,16 +108,16 @@ class DapController extends Controller
   
               $output .= '
                       </td>
-                      <td>' . $datadaps->lieu . '</td>
+                       <td align="right"><b>' . number_format($totalMontant, 0, ',', ' ') . '</b> </td> 
                       <td align="center"><input type="checkbox" ' . $ov . ' class="form-check-input" disabled /></td>
                       <td><span title="' . $datadaps->cho . '">' . (strlen($datadaps->cho) > 8 ? substr($datadaps->cho, 0, 8) . '...' : $datadaps->cho) . '</span></td>
                       <td align="right" >' . $datadaps->comptabiliteb  . '</td>
                       <td align="left">' . $datadaps->banque . '</td>
                       <td><span title="' . $datadaps->paretablie . '">' . (strlen($datadaps->paretablie) > 15 ? substr($datadaps->paretablie, 0, 8) . '...' : $datadaps->paretablie) . '</span></td>
                       <td align="center"><input type="checkbox" ' .$justifier . ' class="form-check-input" disabled /></td>
-                    
                       <td align="center">' . date('d-m-Y', strtotime($datadaps->created_at)) . '</td>
                       <td align="left">' . ucfirst($datadaps->user_prenom) . '</td>
+                    
                   </tr>
               ';
               $nombre++;
@@ -133,8 +135,21 @@ class DapController extends Controller
                   </center>
               </td>
           </tr>';
-      }
+      } 
   }
+  
+  // Fonction pour récupérer le montant total des DAP en fonction de plusieurs FEB
+  public function getTotalDap($dapId)
+  {
+      $febIds = DB::table('elementdaps') // Suppose que vous avez une table de liaison entre DAP et FEB
+          ->where('dapid', $dapId)
+          ->pluck('referencefeb');
+      
+      return DB::table('elementfebs')
+          ->whereIn('febid', $febIds)
+          ->sum('montant');
+  }
+  
 
   public function checkDap(Request $request)
   {
@@ -437,7 +452,7 @@ class DapController extends Controller
 
     // utilisateur
     $personnel = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
       ->orderBy('nom', 'ASC')
       ->get();
@@ -666,8 +681,8 @@ class DapController extends Controller
     $idd = Crypt::decrypt($idd);
 
     $datadap = DB::table('daps')
-      ->join('services', 'daps.serviceid', 'services.id')
-      ->join('projects', 'daps.projetiddap', 'projects.id')
+      ->leftJoin('services', 'daps.serviceid', 'services.id')
+      ->leftJoin('projects', 'daps.projetiddap', 'projects.id')
       ->select('daps.*', 'services.title as titres', 'projects.budget as montantprojet', 'projects.title as projettitle', 'projects.devise as devise')
       ->where('daps.id', $idd)
       ->first();
@@ -677,7 +692,7 @@ class DapController extends Controller
     $devise  = $datadap->devise;
 
     $elementfeb = DB::table('febs')
-      ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
+      ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
       ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire')
       ->where('elementdaps.dapid', $datadap->id)
       ->get();
@@ -685,7 +700,7 @@ class DapController extends Controller
 
 
     $elementfebencours = DB::table('febs')
-      ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
+      ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
       ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.sous_ligne_bugdetaire', 'febs.ligne_bugdetaire')
       ->where('elementdaps.dapid', $datadap->id)
       ->first();
@@ -708,21 +723,31 @@ class DapController extends Controller
       ->Where('projetids', $ID)
       ->SUM('montant');
 
-    $pourcetage_globale = round(($somme_gloable * 100) / $budget, 2);
-
+      if ($budget != 0) {
+        $pourcentage_globale = round(($somme_gloable * 100) / $budget, 2);
+    } else {
+        $pourcentage_globale = 0;
+    }
+    
+    // Calcul du solde comptable
     $solde_comptable = $budget - $somme_gloable;
-
-    $pourcentage_encours =  round(($sommeGrandLigne * 100) / $somme_ligne_principale, 2);
+    
+    // Calcul du pourcentage en cours
+    if ($somme_ligne_principale != 0) {
+        $pourcentage_encours = round(($sommeGrandLigne * 100) / $somme_ligne_principale, 2);
+    } else {
+        $pourcentage_encours = 0;
+    }
 
     //etablie par 
     $etablienom =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->Where('users.id', $datadap->userid)
       ->first();
     
       $fond_reussi = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->Where('users.id', $datadap->beneficiaire)
       ->first();
@@ -730,37 +755,37 @@ class DapController extends Controller
      
 
     $Demandeetablie =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->Where('users.id', $datadap->demandeetablie)
       ->first();
 
     $verifierpar =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->Where('users.id', $datadap->verifierpar)
       ->first();
 
     $approuverpar =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->Where('users.id', $datadap->approuverpar)
       ->first();
 
     $responsable =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->Where('users.id', $datadap->responsable)
       ->first();
 
     $secretaire =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id as idp', 'users.signature', 'users.id as usersid')
       ->Where('users.id', $datadap->secretaire)
       ->first();
 
     $chefprogramme =  DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id as idp', 'users.signature', 'users.id as usersid')
       ->Where('users.id', $datadap->chefprogramme)
       ->first();
@@ -781,7 +806,7 @@ class DapController extends Controller
         'chefprogramme' => $chefprogramme,
         'datafebElement' => $elementfeb,
         'budget' => $budget,
-        'pourcetage_globale' => $pourcetage_globale,
+        'pourcetage_globale' => $pourcentage_globale,
         'solde_comptable' => $solde_comptable,
         'pourcentage_encours' => $pourcentage_encours,
         'devise' => $devise,
@@ -801,8 +826,8 @@ class DapController extends Controller
    
 
     $datadap = DB::table('daps')
-      ->join('services', 'daps.serviceid', 'services.id')
-      ->join('projects', 'daps.projetiddap', 'projects.id')
+      ->leftJoin('services', 'daps.serviceid', 'services.id')
+      ->leftJoin('projects', 'daps.projetiddap', 'projects.id')
       ->select('daps.*', 'daps.id as iddape', 'services.id as idss', 'services.title as titres', 'projects.budget as montantprojet', 'projects.devise as devise', 'daps.userid as iduser')
       ->where('daps.id', $idd)
       ->first();
@@ -813,7 +838,7 @@ class DapController extends Controller
 
 
     $fond_reussi = DB::table('users')
-    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
     ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
     ->Where('users.id', $datadap->beneficiaire)
     ->first();
@@ -835,14 +860,14 @@ class DapController extends Controller
     ->get();
     // utilisateur
     $personnel = DB::table('users')
-    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
     ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
     ->orderBy('nom', 'ASC')
     ->get();
 
 
     $initiateur = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
       ->where('users.id',  $datadap->userid)
       ->first();
@@ -864,50 +889,50 @@ class DapController extends Controller
     $somfeb =  $budget - $somfeb;
 
     $elementdaps_feb  = DB::table('febs')
-      ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
+      ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
       ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf')
       ->where('elementdaps.dapid', $idd)
       ->get();
 
     $sommefebs =   DB::table('elementdaps')
-      ->join('elementfebs', 'elementdaps.referencefeb', 'elementfebs.febid')
+      ->leftJoin('elementfebs', 'elementdaps.referencefeb', 'elementfebs.febid')
       ->Where('elementdaps.dapid', $idd)
       ->SUM('elementfebs.montant');
 
     $sommefebs = number_format($sommefebs, 0, ',', ' ') . ' ' . $devise;
 
     $chefcomposant = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as idus', 'users.signature')
       ->Where('users.id', $datadap->demandeetablie)
       ->first();
 
     $chefcomptable = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as idus', 'users.signature')
       ->Where('users.id', $datadap->verifierpar)
       ->first();
 
     $chefservice = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as idus', 'users.signature')
       ->Where('users.id', $datadap->approuverpar)
       ->first();
 
     $responsable = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as idus', 'users.signature')
       ->Where('users.id', $datadap->responsable)
       ->first();
 
     $secretaire = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as idus', 'users.signature')
       ->Where('users.id', $datadap->secretaire)
       ->first();
 
     $chefprogramme = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as idus', 'users.signature')
       ->Where('users.id', $datadap->chefprogramme)
       ->first();
@@ -919,7 +944,7 @@ class DapController extends Controller
       ->get();
 
       $elementfeb = DB::table('febs')
-      ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
+      ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
       ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire')
       ->where('elementdaps.dapid', $datadap->id)
       ->get();
@@ -957,9 +982,10 @@ class DapController extends Controller
 
   public function generatePDFdap($id)
   {
+    
     $datadap = DB::table('daps')
-      ->join('services', 'daps.serviceid', '=', 'services.id')
-      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->leftJoin('services', 'daps.serviceid', '=', 'services.id')
+      ->leftJoin('projects', 'daps.projetiddap', '=', 'projects.id')
       ->select('daps.*', 'services.title as titres', 'projects.budget as montantprojet', 'projects.devise as devise', 'daps.userid as iduser', 'projects.title as projettitle', 'projects.devise as devise')
       ->where('daps.id', $id)
       ->first();
@@ -970,13 +996,13 @@ class DapController extends Controller
 
 
     $datafebElement = DB::table('febs')
-      ->join('elementdaps', 'febs.id', '=', 'elementdaps.referencefeb')
+      ->leftJoin('elementdaps', 'febs.id', '=', 'elementdaps.referencefeb')
       ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire')
       ->where('elementdaps.dapid', $id)
       ->get();
 
     $elementfebencours = DB::table('febs')
-      ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
+      ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
       ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.sous_ligne_bugdetaire', 'febs.ligne_bugdetaire')
       ->where('elementdaps.dapid', $datadap->id)
       ->first();
@@ -1001,79 +1027,91 @@ class DapController extends Controller
       ->where('projetids', $IDb)
       ->sum('montant');
 
-    $pourcetage_globale = round(($somme_gloable * 100) / $budget, 2);
-
-    $pourcentage_encours = round(($sommeGrandLigne * 100) / $somme_ligne_principale, 2);
+      if ($budget != 0) {
+        $pourcetage_globale = round(($somme_gloable * 100) / $budget, 2);
+    } else {
+       $pourcetage_globale = 0;
+    }
+    
+    // Calcul du solde comptable
+   
 
     $relicat = $budget - $somme_gloable;
+    
+    // Calcul du pourcentage en cours
+    if ($somme_ligne_principale != 0) {
+        $pourcentage_encours = round(($sommeGrandLigne * 100) / $somme_ligne_principale, 2);
+    } else {
+        $pourcentage_encours = 0;
+    }
 
 
 
     $infoglo = DB::table('identifications')->first();
 
     $fond_reussi = DB::table('users')
-    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
     ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
-    ->Where('users.id', $datadap->beneficiaire)
+    ->where('users.id', $datadap->beneficiaire)
     ->first();
 
 
     $etablienom = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->where('users.id', $datadap->iduser)
       ->first();
 
     $Demandeetablie = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->where('users.id', $datadap->demandeetablie)
       ->first();
 
     $verifierpar = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->where('users.id', $datadap->verifierpar)
       ->first();
 
     $approuverpar = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->where('users.id', $datadap->approuverpar)
       ->first();
 
     $responsable = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->where('users.id', $datadap->responsable)
       ->first();
 
     $secretaire = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id as idp', 'users.signature', 'users.id as usersid')
       ->where('users.id', $datadap->secretaire)
       ->first();
 
     $chefprogramme = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'personnels.id as idp', 'users.signature', 'users.id as usersid')
       ->where('users.id', $datadap->chefprogramme)
       ->first();
 
     $chefservice = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as idus', 'users.signature')
       ->where('users.id', $datadap->approuverpar)
       ->first();
 
     $chefcomposant = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as idus', 'users.signature')
       ->where('users.id', $datadap->demandeetablie)
       ->first();
 
     $chefcomptable = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as idus', 'users.signature')
       ->where('users.id', $datadap->verifierpar)
       ->first();
@@ -1147,36 +1185,49 @@ class DapController extends Controller
           ->where('projetids', $IDB)
           ->sum('montant');
 
-      $sommelignpourcentage = round(($sommelign * 100) / $somme_ligne_principale, 2);
+     
+
+      if ($somme_ligne_principale != 0) {
+        $sommelignpourcentage = round(($sommelign * 100) / $somme_ligne_principale, 2);
+    } else {
+      $sommelignpourcentage = 0;
+    }
 
       $sommefeb = DB::table('elementfebs')
           ->where('febid', $idfeb)
           ->where('projetids', $IDB)
           ->sum('montant');
 
-      $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
+    
+      if ($budget != 0) {
+        $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
+    } else {
+      $POURCENTAGE_GLOGALE = 0;
+    }
+
+    
 
       // Récupérer les informations sur l'utilisateur
       $createur = DB::table('users')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
           ->select('personnels.nom', 'personnels.prenom', 'users.id as useridp')
           ->where('users.id', $check->userid)
           ->first();
 
       $etablienom = DB::table('users')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
           ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
           ->where('users.id', $check->acce)
           ->first();
 
       $comptable_nom = DB::table('users')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
           ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
           ->where('users.id', $check->comptable)
           ->first();
 
       $checcomposant_nom = DB::table('users')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
           ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
           ->where('users.id', $check->chefcomposante)
           ->first();
@@ -1548,8 +1599,8 @@ class DapController extends Controller
   {
       $signale = Sigaledap::where('dapid', $dapid)
           ->orderBy('id', 'ASC')
-          ->join('users', 'sigaledaps.userid', '=', 'users.id')
-          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->leftJoin('users', 'sigaledaps.userid', '=', 'users.id')
+          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
           ->select('sigaledaps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'users.avatar as avatar')
           ->get();
 
@@ -1740,7 +1791,5 @@ class DapController extends Controller
           ]);
       }
   }
-  
-  
   
 }
