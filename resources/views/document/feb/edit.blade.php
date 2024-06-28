@@ -1,7 +1,7 @@
 @extends('layout/app')
 @section('page-content')
 @php
-$cryptedId = Crypt::encrypt($dataFe->id);
+    $cryptedId = Crypt::encrypt($dataFe->id);
 @endphp
 <div class="main-content">
     <div class="page-content">
@@ -43,7 +43,7 @@ $cryptedId = Crypt::encrypt($dataFe->id);
                                             <td class="align-middle ps-3 name" colspan="4">Ligne budgétaire: </td>
                                             <td class="align-middle email" colspan="14">
                                                 <select class="form-control  form-control-sm" id="ligneid" name="ligneid" required>
-                                                    <option value="{{ $dataFe->idc }}">{{ $dataFe->libellec }}</option>
+                                                    <option value="{{ $dataFe->ligne_bugdetaire }} - {{ $dataFe->sous_ligne_bugdetaire }}">{{ $dataFe->numeroc }}: {{ $dataFe->libellec }}</option>
                                                     @foreach ($compte as $comptes)
                                                     <optgroup label="{{ $comptes->libelle }}">
                                                         @php
@@ -51,7 +51,7 @@ $cryptedId = Crypt::encrypt($dataFe->id);
                                                         $res= DB::select("SELECT * FROM comptes WHERE compteid= $idc");
                                                         @endphp
                                                         @foreach($res as $re)
-                                                        <option value="{{ $re->id }}"> {{ $re->numero }}. {{ $re->libelle }} </option>
+                                                        <option value="{{ $comptes->id }} - {{ $re->id }}"> {{ $re->numero }}. {{ $re->libelle }} </option>
                                                         @endforeach
                                                     </optgroup>
                                                     @endforeach
@@ -66,7 +66,7 @@ $cryptedId = Crypt::encrypt($dataFe->id);
                                                 <small class="text-danger">Erreur: Propriété 'eligne' introuvable.</small>
                                                 @endif
 
-                                                <input style="width:100%" type="hidden" id="grandligne" name="grandligne" class="form-control form-control-sm" value="{{ $datElementgene ? $datElementgene->grandligne : '' }}">
+                                               
                                                 @if(!$datElementgene)
                                                 <small class="text-danger">Erreur: Propriété 'grandligne' introuvable.</small>
                                                 @endif
@@ -341,15 +341,12 @@ $cryptedId = Crypt::encrypt($dataFe->id);
                                             @foreach ($datElement as $datElements)
                                             <tr>
                                                 <td>
-
                                                     <input style="width:100%" type="hidden" id="idelements" name="idelements[]" class="form-control form-control-sm" value="{{ $datElements->idef }}">
                                                     <input style="width:100%" type="hidden" id="referencefeb" name="referencefeb[]" class="form-control form-control-sm" value="{{ $datElements->febid }}">
                                                     <input style="width:100%; border:none;" type="" id="numerodetail" name="numerodetail[]" value="{{ $ndale }}" readonly>
                                                 </td>
 
-
                                                 <td>
-
                                                     <select class="form-control form-control-sm" name="libelleid[]" id="libelleid">
                                                         <option value="{{ $datElements->libellee }}" seleted> {{ $datElements->titrea }} </option>
                                                         @foreach ($activiteligne as $activitelignes)
@@ -359,7 +356,7 @@ $cryptedId = Crypt::encrypt($dataFe->id);
                                                 </td>
                                                 <td>
                                                     <input style="width:100%" value="{{ $datElements->libelle_description }}" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required>
-                                                    <input value="{{ $datElements->id }}" type="hidden" id="libelle_description_id" name="libelle_description_id[]">
+                                                   
                                                 </td>
                                                 <td><input style="width:100%" value="{{ $datElements->unite }}" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm unit_price" required > </td>
                                                 <td><input style="width:100%" value="{{ $datElements->quantite }}" type="text" id="qty" name="qty[]" class="form-control form-control-sm qty" required min="1"></td>
@@ -529,7 +526,6 @@ $cryptedId = Crypt::encrypt($dataFe->id);
     });
 
     // Fonction pour calculer le total
-
 
     function calc_total() {
         var sum = 0;

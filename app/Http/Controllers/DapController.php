@@ -982,7 +982,8 @@ class DapController extends Controller
 
   public function generatePDFdap($id)
   {
-    
+    $id = Crypt::decrypt($id);
+
     $datadap = DB::table('daps')
       ->leftJoin('services', 'daps.serviceid', '=', 'services.id')
       ->leftJoin('projects', 'daps.projetiddap', '=', 'projects.id')
@@ -1027,26 +1028,17 @@ class DapController extends Controller
       ->where('projetids', $IDb)
       ->sum('montant');
 
-      if ($budget != 0) {
-        $pourcetage_globale = round(($somme_gloable * 100) / $budget, 2);
-    } else {
-       $pourcetage_globale = 0;
-    }
+    $pourcetage_globale = $budget ? round(($somme_gloable * 100) / $budget, 2) : 0;
     
-    // Calcul du solde comptable
-   
 
+    // Calcul du solde comptable
+  
     $relicat = $budget - $somme_gloable;
     
     // Calcul du pourcentage en cours
-    if ($somme_ligne_principale != 0) {
-        $pourcentage_encours = round(($sommeGrandLigne * 100) / $somme_ligne_principale, 2);
-    } else {
-        $pourcentage_encours = 0;
-    }
 
-
-
+    $pourcentage_encours = $somme_ligne_principale ? round(($sommeGrandLigne * 100) / $somme_ligne_principale, 2) : 0;
+    
     $infoglo = DB::table('identifications')->first();
 
     $fond_reussi = DB::table('users')

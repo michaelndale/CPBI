@@ -11,7 +11,7 @@
       <div class="card-header p-4 border-bottom border-300 bg-soft">
         <div class="row g-3 justify-content-between align-items-end">
           <div class="col-12 col-md">
-          <h4 class="card-title mb-0"> <i class="mdi mdi-book-open-page-variant-outline"></i> Activites</h4>
+          <h4 class="card-title mb-0"> <i class="mdi mdi-book-open-page-variant-outline"></i> Activités</h4>
           </div>
           <div class="col col-md-auto">
           <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModale" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Nouvelle activité</a>

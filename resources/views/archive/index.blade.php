@@ -27,8 +27,9 @@
               </div>
               <ul class="nav flex-column border-top fs--1 vertical-nav mb-4">
                 @forelse ($classeur as $classeurs)
-                <li class="nav-item"><a class="nav-link py-2 ps-0 pe-3 border-end border-bottom text-start outline-none recupreclasseur" aria-current="page" href="javascript::;" id="{{ $classeurs->id }}">
-                    <div class="d-flex align-items-center"><span class="me-2 nav-icons uil uil-inbox"></span><span class="flex-1">{{ $classeurs->libellec }}</span><span class="nav-item-count">5</span></div>
+                <li class="nav-item">
+                  <a class="nav-link py-2 ps-0 pe-3 border-end border-bottom text-start outline-none recupreclasseur" aria-current="page" href="javascript::;" id="{{ $classeurs->id }}">
+                    <div class="d-flex align-items-center"><span class="me-2 nav-icons uil uil-inbox"></span><span class="flex-1"> {{ $classeurs->libellec }} </span><span class="nav-item-count">5</span></div>
                   </a>
                 </li>
                 @empty
@@ -43,7 +44,7 @@
           <div class=" row g-lg-6 mb-8" style="padding-left:10px ; height:430px">
             <div class=" email-leftbar card col-lg">
               <div class="px-lg-1">
-                <div id="show_all_recherche" class="show_all_recherche">
+                <div id="show_all_recherche" >
                   <h5 style="margin-top:20% ;color:#c0c0c0">
                     <center>
                       <font size="5px"><i class="fa fa-search"></i> </font><br><br>
@@ -51,6 +52,12 @@
                     </center>
                   </h5>
                 </div>
+
+                <div id="archive-content">
+    <!-- Le contenu chargé par AJAX apparaîtra ici -->
+</div>
+
+
               </div>
             </div>
           </div>
@@ -68,8 +75,39 @@
      
 <!-- Assurez-vous que jQuery est inclus avant ce script -->
 <!-- Assurez-vous que jQuery est inclus avant ce script -->
+
+<style>
+.open-folder {
+    font-weight: bold;
+    color: #007bff; /* Couleur pour indiquer que le dossier est ouvert */
+}
+</style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
+function loadArchive(id) {
+    $.ajax({
+        url: '/get-archive',  // Assurez-vous que l'URL est correcte
+        type: 'GET',
+        data: { id: id },
+        success: function(data) {
+            $('#archive-content').html(data);  // Assurez-vous que l'ID du conteneur est correct
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+}
+</script>
+
+
+
+<script>
+
+  
+
+
+
 function openPopup(element) {
     var documentUrl = element.getAttribute('data-document-url');
     var width = screen.width * 0.9; // 90% de la largeur de l'écran
@@ -111,11 +149,16 @@ function openPopup(element) {
       }
     });
   });
+
+
+
 </script>
 
 
       
 <script>
+
+
 
 $(document).ready(function() {
     // Fonction pour gérer la soumission du formulaire d'ajout d'archive

@@ -469,14 +469,14 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                                     <td>
                                                         <center>
                                                             @if ($dataFeb->acce_signe==1)
-                                                            <img src="{{ asset($etablienom->signature) }}" width="200px" />
+                                                            <img src="{{ asset($etablienom->signature) }}" width="150px" />
                                                             @endif
                                                         </center>
                                                     </td>
                                                     <td>
                                                         <center>
                                                             @if ($dataFeb->comptable_signe==1)
-                                                            <img src="{{ asset($comptable_nom->signature) }}" width="200px" />
+                                                            <img src="{{ asset($comptable_nom->signature) }}" width="150px" />
                                                             @endif
                                                         </center>
                                                     </td>
@@ -484,7 +484,7 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                                     <td>
                                                         <center>
                                                             @if ($dataFeb->chef_signe==1)
-                                                            <img src="{{  asset($checcomposant_nom->signature) }}" width="200px" />
+                                                            <img src="{{  asset($checcomposant_nom->signature) }}" width="150px" />
                                                             @endif
                                                         </center>
 

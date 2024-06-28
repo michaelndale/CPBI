@@ -15,7 +15,7 @@ $idpro=Session::get('id');
                     <div class="page-title-right">
                         <div class="btn-toolbar float-end" role="toolbar">
                             <div class="btn-group me-2 mb-2 mb-sm-0">
-                                <a href="{{ route('generate-pdf-dap', $datadap->iddape) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-print"></i> </a>
+                                <a href="{{ route('generate-pdf-dap',$cryptedId  ) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-print"></i> </a>
                                 <a href="{{ route('viewdap', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect" title="Voir le DAP"><i class="fa fa-eye"></i> </a>
                                 <a href="{{ route('listdap') }}" type="button" class="btn btn-primary waves-light waves-effect"><i class="fa fa-list"></i></a>
                             </div>

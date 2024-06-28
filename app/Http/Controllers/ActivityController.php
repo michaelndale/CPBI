@@ -21,7 +21,7 @@ class ActivityController extends Controller
 {
   public function index()
   {
-      $title = 'Activite';
+      $title = 'Activités';
   
       // Récupérer l'ID du projet de la session
       $projectId = session()->get('id');
@@ -79,12 +79,10 @@ class ActivityController extends Controller
         $output .= '
             <thead>
                 <tr style="background-color:#82E0AA">
-                    <th>N<sup>o</sup></th>
+                  
                     <th><center>Code</center></th>
-                    <th>Ligne et sous ligne budgetaire</th>
-                    <th>
-                        Activité <span style="margin-left: 40%;">Montant total des activités: </b></span>
-                    </th>
+                    <th>Ligne et sous ligne budgétaire</th>
+                    <th> Activités  <!-- <span style="margin-left: 40%;">Montant total des activités: </b></span> --> </th>
                 </tr>
             </thead>
             <tbody>';
@@ -104,7 +102,6 @@ class ActivityController extends Controller
 
                 $output .= '
                     <tr style="background-color:#F5F5F5">
-                        <td class="align-middle ps-3 name"><b>' . $nombre . '</td>
                         <td><b>' . ucfirst($rs->numero) . '</b></td>
                         <td><b>' . ucfirst($rs->libelle) . ' </b></td>
                         <td align="right">Budget de la ligne:  <b>' .  number_format($somme_budget_ligne, 0, ',', ' ')  . ' </b></td>
@@ -123,7 +120,7 @@ class ActivityController extends Controller
 
                         $output .= '
                             <tr>
-                                <td class="align-left" style="background-color:#F5F5F5"></td>
+                               
                                 <td style="width:15px">' . ucfirst($sc->numero) . '</td>
                                 <td style="width:250px">' . ucfirst($sc->libelle) . ' </td>
                                 <td>';

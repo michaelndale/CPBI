@@ -105,7 +105,7 @@
             @php
             $titprojet = Session::get('title');
             @endphp
-            <p> <b>Projet encours : </b>{{ strlen($titprojet) > 60 ? substr($titprojet, 0, 60) . '...' : $titprojet }} </p>
+            <p> <b>Projet encours : </b>{{ strlen($titprojet) > 50 ? substr($titprojet, 0, 50) . '...' : $titprojet }} </p>
 
           </div>
           @else

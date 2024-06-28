@@ -31,7 +31,7 @@ $cryptedId = Crypt::encrypt($datadap->id);
 
                             <div class="btn-toolbar float-end" role="toolbar">
                                 <div class="btn-group me-2 mb-2 mb-sm-0">
-                                    <a href="{{ route('generate-pdf-dap',$datadap->id ) }}" class="btn btn-primary waves-light waves-effect" title="Générer PDF "><i class="fa fa-print"></i> </a>
+                                    <a href="{{ route('generate-pdf-dap',$cryptedId  ) }}" class="btn btn-primary waves-light waves-effect" title="Générer PDF "><i class="fa fa-print"></i> </a>
                                     <a href="{{ route('showdap', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect" title="Modifier le DAP"><i class="fa fa-edit"></i> </a>
                                     <a href="{{ route('listdap') }}" class="btn btn-primary waves-light waves-effect" title="Liste de DAP "><i class="fa fa-list"></i></a>
                                 </div>
@@ -155,11 +155,14 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                     
                                     ->sum('montant');
 
-                                    $sommelignpourcentage = round(($sommelign * 100) /  $somme_ligne_principale, 2);
+                                   
+                                    $sommelignpourcentage =  $somme_ligne_principale ? round(($sommelign * 100) /  $somme_ligne_principale, 2) : 0;
+
+
 
 
                                     $totoglobale += $totoSUM;
-                                    $pourcentage = round(($totoSUM * 100) / $budget, 2);
+                                    $pourcentage = $budget ? round(($totoSUM * 100) / $budget, 2) : 0;
                                     // Ajouter le pourcentage de cette itération au pourcentage total
                                     $pourcentage_total += $pourcentage;
 

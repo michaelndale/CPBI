@@ -211,12 +211,16 @@
 
                         ->sum('montant');
 
-                        $sommelignpourcentage = round(($sommelign * 100) / $somme_ligne_principale, 2);
+                      
+
+                        $sommelignpourcentage =  $somme_ligne_principale ? round(($sommelign * 100) /  $somme_ligne_principale, 2) : 0;
 
 
 
                         $totoglobale += $totoSUM;
-                        $pourcentage = round(($totoSUM * 100) / $budget, 2);
+                       
+                        $pourcentage = $budget ? round(($totoSUM * 100) / $budget, 2) : 0;
+                        
                         // Ajouter le pourcentage de cette itération au pourcentage total
                         $pourcentage_total += $pourcentage;
 

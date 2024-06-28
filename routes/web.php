@@ -221,8 +221,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/showrallonge', [RallongebudgetController::class, 'showrallonge'])->name('showrallonge');
         Route::post('/updaterallonge', [RallongebudgetController::class, 'updatlignebudget'])->name('updaterallonge');
         Route::delete('/deleteligne', [RallongebudgetController::class, 'deleteall'])->name('deleteligne');
-    });
 
+       
+    });
+    Route::get('/telecharger-rapport-budget', [RallongebudgetController::class, 'telecharger_rapport_budget'])->name('telecharger-rapport-budget');
+
+    
     Route::prefix('folder')->group(function () {
         Route::get('/', [FolderController::class, 'index'])->name('folder');
         Route::get('/fetchAllfl', [FolderController::class, 'fetchAll'])->name('fetchAllfl');
@@ -301,6 +305,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/updat_annex/{cle}', [FebController::class, 'updat_annex'])->name('updat_annex');
 
         Route::get('{id}/generate-pdf-feb', [FebController::class, 'generatePDFfeb'])->name('generate-pdf-feb');
+        
         Route::delete('deleteelementsfeb', [FebController::class, 'deleteelementsfeb'])->name('deleteelementsfeb');
         Route::post('/check-feb', [FebController::class, 'checkfeb'])->name('check.feb');
         Route::get('/generate-word-feb/{id}', [FebController::class, 'generateWordFeb'])->name('generate.word.feb');

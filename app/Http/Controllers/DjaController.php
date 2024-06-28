@@ -29,11 +29,12 @@ class DjaController extends Controller
   {
     $ID = session()->get('id');
     $data =  DB::table('djas')
+    ->orderBy('daps.numerodp', 'asc')
     ->join('users', 'djas.userid', '=', 'users.id')
     ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-    ->select('djas.*', 'personnels.prenom as user_prenom')
+    ->join('daps','djas.numerodap' ,'daps.id')
+    ->select('djas.*', 'personnels.prenom as user_prenom', 'daps.numerodp as nume_dap')
     ->where('djas.projetiddja', $ID)
-    ->orderBy('djas.numerodjas', 'asc')
     ->get();
 
 
@@ -76,7 +77,7 @@ class DjaController extends Controller
           </center>
           </td>
           <td> ' . $datas->numerodjas . '  </td>
-          <td > ' . $datas->numerodap . ' </td>
+          <td > ' . $datas->nume_dap . ' </td>
           <td> <input type="checkbox" ' . $ov . ' class="form-check-input" disabled />  </td>
           <td><input type="checkbox" ' . $jus . ' class="form-check-input" disabled /></td>
         

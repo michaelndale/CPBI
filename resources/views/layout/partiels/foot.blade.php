@@ -171,6 +171,12 @@
 
               <input class="form-check-input" type="radio" name="menuoption" id="menuoption" value="1"  @if(Auth::user()->menu === 1) checked @endif >
               <label class="form-check-label" for="horizontalMenu">Menu horizontal</label>
+
+
+                  
+                  
+
+
             </div>
           </div>
         </div>

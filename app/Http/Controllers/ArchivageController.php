@@ -13,59 +13,170 @@ use Illuminate\Support\Facades\Storage;
 
 class ArchivageController extends Controller
 {
+    
+  public function getFullPath($classeur)
+    {
+        $path = $classeur->libellec;
+        while ($classeur->parent != null) {
+            $classeur = Classeur::find($classeur->parent);
+            if ($classeur) {
+                $path = $classeur->libellec . '/' . $path;
+            }
+        }
+        return $path;
+    }
+
     public function index()
     {
-      $title = 'Archivage';
-      $active = 'Archivage';
-      $classeur = Classeur::all();
-      return view(
-        'archive.index',
-        [
-          'title' => $title,
-          'active' => $active,
-          'classeur' => $classeur
-        ]
-      );
+        $title = 'Archivage';
+        $active = 'Archivage';
+        $classeurADD = Classeur::all();
+        $classeur = Classeur::whereNull('parent')->get();
+
+        // Utiliser la fonction getFullPath pour chaque classeur
+        foreach ($classeur as $c) {
+            $fullPath = $this->getFullPath($c);
+            // Utilisez $fullPath comme nécessaire
+        }
+
+        return view(
+            'archive.index',
+            [
+                'title' => $title,
+                'active' => $active,
+                'classeur' => $classeur,
+                'classeurADD' => $classeurADD
+            ]
+        );
     }
+
     public function getArchive(Request $request)
     {
         $id = $request->id;
-        $results = Archive::where('classeur_id', $id)->orderBy('id', 'DESC')->get();
+        $results = Archive::where('classeur_id', $id)->orderBy('id', 'ASC')->get();
+        $classeurs = Classeur::where('parent', $id)->orderBy('id', 'ASC')->get();
+        $classeur = Classeur::where('id', $id)->first();
+    
+        // Fonction récursive pour obtenir le chemin complet
+        function getFullPath($classeur) {
+            $path = $classeur->libellec;
+            while ($classeur->parent != null) {
+                $classeur = Classeur::find($classeur->parent);
+                if ($classeur) {
+                    $path = $classeur->libellec . ' / ' . $path;
+                }
+            }
+            return $path;
+        }
+    
+        // Fonction pour formater la taille du fichier
+        function formatSize($size) {
+            $units = array('o', 'Ko', 'Mo', 'Go', 'To');
+            $unit = 0;
+            while ($size >= 1024 && $unit < count($units) - 1) {
+                $size /= 1024;
+                $unit++;
+            }
+            return round($size, 2) . ' ' . $units[$unit];
+        }
+        
         $output = '';
-        if ($results->count() > 0) {
+    
+        // Afficher les informations du classeur si disponible
+        if ($classeur) {
+            $fullPath = getFullPath($classeur);
+            
+            // Lien pour retourner au dossier parent
+            if ($classeur->parent) {
+                $parentClasseur = Classeur::find($classeur->parent);
+                if ($parentClasseur) {
+                   /* $output .= '
+                        <a class="btn btn-secondary mb-3" href="javascript:void(0);" onclick="loadArchive(' . $parentClasseur->id . ')">
+                            <i class="fa fa-arrow-left" ></i> Retour à ' . $parentClasseur->libellec . '
+                        </a>'; */
+                }
+            }
+            
             $output .= '
                 <table class="table table-striped table-sm fs--1 mb-0">
                     <thead>
                         <tr>
-                            <th class="align-middle ps-3 name">#</th>
-                            <th >Titre</th>
+                            <th>Titre</th>
+                            <th>Type</th>
                             <th>Attache</th>
-                            <th>Format</th> <!-- Nouvelle colonne pour le format -->
+                            <th>Taille</th>
                             <th>Statut</th>
                             <th>Date</th>
                         </tr>
                     </thead>
-                    <tbody class="list">';
-            $nombre = 1;
-            foreach ($results as $result) {
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a class="recupreclasseur open-folder" aria-current="page" href="javascript:void(0);" id="' . $classeur->id . '">
+                                    <span class="me-2 nav-icons fa fa-folder-open"></span>
+                                    <span class="flex-1">' . $fullPath . '</span>
+                                </a>
+                            </td>
+                            <td>Dossier</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>' . date('d-m-Y', strtotime($classeur->created_at)) . '</td>
+                        </tr>
+                   ';
+        } else {
+            $output .= '<h4 class="text-center text-secondary my-5">Classeur introuvable!</h4>';
+        }
+    
+        $emptyFolder = true;
+    
+        // Afficher les sous-dossiers
+        if ($classeurs->count() > 0) {
+            $emptyFolder = false;
+            foreach ($classeurs as $sub_classeur) {
+                $openClass = $sub_classeur->id == $id ? 'open-folder' : '';
                 $output .= '
                     <tr>
-                        <td class="align-middle ps-3 name">' . $nombre . '</td>
+                        <td>
+                            <a class="nav-link border-end text-start outline-none recupreclasseur ' . $openClass . '" aria-current="page" href="javascript:void(0);" id="' . $sub_classeur->id . '">
+                                <font color="#FFD700"><span class="me-2 nav-icons fa fa-folder"></span></font>
+                                <span class="flex-1">' . $sub_classeur->libellec . '</span>
+                            </a>
+                        </td>
+                        <td>Dossier</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>' . date('d-m-Y', strtotime($sub_classeur->created_at)) . '</td>
+                    </tr>';
+            }
+        }
+    
+        // Afficher les résultats des archives
+        if ($results->count() > 0) {
+            $emptyFolder = false;
+            foreach ($results as $result) {
+                $filePath = storage_path('app/public/document/' . basename($result->document_path));
+                $fileSize = file_exists($filePath) ? formatSize(filesize($filePath)) : 'N/A';
+                $output .= '
+                    <tr>
                         <td style="width:50%">' . ucfirst($result->title) . '</td>
+                        <td>' . strtoupper(pathinfo($result->document_path, PATHINFO_EXTENSION)) . '</td>
                         <td><center><a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset('storage/document/' . basename($result->document_path)) . '" title="Ouvrir le document"><i class="fas fa-file-export"></i></a></center></td>
-                        <td>' . strtoupper(pathinfo($result->document_path, PATHINFO_EXTENSION)). '</td> <!-- Affiche le format du fichier -->
+                        <td>' . $fileSize . '</td>
                         <td>' . $result->type . '</td>
                         <td>' . date('d-m-Y', strtotime($result->created_at)) . '</td>
                     </tr>';
-                $nombre++;
             }
-            $output .= '</tbody></table>';
-            echo $output;
-        } else {
-            echo '<h4 class="text-center text-secondary my-5">Aucune donnée pour ce classeur !</h4>';
         }
-    }
     
+        if ($emptyFolder) {
+            $output .= '<tr><td colspan="6" class="text-center text-secondary">Ce dossier est vide!</td></tr>';
+        }
+    
+        $output .= '</tbody></table>';
+        echo $output;
+    }
     
 
     public function store(Request $request)
@@ -78,7 +189,7 @@ class ArchivageController extends Controller
     
         try {
             // Création du dossier de destination s'il n'existe pas
-            $destinationFolder = 'public/document';
+            $destinationFolder = 'document';
             if (!Storage::exists($destinationFolder)) {
                 Storage::makeDirectory($destinationFolder);
             }
@@ -121,8 +232,6 @@ class ArchivageController extends Controller
         }
     }
     
-
-
     public function storeUpload(Request $request)
     {
   

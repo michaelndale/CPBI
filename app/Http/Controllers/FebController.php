@@ -100,10 +100,11 @@ class FebController extends Controller
                                 <a href="feb/' . $datas->id . '/generate-pdf-feb" class="dropdown-item mx-1">
                                     <i class="fa fa-print"></i> Générer PDF
                                 </a>
+                                 
                                 <a class="dropdown-item desactiversignale" id="' . $datas->id . '" href="#">
                                 <i class="fas fa-random"></i>  Désactiver le signal ?
                             </a>
-                                <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datas->id . '" data-numero="' . $datas->numerofeb. '" href="#" style="background-color:red">
+                                <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datas->id . '" data-numero="' . $datas->numerofeb . '" href="#" style="background-color:red">
                                     <i class="far fa-trash-alt"></i> Supprimer
                                 </a>
                             </div>
@@ -111,7 +112,7 @@ class FebController extends Controller
                     </center>
                 </td>
                 <td align="center">  <a href="feb/' . $cryptedId . '/view" class="dropdown-item mx-1" id="' . $datas->id . '"><b>' . $datas->numerofeb . '</b></a></td>
-                <td  align="right"><b>'.$sommefeb.'</b></td>
+                <td  align="right"><b>' . $sommefeb . '</b></td>
                 <td align="center">' . $datas->periode . '</td>
                 <td align="center"><input type="checkbox" ' . $facture . ' class="form-check-input"   disabled /></td>
                 <td align="center"><input type="checkbox" ' . $om . ' class="form-check-input"  disabled /></td>
@@ -148,169 +149,169 @@ class FebController extends Controller
   }
 
   public function notificationdoc()
-{
+  {
     $documents = collect([]);
     $userId = Auth::id();
 
     // Fonction pour récupérer le montant total des FEB
     function getTotalFeb($febId)
     {
-        return DB::table('elementfebs')
-            ->where('febid', $febId)
-            ->sum('montant');
+      return DB::table('elementfebs')
+        ->where('febid', $febId)
+        ->sum('montant');
     }
 
     // Fonction pour récupérer le montant total des DAP en fonction de plusieurs FEB
     function getTotalDap($dapId)
     {
-        $febIds = DB::table('elementdaps') // Suppose que vous avez une table de liaison entre DAP et FEB
-            ->where('dapid', $dapId)
-            ->pluck('referencefeb');
-        
-        return DB::table('elementfebs')
-            ->whereIn('febid', $febIds)
-            ->sum('montant');
+      $febIds = DB::table('elementdaps') // Suppose que vous avez une table de liaison entre DAP et FEB
+        ->where('dapid', $dapId)
+        ->pluck('referencefeb');
+
+      return DB::table('elementfebs')
+        ->whereIn('febid', $febIds)
+        ->sum('montant');
     }
 
     // Récupération des documents FEB
     $documentacce = DB::table('febs')
-        ->join('users', 'febs.userid', '=', 'users.id')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->join('projects', 'febs.projetid', '=', 'projects.id')
-        ->where('acce', $userId)
-        ->where('acce_signe', 0)
-        ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-        ->get();
+      ->join('users', 'febs.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'febs.projetid', '=', 'projects.id')
+      ->where('acce', $userId)
+      ->where('acce_signe', 0)
+      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
 
     $documentacce->each(function ($item) {
-        $item->document_type = 'feb';
-        $item->total = getTotalFeb($item->id);
+      $item->document_type = 'feb';
+      $item->total = getTotalFeb($item->id);
     });
 
     $documentcompte = DB::table('febs')
-        ->join('users', 'febs.userid', '=', 'users.id')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->join('projects', 'febs.projetid', '=', 'projects.id')
-        ->where('comptable', $userId)
-        ->where('comptable_signe', 0)
-        ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-        ->get();
+      ->join('users', 'febs.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'febs.projetid', '=', 'projects.id')
+      ->where('comptable', $userId)
+      ->where('comptable_signe', 0)
+      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
 
     $documentcompte->each(function ($item) {
-        $item->document_type = 'feb';
-        $item->total = getTotalFeb($item->id);
+      $item->document_type = 'feb';
+      $item->total = getTotalFeb($item->id);
     });
 
     $documentchefcomposent = DB::table('febs')
-        ->join('users', 'febs.userid', '=', 'users.id')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->join('projects', 'febs.projetid', '=', 'projects.id')
-        ->where('chefcomposante', $userId)
-        ->where('chef_signe', 0)
-        ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-        ->get();
+      ->join('users', 'febs.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'febs.projetid', '=', 'projects.id')
+      ->where('chefcomposante', $userId)
+      ->where('chef_signe', 0)
+      ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
 
     $documentchefcomposent->each(function ($item) {
-        $item->document_type = 'feb';
-        $item->total = getTotalFeb($item->id);
+      $item->document_type = 'feb';
+      $item->total = getTotalFeb($item->id);
     });
 
     $documents_dap = collect([]);
 
     $dap_demandeetablie = DB::table('daps')
-        ->join('users', 'daps.userid', '=', 'users.id')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-        ->where('demandeetablie', $userId)
-        ->where('demandeetablie_signe', 0)
-        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-        ->get();
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('demandeetablie', $userId)
+      ->where('demandeetablie_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
 
     $dap_demandeetablie->each(function ($item) {
-        $item->document_type = 'dap';
-        $item->total = getTotalDap($item->id);
+      $item->document_type = 'dap';
+      $item->total = getTotalDap($item->id);
     });
 
     $dap_verifier = DB::table('daps')
-        ->join('users', 'daps.userid', '=', 'users.id')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-        ->where('verifierpar', $userId)
-        ->where('verifierpar_signe', 0)
-        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-        ->get();
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('verifierpar', $userId)
+      ->where('verifierpar_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
 
     $dap_verifier->each(function ($item) {
-        $item->document_type = 'dap';
-        $item->total = getTotalDap($item->id);
+      $item->document_type = 'dap';
+      $item->total = getTotalDap($item->id);
     });
 
     $dap_approuverpar = DB::table('daps')
-        ->join('users', 'daps.userid', '=', 'users.id')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-        ->where('approuverpar', $userId)
-        ->where('approuverpar_signe', 0)
-        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-        ->get();
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('approuverpar', $userId)
+      ->where('approuverpar_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
 
     $dap_approuverpar->each(function ($item) {
-        $item->document_type = 'dap';
-        $item->total = getTotalDap($item->id);
+      $item->document_type = 'dap';
+      $item->total = getTotalDap($item->id);
     });
 
     $dap_responsable = DB::table('daps')
-        ->join('users', 'daps.userid', '=', 'users.id')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-        ->where('responsable', $userId)
-        ->where('responsable_signe', 0)
-        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-        ->get();
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('responsable', $userId)
+      ->where('responsable_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
 
     $dap_responsable->each(function ($item) {
-        $item->document_type = 'dap';
-        $item->total = getTotalDap($item->id);
+      $item->document_type = 'dap';
+      $item->total = getTotalDap($item->id);
     });
 
     $dap_secretaire = DB::table('daps')
-        ->join('users', 'daps.userid', '=', 'users.id')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-        ->where('secretaire', $userId)
-        ->where('secretaure_general_signe', 0)
-        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-        ->get();
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('secretaire', $userId)
+      ->where('secretaure_general_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
 
     $dap_secretaire->each(function ($item) {
-        $item->document_type = 'dap';
-        $item->total = getTotalDap($item->id);
+      $item->document_type = 'dap';
+      $item->total = getTotalDap($item->id);
     });
 
     $dap_chefprogramme = DB::table('daps')
-        ->join('users', 'daps.userid', '=', 'users.id')
-        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-        ->where('chefprogramme', $userId)
-        ->where('chefprogramme_signe', 0)
-        ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
-        ->get();
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->where('chefprogramme', $userId)
+      ->where('chefprogramme_signe', 0)
+      ->select('daps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+      ->get();
 
     $dap_chefprogramme->each(function ($item) {
-        $item->document_type = 'dap';
-        $item->total = getTotalDap($item->id);
+      $item->document_type = 'dap';
+      $item->total = getTotalDap($item->id);
     });
 
     $documents = $documents->concat($documentacce)
-        ->concat($documentcompte)
-        ->concat($documentchefcomposent);
+      ->concat($documentcompte)
+      ->concat($documentchefcomposent);
 
     $dap_documents = $documents_dap->concat($dap_demandeetablie)
-        ->concat($dap_verifier)
-        ->concat($dap_approuverpar)
-        ->concat($dap_responsable)
-        ->concat($dap_secretaire)
-        ->concat($dap_chefprogramme);
+      ->concat($dap_verifier)
+      ->concat($dap_approuverpar)
+      ->concat($dap_responsable)
+      ->concat($dap_secretaire)
+      ->concat($dap_chefprogramme);
 
     $all_documents = $documents->concat($dap_documents);
 
@@ -318,25 +319,25 @@ class FebController extends Controller
     $nombre = 1;
 
     if ($all_documents->count() > 0) {
-        // Group documents by project number and title
-        $groupedDocuments = $all_documents->groupBy(function ($item) {
-            return $item->numeroprojets . ' : ' . $item->projet;
-        });
+      // Group documents by project number and title
+      $groupedDocuments = $all_documents->groupBy(function ($item) {
+        return $item->numeroprojets . ' : ' . $item->projet;
+      });
 
-        foreach ($groupedDocuments as $projet => $docs) {
-            $output .= '<tr><td colspan="8"><b>' . ucfirst($projet) . '</b></td></tr>';
-            foreach ($docs as $doc) {
-                $cryptedIDoc = Crypt::encrypt($doc->id);
+      foreach ($groupedDocuments as $projet => $docs) {
+        $output .= '<tr><td colspan="8"><b>' . ucfirst($projet) . '</b></td></tr>';
+        foreach ($docs as $doc) {
+          $cryptedIDoc = Crypt::encrypt($doc->id);
 
-                $datefeb = !empty($doc->datefeb) ? date('d-m-Y', strtotime($doc->datefeb)) : '-';
-                $dateautorisation = !empty($doc->dateautorisation) ? date('d-m-Y', strtotime($doc->dateautorisation)) : '-';
-                $createdAt = !empty($doc->created_at) ? date('d-m-Y', strtotime($doc->created_at)) : '-';
-                $datelimite = !empty($doc->datelimite) ? date('d-m-Y', strtotime($doc->datelimite)) : '-';
+          $datefeb = !empty($doc->datefeb) ? date('d-m-Y', strtotime($doc->datefeb)) : '-';
+          $dateautorisation = !empty($doc->dateautorisation) ? date('d-m-Y', strtotime($doc->dateautorisation)) : '-';
+          $createdAt = !empty($doc->created_at) ? date('d-m-Y', strtotime($doc->created_at)) : '-';
+          $datelimite = !empty($doc->datelimite) ? date('d-m-Y', strtotime($doc->datelimite)) : '-';
 
-                $output .= '<tr>
+          $output .= '<tr>
                     <td>' . $nombre . '</td>
                     <td>' . ($doc->document_type === 'feb' ? 'FEB' : 'DAP') . '</td>
-                    <td align="right"> <a href="'.($doc->document_type === 'feb' ? route('key.viewFeb', $cryptedIDoc) : route('viewdap', $cryptedIDoc)) . '"><b><u>' . ucfirst($doc->document_type === 'feb' ? $doc->numerofeb : $doc->numerodp) . '/' . date('Y') . ' <i class="fas fa-external-link-alt"></i></u></b></a></td>
+                    <td align="right"> <a href="' . ($doc->document_type === 'feb' ? route('key.viewFeb', $cryptedIDoc) : route('viewdap', $cryptedIDoc)) . '"><b><u>' . ucfirst($doc->document_type === 'feb' ? $doc->numerofeb : $doc->numerodp) . '/' . date('Y') . ' <i class="fas fa-external-link-alt"></i></u></b></a></td>
                     <td align="right"><b>' . number_format($doc->total, 0, ',', ' ') . '</b></td>
                     <td>' . ($datefeb ?? $dateautorisation) . '</td>
                     <td>' . $createdAt . '</td>
@@ -344,11 +345,11 @@ class FebController extends Controller
                     <td>' . ucfirst($doc->user_nom) . ' ' . ucfirst($doc->user_prenom) . '</td>
                 </tr>';
 
-                $nombre++;
-            }
+          $nombre++;
         }
+      }
     } else {
-        $output = '<tr>
+      $output = '<tr>
             <td colspan="7" style="background-color:rgba(255,0,0,0)">
             <center>
                 <h6 style="color:red">Aucun document trouvé</h6>
@@ -358,8 +359,7 @@ class FebController extends Controller
     }
 
     return $output;
-}
-
+  }
 
   public function Sommefeb()
   {
@@ -390,6 +390,8 @@ class FebController extends Controller
     DB::beginTransaction();
 
     try {
+
+    
       $IDP = session()->get('id');
 
       $numerofeb = $request->numerofeb;
@@ -471,7 +473,7 @@ class FebController extends Controller
         $apc = $request->has('apc') ? 1 : 0;
         $ra = $request->has('ra') ? 1 : 0;
         $autres = $request->has('autres') ? 1 : 0;
-  
+
         $fp = $request->has('fp') ? 1 : 0;
 
         $activity = new Feb();
@@ -548,6 +550,15 @@ class FebController extends Controller
   {
     DB::beginTransaction();
     try {
+      $activity = Feb::find($request->febid);
+      if ($activity && $activity->userid == Auth::id()) {
+      $comp = $request->ligneid;
+      $compp = explode("-", $comp);
+
+      $grandcompte = $compp[0];
+      $souscompte  = $compp[1];
+
+
       $IDP = session()->get('id');
       $activityTwo = Elementdap::where('referencefeb', $request->febid)->get();
       // Vérifier si des éléments existent
@@ -555,24 +566,23 @@ class FebController extends Controller
         // Mettre à jour les éléments FEB existants
         foreach ($activityTwo as $element) {
           $element->update([
-            'ligneided' => $request->ligneid,
+            'ligneided' =>  $souscompte,
           ]);
         }
       }
 
       $activityTree = Elementdjas::where('febid', $request->febid)->get();
-
       // Vérifier si des éléments existent
       if ($activityTree->isNotEmpty()) {
         // Mettre à jour les éléments FEB existants
         foreach ($activityTree as $elementTree) {
           $elementTree->update([
-            'ligneid' => $request->ligneid,
+            'ligneid' => $souscompte,
           ]);
         }
       }
 
-      $activity = Feb::find($request->febid);
+     
 
       $bc = $request->has('bc') ? 1 : 0;
       $om = $request->has('om') ? 1 : 0;
@@ -592,33 +602,45 @@ class FebController extends Controller
 
       $fp = $request->has('fp') ? 1 : 0;
 
-      if($request->acce==$request->ancien_acce){ 
-        $acce_signe= $request->acce_signe;
-      }
-      else
-      {  
-        $acce_signe=0;
+      if ($request->acce == $request->ancien_acce) {
+        $acce_signe = $request->acce_signe;
+      } else {
+        $acce_signe = 0;
       }
 
 
-      if($request->comptable==$request->ancien_comptable){ 
-        $comptable_signe= $request->comptable_signe;
-      }
-      else
-      {  
-        $comptable_signe=0;
+      if ($request->comptable == $request->ancien_comptable) {
+        $comptable_signe = $request->comptable_signe;
+      } else {
+        $comptable_signe = 0;
       }
 
 
-      if($request->chefcomposante==$request->ancien_chefcomposante){ 
-        $chef_signe= $request->chef_signe;
-      }
-      else
-      {  
-        $chef_signe=0;
+      if ($request->chefcomposante == $request->ancien_chefcomposante) {
+        $chef_signe = $request->chef_signe;
+      } else {
+        $chef_signe = 0;
       }
 
 
+
+      $sum = 0;
+      foreach ($request->numerodetail as $key => $items) {
+        $element1 = $request->pu[$key];
+        $element2 = $request->qty[$key];
+        $element3 = $request->frenquency[$key];
+        $somme = $element1 * $element2 * $element3;
+        $sum += $somme;
+      }
+
+
+    if($sum != $activity->total) {
+        $acce_signe = 0;
+        $comptable_signe = 0;
+        $chef_signe = 0;
+      } 
+
+    
       $activity->numerofeb = $request->numerofeb;
       $activity->periode = $request->periode;
       $activity->datefeb = $request->datefeb;
@@ -638,13 +660,15 @@ class FebController extends Controller
       $activity->ra = $ra;
       $activity->fp = $fp;
       $activity->autres = $autres;
-    
+      $activity->total = $sum;
+
       $activity->comptable = $request->comptable;
       $activity->acce = $request->acce;
       $activity->chefcomposante = $request->chefcomposante;
       $activity->descriptionf = $request->descriptionf;
       $activity->beneficiaire = $request->beneficiaire;
-      $activity->sous_ligne_bugdetaire   = $request->ligneid;
+      $activity->sous_ligne_bugdetaire   = $souscompte;
+      $activity->ligne_bugdetaire = $grandcompte;
 
       //signature
 
@@ -671,23 +695,26 @@ class FebController extends Controller
               'montant' => $request->amount[$key],
               'libellee' => $request->libelleid[$key],
               'tperiode' => $request->periode,
-              'numero' => $request->numerofeb
+              'numero' => $request->numerofeb,
+              'grandligne' => $grandcompte,
+              'eligne' => $souscompte
             ];
           }
         } else {
           $newfeb = new Elementfeb();
           $newfeb->febid = $request->febid;
+          $newfeb->projetids = $request->projetid;
+          $newfeb->tperiode = $request->periode;
+          $newfeb->grandligne = $grandcompte;
+          $newfeb->eligne = $souscompte;
+          $newfeb->numero = $request->numerofeb;
+          
           $newfeb->libelle_description = $request->libelle_description[$key];
           $newfeb->unite = $request->unit_cost[$key];
           $newfeb->quantite = $request->qty[$key];
           $newfeb->frequence = $request->frenquency[$key];
           $newfeb->pu = $request->pu[$key];
           $newfeb->montant = $request->amount[$key];
-          $newfeb->projetids = $request->projetid;
-          $newfeb->tperiode = $request->periode;
-          $newfeb->grandligne = $request->grandligne;
-          $newfeb->eligne = $request->eligne;
-          $newfeb->numero = $request->numerofeb;
           $newfeb->libellee = $request->libelleid[$key];
           $newfeb->userid = Auth::id();
           $newfeb->save();
@@ -701,6 +728,11 @@ class FebController extends Controller
       DB::commit();
 
       return redirect()->back()->with('success', 'FEB mises à jour avec succès');
+   } else {
+      DB::rollBack();
+      return redirect()->back()->with('failed', 'Vous n\'avez pas l\'autorisation nécessaire pour Modifier le FEB. Veuillez contacter le créateur  pour procéder à la suppression.');
+    } 
+      
     } catch (\Exception $e) {
       DB::rollBack();
 
@@ -916,7 +948,7 @@ class FebController extends Controller
 
     return $output;
   }
-  
+
   public function list()
   {
     // Récupérer l'ID de la session
@@ -1231,14 +1263,19 @@ class FebController extends Controller
       ->where('numero', '<=', $numero_classe_feb)
       ->where('projetids', $IDB)
       ->sum('montant');
-    $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
+
+    $POURCENTAGE_GLOGALE = $budget ? round(($sommeallfeb * 100) / $budget, 2) : 0;
+
 
     $sommelign = DB::table('elementfebs')
       ->where('grandligne', $id_gl)
       ->where('numero', '<=', $numero_classe_feb)
       ->where('projetids', $IDB)
       ->sum('montant');
-    $sommelignpourcentage = round(($sommelign * 100) / $somme_ligne_principale, 2);
+
+    $sommelignpourcentage = $somme_ligne_principale ? round(($sommelign * 100) / $somme_ligne_principale, 2) : 0;
+
+
 
 
     $sommefeb = DB::table('elementfebs')
@@ -1328,9 +1365,10 @@ class FebController extends Controller
     $pdf->setPaper('A4', 'landscape'); // Format A4 en mode paysage
 
     // Nom du fichier PDF téléchargé avec numéro FEB et date actuelle
-    $fileName = 'FEB_NUM_' . $datafeb->numerofeb . '.pdf';
+    $fileName = 'FEB_NUMERO_' . $datafeb->numerofeb . '.pdf';
 
     // Télécharge le PDF
+  
     return $pdf->download($fileName);
   }
 
@@ -1450,42 +1488,42 @@ class FebController extends Controller
 
   public function delete(Request $request)
   {
-      DB::beginTransaction();
-  
-      try {
+    DB::beginTransaction();
 
+    try {
+
+      $id = $request->id;
+      $emp = Feb::find($request->id);
+
+      if ($emp && $emp->userid == Auth::id()) {
         $id = $request->id;
-        $emp = Feb::find($request->id);
-         
-          if ($emp && $emp->userid == Auth::id()) {
-              $id = $request->id;
-  
-              Feb::destroy($id);
-              Elementfeb::where('febid', '=', $id)->get();
-              Elementdap::where('referencefeb', $id)->delete();
-              Elementdjas::where('febid', $id)->delete();
 
-              DB::commit();
-  
-              return response()->json([
-                  'status' => 200,
-              ]);
-          } else {
-              DB::rollBack();
-              return response()->json([
-                  'status' => 205,
-                  'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le FEB. Veuillez contacter le créateur  pour procéder à la suppression.'
-              ]);
-          }
-      } catch (\Exception $e) {
-          DB::rollBack();
-          return response()->json([
-              'status' => 500,
-              'message' => 'Erreur lors de la suppression du FEB.',
-              'error' => $e->getMessage(), // Message d'erreur de l'exception
-              'exception' => (string) $e // Détails de l'exception convertis en chaîne
-          ]);
+        Feb::destroy($id);
+        Elementfeb::where('febid', '=', $id)->get();
+        Elementdap::where('referencefeb', $id)->delete();
+        Elementdjas::where('febid', $id)->delete();
+
+        DB::commit();
+
+        return response()->json([
+          'status' => 200,
+        ]);
+      } else {
+        DB::rollBack();
+        return response()->json([
+          'status' => 205,
+          'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le FEB. Veuillez contacter le créateur  pour procéder à la suppression.'
+        ]);
       }
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return response()->json([
+        'status' => 500,
+        'message' => 'Erreur lors de la suppression du FEB.',
+        'error' => $e->getMessage(), // Message d'erreur de l'exception
+        'exception' => (string) $e // Détails de l'exception convertis en chaîne
+      ]);
+    }
   }
 
   public function desacctiveSignale(Request $request)
@@ -1952,6 +1990,4 @@ class FebController extends Controller
       ]);
     }
   }
-
-
 }

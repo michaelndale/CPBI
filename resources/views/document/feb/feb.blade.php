@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FICHE D’EXPRESSION DES BESOINS (FEB) N° {{ $datafeb->numerofeb }}</title>
+
+    
     <style>
         /* Styles pour l'en-tête de la première page */
         header.first-page-header {
@@ -391,17 +393,17 @@
                 <td align="center">
                     @if ($datafeb->acce_signe==1)
                        
-                        <center>   <img src="{{ $etablienom->signature }}" width="200px" />    </center>
+                        <center>   <img src="{{ $etablienom->signature }}" width="150px" />    </center>
                     @endif
                 </td>
                 <td align="center">
                 @if ($datafeb->comptable_signe==1)
-                <center>  <img src="{{ $comptable_nom->signature }}" width="200px" />    </center>
+                <center>  <img src="{{ $comptable_nom->signature }}" width="150px" />    </center>
                         @endif
                 </td>
                 <td align="center"  colspan="2">
                     @if ($datafeb->chef_signe==1)
-                    <center> <img src="{{ $checcomposant_nom->signature }}" width="200px" /></center>   
+                    <center> <img src="{{ $checcomposant_nom->signature }}" width="150px" /></center>   
                     @endif
 
                 </td>

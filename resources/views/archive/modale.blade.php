@@ -14,7 +14,7 @@
                                 <div class="form-floating mb-1">
                                     <select class="form-select" id="classeur" name="classeur">
                                         <option value="" selected="selected">Séléctionner classeur</option>
-                                        @foreach ($classeur as $classeurs)
+                                        @foreach ($classeurADD as $classeurs)
                                             <option value="{{ $classeurs->id }}">{{ ucfirst($classeurs->libellec) }}</option>
                                         @endforeach
                                     </select>
