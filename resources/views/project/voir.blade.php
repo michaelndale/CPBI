@@ -10,7 +10,7 @@
               <br>
               <small>
                 <b><i class="fa fa-info-circle"></i> Statut du projet :</b> <span class="badge rounded-pill bg-success"> {{ $dataProject->statut }} </span> <br>
-                <b><i class="fa fa-edit"></i> Autorisation de modification :</b>
+                <i class="fa fa-edit"></i> Autorisation de modification :
                 @if($dataProject->autorisation==1)
                 <span class="badge rounded-pill bg-primary"> Projet Ouvert </span>
                 @else
@@ -24,52 +24,52 @@
                 $IDPJ= Session::get('id');
                 $cryptedId = Crypt::encrypt($IDPJ);
                 @endphp
-                <a href="{{ route('key.viewProject', $cryptedId ) }}" class="btn btn-primary" type="button" title="Actualiser"><i class="fas fa-redo-alt"></i>  </a>
+                <a href="{{ route('key.viewProject', $cryptedId ) }}" class="btn btn-primary btn-sm " type="button" title="Actualiser"><i class="fas fa-redo-alt"></i>  </a>
                 <button class="btn btn-primary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="fa fa-random"></i> Actions <i class="mdi mdi-dots-vertical align-middle font-size-16"></i>
+                  <i class="fa fa-random"></i> Actions <i class="mdi mdi-dots-vertical align-middle "></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li>
-                    <a class="dropdown-item" href="{{ route('key.editProject',  $cryptedId ) }}"><i class="fas fa-edit font-size-16 align-middle me-2 text-muted"></i>
+                    <a class="dropdown-item" href="{{ route('key.editProject',  $cryptedId ) }}"><i class="mdi mdi-file-document-edit-outline font-size-20 align-middle me-2 text-muted"></i>
                       Modifier le projet</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{{ route('gestioncompte') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                    <a class="dropdown-item" href="{{ route('gestioncompte') }}"><i class="fa fa-chart-line font-size-16 align-middle me-2 text-muted"></i>
                       Ligne budgétaire</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{{ route('rallongebudget') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                    <a class="dropdown-item" href="{{ route('rallongebudget') }}"><i class="fa  fa-chart-bar font-size-16 align-middle me-2 text-muted"></i>
                       Budgét</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{{ route('activity') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                    <a class="dropdown-item" href="{{ route('activity') }}"><i class="fa fa-running font-size-16 align-middle me-2 text-muted"></i>
                       Activitées</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{{ route('listfeb') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
-                      FEB</a>
+                    <a class="dropdown-item" href="{{ route('listfeb') }}"><i class="mdi mdi-file-document-outline font-size-20 align-middle me-2 text-muted"></i>
+                      F.E.B</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{{ route('listdap') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
-                      DAP</a>
+                    <a class="dropdown-item" href="{{ route('listdap') }}"><i class="mdi mdi-file-document-outline font-size-20  align-middle me-2 text-muted"></i>
+                      D.A.P</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{{ route('listdja') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
-                      DJA</a>
+                    <a class="dropdown-item" href="{{ route('listdja') }}"><i class="mdi mdi-file-document-outline font-size-20  align-middle me-2 text-muted"></i>
+                      D.J.A</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{{ route('bpc') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                    <a class="dropdown-item" href="{{ route('bpc') }}"><i class="mdi mdi-file-document-outline font-size-20  align-middle me-2 text-muted"></i>
                       Bon de petite caisse</a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="{{ route('affectation') }}"><i class="fa fa-users font-size-16 align-middle me-2"></i> Intervenants</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{{ route('rapportcumule') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                    <a class="dropdown-item" href="{{ route('rapportcumule') }}"><i class="fa fa-chart-pie font-size-16 align-middle me-2 text-muted"></i>
                       Rapport cummulatif</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="{{ route('planoperationnel') }}"><i class="mdi mdi-pencil-outline font-size-16 align-middle me-2 text-muted"></i>
+                    <a class="dropdown-item" href="{{ route('planoperationnel') }}"><i class="fa fa-tasks font-size-16 align-middle me-2 text-muted"></i>
                       Plan d'action</a>
                   </li>
                   <li>

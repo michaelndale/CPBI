@@ -103,7 +103,7 @@ $idpro=Session::get('id');
 
                                 </table>
                                 <hr>
-                                <h6> <u>Synthese sur l'utilisation dea fonds demandes(Vr details sur FB en avance)</u></h6>
+                                <h6> &nbsp;&nbsp; <u>Synthese sur l'utilisation dea fonds demandes(Vr details sur FB en avance)</u></h6>
                                 <table class="table table-striped table-sm fs--1 mb-0 table-bordered  ">
                                     <thead>
                                         <tr style="background-color:#3CB371; color:white">
@@ -172,7 +172,7 @@ $idpro=Session::get('id');
                                 @if($datadap->justifier==1)
                             <br>
 
-                            <u>Synthese sur les avances </u>
+                            &nbsp;&nbsp; <u>Synthese sur les avances </u>
                             <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
                                 <tr>
                                     <td colspan="5"> Ce montant est-il une avance ? 
@@ -193,15 +193,22 @@ $idpro=Session::get('id');
                               
                                 <tr>
                                     <td style="width:9%"> Numéro FEB : {{ $datafebElement_avances->numerofeb }} </td>
-                                    <td style="width:10%"> Montant de l'Avance : <br>
+                                    <td style="width:15%"> Montant de l'Avance : <br>
                                         <input type="hidden"  name="febid[]" id="febid[]"  value="{{ $datafebElement_avances->referencefeb }}" /> 
                                         <input type="number" class="form-control  form-control-sm"  min="0" name="montantavance[]"   value="{{ $datafebElement_avances->montantavance  }}" /> </td>
-                                    <td style="width:10%"> Durée avance(Jour) : <br><input type="number" class="form-control  form-control-sm" min="0" name="duree_avance[]"  value="{{ $datafebElement_avances->duree_avance }}" />  </td>
-                                    <td style="width:35%"> Description :  <br><input type="text" class="form-control  form-control-sm" name="descriptionel[]"  value="{{ $datafebElement_avances->descriptionn }}" style="width:100%"  /></td>
+                                    <td style="width:15%"> Durée avance(Jour) : <br><input type="number" class="form-control  form-control-sm" min="0" name="duree_avance[]"  value="{{ $datafebElement_avances->duree_avance }}" />  </td>
+                                    <td style="width:30%"> Description :  <br><input type="text" class="form-control  form-control-sm" name="descriptionel[]"  value="{{ $datafebElement_avances->descriptionn }}" style="width:100%"  /></td>
                                     <td style="width:30%">Postes Budgétaire du montant d'avance <br> 
 
                                        <select class="form-control  form-control-sm" id="ligneid[]" name="ligneid[]" required>
-                                                <option value="{{ $datafebElement_avances->ligneided }}">  {{ $compte_ligne ->libelle }} </option>
+                                                <option value="{{ $datafebElement_avances->ligneided }}"> 
+                                                @if(isset($compte_ligne->libelle) && !empty($compte_ligne->libelle))
+                                                    {{ $compte_ligne->libelle }}
+                                                @else
+                                                    Veuillez sélectionner le compte.
+                                                @endif
+
+                                                </option>
                                                 @foreach ($compte as $comptes)
                                                 <optgroup label="{{ $comptes->libelle }}">
                                                     @php
@@ -222,7 +229,7 @@ $idpro=Session::get('id');
                                     <td colspan="5"> Fonds reçus par : 
                                     <select type="text" class="form-control form-control-sm" name="beneficiaire" id="beneficiaire" required>
                                             <option value="@if(isset($fond_reussi->userid)&& !empty($fond_reussi->userid))
-                                             {{ $fond_reussi->userid   }}
+                                                {{ $fond_reussi->userid   }}
                                             @endif"
                                             >
                                             @if(isset($fond_reussi->nom) && !empty($fond_reussi->nom) && isset($fond_reussi->prenom) && !empty($fond_reussi->prenom))
@@ -232,7 +239,7 @@ $idpro=Session::get('id');
                                             @foreach ($personnel as $personnels)
                                             <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                             @endforeach
-                                        </select>
+                                    </select>
 
                                     
                                         

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Connexion | GoProjects</title>
+  <title>Connexion à GoProjects</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta content="Application des gestions des projets" name="GoProject" />
   <meta content="GoProject" name="Michael Ndale" />
@@ -52,8 +52,8 @@
           <div>
             <div class="row justify-content-center align-items-center pt-4">
               <div class="col-lg-6 col-md-8">
-                <div class="" id="ok"></div>
-                <div class="" id="err"></div>
+                <div id="ok"></div>
+                <div id="err"></div>
                 <div class="card">
                   <div class="card-body">
                     <div class="p-3">
@@ -63,17 +63,17 @@
                         </h4>
                         <div class="divider-content-center">Accédez à votre compte GoProject</div>
                       </div>
-                      <form class="auth-input" name="frm_login" id="frm_login">
+                      <form class="auth-input" name="frm_login" id="frm_login" autocomplete="off">
                         @csrf
                         <div class="mb-2">
-                          <label for="indetifiant" class="form-label">Identifiant</label>
-                          <input type="text" class="form-control" id="email" name="email" placeholder="Identifiant" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');">
+                          <label for="email" class="form-label">Identifiant</label>
+                          <input type="text" class="form-control" id="email" name="email" placeholder="Identifiant" autocomplete="Identtifiant" readonly onfocus="this.removeAttribute('readonly');">
                           <small id="erroremail" style="color:red"></small>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb3">
                           <label class="form-label" for="password-input">Mot de passe</label>
-                          <input type="password" class="form-control" placeholder="Mot de passe" id="password" name="password" autocomplete="off">
+                          <input type="password" class="form-control" placeholder="Mot de passe" id="password" name="password" autocomplete="new-password">
                           <small id="errorpassword" style="color:red"></small>
                         </div>
 
@@ -83,6 +83,7 @@
                         </div>
 
                         <div class="mt-4">
+                          
                           <button class="savebtn btn btn-primary w-100" type="button" id="connectBtn">
                             Se connecter
                           </button>
@@ -104,7 +105,7 @@
       </div>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" defer></script>
   <script>
     var save_btn = document.querySelector('.savebtn');
 
@@ -140,18 +141,19 @@
                 type: 'POST',
                 url: "{{ route('handlelogin') }}",
                 data: data,
+                timeout: 10000, // 10 secondes
                 success: function(response) {
                     console.log(response);
                     if (response == 1) {
                         $("#ok").hide().html("<div class='alert alert-success alert-dismissible fade show' role='alert'><i class='mdi mdi-check-all me-2'></i> Connexion établie. Redirection en cours... <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>").fadeIn('slow');
                         $("#err").hide();
                         setTimeout(function() {
-                            location.href = "{{ route('dashboard') }}";
+                            location.href = "{{ route('start') }}";
                         }, 1000);
                     } else if (response == 2) {
                         $("#ok").hide();
                         $("#err").hide().html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><i class='mdi mdi-block-helper me-2'></i> Votre compte est bloqué. Vérifiez s'il vous plaît <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>").fadeIn('slow');
-                        $("#connectBtn").text('Se connecter');
+                        $("#connectBtn").html("<i class='fas fa-sign-in-alt'></i> Se connecter");
                     } else if (response == 3) {
                         $("#ok").hide();
                         $("#err").hide().html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><i class='mdi mdi-block-helper me-2'></i> Votre compte est désactivé. Vérifiez s'il vous plaît <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>").fadeIn('slow');
@@ -167,12 +169,24 @@
                     }
 
                     document.getElementById("connectBtn").disabled = false;
-                }
+                },
+                error: function (xhr, status) {
+            let errorMessage = "Erreur de connexion. Veuillez verifier votre connexion.  " ;
+
+            if (status === "timeout") {
+              errorMessage = "Erreur de connexion. Veuillez réessayer.";
+            }
+
+            $("#ok").hide();
+            $("#err").hide().html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><i class='mdi mdi-block-helper me-2'></i> " + errorMessage + " <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>").fadeIn('slow');
+
+            // Réactiver le bouton et le rétablir
+            $('#connectBtn').html('Se connecter').prop('disabled', false);
+          }
             });
         }
     }
-</script>
+  </script>
+</body>
 
-
-  </body>
 </html>

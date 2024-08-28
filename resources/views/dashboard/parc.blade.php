@@ -42,7 +42,7 @@
                                     <div class="card bg-warning text-white-50">
                                         <div class="card-body">
                                         <center>
-                                            <font size="20px"> <i class="fa fa-gas-pump""></i></font>
+                                            <font size="20px"> <i class="fa fa-gas-pump"></i></font>
                                             <h5 class="mb-4 text-white"> CARBURENTS</h5>
 
                                             </center>

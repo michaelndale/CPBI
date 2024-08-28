@@ -32,7 +32,6 @@ $(document).ready(function() {
 
         // Affichage du modal de chargement
       
-
         // Effectuer une requête AJAX pour obtenir les données du FEB
         $.ajax({
             url: '{{ route("get-feb-details") }}',

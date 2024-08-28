@@ -23,6 +23,7 @@
                 <tr style="background-color:#82E0AA">
                   <th style="width:5%">Code</th>
                   <th style="width:45%">Description</th>
+                  <th>Solde</th>
                   <th>Créé par</th>
                   <th>Créé le</th>
                   <th> <center>Actions</center></th>
@@ -30,7 +31,7 @@
               </thead>
               <tbody id="show_all_compte">
                 <tr>
-                  <td colspan="7">
+                  <td colspan="6">
                     <h5 class="text-center text-secondery my-5">
                       @include('layout.partiels.load')
                   </td>

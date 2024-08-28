@@ -21,7 +21,7 @@ class ComptepetitecaisseController extends Controller
         $title = 'Compte ';
         $projet = Project::all();
         // Retourne la vue avec les données nécessaires
-        return view('bonpetitecaisse.compte', [
+        return view('bonpetitecaisse.compte.compte', [
             'title' => $title,
             'projet' => $projet
         ]);
@@ -46,6 +46,7 @@ class ComptepetitecaisseController extends Controller
                
                   <td> ' . ucfirst($rs->code) . '</td>
                   <td>' . ucfirst($rs->libelle) . '</td>
+                  <td style="align-text:right">  '.number_format( $rs->solde, 0, ',', ' ').' </td>
                   <td>' . ucfirst($rs->personnel_prenom) . '</td>
                   <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
                   <td align="center" style="width:13%">
@@ -54,7 +55,6 @@ class ComptepetitecaisseController extends Controller
                           <i class="mdi mdi-dots-vertical ms-2"></i>
                       </a>
                       <div class="dropdown-menu">
-                        
                           <a class="dropdown-item  mx-1 edit" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#modifierLigneModal" title="Modifier le compte"><i class="far fa-edit"></i> Modifier la ligne</a>
                           <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
                       </div>
@@ -70,7 +70,7 @@ class ComptepetitecaisseController extends Controller
             }
         } else {
             $output .= '<tr>
-              <td colspan="5">
+              <td colspan="6">
                   <center>
                       <h6 style="margin-top:1%; color:#c0c0c0"> 
                           <center><font size="50px"><i class="far fa-trash-alt"></i></font><br><br>

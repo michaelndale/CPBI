@@ -503,10 +503,12 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                         <div class="float-end">
                                             <button type="submit" name="save" id="dave" class="btn btn-primary w-md"> <i class="fas fa-cloud-download-alt"> </i> Sauvegarder la sinatgure </button>
                                             <br>
-                                            <br><small>
-                                                <center> <i class="fa fa-info-circle"></i><br> Cochez la case située en dessous <br> de votre nom si vous êtes accrédité <br> pour apposer votre signature <br> puis cliquez sur le boutton <br> sauvegarder la signature</center>
-                                            </small>
-                                        </div>
+                                            <br>
+                                            
+                                            
+                                            <small><center> <i class="fa fa-info-circle"></i><br> Cochez la case située en dessous <br> de votre nom si vous êtes accrédité <br> pour apposer votre signature <br> puis cliquez sur le boutton <br> sauvegarder la signature</center></small>
+                                       
+                                    </div>
 
                                         @endif
 

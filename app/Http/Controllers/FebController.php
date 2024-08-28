@@ -551,7 +551,20 @@ class FebController extends Controller
     DB::beginTransaction();
     try {
       $activity = Feb::find($request->febid);
-      if ($activity && $activity->userid == Auth::id()) {
+
+      $get_lead =  DB::table('febs')
+      ->join('projects', 'febs.projetid', '=', 'projects.id')
+      ->select( 'projects.lead as lead')
+      ->where('febs.id', $request->febid)
+      ->first();
+
+      
+      $lead = session()->get('lead');
+      $projet_lead= $get_lead ->lead;
+
+     
+
+      if ($activity && $activity->userid == Auth::id() || $projet_lead  == $lead  ) {
       $comp = $request->ligneid;
       $compp = explode("-", $comp);
 
@@ -599,7 +612,6 @@ class FebController extends Controller
       $apc = $request->has('apc') ? 1 : 0;
       $ra = $request->has('ra') ? 1 : 0;
       $autres = $request->has('autres') ? 1 : 0;
-
       $fp = $request->has('fp') ? 1 : 0;
 
       if ($request->acce == $request->ancien_acce) {

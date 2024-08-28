@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'GoProjects'),
 
     /*
     |--------------------------------------------------------------------------
@@ -69,9 +69,7 @@ return [
     | ahead and set this to a sensible default for you out of the box.
     |
     */
-
-    'timezone' => 'UTC',
-
+    'timezone' => 'Africa/Bujumbura',
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

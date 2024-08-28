@@ -150,7 +150,6 @@ class DapController extends Controller
           ->sum('montant');
   }
   
-
   public function checkDap(Request $request)
   {
     $ID = session()->get('id');
@@ -278,8 +277,11 @@ class DapController extends Controller
           DB::beginTransaction();
   
           $IDpp = session()->get('id');
+          $lead = session()->get('lead');
+
           $dap = Dap::where('id', $request->dapid)->first();
-          $dja = Dja::where('numerodap', $request->dapid)->where('projetiddja', $IDpp)->first(); // Changer après service
+          $dja = Dja::where('numerodap', $request->dapid)
+                    ->where('projetiddja', $IDpp)->first(); // Changer après service
   
           // Vérifier si les enregistrements DAP et DJA existent
           if (!$dap || !$dja) {
@@ -287,7 +289,19 @@ class DapController extends Controller
           }
   
           // Vérifier si l'utilisateur a le droit de modifier le DAP
-          if ($dap->userid != Auth::id()) {
+
+          $get_lead =  DB::table('daps')
+          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+          ->select( 'projects.lead as lead')
+          ->where('daps.id', $request->dapid)
+          ->first();
+
+        
+          $projet_lead= $get_lead->lead;
+         
+    
+          if ($dap && $dap->userid != Auth::id() || $projet_lead  != $lead  ) {
+        
               return back()->with('failed', 'Vous n\'avez pas l\'accréditation pour modifier ce DAP.');
           }
 
@@ -686,6 +700,7 @@ class DapController extends Controller
       ->select('daps.*', 'services.title as titres', 'projects.budget as montantprojet', 'projects.title as projettitle', 'projects.devise as devise')
       ->where('daps.id', $idd)
       ->first();
+   
 
     $budget = $datadap->montantprojet;
     $ID = $datadap->projetiddap;
@@ -823,8 +838,6 @@ class DapController extends Controller
 
     $idd = Crypt::decrypt($idd);
 
-   
-
     $datadap = DB::table('daps')
       ->leftJoin('services', 'daps.serviceid', 'services.id')
       ->leftJoin('projects', 'daps.projetiddap', 'projects.id')
@@ -836,15 +849,11 @@ class DapController extends Controller
     $ID = $datadap->projetiddap;
     $devise  = $datadap->devise;
 
-
     $fond_reussi = DB::table('users')
     ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
     ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
     ->Where('users.id', $datadap->beneficiaire)
     ->first();
-
-
-  
 
    // dd($fond_reussi);
 

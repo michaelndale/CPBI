@@ -65,6 +65,11 @@ $fab_nombre= $documentacce + $documentcompte + $documentchefcomposent;
 
 $documentNombre = $dap_nombre + $fab_nombre ;
 
+$TOTAL_FEB   = DB::table('febs')->count();
+$TOTAL_DAP   = DB::table('daps')->count();
+$TOTAL_DAPPS = DB::table('dapbpcs')->count();
+$TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
+
 @endphp
 
 <div class="main-content">
@@ -106,12 +111,12 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
                 <div class="col-xl-12">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="d-flex flex-wrap pb-3 gap-3">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
                                         <div class="flex-grow-1 overflow-hidden">
-                                            <p class="text-truncate mb-2">Projets</p>
+                                            <p class="text-truncate mb-2">PROJETS</p>
                                             <h4 class="mt-2 mb-0">{{ $project->count(); }} <span class="badge bg-subtle-primary text-primary font-size-10 ms-1"><i class="mdi mdi-arrow-up"></i> {{ $project->count(); }}%</sup></h4>
                                         </div>
                                         <div class="text-primary">
@@ -123,29 +128,29 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="d-flex flex-wrap pb-3 gap-3">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
                                         <div class="flex-grow-1 overflow-hidden">
-                                            <p class="text-truncate mb-2">Personnels</p>
-                                            <h4 class="mt-2 mb-0">{{ $user->count(); }}<span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $user->count(); }}%</sup></h4>
+                                            <p class="text-truncate mb-2">LIGNE BUDGÉTAIRES</p>
+                                            <h4 class="mt-2 mb-0">{{  $TOTAL_LIGNE_BUDGET }}<span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{  $TOTAL_LIGNE_BUDGET }} %</sup></h4>
                                         </div>
                                         <div class="text-primary">
                                             <div id="chart-mini2" class="apex-chart"></div>
                                         </div>
                                     </div>
-                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Tous les personnels</span></p>
+                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Lignes budgetaire</span></p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="d-flex flex-wrap pb-3 gap-3">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
                                         <div class="flex-grow-1 overflow-hidden">
-                                            <p class="text-truncate mb-2">Activités</p>
+                                            <p class="text-truncate mb-2">ACTIVITÉS</p>
                                             <h4 class="mt-2 mb-0">{{ $activite->count(); }} <span class="badge bg-subtle-primary text-primary font-size-10 ms-1"><i class="mdi mdi-arrow-up"></i> {{ $activite->count(); }}%</sup></h4>
                                         </div>
                                         <div class="text-primary">
@@ -157,89 +162,140 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="d-flex flex-wrap pb-3 gap-3">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
                                         <div class="flex-grow-1 overflow-hidden">
-                                            <p class="text-truncate mb-2">Projets</p>
-                                            <h4 class="mt-2 mb-0">{{ $encours }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
+                                            <p class="text-truncate mb-2">F.E.B</p>
+                                            <h4 class="mt-2 mb-0">{{ $TOTAL_FEB }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
                                         </div>
                                         <div class="text-primary">
                                             <div id="chart-mini4" class="apex-chart"></div>
                                         </div>
                                     </div>
-                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Encours d'exécution</span></p>
+                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Tout les F.E.B </span></p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- end row -->
-                    @if (session()->has('id'))
-                    <div class="px-lg-2">
-                        <div class="row g-0">
-                            <div class="col" style="border:1px solid #c0c0c0">
-                                <a class="dropdown-icon-item" href="{{ route('rallongebudget') }}">
-                                    <i class="fa fa-folder-open" size='5'></i>
-                                    <span>Budget</span>
-                                </a>
-                            </div>
-                            <div class="col" style="border:1px solid #c0c0c0">
-                                <a class="dropdown-icon-item" href="{{ route('activity') }}">
-                                    <i class="fa fa-folder-open" size='5'></i>
-                                    <span>Activités</span>
-                                </a>
-                            </div>
-                            <div class="col" style="border:1px solid #c0c0c0">
-                                <a class="dropdown-icon-item" href="{{ route('listfeb') }}">
-                                    <i class="fa fa-edit" size='5'></i>
-                                    <span>FEB</span>
-                                </a>
-                            </div>
-                            <div class="col" style="border:1px solid #c0c0c0">
-                                <a class="dropdown-icon-item" href="{{ route('listdap') }}">
-                                    <i class="fa fa-edit" size='5'></i>
-                                    <span>DAP</span>
-                                </a>
-                            </div>
-                            <div class="col" style="border:1px solid #c0c0c0">
-                                <a class="dropdown-icon-item" href="{{ route('listdja') }}">
-                                    <i class="fa fa-edit" size='5'></i>
-                                    <span>DJA</span>
-                                </a>
-                            </div>
-                            <div class="col" style="border:1px solid #c0c0c0">
-                                <a class="dropdown-icon-item" href="{{ route('affectation') }}">
-                                    <i class="fa fa-users" size='5'></i>
-                                    <span>Intervenant</span>
-                                </a>
-                            </div>
 
-                            <div class="col" style="border:1px solid #c0c0c0">
-                                <a class="dropdown-icon-item" href="{{ route('rapportcumule') }}">
-                                    <i class="fa fa-file-alt" size='5'></i>
-                                    <span>Rapport commule</span>
-                                </a>
+                        <div class="col-md-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <p class="text-truncate mb-2">D.A.P</p>
+                                            <h4 class="mt-2 mb-0">{{ $TOTAL_DAP }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
+                                        </div>
+                                        <div class="text-primary">
+                                            <div id="chart-mini4" class="apex-chart"></div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Tout les D.A.P</span></p>
+                                </div>
                             </div>
-                            <div class="col" style="border:1px solid #c0c0c0">
-                                <a class="dropdown-icon-item" href="{{ route('planoperationnel') }}">
-                                    <i class="fa fa-file-alt" size='5'></i>
-                                    <span>Plan d'action</span>
-                                </a>
-                            </div>
-
-                            <div class="col" style="border:1px solid #c0c0c0">
-                                <a class="dropdown-icon-item" href="#">
-                                    <i class="fa fa-info-circle" size='5'></i>
-                                    <span>Plan d'action</span>
-                                </a>
-                            </div>
-
-
                         </div>
 
-
+                        <div class="col-md-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <p class="text-truncate mb-2">PETITE CAISSE</p>
+                                            <h4 class="mt-2 mb-0">{{ $TOTAL_DAPPS }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
+                                        </div>
+                                        <div class="text-primary">
+                                            <div id="chart-mini4" class="apex-chart"></div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Confondues </span></p>
+                                </div>
+                            </div>
+                        </div>
+                    
+                    <!-- end row -->
+                    @if (session()->has('id'))
+                
+                    <div class="col-md-2">
+                   
+                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+                            
+                        <a class="dropdown-icon-item" href="{{ route('gestioncompte') }}">
+                            <font size="5px" color="green">
+                                <i class="fa fa-chart-line"></i>
+                            </font> 
+                                <span>Ligne  budgétaire</span>
+                         </a>
+                        </div>
+                   
                     </div>
+
+                    <div class="col-md-2">
+                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+                            <a class="dropdown-icon-item" href="{{ route('rallongebudget') }}">
+                                <font size="5px" color="green">
+                                <i class="fa fa-chart-bar"></i>
+                                </font> 
+                                    <span>Budget</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+                            <a class="dropdown-icon-item" href="{{ route('activity') }}">
+                                <font size="5px" color="green">
+                                <i class="fa fa-running"></i>
+                                </font> 
+                                <span>Activités</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+                            <a class="dropdown-icon-item" href="{{ route('listfeb') }}">
+                                <font size="5px" color="green">
+                                <i class="mdi mdi-file-document-outline font-size-30"></i>
+                                </font> 
+                                <span>F.E.B</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+                            <a class="dropdown-icon-item" href="{{ route('listdap') }}">
+                                <font size="5px" color="green">
+                                <i class="mdi mdi-file-document-outline font-size-30"></i>
+                                </font> 
+                                <span>D.A.P</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+                            <a class="dropdown-icon-item" href="{{ route('bpc') }}">
+                                <font size="5px" color="green">
+                                <i class="mdi mdi-file-document-outline font-size-30"></i>
+                                </font> 
+                                <span>PETITE CAISSE</span>
+                            </a>
+                        </div>
+                    </div>
+
+
+                    
+
+                
+
+                 
+                  
+                    </div>
+
+                         
+
                     @endif
 
 
@@ -261,7 +317,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
                                         <div class="mt-4 text-center">
                                             <select class="form-select classcategory" id="classcategory">
-                                                <option disabled="true" selected="true">--Dossier--</option>
+                                                <option disabled="true" selected="true"> -- Dossier -- </option>
                                                 @foreach ($folder as $folders)
                                                 <option value="{{ $folders->id }}">{{ ucfirst($folders->title) }} </option>
                                                 @endforeach
@@ -271,7 +327,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                                         <div class="mt-4 text-center">
 
                                             <select class="form-select annee" id="annee">
-                                                <option value="0" disabled="true" selected="true">--Année--</option>
+                                                <option value="0" disabled="true" selected="true"> -- Année -- </option>
                                             </select>
                                         </div>
 
@@ -284,7 +340,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                             <div class="card">
                                 <div class="card-body">
 
-                                    <h4 class="card-title mb-3"><i class="fa fa-list"></i> Bref résumé de tous les projets de recherche</h4>
+                                    <h4 class="card-title mb-3"><i class="fa fa-info-circle"></i> Bref résumé de tous les projets de la recherche</h4>
 
 
                                     <div class="table-responsive">

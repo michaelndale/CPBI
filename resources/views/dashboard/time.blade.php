@@ -6,11 +6,9 @@ document.getElementById('heure').innerHTML = new Date().toLocaleTimeString();
 </script>
  <e id="heure"></e>
                           
-@php
-
-    setlocale(LC_TIME, 'fra_fra');
-    echo "&nbsp;"; 
-
+ @php
+    setlocale(LC_TIME, 'kir_kir');
+    echo "&nbsp;";
     echo ucfirst(strftime('%A, %d-%m-%Y'));
     $t='%d';
 @endphp

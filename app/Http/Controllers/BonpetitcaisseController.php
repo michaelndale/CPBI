@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Beneficaire;
 use App\Models\Bonpetitcaisse;
+use App\Models\Compte;
+use App\Models\Comptepetitecaisse;
 use App\Models\Elementboncaisse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,13 +23,19 @@ class BonpetitcaisseController extends Controller
             // Rediriger vers la route nommée 'dashboard'
             return redirect()->route('dashboard');
         }
-        $compte =  DB::table('comptes')
-            ->where('comptes.projetid', $ID)
-            ->where('compteid', '=', 0)
+      
+        $compte_bpc =  Comptepetitecaisse::where('projetid', $ID)
+            ->join('users', 'comptepetitecaisses.userid', '=', 'users.id')
+            ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('comptepetitecaisses.*', 'personnels.prenom as personnel_prenom')
             ->get();
 
-        $beneficaire = Beneficaire::orderBy('libelle')->get();
+        $comptes = Compte::where('projetid', $ID)
+            ->where('compteid', 0)
+            ->distinct()
+            ->get();
 
+       
         $personnel = DB::table('users')
             ->join('personnels', 'users.personnelid', '=', 'personnels.id')
             ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
@@ -35,12 +43,13 @@ class BonpetitcaisseController extends Controller
             ->get();
 
         return view(
-            'bonpetitecaisse.compte',
+            'bonpetitecaisse.bonpc.index',
             [
-                'title' => $title,
-                'compte' => $compte,
+                'title'     => $title,
+                'compte_bpc'    => $compte_bpc,
+                'compte'    => $comptes,
                 'personnel' => $personnel,
-                'beneficaire' => $beneficaire
+               
             ]
         );
     }
@@ -99,7 +108,6 @@ class BonpetitcaisseController extends Controller
             return response()->json(['status' => 202, 'error' => $e->getMessage()]);
         }
     }
-    
 
     public function list()
     {
@@ -122,7 +130,7 @@ class BonpetitcaisseController extends Controller
 
                 $output .= '<tr>
           <td>
-          <center>
+       
               <div class="btn-group me-2 mb-2 mb-sm-0">
                   <a  data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="mdi mdi-dots-vertical ms-2"></i> Options
@@ -143,11 +151,11 @@ class BonpetitcaisseController extends Controller
                       </a>
                   </div>
               </div>
-          </center>
+         
       </td>
-                <td align="center">' . ucfirst($rs->numero) . '</td>
-                <td align="center">' . ucfirst($rs->motif) . '</td>
-                <td>'.$sommebpc.'</td>
+                <td>' . ucfirst($rs->numero) . '</td>
+                <td>' . ucfirst($rs->motif) . '</td>
+                <td align="right">'.$sommebpc.'</td>
                 <td align="center">' . ucfirst($rs->nom_prenom_sous_signe) . '</td>
                 <td align="center">' . ucfirst($rs->date) . '</td>
                 <td align="center">' . ucfirst($rs->user_prenom) . '</td>

@@ -105,7 +105,7 @@
             @php
             $titprojet = Session::get('title');
             @endphp
-            <p> <b>Projet encours : </b>{{ strlen($titprojet) > 50 ? substr($titprojet, 0, 50) . '...' : $titprojet }} </p>
+            <p> <b>Projet encours : </b>{{ strlen($titprojet) > 35 ? substr($titprojet, 0, 35) . '...' : $titprojet }} </p>
 
           </div>
           @else
@@ -350,14 +350,18 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="topnav-apps">
 
-                  @php
-                  $IDPJ= Session::get('id');
-                  $cryptedId = Crypt::encrypt($IDPJ);
-                  @endphp
-                  <a href="{{ route('key.viewProject', $cryptedId ) }}" class="dropdown-item">Voir le projet</a>
-                  <a href="{{ route('gestioncompte') }}" class="dropdown-item">Ligne budgétaire</a>
-                  <a href="{{ route('rallongebudget') }}" class="dropdown-item">Budget</a>
-                  <a href="{{ route('activity') }}" class="dropdown-item">Activités</a>
+                @php
+                    
+                    $IDPJ= Session::get('id');
+                    $cryptedId = Crypt::encrypt($IDPJ);
+
+                    @endphp
+                      <a href="{{ route('key.viewProject', $cryptedId ) }}" class="dropdown-item">Voir le projet</a>
+                      <a href="{{ route('gestioncompte') }}" class="dropdown-item">Ligne budgétaire</a>
+                      <a href="{{ route('rallongebudget') }}" class="dropdown-item">Budget</a>
+                      <a href="{{ route('activity') }}" class="dropdown-item">Activités</a>
+                     
+                  
                   <a href="{{ route('listfeb') }}" class="dropdown-item">FEB</a>
                   <a href="{{ route('listdap') }}" class="dropdown-item">DAP</a>
                   <a href="{{ route('listdja') }}" class="dropdown-item">DJA</a>
@@ -368,15 +372,15 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="topnav-invoice">
                       <a href="{{ route('cpc') }}" class="dropdown-item">Compte Petite caisse</a>
-                      <a href="{{ route('user') }}" class="dropdown-item">FEB Petit caisse</a>
-                      <a href="{{ route('fonction')}}" class="dropdown-item">DJA Petite caisse</a>
-                      <a href="{{ route('bpc') }}" class="dropdown-item">Bon petite caisse</a>
-                      <a href="{{ route('fonction')}}" class="dropdown-item">Rapport petite caisse</a>
-                    </div>
+                      <a href="{{ route('febpc') }}" class="dropdown-item">FEB Petit caisse</a>
+                      <a href="{{ route('dappc') }}" class="dropdown-item">DAP Petite caisse </a>
+                      <a href="{{ route('bpc') }}" class="dropdown-item">Gestion Petite Caisse </a>
+                    
+                  </div>
                   </div>
 
 
-                  <a href="{{ route('affectation') }}" class="dropdown-item">Emprunt</a>
+                  <!--<a href="{{ route('affectation') }}" class="dropdown-item">Emprunt</a>  -->
                   <a href="{{ route('affectation') }}" class="dropdown-item">Intervenants</a>
                   <a href="{{ route('rapportcumule') }}" class="dropdown-item">Rapport commule</a>
                   <a href="{{ route('planoperationnel') }}" class="dropdown-item">Plan d'action</a>

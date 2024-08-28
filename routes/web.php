@@ -19,6 +19,7 @@ use App\Http\Controllers\CategoriebeneficiaireController;
 use App\Http\Controllers\ClasseurController;
 use App\Http\Controllers\CompteController;
 use App\Http\Controllers\ComptepetitecaisseController;
+use App\Http\Controllers\DapbpcController;
 use App\Http\Controllers\DapController;
 use App\Http\Controllers\DepartementController;
 use App\Http\Controllers\DeviseController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\EntretientController;
 use App\Http\Controllers\EtiquetteController;
 use App\Http\Controllers\FdtController;
 use App\Http\Controllers\FebController;
+use App\Http\Controllers\FebpetitcaisseController;
 use App\Http\Controllers\FeuilletempsController;
 use App\Http\Controllers\FolderController;
 use App\Http\Controllers\FonctionController;
@@ -55,6 +57,8 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\StatutvehiculeController;
 use App\Http\Controllers\TypeprojetController;
 use App\Http\Controllers\VehiculeController;
+use App\Models\Dapbpc;
+use App\Models\Febpetitcaisse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -64,16 +68,30 @@ Route::get('/', function () {
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'handlelogin'])->name('handlelogin');
-Route::get('/out', function () { return view('auth.out'); });
-Route::get('/maintenance', function () { return view('auth.maintenance'); });
+Route::get('/out', function () {
+    return view('auth.out');
+});
+Route::get('/maintenance', function () {
+    return view('auth.maintenance');
+});
 
 Route::middleware('auth')->group(function () {
+
+    Route::prefix('start')->group(function () {
+        Route::get('/', [AppCOntroller::class, 'start'])->name('start');
+        Route::get('/page-de-paiement', [AppCOntroller::class, 'start'])->name('page-de-paiement');
+    });
+
 
     Route::prefix('dashboard')->group(function () {
         Route::get('/', [AppCOntroller::class, 'index'])->name('dashboard');
         Route::get('/findClaseur', [AppCOntroller::class, 'findClaseur'])->name('findClaseur');
         Route::get('/findAnnee', [AppCOntroller::class, 'findAnnee'])->name('findAnnee');
     });
+
+    Route::get('/rh', [AppCOntroller::class, 'rh'])->name('rh');
+    Route::get('/archivages', [AppCOntroller::class, 'archivage'])->name('archivages');
+    Route::get('/parcAuto', [AppCOntroller::class, 'parcAuto'])->name('parcAuto');
 
     Route::prefix('rapportcumule')->group(function () {
         Route::get('/', [RapportcummuleController::class, 'index'])->name('rapportcumule');
@@ -179,15 +197,15 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('carburents')->group(function () {
         Route::get('/', [PleincarburantController::class, 'index'])->name('carburents');
-        Route::get('/allcarburents', [PleincarburantController::class, 'allcarburents'])->name('allcarburents'); 
+        Route::get('/allcarburents', [PleincarburantController::class, 'allcarburents'])->name('allcarburents');
         Route::delete('/deletePlain', [PleincarburantController::class, 'deletePlain'])->name('deletePlain');
     });
 
- 
-      
-      
 
-   
+
+
+
+
 
     Route::get('parc', [AppCOntroller::class, 'parc'])->name('parc');
 
@@ -209,7 +227,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/updateGc', [CompteController::class, 'update'])->name('updateGc');
         Route::post('/updatecompte', [CompteController::class, 'updatecompte'])->name('updatecompte');
         Route::post('/updateGrandcompte', [CompteController::class, 'updateGrandcompte'])->name('updateGrandcompte');
-        
     });
 
     Route::prefix('rallongebudget')->group(function () {
@@ -217,16 +234,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/storerallonge', [RallongebudgetController::class, 'store'])->name('storerallonge');
         Route::get('/fetchRallonge', [RallongebudgetController::class, 'fetchAll'])->name('fetchRallonge');
         Route::get('/findSousCompte', [RallongebudgetController::class, 'findSousCompte'])->name('findSousCompte');
-        
+
         Route::get('/showrallonge', [RallongebudgetController::class, 'showrallonge'])->name('showrallonge');
         Route::post('/updaterallonge', [RallongebudgetController::class, 'updatlignebudget'])->name('updaterallonge');
         Route::delete('/deleteligne', [RallongebudgetController::class, 'deleteall'])->name('deleteligne');
-
-       
     });
     Route::get('/telecharger-rapport-budget', [RallongebudgetController::class, 'telecharger_rapport_budget'])->name('telecharger-rapport-budget');
 
-    
+
     Route::prefix('folder')->group(function () {
         Route::get('/', [FolderController::class, 'index'])->name('folder');
         Route::get('/fetchAllfl', [FolderController::class, 'fetchAll'])->name('fetchAllfl');
@@ -265,7 +280,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/categoriebeneficiaire', [CategoriebeneficiaireController::class, 'allcategoriebeneficiaire'])->name('categoriebeneficiaire');
         Route::post('/storecategoriebeneficiaire', [CategoriebeneficiaireController::class, 'storecategorie'])->name('storecategoriebeneficiaire');
         Route::get('/selectcategorie', [CategoriebeneficiaireController::class, 'selectcategorie'])->name('selectcategorie');
-       
+
         Route::get('/editcategorie', [CategoriebeneficiaireController::class, 'edit'])->name('editcategorie');
         Route::post('/updatecategorie', [CategoriebeneficiaireController::class, 'updatecate'])->name('updatecategorie');
 
@@ -281,6 +296,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/{key}/edit/', [ProjectController::class, 'editshow'])->name('key.editProject');
         Route::put('/updatprojet/{cle}', [ProjectController::class, 'updateprojet'])->name('updatprojet');
         Route::delete('/deleteprojet', [ProjectController::class, 'deleteprojet'])->name('projetdelete');
+        Route::post('/check_project_access', [ProjectController::class, 'checkProjectAccess'])->name('check_project_access');
+
     });
 
     Route::prefix('affectation')->group(function () {
@@ -305,24 +322,25 @@ Route::middleware('auth')->group(function () {
         Route::put('/updat_annex/{cle}', [FebController::class, 'updat_annex'])->name('updat_annex');
 
         Route::get('{id}/generate-pdf-feb', [FebController::class, 'generatePDFfeb'])->name('generate-pdf-feb');
-        
+
         Route::delete('deleteelementsfeb', [FebController::class, 'deleteelementsfeb'])->name('deleteelementsfeb');
         Route::post('/check-feb', [FebController::class, 'checkfeb'])->name('check.feb');
         Route::get('/generate-word-feb/{id}', [FebController::class, 'generateWordFeb'])->name('generate.word.feb');
-       
+
         Route::get('/feb/fetchAllsignalefeb/{febid?}', [SignalefebController::class, 'fetchAllsignalefeb'])->name('fetchAllsignalefeb');
         Route::post('/storesignalefeb', [SignalefebController::class, 'storeSignaleFeb'])->name('storesignalefeb');
-        
+
         Route::post('/storeAnnexe', [FebController::class, 'updatannex'])->name('storeAnnexe');
         Route::delete('/supprimerlesignalefeb', [SignalefebController::class, 'deleteSignale'])->name('supprimerlesignalefeb');
-        
     });
 
     Route::get('/getfeb', [FebController::class, 'findfebelement'])->name('getfeb');
     Route::get('/getfebretour', [FebController::class, 'findfebelementretour'])->name('getfebretour');
     Route::get('/getdjas', [DjaController::class, 'getdjas'])->name('getdjas');
     Route::get('/getdjasto', [DjaController::class, 'getdjasto'])->name('getdjasto');
-   
+
+    Route::get('/findfebpc', [DapbpcController::class, 'findfebpc'])->name('findfebpc');
+
 
     Route::get('/getactivite', [FebController::class, 'getactivite'])->name('getactivite');
     Route::get('/fetctnotifiaction', [FebController::class, 'notificationdoc'])->name('allnotification');
@@ -360,7 +378,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/desactiverlesignaledap', [DapController::class, 'desacctiveSignale'])->name('desactiverlesignaledap');
         Route::delete('/supprimerlesignaledap', [DapController::class, 'deleteSignale'])->name('supprimerlesignaledap');
         Route::delete('/deleteelementsdap', [DapController::class, 'deleteElement'])->name('deleteelementsdap');
-        
     });
 
     Route::prefix('dja')->group(function () {
@@ -394,6 +411,49 @@ Route::middleware('auth')->group(function () {
         Route::delete('/deletecpc', [ComptepetitecaisseController::class, 'delete'])->name('deletecpc');
     });
 
+    Route::prefix('febpetitcaisse')->group(function () {
+        Route::get('/', [FebpetitcaisseController::class, 'index'])->name('febpc');
+        Route::get('/liste_febpc', [FebpetitcaisseController::class, 'fetchAll'])->name('liste_febpc');
+        Route::get('/{id}/viewfebpc', [FebpetitcaisseController::class, 'show'])->name('viewfebpc');
+        Route::post('/updatesignaturefebpetit', [FebpetitcaisseController::class, 'updatesignaturefebpetit'])->name('updatesignaturefebpetit');
+        Route::get('/{id}/editfebpc', [FebpetitcaisseController::class, 'edit'])->name('editfebpc');
+        Route::put('/updatefebpetit/{cle}', [FebpetitcaisseController::class, 'Updatestore'])->name('updatefebpetit');
+        Route::post('/check-febpc', [FebpetitcaisseController::class, 'checkfeb'])->name('check.febpc');
+        Route::post('/storefebpc', [FebpetitcaisseController::class, 'store'])->name('storefebpc');
+        Route::delete('/deletefebpc', [FebpetitcaisseController::class, 'delete'])->name('deletefebpc');
+        Route::get('{id}/generate-pdf', [FebpetitcaisseController::class, 'generatePDFfebpc'])->name('generate-pdf');
+    });
+
+    Route::prefix('dappc')->group(function () {
+        Route::get('/', [DapbpcController::class, 'index'])->name('dappc');
+        Route::get('/fetchdappc', [DapbpcController::class, 'fetchAll'])->name('fetchdappc');
+        Route::post('/storedappc', [DapbpcController::class, 'store'])->name('storedappc');
+        Route::delete('/deletedappc', [DapbpcController::class, 'delete'])->name('deletedappc');
+        Route::get('/{id}/view/', [DapbpcController::class, 'show'])->name('viewdappc');
+        Route::get('{id}/edit/', [DapbpcController::class, 'edit'])->name('showdappc');
+        Route::post('/check-dappc', [DapbpcController::class, 'checkDap'])->name('check.dappc');
+        Route::post('/updatesignaturedappc', [DapbpcController::class, 'updatesignature'])->name('updatesignaturedappc');
+       
+        
+        Route::put('/updatalldap', [DapController::class, 'updatestore'])->name('updatdap');
+       
+        Route::post('/updateautorisactiondap', [DapController::class, 'updateautorisactiondap'])->name('updateautorisactiondap');
+        Route::post('/update_autorisation_dap', [DapController::class, 'update_autorisation_dap'])->name('update_autorisation_dap');
+        Route::get('{id}/generate-pdf-dap', [DapController::class, 'generatePDFdap'])->name('generate-pdf-dap');
+        Route::get('/{key}/verification/', [DapController::class, 'show'])->name('key.verificationdap');
+       
+        Route::get('/getFuelTypes', [DapController::class, 'getFuelType'])->name('getFuelTypes');
+        Route::post('/get-feb-details', [DapController::class, 'getFebDetails'])->name('get-feb-details');
+
+        Route::get('/dap/fetchAllsignaledap/{dapid?}', [DapController::class, 'fetchAllsignaledap'])->name('fetchAllsignaledap');
+        Route::post('/storesignaledap', [DapController::class, 'storeSignaleDap'])->name('storesignaledap');
+        Route::delete('/desactiverlesignaledap', [DapController::class, 'desacctiveSignale'])->name('desactiverlesignaledap');
+        Route::delete('/supprimerlesignaledap', [DapController::class, 'deleteSignale'])->name('supprimerlesignaledap');
+        Route::delete('/deleteelementsdap', [DapController::class, 'deleteElement'])->name('deleteelementsdap');
+    });
+
+
+
     Route::prefix('ftd')->group(function () {
         Route::get('/', [FdtController::class, 'list'])->name('listftd');
         Route::post('/storeftd', [FdtController::class, 'store'])->name('storeftd');
@@ -412,7 +472,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/storevl', [VehiculeController::class, 'store'])->name('storevl');
         Route::delete('/deletevl', [VehiculeController::class, 'deleteall'])->name('deletevl');
         Route::get('/editveh', [VehiculeController::class, 'edit'])->name('editveh');
-        Route::post('/updateveh', [VehiculeController::class, 'update'])->name('updateveh'); 
+        Route::post('/updateveh', [VehiculeController::class, 'update'])->name('updateveh');
 
         // Achat location
         Route::get('/fetchachat', [AchatLocationController::class, 'fetchachat'])->name('fetchachat');
@@ -420,7 +480,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/deleteachat', [AchatLocationController::class, 'deleteachat'])->name('deleteachat');
 
         Route::get('/showvehicule', [VehiculeController::class, 'edit'])->name('showvehicule');
-
     });
 
     Route::prefix('entretient')->group(function () {
@@ -442,7 +501,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/storeCarnet', [CarnetbordController::class, 'store'])->name('storeCarnet');
         Route::delete('/deleteCarnet', [CarnetbordController::class, 'delete'])->name('delete_carnet');
         Route::get('/showCarnet', [CarnetbordController::class, 'showCarnet'])->name('showCarnet');
-        Route::post('/updateCarnet', [CarnetbordController::class, 'updateCarnet'])->name('updateCarnet'); 
+        Route::post('/updateCarnet', [CarnetbordController::class, 'updateCarnet'])->name('updateCarnet');
     });
 
 
@@ -452,42 +511,41 @@ Route::middleware('auth')->group(function () {
         Route::get('/alltype', [OutilsController::class, 'alltype'])->name('alltype');
         Route::post('/storetype', [OutilsController::class, 'storetype'])->name('storetype');
         Route::get('/edittype', [OutilsController::class, 'edittype'])->name('edittype');
-        Route::post('/updatetype', [OutilsController::class, 'updatetype'])->name('updatetype'); 
+        Route::post('/updatetype', [OutilsController::class, 'updatetype'])->name('updatetype');
         Route::delete('/deletetype', [OutilsController::class, 'deletetype'])->name('deletetype');
-        
+
         Route::get('/allcarburent', [CarburantController::class, 'allcaburent'])->name('allcarburent');
-        Route::post('/storecarburent', [CarburantController::class, 'storecarburent'])->name('storecarburent'); 
+        Route::post('/storecarburent', [CarburantController::class, 'storecarburent'])->name('storecarburent');
         Route::get('/editcarburent', [CarburantController::class, 'editcarburent'])->name('editcarburent');
-        Route::post('/updatecarburent', [CarburantController::class, 'updatecarburent'])->name('updatecarburent'); 
+        Route::post('/updatecarburent', [CarburantController::class, 'updatecarburent'])->name('updatecarburent');
         Route::delete('/deletecartburent', [CarburantController::class, 'deletecarburent'])->name('deletecartburent');
 
         // Statut
         Route::get('/allstatut', [StatutvehiculeController::class, 'allstatut'])->name('allstatut');
-        Route::post('/storestatut', [StatutvehiculeController::class, 'storestatut'])->name('storestatut'); 
+        Route::post('/storestatut', [StatutvehiculeController::class, 'storestatut'])->name('storestatut');
         Route::get('/editstatutvehicule', [StatutvehiculeController::class, 'editstatut'])->name('editstatut');
-        Route::post('/updatestatutvehicule', [StatutvehiculeController::class, 'updatestatut'])->name('updatestatut'); 
+        Route::post('/updatestatutvehicule', [StatutvehiculeController::class, 'updatestatut'])->name('updatestatut');
         Route::delete('/deletestatut', [StatutvehiculeController::class, 'deletestatut'])->name('deletestatut');
 
 
         // Fournissseur
         Route::get('/allfournisseur', [FournisseurController::class, 'fetchfournisseur'])->name('allfournisseur');
-        Route::post('/storefournisseur', [FournisseurController::class, 'storefournisseur'])->name('storefournisseur'); 
-        Route::get('/selectfournisseur', [FournisseurController::class, 'Selectfournisseur'])->name('selectfournisseur'); 
+        Route::post('/storefournisseur', [FournisseurController::class, 'storefournisseur'])->name('storefournisseur');
+        Route::get('/selectfournisseur', [FournisseurController::class, 'Selectfournisseur'])->name('selectfournisseur');
         Route::delete('/deletefournisseur', [FournisseurController::class, 'deletefournisseur'])->name('deletefournisseur');
         Route::get('/editfournisseur', [FournisseurController::class, 'editfournisseur'])->name('editfournisseur');
-        Route::post('/updatefournisseur', [FournisseurController::class, 'updatefournisseur'])->name('updatefournisseur'); 
-        
+        Route::post('/updatefournisseur', [FournisseurController::class, 'updatefournisseur'])->name('updatefournisseur');
+
         //
-        
+
         Route::get('/allpiece', [PieceController::class, 'allpiece'])->name('allpiece');
-        Route::post('/storepiece', [PieceController::class, 'storepiece'])->name('storepiece'); 
+        Route::post('/storepiece', [PieceController::class, 'storepiece'])->name('storepiece');
         Route::delete('/deletepiece', [PieceController::class, 'deletepiece'])->name('deletepiece');
         Route::get('/editpiece', [PieceController::class, 'editpiece'])->name('editpiece');
-        Route::post('/updatepieceedit', [PieceController::class, 'updatepiece'])->name('updatepieceedit'); 
-      
+        Route::post('/updatepieceedit', [PieceController::class, 'updatepiece'])->name('updatepieceedit');
     });
 
-   
+
 
     Route::prefix('archivage')->group(function () {
         Route::get('/', [ArchivageController::class, 'index'])->name('archivage');
@@ -496,7 +554,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/storeClasseur', [ArchivageController::class, 'store'])->name('storeClasseur');
         Route::post('/fetchAllclasseur', [ArchivageController::class, 'store'])->name('fetchAllclasseur');
         Route::get('/getEtiquettes/{classeurId}', [EtiquetteController::class, 'getEtiquettesByClasseur'])->name('getEtiquettesByCl');
-
     });
 
     Route::prefix('etiquette')->group(function () {
@@ -560,17 +617,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [FeuilletempsController::class, 'index'])->name('feuilletemps');
         Route::post('/storefeuille', [FeuilletempsController::class, 'store'])->name('storefeuille');
         Route::get('/fetchAllfeuille', [FeuilletempsController::class, 'monfeuille'])->name('fetchAllfeuille');
-        
+
         Route::post('/updatefeuille', [FeuilletempsController::class, 'updatefeuille'])->name('updatefeuille');
         Route::get('/showft', [FeuilletempsController::class, 'editf'])->name('showft');
         Route::delete('/deleteftemps', [FeuilletempsController::class, 'deleteftemps'])->name('deleteftemps');
-
-       
     });
 
     Route::get('/active-users', [AuthController::class, 'activeUsers'])->name('active-users');
 
-  /*  Route::get('/test-update-last-activity', function() {
+    /*  Route::get('/test-update-last-activity', function() {
         if (Auth::check()) {
             $user = Auth::user();
             $user->last_activity = Carbon::now();
@@ -583,9 +638,7 @@ Route::middleware('auth')->group(function () {
     //FIN RH
 
     // web.php (routes file)
-Route::get('/error-page', function () {
-    return view('error-page');
-})->name('errorPage');
-
-
+    Route::get('/error-page', function () {
+        return view('error-page');
+    })->name('errorPage');
 });

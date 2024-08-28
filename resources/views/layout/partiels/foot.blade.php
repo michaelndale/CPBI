@@ -8,18 +8,22 @@
       <div class="modal-body">
         <div id="tableExample2">
           <div class="table-responsive">
-          <div class="input-group mb-3">
-  <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
-  <input type="text" name="recherche" id="recherche" class="form-control" placeholder="Recherche par numéro, document, date, initiateur...">
-</div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+              <input type="text" name="recherche" id="recherche" class="form-control" placeholder="Recherche par numéro, document, date, initiateur...">
+            </div>
 
-             <table class="table table-bordered table-striped table-sm fs--1 mb-0">
+            <table class="table table-bordered table-striped table-sm fs--1 mb-0">
               <thead>
                 <tr>
                   <th class="sort border-top"><b>#</b></th>
                   <th class="sort border-top" data-sort="Document"><b>Document</b></th>
-                  <th class="sort border-top" data-sort="febnum"><b><center>N<sup>o</sup> DOC</center></b></th>
-                  <th class="sort border-top" data-sort="montant"><b><center>Montant</center></b></th>
+                  <th class="sort border-top" data-sort="febnum"><b>
+                      <center>N<sup>o</sup> DOC</center>
+                    </b></th>
+                  <th class="sort border-top" data-sort="montant"><b>
+                      <center>Montant</center>
+                    </b></th>
                   <th class="sort border-top" data-sort="Date Doc"><b>Date FEB</b></th>
                   <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
                   <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
@@ -27,7 +31,7 @@
                 </tr>
               </thead>
               <tbody id="footernotification">
-              <tr>
+                <tr>
                   <td colspan="8">
                     <h5 class="text-center text-secondery my-5">
                       @include('layout.partiels.load')
@@ -164,17 +168,17 @@
           <div class="row">
             <div class="form-check form-check-inline">
               <input id="useridtheme" name="useridtheme" type="hidden" value="{{ Auth::user()->id }}" />
-              
+
               <input class="form-check-input" type="radio" name="menuoption" id="menuoption" value="0" @if(Auth::user()->menu === 0) checked @endif >
               <label class="form-check-label" for="verticalMenu">Menu vertical</label>
               <br>
 
-              <input class="form-check-input" type="radio" name="menuoption" id="menuoption" value="1"  @if(Auth::user()->menu === 1) checked @endif >
+              <input class="form-check-input" type="radio" name="menuoption" id="menuoption" value="1" @if(Auth::user()->menu === 1) checked @endif >
               <label class="form-check-label" for="horizontalMenu">Menu horizontal</label>
 
 
-                  
-                  
+
+
 
 
             </div>
@@ -326,47 +330,47 @@
 </div>
 
 <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var audio = document.getElementById('notificationAudio');
-            // Try to play the audio
-            var playPromise = audio.play();
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    // Automatic playback started!
-                    console.log('Audio is playing automatically.');
-                }).catch(error => {
-                    // Auto-play was prevented
-                    console.log('Playback prevented. User interaction required.');
-                });
-            }
-        });
-    </script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var audio = document.getElementById('notificationAudio');
+    // Try to play the audio
+    var playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(_ => {
+        // Automatic playback started!
+        console.log('Audio is playing automatically.');
+      }).catch(error => {
+        // Auto-play was prevented
+        console.log('Playback prevented. User interaction required.');
+      });
+    }
+  });
+</script>
 
 
 <script>
-$(document).ready(function() {
+  $(document).ready(function() {
     $('#EditThemeForm').on('submit', function(e) {
-        e.preventDefault();
+      e.preventDefault();
 
-        $.ajax({
-            type: 'POST',
-            url: "{{ route('update-theme') }}",
-            data: $(this).serialize(),
-            success: function(response) {
-                if(response.success) {
-                    toastr.success(response.message);
-                    window.location.reload();
-                    $('#editthemeModal').modal('hide');
-                } else {
-                  toastr.error('Une erreur est survenue.');
-                }
-            },
-            error: function(response) {
-              toastr.error('Une erreur est survenue.');
-            }
-        });
+      $.ajax({
+        type: 'POST',
+        url: "{{ route('update-theme') }}",
+        data: $(this).serialize(),
+        success: function(response) {
+          if (response.success) {
+            toastr.success(response.message);
+            window.location.reload();
+            $('#editthemeModal').modal('hide');
+          } else {
+            toastr.error('Une erreur est survenue.');
+          }
+        },
+        error: function(response) {
+          toastr.error('Une erreur est survenue.');
+        }
+      });
     });
-});
+  });
 </script>
 
 
@@ -629,7 +633,34 @@ $(document).ready(function() {
 <script src="{{ asset('element/assets/libs/metismenu/metisMenu.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/simplebar/simplebar.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/node-waves/waves.min.js') }}"></script>
+
+
 <script src="{{ asset('element/assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+
+<script src="assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+        <!-- Buttons examples -->
+        <script src="{{ asset('element/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/jszip/jszip.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/pdfmake/build/pdfmake.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/pdfmake/build/vfs_fonts.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/datatables.net-buttons/js/buttons.html5.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/datatables.net-buttons/js/buttons.print.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js') }}"></script>
+
+        <script src="{{ asset('element/assets/libs/datatables.net-keytable/js/dataTables.keyTable.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/datatables.net-select/js/dataTables.select.min.js') }}"></script>
+        
+        <!-- Responsive examples -->
+        <script src="{{ asset('element/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
+        <script src="{{ asset('element/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}"></script>
+
+        <!-- Datatable init js -->
+        <script src="{{ asset('element/assets/js/pages/datatables.init.js') }}"></script>
+
+
+
 <script src="{{ asset('element/assets/js/app.js') }}"></script>
 <!-- Sweet Alerts js -->
 <script src="{{ asset('element/assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
