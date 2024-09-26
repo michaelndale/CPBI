@@ -708,7 +708,7 @@ class DapController extends Controller
 
     $elementfeb = DB::table('febs')
       ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
-      ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire')
+      ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire' ,  'febs.acce_signe', 'febs.comptable_signe' , 'febs.chef_signe')
       ->where('elementdaps.dapid', $datadap->id)
       ->get();
 
@@ -738,14 +738,25 @@ class DapController extends Controller
       ->Where('projetids', $ID)
       ->SUM('montant');
 
+      $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
+    ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
+    ->where('elementboncaisses.projetid',$ID)
+    ->where('bonpetitcaisses.approuve_par_signature', 1)
+    ->sum('elementboncaisses.montant');
+    
+    $SOMMES_DEJA_UTILISE = $somme_gloable + $SOMME_PETITE_CAISSE;
+
       if ($budget != 0) {
-        $pourcentage_globale = round(($somme_gloable * 100) / $budget, 2);
+        $pourcentage_globale = round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2);
     } else {
         $pourcentage_globale = 0;
     }
+  
     
     // Calcul du solde comptable
-    $solde_comptable = $budget - $somme_gloable;
+    $solde_comptable = $budget - $SOMMES_DEJA_UTILISE;
+
+  
     
     // Calcul du pourcentage en cours
     if ($somme_ligne_principale != 0) {
@@ -1007,9 +1018,11 @@ class DapController extends Controller
 
     $datafebElement = DB::table('febs')
       ->leftJoin('elementdaps', 'febs.id', '=', 'elementdaps.referencefeb')
-      ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire')
+      ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire' )
       ->where('elementdaps.dapid', $id)
       ->get();
+
+ 
 
     $elementfebencours = DB::table('febs')
       ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
@@ -1037,12 +1050,20 @@ class DapController extends Controller
       ->where('projetids', $IDb)
       ->sum('montant');
 
-    $pourcetage_globale = $budget ? round(($somme_gloable * 100) / $budget, 2) : 0;
-    
 
+      $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
+    ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
+    ->where('elementboncaisses.projetid',$IDb)
+    ->where('bonpetitcaisses.approuve_par_signature', 1)
+    ->sum('elementboncaisses.montant');
+    
+    $SOMMES_DEJA_UTILISE = $somme_gloable + $SOMME_PETITE_CAISSE;
+
+    $pourcetage_globale = $budget ? round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2) : 0;
+    
     // Calcul du solde comptable
   
-    $relicat = $budget - $somme_gloable;
+    $relicat = $budget - $SOMMES_DEJA_UTILISE;
     
     // Calcul du pourcentage en cours
 
@@ -1199,9 +1220,18 @@ class DapController extends Controller
           ->where('projetids', $IDB)
           ->sum('montant');
 
+          $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
+          ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
+          ->where('elementboncaisses.projetid',$IDB)
+          ->where('bonpetitcaisses.approuve_par_signature', 1)
+          ->sum('elementboncaisses.montant');
+
+
+    $SOMMES_DEJA_UTILISE = $sommeallfeb + $SOMME_PETITE_CAISSE;
+
     
       if ($budget != 0) {
-        $POURCENTAGE_GLOGALE = round(($sommeallfeb * 100) / $budget, 2);
+        $POURCENTAGE_GLOGALE = round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2);
     } else {
       $POURCENTAGE_GLOGALE = 0;
     }

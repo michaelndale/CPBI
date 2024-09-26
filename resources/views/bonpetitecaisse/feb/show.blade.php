@@ -60,7 +60,7 @@
                                              
                                             </td>
                                             <td>
-                                                  <label title="le calcul du taux progressif en fonction des numéros de FEB de tout le projet encours (Formulaire d'Engagement Budgétaire) qui est inférieur ou égal au numéro de FEB en cours.">Taux d’exécution global du projet: % </label>
+                                                  <label title="le calcul du taux progressif en fonction des numéros de FEB de tout le projet encours (Formulaire d'Engagement Budgétaire) qui est inférieur ou égal au numéro de FEB en cours.">Taux d’exécution global du projet: {{ $POURCENTAGE_GLOGALE }}% </label>
                                           
                                             </td>
                                         </tr>
@@ -70,7 +70,7 @@
                                                 {{ $febData->description }}
                                             </td>
                                             <td>
-                                                Montant de la demande : {{ $febData->montant }}
+                                                Montant de la demande : {{  number_format($febData->montant , 0, ',', ' ')   }}
                                             </td>
                                         </tr>
                                         <tr>

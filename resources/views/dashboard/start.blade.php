@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="en">
-<!-- Mirrored from themesdesign.in/reactly/layouts/pages-comingsoon.html by HTTraQt Website Copier/1.x [Karbofos 2012-2017] ven., 02 févr. 2024 11:41:12 GMT -->
+<html lang="fr">
+
 <head>
     <meta charset="utf-8" />
     <title>Bienvenu | GoProject</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
-    <meta content="Themesdesign" name="author" />
+    <meta content="GoProject" name="Application des Projets , RH , ARCHIVAGE , PARC AUTOMOBILE" />
+    <meta content="GoProjects" name="MICHAEL NDALE" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('element/assets/images/logo.png') }}">
     <!-- Layout Js -->
@@ -17,7 +17,6 @@
     <link href="{{ asset('element/assets/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
     <link href="{{ asset('element/assets/css/app.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-
 </head>
 @php
 // Récupérer les données du profil de l'utilisateur
@@ -153,7 +152,7 @@ $personnelData = DB::table('personnels')
                             <center>
 
                                 <a href="javascript:void(0);" class="dropdown-item notify-item" data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel" role="button" aria-expanded="false"> <span class="me-2" data-feather="log-out" title="Déconnectez-vous en cliquant sur l'icône.">
-                                        <i class="fas fa-sign-out-alt"></i> Se déconnecter 
+                                        <i class="fas fa-sign-out-alt"></i> Se déconnecter
                                 </a>
 
                                 <div class="modal fade" id="deconnecterModalLabel" tabindex="-1" aria-labelledby="deconnecterModalLabel" aria-hidden="true">
@@ -180,7 +179,7 @@ $personnelData = DB::table('personnels')
 
                         @php
                         $currentDate = date('Y-m-d');
-                        $limitDate = '2024-09-25';
+                        $limitDate = '2024-10-25';
                         $limitDateTime = new DateTime($limitDate);
                         $currentDateTime = new DateTime($currentDate);
 
@@ -210,7 +209,7 @@ $personnelData = DB::table('personnels')
                     <div class="row justify-content-center">
                         <div class="col-md-9">
                             <div class="mt-5">
-                                <div data-countdown="2024/09/30" class="counter-number"></div>
+                                <div data-countdown="2024/10/30" class="counter-number"></div>
                             </div>
                         </div>
                     </div>
@@ -229,11 +228,9 @@ $personnelData = DB::table('personnels')
     <script src="{{ asset('element/assets/libs/metismenu/metisMenu.min.js') }}"></script>
     <script src="{{ asset('element/assets/libs/simplebar/simplebar.min.js') }}"></script>
     <script src="{{ asset('element/assets/libs/node-waves/waves.min.js') }}"></script>
-    <!-- apexcharts -->
-    <script src="{{ asset('element/assets/libs/apexcharts/apexcharts.min.js') }}"></script>
-    <!-- Plugins js-->
+
     <script src="{{ asset('element/assets/libs/jquery-countdown/jquery.countdown.min.js') }}"></script>
-    <!-- Countdown js -->
+
     <script src="{{ asset('element/assets/js/pages/coming-soon.init.js') }}"></script>
     <script src="{{ asset('element/assets/js/app.js') }}"></script>
 </body>

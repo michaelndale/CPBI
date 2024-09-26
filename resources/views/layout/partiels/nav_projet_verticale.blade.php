@@ -6,10 +6,9 @@ $personnelData = DB::table('personnels')
                   ->where('id',Auth::user()->personnelid)
                   ->first();
 
-  $avatar = Auth::user()->avatar;
+$avatar = Auth::user()->avatar;
 
-
-
+// DOCUMENT GENERALE
 $documentacce= DB::table('febs')
 ->Where('acce', Auth::id() )
 ->Where('acce_signe',  0)
@@ -68,11 +67,127 @@ $dap_chefprogramme= DB::table('daps')
 ->get()
 ->count();
 
+// DOCUMENT PETITE CAISSE ETABLIE
+$FEB_PETIT_CAISSE_ETABLIE_PAR= DB::table('febpetitcaisses')
+->Where('etabli_par', Auth::id() )
+->Where('etabli_par_signature',  0)
+->get()
+->count();
+
+// DOCUMENT PETITE CAISSE VERIFIER 
+$FEB_PETIT_CAISSE_VERIFIER_PAR= DB::table('febpetitcaisses')
+->Where('verifie_par', Auth::id() )
+->Where('verifie_par_signature',  0)
+->get()
+->count();
+
+// DOCUMENT PETITE CAISSE APPROUVER 
+$FEB_PETIT_CAISSE_APPROUVER_PAR= DB::table('febpetitcaisses')
+->Where('approuve_par', Auth::id() )
+->Where('approuve_par_signature',  0)
+->get()
+->count();
+
+//1 DOCUMENT PETITE CAISSE DAP ETABLIE 
+$DAP_PETIT_CAISSE_ETABLIE = DB::table('dapbpcs')
+->Where('demande_etablie', Auth::id() )
+->Where('demande_etablie_signe',  0)
+->get()
+->count();
+
+//2 DOCUMENT PETITE CAISSE DAP VERIFIER 
+$DAP_PETIT_CAISSE_VERIFIER = DB::table('dapbpcs')
+->Where('verifier', Auth::id() )
+->Where('verifier_signe',  0)
+->get()
+->count();
+
+//3 DOCUMENT PETITE CAISSE DAP APPROUVER 
+$DAP_PETIT_CAISSE_APPROUVER= DB::table('dapbpcs')
+->Where('approuver', Auth::id() )
+->Where('approuver_signe',  0)
+->get()
+->count();
+
+//4 DOCUMENT PETITE CAISSE DAP AUTORISER 
+$DAP_PETIT_CAISSE_AUTORISER = DB::table('dapbpcs')
+->Where('autoriser', Auth::id() )
+->Where('autoriser_signe',  0)
+->get()
+->count();
+
+//5 DOCUMENT PETITE CAISSE DAP SECRETAIRE 
+$DAP_PETIT_CAISSE_SECRETAIRE = DB::table('dapbpcs')
+->Where('secretaire', Auth::id() )
+->Where('secretaire_signe',  0)
+->get()
+->count();
+
+//6 DOCUMENT PETITE CAISSE DAP CHEF PROGRAMME
+$DAP_PETIT_CAISSE_CHEF_PROGRAMME = DB::table('dapbpcs')
+->Where('chefprogramme', Auth::id() )
+->Where('chefprogramme_signe',  0)
+->get()
+->count();
+
+//1 BON PETITE CAISSE ETABLIE
+$BON_PETIT_CAISSE_ETABLIE_PAR= DB::table('bonpetitcaisses')
+->Where('etabli_par', Auth::id() )
+->Where('etabli_par_signature',  0)
+->get()
+->count();
+
+//2 BON PETITE CAISSE VERIFIER 
+$BON_PETIT_CAISSE_VERIFIER_PAR= DB::table('bonpetitcaisses')
+->Where('verifie_par', Auth::id() )
+->Where('verifie_par_signature',  0)
+->get()
+->count();
+
+//3 BON  PETITE CAISSE APPROUVER 
+$BON_PETIT_CAISSE_APPROUVER_PAR = DB::table('bonpetitcaisses')
+->Where('approuve_par', Auth::id() )
+->Where('approuve_par_signature',  0)
+->get()
+->count();
+
+
+//1 CAISSE REPORT PETITE CAISSE VERIFIER 
+$CAISSE_PETIT_CAISSE_VERIFIER_PAR= DB::table('rappotages')
+->Where('verifier_par', Auth::id() )
+->Where('verifier_signature',  0)
+->get()
+->count();
+
+//2 CAISSE REPORT  PETITE CAISSE APPROUVER 
+$CAISSE_PETIT_CAISSE_APPROUVER_PAR = DB::table('rappotages')
+->Where('approver_par', Auth::id() )
+->Where('approver_signature',  0)
+->get()
+->count();
+
 
 $dap_nombre= $dap_demandeetablie + $dap_verifier + $dap_approuverpar + $dap_responsable + $dap_secretaire + $dap_chefprogramme ;
 $fab_nombre= $documentacce + $documentcompte + $documentchefcomposent;
+$FEB_PET_CAISSE = $FEB_PETIT_CAISSE_ETABLIE_PAR + $FEB_PETIT_CAISSE_VERIFIER_PAR + $FEB_PETIT_CAISSE_APPROUVER_PAR;
+$DAP_PETITE_CAISSE = $DAP_PETIT_CAISSE_ETABLIE +  $DAP_PETIT_CAISSE_VERIFIER + $DAP_PETIT_CAISSE_APPROUVER + $DAP_PETIT_CAISSE_AUTORISER + $DAP_PETIT_CAISSE_SECRETAIRE + $DAP_PETIT_CAISSE_CHEF_PROGRAMME ;
+$BON_PTC = $BON_PETIT_CAISSE_ETABLIE_PAR + $BON_PETIT_CAISSE_VERIFIER_PAR + $BON_PETIT_CAISSE_APPROUVER_PAR ;
+$CAISSE_PTC = $CAISSE_PETIT_CAISSE_VERIFIER_PAR + $CAISSE_PETIT_CAISSE_APPROUVER_PAR ; 
 
-$documentNombre = $dap_nombre + $fab_nombre ;
+$documentNombre = $dap_nombre + $fab_nombre + $FEB_PET_CAISSE + $DAP_PETITE_CAISSE + $BON_PTC + $CAISSE_PTC;
+
+if(session()->has('id')){
+
+  $ProjetIdEncours = Session::get('id');
+  $classement =  DB::table('rappotages')
+                    ->where('cloture', 0)
+                    ->where('projetid', $ProjetIdEncours)
+                    ->first();
+
+
+}
+
+
 
 @endphp
   <div id="layout-wrapper">
@@ -229,8 +344,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
         <div id="sidebar-menu">
           <!-- Left Menu Start -->
           <ul class="metismenu list-unstyled" id="side-menu">
-            <li class="menu-title">Menu</li>
-            
+           
               @if ( $documentNombre != 0)
               <audio autoplay>
                     <source src="{{ asset('notification/son.mp3') }}" type="audio/mpeg">
@@ -238,7 +352,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                 </audio>
               <li class="nav-item">
                 <a href="#" class="waves-effect" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
-                <i class="fas fa-file-signature"></i><span class="badge rounded-pill bg-danger float-end">{{ $documentNombre }}</span>
+                <i class="ri-file-edit-fill "></i><span class="badge rounded-pill bg-danger float-end">{{ $documentNombre }}</span>
                 <span>Documents</span>
               </a>
               </li>
@@ -246,14 +360,14 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
             <li>
               <a href="{{ route('dashboard') }}" class="waves-effect">
-                <i class="fas fa-home"></i>
+                <i class="ri-dashboard-fill"></i>
                 <span>Tableau de bord {{ Session::get('menu') }} </span>
               </a>
             </li>
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
-                <i class="fas fa-feather"></i>
-                <span>Outils généraux</span>
+                <i class="ri-quill-pen-fill"></i>
+                <span>Outils Généraux</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
 
@@ -262,23 +376,26 @@ $documentNombre = $dap_nombre + $fab_nombre ;
                 <li><a href="{{ route('devise') }}">Devise</a></li>
                 <li><a href="{{ route('beneficiaire') }}">Bénéficiaire</a></li>
                 <li><a href="{{ route('banque') }}">Banque</a></li>
-                <li><a href="{{ route('termes') }}">Termes de  refference</a></li>
+                <li><a href="{{ route('termes') }}">Termes de  Reference</a></li>
               </ul>
             </li>
 
 
             <li>
               <a href="{{ route('list_project') }}" >
-              <i class="fa fa-list"></i>
+              <i class="ri-list-unordered"></i>
 
-                <span>Tout les projets</span>
+                <span>Tous les Projets</span>
               </a>
             </li>
 
 
 
 
+
+
             @if (session()->has('id'))
+            
             @php
                 $IDPJ= Session::get('id');
                 $cryptedId = Crypt::encrypt($IDPJ);
@@ -287,35 +404,30 @@ $documentNombre = $dap_nombre + $fab_nombre ;
             <li class="menu-title">Projet</li>
 
             <li>
-              <a href="{{ route('key.viewProject', $cryptedId ) }}" >
-                <i class="fa fa-eye"></i>
-                <span>Voir le projet</span>
+              <a href="javascript: void(0);" class="has-arrow waves-effect">
+              <i class="ri-apps-2-line me-1"></i>
+                <span>Gestion de Projet</span>
               </a>
+              <ul class="sub-menu" aria-expanded="false">
+               
+              
+                <li><a href="{{ route('key.viewProject', $cryptedId ) }}"><i class="fa fa-eye"></i> Voir le projet</a></li>
+                <li><a href="{{ route('gestioncompte') }}"><i class="fa fa-chart-line"></i> Ligne budgétaire</a></li>
+                <li><a href="{{ route('rallongebudget') }}"><i class="fa fa-chart-bar"></i> Budget</a></li>  
+                <li><a href="{{ route('activity') }}"><i class="fa fa-running"></i> Activités</a></li>  
+                <li><a href="{{ route('affectation') }}"><i class="fa fa-users"></i> Intervenants</a></li>  
+                <li><a href="{{ route('planoperationnel') }}"><i class="fa fa-tasks"></i> Plan d'action</a></li>  
+                <li><a href="{{ route('rapportcumule') }}"><i class="fa fa-chart-pie"></i> Cummulatif</a></li>  
+            
+             
+              </ul>
             </li>
 
-            <li>
-              <a href="{{ route('gestioncompte') }}" >
-                <i class="fa fa-chart-line"></i>
-                <span>Ligne budgétaire</span>
-              </a>
-            </li>
+        
 
-            <li>
-              <a href="{{ route('rallongebudget') }}" >
-                <i class="fa fa-chart-bar"></i>
-                <span>Budget</span>
-              </a>
-            </li>
-
-              <li>
-              <a href="{{ route('activity') }}" >
-                <i class="fa fa-running"></i>
-                <span>Activités</span>
-              </a>
-            </li>
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
-              <i class="fa fa-folder-open"></i>
+              <i class="ri-file-copy-2-line"></i>  
                 <span>Document</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
@@ -332,60 +444,77 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
             <li>
               <a href="javascript: void(0);" class="has-arrow waves-effect">
-              <i class="fa fa-folder-open"></i>
-                <span>Petit caisse</span>
+              <i class="ri-book-3-line "></i> 
+                <span>Petite Caisse</span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
                
-              
-     
-              <li> <a href="{{ route('bpc') }}" class="dropdown-item"> Petite Caisse </a></li>
-                <li> <a href="{{ route('cpc') }}" class="dropdown-item">Compte </a></li>
-                <li> <a href="{{ route('febpc') }}" class="dropdown-item">F.E.B </a></li>
-                <li> <a href="{{ route('dappc') }}" class="dropdown-item">D.A.P </a></li>
-              
             
+
+            
+
+              @if(isset($classement))
+            
+              <li>
+                  <a href="{{ route('Rapport.cloture.caisse') }}" class="dropdown-item">
+                      <div class="spinner-grow text-warning m-1" role="status" style="width: 0.7rem; height: 0.7rem;">
+                          <span class="sr-only">Loading...</span>
+                      </div>
+                      <span>Cloture caisse </span>
+                      
+                  </a>
+              </li>
+             
+            @else
+            <li> <a href="{{ route('bpc') }}" class="dropdown-item"> B.P.C </a></li>
+                  <li> <a href="{{ route('cpc') }}" class="dropdown-item">Compte </a></li>
+                  <li> <a href="{{ route('febpc') }}" class="dropdown-item">F.E.B </a></li>
+                  <li> <a href="{{ route('dappc') }}" class="dropdown-item">D.A.P </a></li>
+            
+            @endif
+            
+
+
+              <li> <a href="{{ route('Rapport.caisse') }}" class="dropdown-item">Rapport de caisse</a></li>
+               
              
               </ul>
             </li>
 
             <li>
-              <a href="{{ route('affectation') }}" >
-                <i class="fa fa-users"></i>
-                <span>Intervenants</span>
+              <a href="javascript: void(0);" class="has-arrow waves-effect">
+              <i class="ri-file-ppt-2-line "></i>
+                <span>Rapports </span>
               </a>
+              <ul class="sub-menu" aria-expanded="false">
+                <li><a href="{{ route('rapportcumule') }}">Rapport Commulatif</a></li>
+                <li><a href="{{ route('Rapport.caisse') }}">Rapport Caisse</a></li>
+              </ul>
             </li>
-
-            <li>
-              <a href="{{ route('rapportcumule') }}" >
-              <i class="fa fa-chart-pie"></i>
-
-                <span>Rapport commulatif</span>
-              </a>
-            </li>
-
-            <li>
-              <a href="{{ route('planoperationnel') }}" >
-              <i class="fa fa-tasks"></i>
-
-                <span>Plan d'action</span>
-              </a>
-            </li>
-
-
-
             @else
 
-
             <li>
-              <a href="{{ route('start') }}" >
-              <i class="fas fa-sign-out-alt"></i>
-                <span>Quitter le service</span>
+              <a href="{{ route('new_project') }}" >
+              <i class="fas fa-plus-circle"></i>
+                <span>Nouveau Projet</span>
               </a>
             </li>
-        
 
             @endif
+
+            <li>
+              <a href="{{ route('communique') }}" >
+              <i class="  ri-error-warning-line "></i>
+                <span>Communique</span>
+              </a>
+            </li>
+      
+            <li>
+              <a href="{{ route('start') }}" >
+              <i class=" ri-logout-circle-r-line "></i>
+                <span>Quitter le Service</span>
+              </a>
+            </li>
 
             <li>
               <a href="javascript:void(0);" class="dropdown-item notify-item" data-bs-toggle="modal" data-bs-target="#deconnecterModalLabel">

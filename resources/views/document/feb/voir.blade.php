@@ -379,9 +379,9 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                                 </td>
                                                 <td style="width:10%" align="center">{{ $datElements->frequence }}
                                                 </td>
-                                                <td style="width:15%" align="center">{{ number_format($datElements->pu,0, ',', ' ') }}
+                                                <td style="width:15%" align="right">{{ number_format($datElements->pu,0, ',', ' ') }}
                                                 </td>
-                                                <td style="width:20%" align="center"> {{ number_format($datElements->montant,0, ',', ' ') }} </td>
+                                                <td style="width:20%" align="right"> {{ number_format($datElements->montant,0, ',', ' ') }} </td>
                                             </tr>
                                             @php
                                             $n++
@@ -389,10 +389,10 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                             @endforeach
 
                                             <tr>
-                                                <td colspan="7"><b>
+                                                <td colspan="7" align="center"><b>
                                                         Total général</font>
                                                     </b></td>
-                                                <td align="center"><b>
+                                                <td align="right"><b>
                                                         {{ number_format($sommefeb,0, ',', ' ') }} </font>
                                                     </b></h5>
                                                 </td>

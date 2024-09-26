@@ -1,78 +1,207 @@
+<style>
+  /* Réduire l'espacement entre les éléments de la liste */
+  .navbar-nav  {
+    margin-right: -20px; /* Ajuste la marge droite entre les éléments */
+  }
+
+  /* Réduire le padding à l'intérieur des liens */
+  .navbar-nav .dropdown {
+    margin-right: -20px /* Ajuste le padding vertical et horizontal */
+  }
+</style>
+
 <body data-topbar="colored" data-layout="horizontal">
-  @php
+@php
 
-  // Récupérer les données du profil de l'utilisateur
-  $personnelData = DB::table('personnels')
-  ->where('id',Auth::user()->personnelid)
-  ->first();
+// Récupérer les données du profil de l'utilisateur
+$personnelData = DB::table('personnels')
+                  ->where('id',Auth::user()->personnelid)
+                  ->first();
 
-  $avatar = Auth::user()->avatar;
+$avatar = Auth::user()->avatar;
 
-  $documentacce= DB::table('febs')
-  ->Where('acce', Auth::id() )
-  ->Where('acce_signe', 0)
-  ->get()
-  ->count();
+// DOCUMENT GENERALE
+$documentacce= DB::table('febs')
+->Where('acce', Auth::id() )
+->Where('acce_signe',  0)
+->get()
+->count();
 
-  $documentcompte = DB::table('febs')
-  ->Where('comptable', Auth::id() )
-  ->Where('comptable_signe', 0)
-  ->get()
-  ->count();
+$documentcompte = DB::table('febs')
+->Where('comptable', Auth::id() )
+->Where('comptable_signe',  0)
+->get()
+->count();
 
-  $documentchefcomposent= DB::table('febs')
-  ->Where('chefcomposante', Auth::id() )
-  ->Where('chef_signe', 0)
-  ->get()
-  ->count();
-
-
-
-  $dap_demandeetablie= DB::table('daps')
-  ->Where('demandeetablie', Auth::id() )
-  ->Where('demandeetablie_signe', 0)
-  ->get()
-  ->count();
+$documentchefcomposent= DB::table('febs')
+->Where('chefcomposante', Auth::id() )
+->Where('chef_signe',  0)
+->get()
+->count();
 
 
 
-  $dap_verifier= DB::table('daps')
-  ->Where('verifierpar', Auth::id() )
-  ->Where('verifierpar_signe', 0)
-  ->get()
-  ->count();
-
-  $dap_approuverpar= DB::table('daps')
-  ->Where('approuverpar', Auth::id() )
-  ->Where('approuverpar_signe', 0)
-  ->get()
-  ->count();
-
-  $dap_responsable= DB::table('daps')
-  ->Where('responsable', Auth::id() )
-  ->Where('responsable_signe', 0)
-  ->get()
-  ->count();
-
-  $dap_secretaire= DB::table('daps')
-  ->Where('secretaire', Auth::id() )
-  ->Where('secretaure_general_signe', 0)
-  ->get()
-  ->count();
-
-  $dap_chefprogramme= DB::table('daps')
-  ->Where('chefprogramme', Auth::id() )
-  ->Where('chefprogramme_signe', 0)
-  ->get()
-  ->count();
+$dap_demandeetablie= DB::table('daps')
+->Where('demandeetablie', Auth::id() )
+->Where('demandeetablie_signe',  0)
+->get()
+->count();
 
 
-  $dap_nombre= $dap_demandeetablie + $dap_verifier + $dap_approuverpar + $dap_responsable + $dap_secretaire + $dap_chefprogramme ;
-  $fab_nombre= $documentacce + $documentcompte + $documentchefcomposent;
 
-  $documentNombre = $dap_nombre + $fab_nombre ;
+$dap_verifier= DB::table('daps')
+->Where('verifierpar', Auth::id() )
+->Where('verifierpar_signe',  0)
+->get()
+->count();
 
-  @endphp
+$dap_approuverpar= DB::table('daps')
+->Where('approuverpar', Auth::id() )
+->Where('approuverpar_signe',  0)
+->get()
+->count();
+
+$dap_responsable= DB::table('daps')
+->Where('responsable', Auth::id() )
+->Where('responsable_signe',  0)
+->get()
+->count();
+
+$dap_secretaire= DB::table('daps')
+->Where('secretaire', Auth::id() )
+->Where('secretaure_general_signe',  0)
+->get()
+->count();
+
+$dap_chefprogramme= DB::table('daps')
+->Where('chefprogramme', Auth::id() )
+->Where('chefprogramme_signe',  0)
+->get()
+->count();
+
+// DOCUMENT PETITE CAISSE ETABLIE
+$FEB_PETIT_CAISSE_ETABLIE_PAR= DB::table('febpetitcaisses')
+->Where('etabli_par', Auth::id() )
+->Where('etabli_par_signature',  0)
+->get()
+->count();
+
+// DOCUMENT PETITE CAISSE VERIFIER 
+$FEB_PETIT_CAISSE_VERIFIER_PAR= DB::table('febpetitcaisses')
+->Where('verifie_par', Auth::id() )
+->Where('verifie_par_signature',  0)
+->get()
+->count();
+
+// DOCUMENT PETITE CAISSE APPROUVER 
+$FEB_PETIT_CAISSE_APPROUVER_PAR= DB::table('febpetitcaisses')
+->Where('approuve_par', Auth::id() )
+->Where('approuve_par_signature',  0)
+->get()
+->count();
+
+//1 DOCUMENT PETITE CAISSE DAP ETABLIE 
+$DAP_PETIT_CAISSE_ETABLIE = DB::table('dapbpcs')
+->Where('demande_etablie', Auth::id() )
+->Where('demande_etablie_signe',  0)
+->get()
+->count();
+
+//2 DOCUMENT PETITE CAISSE DAP VERIFIER 
+$DAP_PETIT_CAISSE_VERIFIER = DB::table('dapbpcs')
+->Where('verifier', Auth::id() )
+->Where('verifier_signe',  0)
+->get()
+->count();
+
+//3 DOCUMENT PETITE CAISSE DAP APPROUVER 
+$DAP_PETIT_CAISSE_APPROUVER= DB::table('dapbpcs')
+->Where('approuver', Auth::id() )
+->Where('approuver_signe',  0)
+->get()
+->count();
+
+//4 DOCUMENT PETITE CAISSE DAP AUTORISER 
+$DAP_PETIT_CAISSE_AUTORISER = DB::table('dapbpcs')
+->Where('autoriser', Auth::id() )
+->Where('autoriser_signe',  0)
+->get()
+->count();
+
+//5 DOCUMENT PETITE CAISSE DAP SECRETAIRE 
+$DAP_PETIT_CAISSE_SECRETAIRE = DB::table('dapbpcs')
+->Where('secretaire', Auth::id() )
+->Where('secretaire_signe',  0)
+->get()
+->count();
+
+//6 DOCUMENT PETITE CAISSE DAP CHEF PROGRAMME
+$DAP_PETIT_CAISSE_CHEF_PROGRAMME = DB::table('dapbpcs')
+->Where('chefprogramme', Auth::id() )
+->Where('chefprogramme_signe',  0)
+->get()
+->count();
+
+//1 BON PETITE CAISSE ETABLIE
+$BON_PETIT_CAISSE_ETABLIE_PAR= DB::table('bonpetitcaisses')
+->Where('etabli_par', Auth::id() )
+->Where('etabli_par_signature',  0)
+->get()
+->count();
+
+//2 BON PETITE CAISSE VERIFIER 
+$BON_PETIT_CAISSE_VERIFIER_PAR= DB::table('bonpetitcaisses')
+->Where('verifie_par', Auth::id() )
+->Where('verifie_par_signature',  0)
+->get()
+->count();
+
+//3 BON  PETITE CAISSE APPROUVER 
+$BON_PETIT_CAISSE_APPROUVER_PAR = DB::table('bonpetitcaisses')
+->Where('approuve_par', Auth::id() )
+->Where('approuve_par_signature',  0)
+->get()
+->count();
+
+
+//1 CAISSE REPORT PETITE CAISSE VERIFIER 
+$CAISSE_PETIT_CAISSE_VERIFIER_PAR= DB::table('rappotages')
+->Where('verifier_par', Auth::id() )
+->Where('verifier_signature',  0)
+->get()
+->count();
+
+//2 CAISSE REPORT  PETITE CAISSE APPROUVER 
+$CAISSE_PETIT_CAISSE_APPROUVER_PAR = DB::table('rappotages')
+->Where('approver_par', Auth::id() )
+->Where('approver_signature',  0)
+->get()
+->count();
+
+
+$dap_nombre= $dap_demandeetablie + $dap_verifier + $dap_approuverpar + $dap_responsable + $dap_secretaire + $dap_chefprogramme ;
+$fab_nombre= $documentacce + $documentcompte + $documentchefcomposent;
+$FEB_PET_CAISSE = $FEB_PETIT_CAISSE_ETABLIE_PAR + $FEB_PETIT_CAISSE_VERIFIER_PAR + $FEB_PETIT_CAISSE_APPROUVER_PAR;
+$DAP_PETITE_CAISSE = $DAP_PETIT_CAISSE_ETABLIE +  $DAP_PETIT_CAISSE_VERIFIER + $DAP_PETIT_CAISSE_APPROUVER + $DAP_PETIT_CAISSE_AUTORISER + $DAP_PETIT_CAISSE_SECRETAIRE + $DAP_PETIT_CAISSE_CHEF_PROGRAMME ;
+$BON_PTC = $BON_PETIT_CAISSE_ETABLIE_PAR + $BON_PETIT_CAISSE_VERIFIER_PAR + $BON_PETIT_CAISSE_APPROUVER_PAR ;
+$CAISSE_PTC = $CAISSE_PETIT_CAISSE_VERIFIER_PAR + $CAISSE_PETIT_CAISSE_APPROUVER_PAR ; 
+
+$documentNombre = $dap_nombre + $fab_nombre + $FEB_PET_CAISSE + $DAP_PETITE_CAISSE + $BON_PTC + $CAISSE_PTC;
+
+if(session()->has('id')){
+
+  $ProjetIdEncours = Session::get('id');
+  $classement =  DB::table('rappotages')
+                    ->where('cloture', 0)
+                    ->where('projetid', $ProjetIdEncours)
+                    ->first();
+
+
+}
+
+
+
+@endphp
   <!-- Begin page -->
   <div id="layout-wrapper">
 
@@ -151,57 +280,7 @@
 
           </div>
 
-          <div class="dropdown d-none d-lg-inline-block ms-1">
-            <button type="button" class="btn header-item noti-icon waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="ri-apps-2-line"></i>
-            </button>
-
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-              <div class="px-lg-2">
-                <div class="row g-0">
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-folder-open" size='5'></i>
-                      <span>Projet</span>
-                    </a>
-                  </div>
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-folder-open" size='5'></i>
-                      <span>Activité</span>
-                    </a>
-                  </div>
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-users" size='5'></i>
-                      <span>RH</span>
-                    </a>
-                  </div>
-                </div>
-
-                <div class="row g-0">
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-car" size='5'></i>
-                      <span>ParcAuto</span>
-                    </a>
-                  </div>
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-users" size='5'></i>
-                      <span>Archivage</span>
-                    </a>
-                  </div>
-                  <div class="col">
-                    <a class="dropdown-icon-item" href="#">
-                      <i class="fa fa-info-circle" size='5'></i>
-                      <span>Info</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+         
 
           <div class="dropdown d-none d-lg-inline-block ms-1">
             <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
@@ -271,42 +350,6 @@
 
           </div>
 
-
-          <div class="dropdown d-none d-sm-inline-block">
-            <button type="button" class="btn header-item " data-bs-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-
-              <a class="dropdown-item notify-item" class="btn header-item" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-cogs"></i>
-              </a>
-
-
-            </button>
-            <div class="dropdown-menu dropdown-menu-end " style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 72px); " data-popper-placement="bottom-end">
-
-              <!-- item-->
-
-              <a href="{{ route('info') }}" class="dropdown-item notify-item">
-                Identifications
-              </a>
-
-              <a href="{{ route('notis') }}" class="dropdown-item notify-item">
-                Notifications
-              </a>
-
-              <a href="{{ route('history') }}" class="dropdown-item notify-item">
-                Historique
-              </a>
-
-              <a href="{{ route('active-users') }}" class="dropdown-item notify-item">
-                Qui est connecter
-              </a>
-
-
-
-            </div>
-
-          </div>
-
           <div class="dropdown d-none d-lg-inline-block ms-1">
 
             <button type="button" class="btn header-item noti-icon waves-effect">
@@ -343,10 +386,27 @@
                   <i class="ri-dashboard-2-line me-2"></i>Tableau de bord
                 </a>
               </li>
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button">
+                  <i class="ri-list-settings-fill  me-1"></i> Outils <div class="arrow-down"></div>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="topnav-apps">
+                  <a href="{{ route('folder') }}" class="dropdown-item">Dossier</a>
+                  <a href="{{ route('typebudget') }}" class="dropdown-item">Type de budget</a>
+                  <a href="{{ route('devise') }}" class="dropdown-item">Devise</a>
+                  <a href="{{ route('beneficiaire') }}" class="dropdown-item">Bénéficiaire</a>
+                  <a href="{{ route('banque') }}" class="dropdown-item">Banque</a>
+                  <a href="{{ route('termes') }}" class="dropdown-item">Termes de Reference</a>
+                  <a href="{{ route('list_project') }}" class="dropdown-item">Tous les projets</a>
+                </div>
+              </li>
+
+
               @if (session()->has('id'))
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button">
-                  <i class="ri-apps-2-line me-1"></i>Projets <div class="arrow-down"></div>
+                  <i class="ri-apps-2-line me-1"></i>Projet <div class="arrow-down"></div>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="topnav-apps">
 
@@ -360,97 +420,93 @@
                       <a href="{{ route('gestioncompte') }}" class="dropdown-item">Ligne budgétaire</a>
                       <a href="{{ route('rallongebudget') }}" class="dropdown-item">Budget</a>
                       <a href="{{ route('activity') }}" class="dropdown-item">Activités</a>
-                     
-                  
+                      <a href="{{ route('affectation') }}" class="dropdown-item">Intervenants</a>
+                      <a href="{{ route('rapportcumule') }}" class="dropdown-item">Rapport commule</a>
+                      <a href="{{ route('planoperationnel') }}" class="dropdown-item">Plan d'action</a>
+                </div>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button">
+                  <i class="ri-apps-2-line me-1"></i>Documents <div class="arrow-down"></div>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="topnav-apps">
                   <a href="{{ route('listfeb') }}" class="dropdown-item">FEB</a>
                   <a href="{{ route('listdap') }}" class="dropdown-item">DAP</a>
                   <a href="{{ route('listdja') }}" class="dropdown-item">DJA</a>
-
-                  <div class="dropdown">
-                    <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-invoice" role="button">
-                      Petite caisse<div class="arrow-down"></div>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="topnav-invoice">
-                      <a href="{{ route('cpc') }}" class="dropdown-item">Compte Petite caisse</a>
-                      <a href="{{ route('febpc') }}" class="dropdown-item">FEB Petit caisse</a>
-                      <a href="{{ route('dappc') }}" class="dropdown-item">DAP Petite caisse </a>
-                      <a href="{{ route('bpc') }}" class="dropdown-item">Gestion Petite Caisse </a>
-                    
-                  </div>
-                  </div>
-
-
-                  <!--<a href="{{ route('affectation') }}" class="dropdown-item">Emprunt</a>  -->
-                  <a href="{{ route('affectation') }}" class="dropdown-item">Intervenants</a>
-                  <a href="{{ route('rapportcumule') }}" class="dropdown-item">Rapport commule</a>
-                  <a href="{{ route('planoperationnel') }}" class="dropdown-item">Plan d'action</a>
                 </div>
               </li>
-              @endif
+
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button">
-                  <i class="ri-list-settings-fill  me-1"></i> Outils généraux <div class="arrow-down"></div>
+                  <i class="ri-apps-2-line me-1"></i>Petite Caisse <div class="arrow-down"></div>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="topnav-apps">
-                  <a href="{{ route('folder') }}" class="dropdown-item">Dossier</a>
-                  <a href="{{ route('typebudget') }}" class="dropdown-item">Type de budget</a>
-                  <a href="{{ route('devise') }}" class="dropdown-item">Devise</a>
-                  <a href="{{ route('beneficiaire') }}" class="dropdown-item">Bénéficiaire</a>
-                  <a href="{{ route('banque') }}" class="dropdown-item">Banque</a>
-                  <a href="{{ route('termes') }}" class="dropdown-item">Termes de refference</a>
-                  <a href="{{ route('list_project') }}" class="dropdown-item">Tout les projets</a>
+
+                @if(isset($classement))
+                     
+                <a href="{{ route('Rapport.cloture.caisse') }}" class="dropdown-item">
+                      <div class="spinner-grow text-warning m-1" role="status" style="width: 0.7rem; height: 0.7rem;">
+                          <span class="sr-only">Loading...</span>
+                      </div>
+                      <span>Cloture caisse </span>
+                      
+                  </a>
+
+                @else
+                    <a href="{{ route('bpc') }}" class="dropdown-item">B.P.C </a>
+                    <a href="{{ route('cpc') }}" class="dropdown-item">Compte </a>
+                    <a href="{{ route('febpc') }}" class="dropdown-item">F.E.B</a>
+                    <a href="{{ route('dappc') }}" class="dropdown-item">D.A.P </a>
+
+                @endif    
+
+                 <a href="{{ route('Rapport.caisse') }}" class="dropdown-item">Rapport Caisse</a>
+
+                
                 </div>
               </li>
 
+            
+
+
+
+              
+              @endif
+
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button">
+                  <i class="ri-apps-2-line me-1"></i>Rapports <div class="arrow-down"></div>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="topnav-apps">
+                  <a href="{{ route('rapportcumule') }}" class="dropdown-item">Rapport Cummule </a>
+                  <a href="{{ route('Rapport.caisse') }}" class="dropdown-item">Rapport Petite Caisse</a>
+                </div>
+              </li>
+
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button">
+                  <i class="ri-apps-2-line me-1"></i>Autres <div class="arrow-down"></div>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="topnav-apps">
+
+                     
+                  <a href="{{ route('communique') }}" class="dropdown-item">Communique </a>
+                  <a href="{{ route('start') }}" class="dropdown-item">Quitter le service</a>
+                  
+                </div>
+              </li>
+
+
+            
              
 
               
 
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button">
-                  <i class="ri-group-fill  me-1"></i> R.H <div class="arrow-down"></div>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="topnav-apps">
+           
 
-                  <div class="dropdown">
-                    <a class="dropdown-item dropdown-toggle arrow-none" href="#" id="topnav-invoice" role="button">
-                      Personnel<div class="arrow-down"></div>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="topnav-invoice">
-                      <a href="{{ route('personnel') }}" class="dropdown-item">Tous les employés </a>
-                      <a href="{{ route('user') }}" class="dropdown-item">Utilisateurs</a>
-                      <a href="{{ route('fonction')}}" class="dropdown-item">Fonctions</a>
-                    </div>
-                  </div>
-
-                  <a href="{{ route('service') }}" class="dropdown-item">Service</a>
-                  <a href="{{ route('department')}}" class="dropdown-item">Departements</a>
-                </div>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button">
-                  <i class="ri-folder-open-fill  me-1"></i> Archivage <div class="arrow-down"></div>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="topnav-apps">
-                  <a href="{{ route('archivage') }}" class="dropdown-item">Document</a>
-                  <a href="{{ route('classeur') }}" class="dropdown-item">Classeur</a>
-                  <a href="{{ route('etiquette') }}" class="dropdown-item">Etiquette</a>
-                </div>
-              </li>
-
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle arrow-none" href="#" id="topnav-apps" role="button">
-                  <i class="ri-taxi-fill  me-1"></i>Parc Automobile<div class="arrow-down"></div>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="topnav-apps">
-                  <a href="{{ route('parc') }}" class="dropdown-item">Accueil</a>
-                  <a href="{{ route('vehicule') }}" class="dropdown-item">Véhicules</a>
-                  <a href="{{ route('carburents') }}" class="dropdown-item">Carburants</a>
-                  <a href="{{ route('entretient') }}" class="dropdown-item">Entretiens & Réparations</a>
-                  <a href="{{ route('carnet_bord') }}" class="dropdown-item">Carnet de bord</a>
-                  <a href="{{ route('outilspa') }}" class="dropdown-item">Outils gestions</a>
-                </div>
-              </li>
             </ul>
           </div>
         </nav>

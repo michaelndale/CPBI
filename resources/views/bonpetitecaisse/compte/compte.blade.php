@@ -15,23 +15,24 @@
         </div>
       </div>
       <div class="card-body p-0">
-
         <div id="tableExample2">
           <div class="table-responsive" id="table-container" style="overflow-y: auto;">
             <table class="table table-bordered table-striped table-sm fs--1 mb-0">
               <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
                 <tr style="background-color:#82E0AA">
+                  <th> <center>Actions</center> </th>
                   <th style="width:5%">Code</th>
-                  <th style="width:45%">Description</th>
-                  <th>Solde</th>
+                  <th style="width:30%">Libellé du compte</th>
+                  <th><center>Solde</center></th>
                   <th>Créé par</th>
                   <th>Créé le</th>
-                  <th> <center>Actions</center></th>
+                  <th>Mises à jour le</th>
+                  
                 </tr>
               </thead>
               <tbody id="show_all_compte">
                 <tr>
-                  <td colspan="6">
+                  <td colspan="7">
                     <h5 class="text-center text-secondery my-5">
                       @include('layout.partiels.load')
                   </td>
@@ -50,40 +51,32 @@
 {{-- new compte modal --}}
 
 
-
-
-
-
 <div class="modal fade" id="modifierLigneModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modifierLigneModal" aria-hidden="true">
   <div class="modal-dialog modal-lg  modal-dialog-centered">
     <div class="modal-content">
-      <form method="POST" id="editGrandform"> <!-- Utilisation de id="modifierLigneForm" au lieu de id="modifierLigneModal" pour le formulaire -->
+      <form method="POST" id="editcodeform"> <!-- Utilisation de id="modifierLigneForm" au lieu de id="modifierLigneModal" pour le formulaire -->
         @method('post')
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Modification de la ligne budgétaire</h5>
+          <h5 class="modal-title" id="verticallyCenteredModalLabel">Modification Compte petite caisse</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row g-3">
 
-          <div class="col-sm-6 col-lg-12 col-xl-3">
+            <div class="col-sm-6 col-lg-12 col-xl-3">
               <label class="text-1000 fw-bold mb-4">Code :</label>
-
-              <input type="text" name="numero_gl" id="numero_gl" class="form-control" />
+              <input type="text" name="c_code" id="c_code" class="form-control" required />
             </div>
-
             <div class="col-sm-12 col-lg-12 col-xl-8">
-              Description
-              <input type="hidden" name="projetid" id="projetid" class="form-control" />
-              <input type="text" name="libelle_gr" id="libelle_gr" class="form-control"  />
+              <label class="text-1000 fw-bold mb-4"> Libellé du compte :</label>
+              <input type="hidden" name="c_id" id="c_id" class="form-control" />
+              <input type="text" name="c_description" id="c_description" class="form-control" required />
             </div>
-           
-
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" name="sendGrand" id="sendGrand" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
+          <button type="submit" name="editcomptebtn" id="editcomptebtn" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
         </div>
       </form>
     </div>
@@ -97,26 +90,26 @@
         @method('post')
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle  Compte petite caisse </h5>
+          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle Compte petite caisse </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
 
           <div class="row g-3">
-          <div class="col-sm-6 col-lg-12 col-xl-12">
-            <label class="text-1000 fw-bold mb-2"> Composante/ Projet/Section </label>
-          <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
-          <input value="{{ Session::get('title') }} " class="form-control form-control-sm" style="background-color:#c0c0c0" disabled>
+            <div class="col-sm-6 col-lg-12 col-xl-12">
+              <label class="text-1000 fw-bold mb-2"> Composante/ Projet/Section </label>
+              <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
+              <input value="{{ Session::get('title') }} " class="form-control form-control-sm" style="background-color:#c0c0c0" disabled>
             </div>
-          
-          <div class="col-sm-6 col-lg-12 col-xl-3">
+
+            <div class="col-sm-6 col-lg-12 col-xl-3">
               <label class="text-1000 fw-bold mb-2">Code :</label>
-              <input type="text" name="code" id="code" class="form-control" />
+              <input type="text" name="code" id="code" class="form-control" required/>
             </div>
 
             <div class="col-sm-12 col-lg-12 col-xl-9">
-            <label class="text-1000 fw-bold mb-2">Description :</label> 
-              <input type="text" name="libelle" id="libelle" class="form-control"  />
+              <label class="text-1000 fw-bold mb-2">Libellé du compte :</label>
+              <input type="text" name="libelle" id="libelle" class="form-control" required />
             </div>
 
           </div>
@@ -131,97 +124,27 @@
 
 {{-- new sous compte modal --}}
 
-<div class="modal fade" id="addDealModalSousCompte" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addDealModalSousCompte" aria-hidden="true">
-  <div class="modal-dialog  modal-dialog-centered">
-    <div class="modal-content">
-      <form method="POST" id="addsouscompteform">
-        @method('post')
-        @csrf
-        <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle sous ligne budgétaire </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-
-          <div class="row g-3">
-            <div class="col-sm-6 col-lg-12 col-xl-3">
-              Code
-              <input type="text" name="ccode" id="ccode" class="form-control" disabled style="background-color:#F5F5F5" />
-            </div>
-            <div class="col-sm-6 col-lg-12 col-xl-9">
-              Titre
-              <input type="text" name="ctitle" id="ctitle" class="form-control" disabled style="background-color:#F5F5F5" />
-              <input type="hidden" name="cid" id="cid" />
-            </div>
-
-            <div class="col-sm-6 col-lg-12 col-xl-12">
-              <label class="text-1000 fw-bold mb-2">Acc. Non</label>
-
-              <div class="row g-2">
-                <div class="col">
-                  <input value="{{ Session::get('id') }}" type="hidden" name="projetid" id="projetid">
-
-                  <input type="hidden" name="scle_type_projet" id="scle_type_projet">
-                  <input type="hidden" name="scle_cout" id="scle_cout">
-
-                  <input id="code" name="code" class="form-control" type="text" placeholder="Entrer Acc. Non" required />
-                </div>
-              </div>
-            </div>
-
-            <div class="col-sm-6 col-lg-12 col-xl-12">
-              <label class="text-1000 fw-bold mb-2">Intitulé du compte</label>
-              <textarea class="form-control" id="libelle" name="libelle" type="text" placeholder="Entrer la description" style="height:100px" required></textarea>
-            </div>
-
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" name="sendsousCompte" id="sendsousCompte" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 
 {{-- new sous compte modal --}}
 
-<div class="modal fade" id="EditModalSousCompte" data-bs-keyboard="false" tabindex="-1" aria-labelledby="EditModalSousCompte" aria-hidden="true">
-  <div class="modal-dialog  modal-dialog-centered">
+
+<!-- Modal -->
+<div class="modal fade bs-historique-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
-      <form method="POST" id="editsouscompteform">
-        @method('post')
-        @csrf
-        <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel"><i class="fa fa-edit"></i> Modifier la ligne budgétaire </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
+      <div class="modal-header">
+        <h5 class="modal-title" id="myExtraLargeModalLabel">MOUVEMENT ENCOURS</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
 
-          <div class="row g-3">
-            <div class="col-sm-6 col-lg-12 col-xl-3">
-              Code
-              <input type="text" name="ccodeedit" id="ccodeedit" class="form-control" />
-            </div>
-            <div class="col-sm-6 col-lg-12 col-xl-9">
-              Description
-              <textarea type="text" name="ctitleedit" id="ctitleedit" class="form-control" style="height:100px"></textarea>
-              <input type="hidden" name="cidedit" id="cidedit" />
-            </div>
-
-          
-
-
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" name="editlignebtn" id="editlignebtn" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
-        </div>
-      </form>
+        <!-- Le contenu dynamique sera injecté ici -->
+      </div>
     </div>
   </div>
 </div>
 
+</div>
 
 </div>
 </div>
@@ -241,6 +164,7 @@
   // Appelez la fonction lorsque la fenêtre est redimensionnée
   window.onresize = adjustTableHeight;
 </script>
+
 <script>
   $(function() {
     // Add Compte ajax 
@@ -262,9 +186,9 @@
 
           if (response.status == 200) {
             toastr.success("Petite compte ajouté avec succès. !", "Enregistrement");
-          
+
             fetchAlldcompte();
-           
+
 
             $("#sendCompte").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addcompteform")[0].reset();
@@ -274,7 +198,7 @@
           }
 
           if (response.status == 201) {
-            toastr.error("La ligne de compte dans ce projet existe déjà !", "Attention");
+            toastr.error("Le compte avec le code et libellé dans ce projet existe déjà !", "Attention");
             $("#sendCompte").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addDealModal").modal('show');
             document.getElementById("sendCompte").disabled = false;
@@ -295,30 +219,34 @@
     });
 
     // Edit fonction ajax request
-    $(document).on('click', '.editIcon', function(e) {
+    $(document).on('click', '.editCaisse', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
+      
       $.ajax({
-        url: "{{ route('editGc') }}",
+        url: "{{ route('editCompte') }}",
         method: 'get',
         data: {
           id: id,
           _token: '{{ csrf_token() }}'
         },
         success: function(response) {
-          $("#gc_title").val(response.title);
-          $("#gc_id").val(response.id);
+          $("#c_id").val(response.id);
+          $("#c_code").val(response.code);
+          $("#c_description").val(response.libelle);
         }
       });
     });
 
     // update function ajax request
-    $("#editcompteform").submit(function(e) {
+    $("#editcodeform").submit(function(e) {
       e.preventDefault();
       const fd = new FormData(this);
-      $("#editcomptebtn").text('Modification...');
+   
+      $("#editcomptebtn").html('<i class="fas fa-spinner fa-spin"></i>');
+      document.getElementById("editcomptebtn").disabled = true;
       $.ajax({
-        url: "{{ route('updateGc') }}",
+        url: "{{ route('updateCompte') }}",
         method: 'post',
         data: fd,
         cache: false,
@@ -327,18 +255,21 @@
         dataType: 'json',
         success: function(response) {
           if (response.status == 200) {
-            toastr.success("Compte modifie !", "Modification");
-            Selectdcompte();
+            toastr.success("Mises ajours reussi avec succees", "Compte modifie");
             fetchAlldcompte();
-            Selectsouscompte();
           }
-          $("#editcomptebtn").text('Update compte');
-          $("#editcompteModal").modal('hide');
+         
+
+          $("#editcomptebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+            $("#editcompteModal").modal('show');
+            document.getElementById("editcomptebtn").disabled = false;
+
+
         }
       });
     });
 
-  
+
     // Delete compte ajax request
     $(document).on('click', '.deleteIcon', function(e) {
       e.preventDefault();
@@ -346,12 +277,15 @@
       let csrf = '{{ csrf_token() }}';
       Swal.fire({
         title: 'Êtes-vous sûr ?',
-        text: "Vous ne pourrez plus revenir en arrière !",
+        html:  "<p class='swal-text'> Vous ne pourrez plus revenir en arrière , <br>  <i class='fa fa-info-circle' style='color: red;'></i> A savoir  le compte peut etre supprimer si le solde est a zero  ! </p> ",
 
         showCancelButton: true,
         confirmButtonColor: 'green',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Oui, Supprimer !'
+        confirmButtonText: 'Oui, Supprimer !',
+        customClass: {
+          content: 'swal-custom-content'
+        },
       }).then((result) => {
         if (result.isConfirmed) {
           $.ajax({
@@ -370,7 +304,7 @@
               }
 
               if (response.status == 205) {
-                toastr.error("Vous n'avez pas l'accreditation de supprimer cette ligne!", "Erreur");
+                toastr.error("Vous n\'avez pas l\'autorisation de supprimer le compte qui est encours d\'exécution.", "Erreur");
               }
 
               if (response.status == 202) {
@@ -383,8 +317,6 @@
       })
     });
 
-   
-
     fetchAlldcompte();
 
     function fetchAlldcompte() {
@@ -396,9 +328,95 @@
         }
       });
     }
+  });
+</script>
 
+<script>
+  $(document).ready(function() {
+    var currentId;
 
-  
+    $(document).on('click', '.voirHistorique', function() {
+      currentId = $(this).attr('id');
+      $.ajax({
+        url: "{{ route('historiqueCaisse') }}",
+        type: 'GET',
+        data: {
+          id: currentId
+        },
+        success: function(response) {
+          $('.bs-historique-modal-xl .modal-body').html(response);
+        },
+        error: function() {
+          $('.bs-historique-modal-xl .modal-body').html('<p>Une erreur est survenue lors du chargement des données.</p>');
+        }
+      });
+    });
+
+    $(document).on('click', '#refreshData', function() {
+      if (currentId) {
+        $.ajax({
+          url: "{{ route('historiqueCaisse') }}",
+          type: 'GET',
+          data: {
+            id: currentId
+          },
+          success: function(response) {
+            $('.bs-historique-modal-xl .modal-body').html(response);
+          },
+          error: function() {
+            $('.bs-historique-modal-xl .modal-body').html('<p>Une erreur est survenue lors du chargement des données.</p>');
+          }
+        });
+      } else {
+        $('.bs-historique-modal-xl .modal-body').html('<p>Aucun ID disponible pour actualiser les données.</p>');
+      }
+    });
+
+    $(document).on('click', '#searchBetweenDates', function() {
+      var dateDebut = $('#dateDebut').val();
+      var dateFin = $('#dateFin').val();
+
+      if (dateDebut && dateFin && currentId) {
+        $.ajax({
+          url: "{{ route('historiqueCaisse') }}",
+          type: 'GET',
+          data: {
+            id: currentId,
+            dateDebut: dateDebut,
+            dateFin: dateFin
+          },
+          success: function(response) {
+            $('.bs-historique-modal-xl .modal-body').html(response);
+          },
+          error: function() {
+            $('.bs-historique-modal-xl .modal-body').html('<p>Une erreur est survenue lors du chargement des données.</p>');
+          }
+        });
+      } else {
+        $('.bs-historique-modal-xl .modal-body').html('<p>Veuillez sélectionner les deux dates et l\'ID avant de rechercher.</p>');
+      }
+    });
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const printLinks = document.querySelectorAll('.PrintHistorique');
+
+    printLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const reportId = this.dataset.id; // Utilisation de dataset pour récupérer l'ID
+        if (reportId) {
+          const url = `/historiqueCaisse/print/${reportId}`;
+          window.open(url, '_blank'); // Ouvre l'URL dans un nouvel onglet pour imprimer
+          console.log(`URL générée : ${url}`);
+
+        } else {
+          console.error("L'ID du rapport est manquant.");
+        }
+      });
+    });
   });
 </script>
 

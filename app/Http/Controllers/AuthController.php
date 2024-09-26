@@ -212,7 +212,7 @@ class AuthController extends Controller
   public function login()
   {
     if (Auth::id()) {
-      return redirect()->route('dashboard');
+      return redirect()->route('start');
     } else {
       return view('auth.login');
     }

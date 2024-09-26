@@ -11,15 +11,28 @@
 </div>
 
 <div class="modal fade" id="djaModale" tabindex="-1" aria-labelledby="djaModale" style="display: none;" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog modal-xl  modal-dialog-scrollable">
+    <div class="modal-dialog modal-fullscreen modal-dialog-centered  modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Ajouter l'utilisation de l'avance</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
+                <h5 class="modal-title"><i class="fa fa-plus-circle"></i> ajouter l'utilisation de l'Avance</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
             </div>
             <div class="modal-body">
                 <form class="row g-3 mb-6" method="POST" id="addjdaForm">
                     @method('post')
                     @csrf
+
+                    <table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
+                                <tbody class="list">
+                                    <tr>
+                                        <td class="align-middle ps-3 name" style="width:15%">Composante/ Projet/Section</td>
+                                        <td class="align-middle email" colspan="15">
+                                            <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
+                                            <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                    </table>
+
                     <div class="show_justificatif" id="show_justificatif">
 
                         
@@ -34,7 +47,7 @@
 </div>
 
 <div class="modal fade" id="editdjaModale" tabindex="-1" aria-labelledby="djaModale" style="display: none;" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog modal-xl  modal-dialog-scrollable">
+    <div class="modal-dialog modal-fullscreen modal-dialog-centered  modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Modification Dja justification de l'utilisation de l'avance</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1" style="color:#58D68D"></span></button>
@@ -43,6 +56,19 @@
                 <form class="row g-3 mb-6" method="POST" id="editjdaForm">
                     @method('post')
                     @csrf
+                    <table class="table table-striped table-sm fs--1 mb-0">
+                                <tbody class="list">
+                                    <tr>
+                                        <td class="align-middle ps-3 name" style="width:15%">Composante/ Projet/Section</td>
+                                        <td class="align-middle email" colspan="15">
+                                            <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
+                                            <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                    </table>
+
+
                     <div class="edit__justificatif" id="edit__justificatif">
 
                         

@@ -29,18 +29,19 @@ class BpcController extends Controller
   }
 
   // insert a new employee ajax request
-  public function store(Request $request, Notification $notis, Historique $his)
+  public function store(Request $request)
   {
 
-    $operation = "New activite: " . $request->title;
+   /* $operation = "New activite:" . $request->title;
     $link = 'listactivity';
     $notis->operation = $operation;
     $his->userid  = Auth()->user()->id;
     $notis->link = $link;
     $notis->save();
-
+*/
 
     $activity = new bpc();
+
     $activity->title = $request->title;
     $activity->numeroprojet = $request->numeroProjet;
     $activity->region = $request->region;

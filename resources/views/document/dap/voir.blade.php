@@ -125,8 +125,11 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                 <thead>
                                     <tr>
                                         <th width="13%">Numéro du FEB </th>
-                                        <th width="60%">Activité </th>
-                                        <th>Montant total </th>
+                                        <th width="30%">Activité </th>
+                                        <th>Montant Total </th>
+                                        <th><center>AC/CE/CS </center> </th>
+                                        <th><center>Comptable </center> </th>
+                                        <th><center>Chef de Composante/Projet/Section </center> </th>
                                         <th>
                                             <center> <label title="Taux d’exécution de la ligne et ses sous lignes">T.E / L & S.L</label></center>
                                         </th>
@@ -161,7 +164,19 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                         // Ajouter le pourcentage de cette itération au pourcentage total
                                         $pourcentage_total += $pourcentage;
 
-                                        @endphp
+                                            $acc = $datafebElements->acce_signe == 1 
+                                                ? '<i class="fa fa-check-circle text-primary"></i>' 
+                                                : '<i class="fa fa-times-circle text-danger"></i>';
+                                            
+                                            $Comptable = $datafebElements->comptable_signe == 1 
+                                                ? '<i class="fa fa-check-circle text-primary"></i>' 
+                                                : '<i class="fa fa-times-circle text-danger"></i>';
+                                            
+                                            $Chef = $datafebElements->chef_signe == 1 
+                                                ? '<i class="fa fa-check-circle text-primary"></i>' 
+                                                : '<i class="fa fa-times-circle text-danger"></i>';
+                                        @endphp 
+
                                         <tr>
                                             <td align="center"> <a href="#" data-bs-toggle="modal" data-bs-target="#febinfo" data-id="{{ $datafebElements->fid }}" class="infofeb">
                                                     <b>0000{{ $datafebElements->numerofeb }}</b>
@@ -178,13 +193,17 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                                 {{ number_format($totoSUM, 0, ',', ' ')  }}
 
                                             </td>
+                                            <td align="center"> {!! $acc !!} </td>
+                                            <td align="center"> {!! $Comptable !!} </td>
+                                            <td align="center"> {!! $Chef !!} </td>
                                             <td align="center">{{ $sommelignpourcentage }} </td>
                                         </tr>
                                         @endforeach
-                                        <tr style=" background-color: #040895;">
-                                            <td style="color:white" colspan="2"> Total général </td>
-                                            <td align="right" style="color:white"> {{ number_format($totoglobale, 0, ',', ' ')  }}</td>
-                                            <td style="color:white" align="center"> <!-- {{ $pourcentage_total }} % --></td>
+                                        <tr style=" background-color:#addfad;">
+                                            <td  colspan="2"> Total général </td>
+                                            
+                                            <td align="right" > {{ number_format($totoglobale, 0, ',', ' ')  }}</td>
+                                            <td  align="center"  colspan="4"> <!-- {{ $pourcentage_total }} % --></td>
                                         </tr>
                                 </tbody>
                             </table>
@@ -222,7 +241,7 @@ $cryptedId = Crypt::encrypt($datadap->id);
                             @endif
 
                             <br>
-                            <form method="POST" action="{{ route('updatesignaturedapps') }}">
+                            <form method="POST" action="{{ route('updatesignaturedap') }}">
 
                                 @method('post')
                                 @csrf
@@ -266,10 +285,10 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                         </td>
                                         <td width="15%">Date
                                             @if(Auth::user()->id == $datadap->demandeetablie )
-                                            <input type="text" value="{{ $datadap->demandeetablie_signe_date }}" name="dated">
+                                            <input type="text" value="{{ $datadap->demandeetablie_signe_date }}" name="dated" style="width:45%; border:none; border-bottom: 2px dotted #000;">
                                             @else
 
-                                            <input type="hidden" value="{{ $datadap->demandeetablie_signe_date }}" name="dated_an">
+                                            <input type="hidden" value="{{ $datadap->demandeetablie_signe_date }}" name="dated_an" >
                                             {{ $datadap->demandeetablie_signe_date }}
                                             @endif
                                         </td>
@@ -302,7 +321,7 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                         </td>
                                         <td>Date :
                                             @if(Auth::user()->id == $datadap->verifierpar )
-                                            <input type="hidde" value="{{ $datadap->verifierpar_signe_date }}" name="datev">
+                                            <input type="hidde" value="{{ $datadap->verifierpar_signe_date }}" name="datev" style="width:45%; border:none; border-bottom: 2px dotted #000;">
 
                                             @else
 
@@ -339,7 +358,7 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                         </td>
                                         <td>Date :
                                             @if(Auth::user()->id == $datadap->approuverpar)
-                                            <input type="hidde" value="{{ $datadap->approuverpar_signe_date }}" name="datea">
+                                            <input type="hidde" value="{{ $datadap->approuverpar_signe_date }}" name="datea" style="width:45%; border:none; border-bottom: 2px dotted #000;">
                                         </td>
                                         @else
                                         {{ $datadap->approuverpar_signe_date }}
@@ -379,7 +398,7 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                             <center>
                                                 <u>Responsable Administratif et Financier</u>
                                                 <!-- poser signature -->
-                                                <br> {{ ucfirst($responsable->nom) }} {{ ucfirst($responsable->prenom) }} <br>
+                                                <br><b>{{ ucfirst($responsable->nom) }} {{ ucfirst($responsable->prenom) }} </b><br>
 
 
                                                 @if(Auth::user()->id == $datadap->responsable)
@@ -405,7 +424,7 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                             <center>
                                                 <u>Chef des Programmes</u>
 
-                                                <br> {{ ucfirst($chefprogramme->nom) }} {{ ucfirst($chefprogramme->prenom) }} <br>
+                                                <br><b>{{ ucfirst($chefprogramme->nom) }} {{ ucfirst($chefprogramme->prenom) }} </b><br>
 
                                                 @if(Auth::user()->id == $datadap->chefprogramme)
                                                 <small>Cochez pour Poser la signature</small> <input class="form-check-input" type="checkbox" name="chefprogrammesignature" {{ $datadap->chefprogramme_signe=="1"? 'checked':'' }} style="border:2px solid red">
@@ -423,13 +442,13 @@ $cryptedId = Crypt::encrypt($datadap->id);
 
                                         </td>
 
-                                        <td align="center">Secretaire General de la CEPBU <br>
+                                        <td align="center"><u>Secretaire General de la CEPBU</u> <br>
 
 
-                                            {{ ucfirst($secretaire->nom) }} {{ ucfirst($secretaire->prenom) }}
+                                           <b>{{ ucfirst($secretaire->nom) }} {{ ucfirst($secretaire->prenom) }}</b>
 
                                             @if(Auth::user()->id == $datadap->secretaire)
-                                            <small>Cochez pour Poser la signature</small>
+                                            <small><br>Cochez pour Poser la signature</small>
                                             <input class="form-check-input" type="checkbox" name="secretairesignature" {{ $datadap->secretaure_general_signe=="1"? 'checked':'' }} style="border:2px solid red">
 
                                             @endif

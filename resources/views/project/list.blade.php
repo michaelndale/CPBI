@@ -1,5 +1,6 @@
 @extends('layout/app')
 @section('page-content')
+
 <div class="main-content">
     <div class="page-content">
         <div class="container-fluid">
@@ -19,7 +20,6 @@
                 </div>
             </div>
             <!-- end page title -->
-
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -33,7 +33,6 @@
                                     <th>Date début</th>
                                     <th>Date fin</th>
                                     <!-- <th>Action</th> -->
-
                                     </thth>
                                 </thead>
 
@@ -41,14 +40,11 @@
                                 <tbody>
                                     @foreach ($data as $datas)
                                     <tr>
-
                                         <td style="width: 100px;">
-
                                             @php
-                                            $cryptedId = Crypt::encrypt($datas->idpr);
+                                                $cryptedId = Crypt::encrypt($datas->idpr);
                                             @endphp
                                             <a href="{{ route('key.viewProject', $cryptedId) }}" class="text-dark">{{ $datas->title }}</a>
-
                                         </td>
                                         <td>
                                             {{ ucfirst($datas->nom) }} {{ ucfirst($datas->prenom) }}
@@ -56,9 +52,9 @@
 
                                         <td>
                                             @if($datas->autorisation==1)
-                                            <span class="badge rounded-pill bg-primary"> &nbsp;&nbsp; Ouvert &nbsp;&nbsp; </span>
+                                                    <span class="badge rounded-pill bg-primary"> &nbsp;&nbsp; Ouvert &nbsp;&nbsp; </span>
                                             @else
-                                            <span class="badge rounded-pill bg-danger"> Fermer </span>
+                                                    <span class="badge rounded-pill bg-danger"> Fermer </span>
                                             @endif
                                             </small>
                                         </td>
@@ -80,7 +76,8 @@
                                                         <a class="dropdown-item" href="{{ route('key.viewProject', $cryptedId) }}"><i class="fa fa-eye"></i> Voir</a>
                                                     </div>
                                                 </div>
-                                            </td> -->
+                                            </td> 
+                                        -->
 
                                     </tr>
                                     @endforeach

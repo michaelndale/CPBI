@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Activity;
+use App\Models\Communique;
 use App\Models\Contact;
 use App\Models\Folder;
 use App\Models\Project;
@@ -24,9 +25,24 @@ class AppCOntroller extends Controller
     $activite = Activity::all();
     $encours = Project::where('statut', 'Activé')->Count();
     $folder = Folder::orderBy('title', 'ASC')->get();
-    //  $dernier = Project::orderBy('id', 'DESC')->limit(1)->get();
+    
+    $jour = date('Y-m-d');
+    $communique = Communique::join('users', 'communiques.userid', '=', 'users.id')
+    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->select('communiques.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom')
+    ->where('datelimite', '>=', $jour)
+    ->get();
 
+
+    
+    
     session(['service' => 1]); // Définit la session 'service' à 1
+
+    $TOTAL_FEB = DB::table('febs')->get();
+    $TOTAL_DAP = DB::table('daps')->get();
+    $TOTAL_DAPPS = DB::table('dapbpcs')->get();
+    $TOTAL_LIGNE_BUDGET = DB::table('comptes')->get();
+    $INTERVENANT = DB::table('affectations')->get();
 
     return view(
       'dashboard.dashboard',
@@ -38,7 +54,15 @@ class AppCOntroller extends Controller
         'user' => $user,
         'activite' => $activite,
         'encours' => $encours,
-        'folder' => $folder
+        'folder' => $folder,
+        'communique' => $communique,
+        'TOTAL_FEB' => $TOTAL_FEB,
+        'TOTAL_DAP' => $TOTAL_DAP,
+        'TOTAL_DAPPS' => $TOTAL_DAPPS,
+        'TOTAL_LIGNE_BUDGET' => $TOTAL_LIGNE_BUDGET,
+        'INTERVENANT' =>  $INTERVENANT
+
+
 
       ]
     );

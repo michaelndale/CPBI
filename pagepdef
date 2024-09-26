@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport de caisse</title>
+    <style>
+        body {
+            font-family: 'Helvetica';
+            margin: 0;
+            padding: 0;
+        }
+
+        /* En-tête */
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100px; /* Ajustez la hauteur de l'en-tête */
+            text-align: center;
+            border-bottom: 1px solid #000;
+            padding: 10px;
+            font-size: 12px;
+            background-color: #fff; /* Assure la visibilité de l'en-tête */
+        }
+
+        /* Pied de page */
+        #footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 25px; /* Ajustez la hauteur du pied de page */
+            text-align: center;
+            border-top: 1px solid #000;
+            font-size: 10px;
+            padding: 5px;
+            background-color: #fff; /* Assure la visibilité du pied de page */
+        }
+
+        /* Contenu principal */
+        #content {
+            margin-top: 100px; /* Marge pour l'en-tête (doit être supérieure à la hauteur de l'en-tête) */
+            margin-bottom: 25px; /* Marge pour le pied de page (doit être supérieure à la hauteur du pied de page) */
+            font-size: 10px;
+        }
+
+        #mytable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #mytable th,
+        #mytable td {
+            border: 1px solid #000;
+            padding: 5px;
+        }
+
+        /* Styles spécifiques pour dompdf */
+        @page {
+            margin: -10px 25px 25px 25px; /* Ajustez les marges : haut, droite, bas, gauche */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- En-tête -->
+    <div id="header">
+        <h1>Rapport de caisse</h1>
+        <p>Date : {{ \Carbon\Carbon::now()->format('d/m/Y') }}</p>
+    </div>
+
+    <!-- Contenu -->
+    <div id="content">
+        <table id="mytable">
+            <thead>
+                <tr>
+                    <th>Colonne 1</th>
+                    <th>Colonne 2</th>
+                    <th>Colonne 3</th>
+                </tr>
+            </thead>
+            <tbody>
+               
+                    <td>Donnée 1</td>
+                    <td>Donnée 2</td>
+                    <td>Donnée 3</td>
+                </tr>
+                <!-- Autres lignes de données -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pied de page -->
+    <div id="footer">
+        <p>Page <span class="pageNumber"></span></p>
+    </div>
+
+    <script type="text/php">
+        if (isset($pdf)) {
+            $pdf->page_text(270, 780, "Page {PAGE_NUM} sur {PAGE_COUNT}", null, 10, array(0,0,0));
+        }
+    </script>
+</body>
+
+</html>

@@ -29,6 +29,7 @@ use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Shared\Html;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 
 
@@ -42,9 +43,10 @@ class FebController extends Controller
 
     $data = DB::table('febs')
       ->orderBy('numerofeb', 'asc')
+      ->join('comptes', 'febs.sous_ligne_bugdetaire' , 'comptes.id')
       ->join('users', 'febs.userid', '=', 'users.id')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('febs.*',  'personnels.prenom as user_prenom')
+      ->select('febs.*',  'personnels.prenom as user_prenom','comptes.numero as code')
       ->where('febs.projetid', $ID)
       ->get();
 
@@ -65,6 +67,47 @@ class FebController extends Controller
         $fp = $datas->fp ? "checked" : "";
         $recu = $datas->recu ? "checked" : "";
         $rm = $datas->rm ? "checked" : "";
+
+        $checkedElements = [];
+
+        if ($datas->facture) {
+            $checkedElements[] = "facture";
+        }
+        if ($datas->om) {
+            $checkedElements[] = "om";
+        }
+        if ($datas->bc) {
+            $checkedElements[] = "bc";
+        }
+        if ($datas->nec) {
+            $checkedElements[] = "nec";
+        }
+        if ($datas->fp) {
+            $checkedElements[] = "fp";
+        }
+        if ($datas->recu) {
+            $checkedElements[] = "recu";
+        }
+        if ($datas->rm) {
+            $checkedElements[] = "rm";
+        }
+
+        // Convertir en chaîne de caractères pour affichage
+        // Vérification s'il y a des éléments cochés
+        if (!empty($checkedElements)) {
+          $checkedString = implode(', <i class="fa fa-check-circle" style="color: green;"></i> ', $checkedElements);
+
+
+          $checkedString=strtoupper($checkedString);
+          
+        } else {
+          $checkedString = '<i class="fa fa-times-circle" style="color: red;" title="Aucun fichier attache disponible"></i>';  // Affiche un message si aucun élément n'est coché
+        }
+
+
+
+
+        $description = Str::limit($datas->descriptionf, 100, '...');
 
         if ($datas->signale == 1) {
           $message = ' <div class="spinner-grow text-danger " role="status" style=" 
@@ -114,13 +157,9 @@ class FebController extends Controller
                 <td align="center">  <a href="feb/' . $cryptedId . '/view" class="dropdown-item mx-1" id="' . $datas->id . '"><b>' . $datas->numerofeb . '</b></a></td>
                 <td  align="right"><b>' . $sommefeb . '</b></td>
                 <td align="center">' . $datas->periode . '</td>
-                <td align="center"><input type="checkbox" ' . $facture . ' class="form-check-input"   disabled /></td>
-                <td align="center"><input type="checkbox" ' . $om . ' class="form-check-input"  disabled /></td>
-                <td align="center"><input type="checkbox" ' . $bc . ' class="form-check-input"  disabled /></td>
-                <td align="center"><input type="checkbox" ' . $nec . ' class="form-check-input"  disabled /></td>
-                <td align="center"><input type="checkbox" ' . $fp . ' class="form-check-input"   disabled /></td>
-                <td align="center"><input type="checkbox" ' . $recu . ' class="form-check-input"  disabled  /></td>
-                <td align="center"><input type="checkbox" ' . $rm . ' class="form-check-input"  disabled /></td>
+                <td align="center">' . $datas->code . '</td>
+                <td><label title="'.$datas->descriptionf.'">' . $description . '</label></td>
+                <td> ' . $checkedString . ' </td>
                 <td align="center">' . date('d-m-Y', strtotime($datas->datefeb)) . '</td>
                 <td align="center">' . date('d-m-Y', strtotime($datas->created_at)) . '</td>
                 <td  align="left" >' . ucfirst($datas->user_prenom) . '</td>
@@ -302,16 +341,37 @@ class FebController extends Controller
       $item->total = getTotalDap($item->id);
     });
 
-    $documents = $documents->concat($documentacce)
+  /* FEB PETIT CAISS
+    $documentfeb_pc = DB::table('febpetitcaisses')
+    ->join('users', 'febpetitcaisses.userid', '=', 'users.id')
+    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->join('projects', 'febpetitcaisses.projet_id', '=', 'projects.id')
+    ->where('acce', $userId)
+    ->where('acce_signe', 0)
+    ->select('febs.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'projects.title as projet', 'projects.numeroprojet as numeroprojets')
+    ->get();
+
+    $documentfeb_pc ->each(function ($item) {
+      $item->document_type = 'feb pc';
+      $item->total = getTotalFeb($item->id);
+    });
+    */
+
+
+    $documents = $documents
+      ->concat($documentacce)
       ->concat($documentcompte)
       ->concat($documentchefcomposent);
 
-    $dap_documents = $documents_dap->concat($dap_demandeetablie)
+    $dap_documents = $documents_dap
+      ->concat($dap_demandeetablie)
       ->concat($dap_verifier)
       ->concat($dap_approuverpar)
       ->concat($dap_responsable)
       ->concat($dap_secretaire)
       ->concat($dap_chefprogramme);
+
+
 
     $all_documents = $documents->concat($dap_documents);
 
@@ -321,11 +381,11 @@ class FebController extends Controller
     if ($all_documents->count() > 0) {
       // Group documents by project number and title
       $groupedDocuments = $all_documents->groupBy(function ($item) {
-        return $item->numeroprojets . ' : ' . $item->projet;
+        return  ucfirst($item->projet);
       });
 
       foreach ($groupedDocuments as $projet => $docs) {
-        $output .= '<tr><td colspan="8"><b>' . ucfirst($projet) . '</b></td></tr>';
+        $output .= '<tr style="background-color:#addfad"><td colspan="8"><b>' . ucfirst($projet) . '</b></td></tr>';
         foreach ($docs as $doc) {
           $cryptedIDoc = Crypt::encrypt($doc->id);
 
@@ -334,7 +394,8 @@ class FebController extends Controller
           $createdAt = !empty($doc->created_at) ? date('d-m-Y', strtotime($doc->created_at)) : '-';
           $datelimite = !empty($doc->datelimite) ? date('d-m-Y', strtotime($doc->datelimite)) : '-';
 
-          $output .= '<tr>
+          $output .= '
+                <tr>
                     <td>' . $nombre . '</td>
                     <td>' . ($doc->document_type === 'feb' ? 'FEB' : 'DAP') . '</td>
                     <td align="right"> <a href="' . ($doc->document_type === 'feb' ? route('key.viewFeb', $cryptedIDoc) : route('viewdap', $cryptedIDoc)) . '"><b><u>' . ucfirst($doc->document_type === 'feb' ? $doc->numerofeb : $doc->numerodp) . '/' . date('Y') . ' <i class="fas fa-external-link-alt"></i></u></b></a></td>
@@ -350,7 +411,7 @@ class FebController extends Controller
       }
     } else {
       $output = '<tr>
-            <td colspan="7" style="background-color:rgba(255,0,0,0)">
+            <td colspan="9" style="background-color:rgba(255,0,0,0)">
             <center>
                 <h6 style="color:red">Aucun document trouvé</h6>
             </center>
@@ -1032,6 +1093,14 @@ class FebController extends Controller
       ->where('projetids', $IDB)
       ->sum('montant');
 
+      // recuperation la somme de
+      $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
+      ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
+      ->where('elementboncaisses.projetid', $IDB)
+      ->where('bonpetitcaisses.approuve_par_signature', 1)
+      ->sum('elementboncaisses.montant');
+  
+
     $dataLigne = Compte::find($idl);
 
     $sommelign = DB::table('elementfebs')
@@ -1047,7 +1116,9 @@ class FebController extends Controller
       ->where('projetids', $IDB)
       ->sum('montant');
 
-    $POURCENTAGE_GLOGALE = $budget ? round(($sommeallfeb * 100) / $budget, 2) : 0;
+    $SOMMES_DEJA_UTILISE = $sommeallfeb + $SOMME_PETITE_CAISSE;
+
+    $POURCENTAGE_GLOGALE = $budget ? round(( $SOMMES_DEJA_UTILISE * 100) / $budget, 2) : 0;
 
     $createur = DB::table('users')
       ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -1161,7 +1232,18 @@ class FebController extends Controller
       ->where('projetids', $ID)
       ->sum('montant');
 
-    $POURCENTAGE_GLOGALE = $budget ? round(($datafebs * 100) / $budget) : 0;
+
+    $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
+    ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
+    ->where('elementboncaisses.projetid', $IDB)
+    ->where('bonpetitcaisses.approuve_par_signature', 1)
+    ->sum('elementboncaisses.montant');
+
+      $SOMMES_DEJA_UTILISE = $datafebs + $SOMME_PETITE_CAISSE;
+
+   
+
+    $POURCENTAGE_GLOGALE = $budget ? round(($SOMMES_DEJA_UTILISE * 100) / $budget) : 0;
 
     // Récupération des noms des responsables
     $etablienom = DB::table('users')
@@ -1276,7 +1358,15 @@ class FebController extends Controller
       ->where('projetids', $IDB)
       ->sum('montant');
 
-    $POURCENTAGE_GLOGALE = $budget ? round(($sommeallfeb * 100) / $budget, 2) : 0;
+      $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
+      ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
+      ->where('elementboncaisses.projetid', $IDB)
+      ->where('bonpetitcaisses.approuve_par_signature', 1)
+      ->sum('elementboncaisses.montant');
+
+      $SOMMES_DEJA_UTILISE = $sommeallfeb + $SOMME_PETITE_CAISSE;
+
+    $POURCENTAGE_GLOGALE = $budget ? round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2) : 0;
 
 
     $sommelign = DB::table('elementfebs')
@@ -1286,8 +1376,6 @@ class FebController extends Controller
       ->sum('montant');
 
     $sommelignpourcentage = $somme_ligne_principale ? round(($sommelign * 100) / $somme_ligne_principale, 2) : 0;
-
-
 
 
     $sommefeb = DB::table('elementfebs')
@@ -2002,4 +2090,5 @@ class FebController extends Controller
       ]);
     }
   }
+  
 }

@@ -10,12 +10,7 @@
             <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-book-open-page-variant-outline"></i> Demande et Justification d'Avance "DJA"  </h4>
           </div>
           <div class="col col-md-auto">
-
             <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>
-
-
-            <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addfebModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle"></span> Nouvel fiche FEB</a>
-
           </div>
         </div>
       </div>
@@ -39,6 +34,7 @@
                   </th>
                   <th><b>N<sup>o</sup> DJA</b> </th>
                   <th><b>N<sup>o</sup> DAP</b></th>
+                  <th><b>Fonds payés à</b></th>
                   <th><b>OV </b></th>
                   <th><b> Justifier ?</b></th>
                   <th><b>Créé le. </b></th>

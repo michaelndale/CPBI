@@ -53,7 +53,7 @@
                                                 @forelse ($feb as $febs)
                                                 <option value="{{ $febs->id }}"> {{ $febs->numerofeb }}</option>
                                                 @empty
-                                                <option value="">--Aucun Numero FEB trouvé--</option>
+                                                <option  disabled="true" selected="true">--Aucun numéro FEB trouvé--</option>
                                                 @endforelse
                                             </select>
                                         </td>

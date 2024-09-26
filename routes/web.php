@@ -17,6 +17,7 @@ use App\Http\Controllers\CarnetbordController;
 use App\Http\Controllers\CatactivityController;
 use App\Http\Controllers\CategoriebeneficiaireController;
 use App\Http\Controllers\ClasseurController;
+use App\Http\Controllers\CommuniqueController;
 use App\Http\Controllers\CompteController;
 use App\Http\Controllers\ComptepetitecaisseController;
 use App\Http\Controllers\DapbpcController;
@@ -49,6 +50,7 @@ use App\Http\Controllers\PortierController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RallongebudgetController;
+use App\Http\Controllers\RapportController;
 use App\Http\Controllers\RapportcummuleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SignalefebController;
@@ -199,6 +201,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [PleincarburantController::class, 'index'])->name('carburents');
         Route::get('/allcarburents', [PleincarburantController::class, 'allcarburents'])->name('allcarburents');
         Route::delete('/deletePlain', [PleincarburantController::class, 'deletePlain'])->name('deletePlain');
+        Route::post('/storeplein', [PleincarburantController::class, 'store'])->name('storeplein');
     });
 
 
@@ -222,7 +225,6 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/ShowCompte', [CompteController::class, 'addsc'])->name('ShowCompte');
         Route::get('/ShowCompteGrand', [CompteController::class, 'addscr'])->name('ShowCompteGrand');
-        Route::get('/editGc', [CompteController::class, 'edit'])->name('editGc');
         Route::get('/editGc', [CompteController::class, 'edit'])->name('editGc');
         Route::post('/updateGc', [CompteController::class, 'update'])->name('updateGc');
         Route::post('/updatecompte', [CompteController::class, 'updatecompte'])->name('updatecompte');
@@ -353,7 +355,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('bpc')->group(function () {
 
         Route::get('/', [BpcController::class, 'list'])->name('listbpc');
-        Route::post('/storebpc', [BpcController::class, 'store'])->name('storebpc');
+     
     });
 
     Route::prefix('dap')->group(function () {
@@ -402,13 +404,31 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [BonpetitcaisseController::class, 'index'])->name('bpc');
         Route::get('/liste_bpc', [BonpetitcaisseController::class, 'list'])->name('liste_bpc');
         Route::post('/storebpc', [BonpetitcaisseController::class, 'store'])->name('storebpc');
+        Route::get('/{key}/viewbpc/', [BonpetitcaisseController::class, 'show'])->name('viewbpc');
+        Route::post('/update_signature_bpc', [BonpetitcaisseController::class, 'updateSignature'])->name('update_signature_bpc');
     });
+
+    Route::prefix('Rappport')->group(function () { 
+        Route::get('caisse', [RapportController::class, 'caisse'])->name('Rapport.caisse');
+        Route::get('cloturecaisse', [RapportController::class, 'cloturecaisse'])->name('Rapport.cloture.caisse');
+        Route::post('/update_signature_cloture', [RapportController::class, 'updateSignatureCloture'])->name('update_signature_cloture');
+        Route::get('/get-nums/{compteId}', [RapportController::class, 'getNumeros'])->name('get.nums');
+        Route::get('/filter-data', [RapportController::class, 'filterData'])->name('filterData');
+    
+    });
+    Route::post('/clotureCaisse', [RapportController::class, 'store'])->name('clotureCaisse');
+   
+    Route::post('/generate-printable-rapport', [RapportController::class, 'generatePrintableFile'])->name('generate.print.raport');
 
     Route::prefix('comptepetitcaisse')->group(function () {
         Route::get('/', [ComptepetitecaisseController::class, 'index'])->name('cpc');
         Route::get('/liste_cpc', [ComptepetitecaisseController::class, 'fetchAll'])->name('liste_cpc');
         Route::post('/storecpc', [ComptepetitecaisseController::class, 'store'])->name('storecpc');
         Route::delete('/deletecpc', [ComptepetitecaisseController::class, 'delete'])->name('deletecpc');
+        Route::get('/historiqueCaisse', [ComptepetitecaisseController::class, 'fetchHistoriqueCaisse'])->name('historiqueCaisse');
+        Route::get('/historiqueCaisse/print/{id}', [ComptepetitecaisseController::class, 'printHistoriqueCaisse'])->name('historiqueCaisse.print');
+        Route::get('/editCompte', [ComptepetitecaisseController::class, 'edit'])->name('editCompte');
+        Route::post('/updateCompte', [ComptepetitecaisseController::class, 'update'])->name('updateCompte');   
     });
 
     Route::prefix('febpetitcaisse')->group(function () {
@@ -457,6 +477,13 @@ Route::middleware('auth')->group(function () {
     Route::prefix('ftd')->group(function () {
         Route::get('/', [FdtController::class, 'list'])->name('listftd');
         Route::post('/storeftd', [FdtController::class, 'store'])->name('storeftd');
+    });
+
+    Route::prefix('communique')->group(function () {
+        Route::get('/', [CommuniqueController::class, 'index'])->name('communique');
+        Route::get('/listeCom', [CommuniqueController::class, 'liste'])->name('listeCom');
+        Route::post('/storeCom', [CommuniqueController::class, 'store'])->name('storeCom');
+        Route::delete('/deleteCom', [CommuniqueController::class, 'destroy'])->name('deleteCom');
     });
 
     Route::prefix('portier')->group(function () {

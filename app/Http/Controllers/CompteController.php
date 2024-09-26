@@ -457,13 +457,10 @@ class CompteController extends Controller
   public function deleteall(Request $request)
   {
       DB::beginTransaction();
-  
       try {
-
         $id = $request->id;
        $emp = Compte::find($id);
-         
-  
+        
           if ($emp && $emp->userid == Auth::id()) {
               $id = $request->id;
   

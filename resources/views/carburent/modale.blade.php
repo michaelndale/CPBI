@@ -86,7 +86,7 @@
           <div class="row">
             <div class="col-sm-6 col-md-6">
               <div class="form-floating mb-1">
-                <input class="form-control" id="kilofin" type="text" name="kilofin" required="required" placeholder="Kilomètrage fin" />
+                <input class="form-control" id="kilofin" type="number" name="kilofin" required="required" placeholder="Kilomètrage fin" />
                 <label for="eventLabel">Kilomètrage fin</label>
               </div>
             </div>

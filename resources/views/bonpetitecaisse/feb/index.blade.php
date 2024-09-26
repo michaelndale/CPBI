@@ -14,7 +14,7 @@
       <div class="card-header p-4 border-bottom border-300 bg-soft">
         <div class="row g-3 justify-content-between align-items-end">
           <div class="col-12 col-md">
-            <h4 class="card-title mb-0"> <i class="mdi mdi-book-open-page-variant-outline"></i> Bon petite caisse > Fiche d'Expression des Besoins "FEB" </h4>
+            <h4 class="card-title mb-0"> <i class="mdi mdi-book-open-page-variant-outline"></i> Petite caisse > Liste  d'Expression des Besoins "FEB" pour la petite caisse</h4>
 
           </div>
           <div class="col col-md-auto">
@@ -57,7 +57,7 @@
                     <center><b>N<sup>o</sup> FEB </b></center>
                   </th>
                   <th class="sort border-top" data-sort="febnum">
-                    <center><b>Description </b></center>
+                   <b>Description de la demande </b>
                   </th>
                   <th class="sort border-top" data-sort="om"> <b>
                       <center>Montant total </center>
@@ -77,6 +77,9 @@
                   <th class="sort border-top" data-sort="date">
                     <center><b>Créé le</b></center>
                   </th>
+                  <th class="sort border-top" data-sort="date">
+                    <center><b>Mises à jour le</b></center>
+                  </th>
                   <th class="sort border-top" data-sort="date"><b>Créé par</b></th>
 
 
@@ -86,7 +89,7 @@
 
               <tbody class="show_all" id="show_all">
                 <tr>
-                  <td colspan="15">
+                  <td colspan="16">
                     <h5 class="text-center text-secondery my-5">
                       <center> @include('layout.partiels.load') </center>
                   </td>
@@ -139,7 +142,8 @@
     var numerofeb = $(this).val();
     // Vérification si le champ est vide
     if (numerofeb.trim() === '') {
-      $('#numerofeb_error').text('Renseigner  numéro F.E.B');
+
+      $("#numerofeb_error").html('<i class="fa fa-info-circle"></i> Renseigner  numéro F.E.B');
       $('#numerofeb').removeClass('has-success has-error'); // Supprime toutes les classes de succès ou d'erreur
       $('#numerofeb_info').text('');
       return; // Sortir de la fonction si le champ est vide

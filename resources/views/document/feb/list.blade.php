@@ -62,27 +62,17 @@
                   <th class="sort border-top" data-sort="periode">
                     <center><b>Période</b></center>
                   </th>
+                  <th class="sort border-top" data-sort="code">
+                    <center><b>CODE</b></center>
+                  </th>
+                  <th class="sort border-top" data-sort="Description">
+                   <b>Description</b>
+                  </th>
                   <th class="sort border-top ps-3" data-sort="facture">
-                    <center><b>Facture</b></center>
+                   <b>Document Attachez</b>
                   </th>
-                  <th class="sort border-top" data-sort="om">
-                    <center><b title="Ordre de mission">O.M</b></center>
-                  </th>
-                  <th class="sort border-top" data-sort="bc">
-                    <center><b title="Bon de commande">B.C</b></center>
-                  </th>
-                  <th class="sort border-top" data-sort="PVA">
-                    <center><b title="Procès-verbal d'analyse">P.V.A</b></center>
-                  </th>
-                  <th class="sort border-top" data-sort="F.P">
-                    <center><b title="Facture proformat">F.P</b></center>
-                  </th>
-                  <th class="sort border-top" data-sort="F.P">
-                    <center><b>Reçu</b></center>
-                  </th>
-                  <th class="sort border-top" data-sort="F.P">
-                    <center title="Rapport de mission"><b>R.M</b></center>
-                  </th>
+                  
+                
                   <th class="sort border-top" data-sort="date">
                     <center><b>Date FEB</b></center>
                   </th>

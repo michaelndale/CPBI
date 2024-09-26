@@ -65,10 +65,7 @@ $fab_nombre= $documentacce + $documentcompte + $documentchefcomposent;
 
 $documentNombre = $dap_nombre + $fab_nombre ;
 
-$TOTAL_FEB   = DB::table('febs')->count();
-$TOTAL_DAP   = DB::table('daps')->count();
-$TOTAL_DAPPS = DB::table('dapbpcs')->count();
-$TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
+
 
 @endphp
 
@@ -90,28 +87,226 @@ $TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
             <!-- end page title -->
 
             <div class="row">
-                <!--
-                <div class="col-lg-12">
-                    <div class="card border border-danger">
-                        <div class="card-header bg-transparent border-danger">
-                            <h5 class="my-0 text-danger"><i class="mdi mdi-block-helper me-3"></i>MESSAGE D’ALERTE…</h5>
+
+               @forelse ($communique as $communiques)
+               <div class="col-lg-12">
+                        <div class="card border border-danger">
+                            <div class="card-header bg-transparent border-danger">
+                                <h5 class="my-0 text-danger"><i class="mdi mdi-block-helper me-3"></i>{{ $communiques->titre }}</h5>
+                            </div>
+                            <div class="card-body">
+
+                                <p class="card-text"> 
+                                    {{ $communiques->description }} 
+
+                                    <br>  <br>
+
+                                    <i class="fa fa-user"></i> {{ ucfirst($communiques->user_nom) }} {{ ucfirst($communiques->user_prenom) }},  {{  date('d-m-Y H:i:s', strtotime($communiques->created_at))    }} 
+                                </p>
+                            </div>
                         </div>
-                        <div class="card-body">
+                    </div>  
+                   
+               @empty
+               @endforelse
+                   
+                
+             
+               
 
-                            <p class="card-text"> Compte tenu des erreurs constatées dans l'exécution de l'application, tous les DAP ont été supprimés. Ces erreurs étaient causées par des saisies erronées des utilisateurs. <br>
-                                Nous vous demandons donc de refaire les DAP pour les personnes dont les informations ont été supprimées au sein de votre projet.
-                                <br>Veuillez suivre scrupuleusement la procédure de création, en respectant la nomenclature de chaque champ. <br>
-
-                                Nous ne pouvons pas tous reprendre ici les erreurs constatées, mais nous sommes à votre disposition dans la salle de conférence pour vous faciliter cette étape.
-
-                            </p>
-                        </div>
-                    </div>
-                </div>  -->
 
                 <div class="col-xl-12">
                     <div class="row">
+                       
+
+                        <!-- end row -->
+                        @if (session()->has('id'))
+
+                        @php
+                        $idprojet_session = session()->get('id'); // Récupère la valeur de 'id' dans la session
+
+                        @endphp
+                    
                         <div class="col-md-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <p class="text-truncate mb-2">LIGNE BUDGÉTAIRES</p>
+                                            <h4 class="mt-2 mb-0">
+                                                
+                                                {{ $TOTAL_LIGNE_BUDGET->where('projetid', $idprojet_session)->count(); }}
+
+                                                <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i>  {{ $TOTAL_LIGNE_BUDGET->where('projetid', $idprojet_session)->count(); }}
+                                                %</sup></h4>
+                                        </div>
+                                        <div class="text-primary">
+                                            <div id="chart-mini2" class="apex-chart"></div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Lignes budgetaire</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <p class="text-truncate mb-2">ACTIVITÉS</p>
+                                            <h4 class="mt-2 mb-0">{{ $activite->where('projectid', $idprojet_session)->count(); }} <span class="badge bg-subtle-primary text-primary font-size-10 ms-1"><i class="mdi mdi-arrow-up"></i> {{ $activite->count(); }}%</sup></h4>
+                                        </div>
+                                        <div class="text-primary">
+                                            <div id="chart-mini3" class="apex-chart"></div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Tout les activités </span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <p class="text-truncate mb-2">F.E.B</p>
+                                            <h4 class="mt-2 mb-0">{{ $TOTAL_FEB->where('projetid', $idprojet_session)->count(); }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
+                                        </div>
+                                        <div class="text-primary">
+                                            <div id="chart-mini4" class="apex-chart"></div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Tout les F.E.B </span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <p class="text-truncate mb-2">D.A.P</p>
+                                            <h4 class="mt-2 mb-0">{{ $TOTAL_DAP->where('projetiddap', $idprojet_session)->count(); }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
+                                        </div>
+                                        <div class="text-primary">
+                                            <div id="chart-mini4" class="apex-chart"></div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Tout les D.A.P</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <p class="text-truncate mb-2">PETITE CAISSE</p>
+                                            <h4 class="mt-2 mb-0">{{ $TOTAL_DAPPS->where('projetid', $idprojet_session)->count();  }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
+                                        </div>
+                                        <div class="text-primary">
+                                            <div id="chart-mini4" class="apex-chart"></div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Confondues </span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap pb-2 gap-2">
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <p class="text-truncate mb-2">INTERVENANTS</p>
+                                            <h4 class="mt-2 mb-0">{{ $INTERVENANT->where('projectid', $idprojet_session)->count();  }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
+                                        </div>
+                                        <div class="text-primary">
+                                            <div id="chart-mini4" class="apex-chart"></div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0 font-size-14 fw-bold mt-2 text-truncate"><span class="text-muted fw-normal"> ~ Confondues </span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+
+                            <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+
+                                <a class="dropdown-icon-item" href="{{ route('gestioncompte') }}">
+                                    <font size="5px" color="green">
+                                        <i class="fa fa-chart-line"></i>
+                                    </font>
+                                    <span>Ligne budgétaire</span>
+                                </a>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+                                <a class="dropdown-icon-item" href="{{ route('rallongebudget') }}">
+                                    <font size="5px" color="green">
+                                        <i class="fa fa-chart-bar"></i>
+                                    </font>
+                                    <span>Budget</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+                                <a class="dropdown-icon-item" href="{{ route('activity') }}">
+                                    <font size="5px" color="green">
+                                        <i class="fa fa-running"></i>
+                                    </font>
+                                    <span>Activités</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+                                <a class="dropdown-icon-item" href="{{ route('listfeb') }}">
+                                    <font size="5px" color="green">
+                                        <i class="mdi mdi-file-document-outline font-size-30"></i>
+                                    </font>
+                                    <span>F.E.B</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+                                <a class="dropdown-icon-item" href="{{ route('listdap') }}">
+                                    <font size="5px" color="green">
+                                        <i class="mdi mdi-file-document-outline font-size-30"></i>
+                                    </font>
+                                    <span>D.A.P</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="col" style="border:1px solid #c0c0c0; background-color:white">
+                                <a class="dropdown-icon-item" href="{{ route('bpc') }}">
+                                    <font size="5px" color="green">
+                                        <i class="mdi mdi-file-document-outline font-size-30"></i>
+                                    </font>
+                                    <span>PETITE CAISSE</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    @else
+
+
+                    <div class="col-md-2">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="d-flex flex-wrap pb-2 gap-2">
@@ -134,7 +329,7 @@ $TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
                                     <div class="d-flex flex-wrap pb-2 gap-2">
                                         <div class="flex-grow-1 overflow-hidden">
                                             <p class="text-truncate mb-2">LIGNE BUDGÉTAIRES</p>
-                                            <h4 class="mt-2 mb-0">{{  $TOTAL_LIGNE_BUDGET }}<span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{  $TOTAL_LIGNE_BUDGET }} %</sup></h4>
+                                            <h4 class="mt-2 mb-0">{{ $TOTAL_LIGNE_BUDGET->count();  }}<span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i>15%</sup></h4>
                                         </div>
                                         <div class="text-primary">
                                             <div id="chart-mini2" class="apex-chart"></div>
@@ -168,7 +363,7 @@ $TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
                                     <div class="d-flex flex-wrap pb-2 gap-2">
                                         <div class="flex-grow-1 overflow-hidden">
                                             <p class="text-truncate mb-2">F.E.B</p>
-                                            <h4 class="mt-2 mb-0">{{ $TOTAL_FEB }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
+                                            <h4 class="mt-2 mb-0">{{ $TOTAL_FEB->count();  }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
                                         </div>
                                         <div class="text-primary">
                                             <div id="chart-mini4" class="apex-chart"></div>
@@ -185,7 +380,7 @@ $TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
                                     <div class="d-flex flex-wrap pb-2 gap-2">
                                         <div class="flex-grow-1 overflow-hidden">
                                             <p class="text-truncate mb-2">D.A.P</p>
-                                            <h4 class="mt-2 mb-0">{{ $TOTAL_DAP }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
+                                            <h4 class="mt-2 mb-0">{{ $TOTAL_DAP->count();  }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
                                         </div>
                                         <div class="text-primary">
                                             <div id="chart-mini4" class="apex-chart"></div>
@@ -202,7 +397,7 @@ $TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
                                     <div class="d-flex flex-wrap pb-2 gap-2">
                                         <div class="flex-grow-1 overflow-hidden">
                                             <p class="text-truncate mb-2">PETITE CAISSE</p>
-                                            <h4 class="mt-2 mb-0">{{ $TOTAL_DAPPS }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
+                                            <h4 class="mt-2 mb-0">{{ $TOTAL_DAPPS->count();  }} <span class="badge bg-subtle-danger text-danger font-size-10 ms-1"><i class="mdi mdi-arrow-down"></i> {{ $encours }}%</sup></h4>
                                         </div>
                                         <div class="text-primary">
                                             <div id="chart-mini4" class="apex-chart"></div>
@@ -212,90 +407,6 @@ $TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
                                 </div>
                             </div>
                         </div>
-                    
-                    <!-- end row -->
-                    @if (session()->has('id'))
-                
-                    <div class="col-md-2">
-                   
-                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
-                            
-                        <a class="dropdown-icon-item" href="{{ route('gestioncompte') }}">
-                            <font size="5px" color="green">
-                                <i class="fa fa-chart-line"></i>
-                            </font> 
-                                <span>Ligne  budgétaire</span>
-                         </a>
-                        </div>
-                   
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
-                            <a class="dropdown-icon-item" href="{{ route('rallongebudget') }}">
-                                <font size="5px" color="green">
-                                <i class="fa fa-chart-bar"></i>
-                                </font> 
-                                    <span>Budget</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
-                            <a class="dropdown-icon-item" href="{{ route('activity') }}">
-                                <font size="5px" color="green">
-                                <i class="fa fa-running"></i>
-                                </font> 
-                                <span>Activités</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
-                            <a class="dropdown-icon-item" href="{{ route('listfeb') }}">
-                                <font size="5px" color="green">
-                                <i class="mdi mdi-file-document-outline font-size-30"></i>
-                                </font> 
-                                <span>F.E.B</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
-                            <a class="dropdown-icon-item" href="{{ route('listdap') }}">
-                                <font size="5px" color="green">
-                                <i class="mdi mdi-file-document-outline font-size-30"></i>
-                                </font> 
-                                <span>D.A.P</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-md-2">
-                        <div class="col" style="border:1px solid #c0c0c0; background-color:white">
-                            <a class="dropdown-icon-item" href="{{ route('bpc') }}">
-                                <font size="5px" color="green">
-                                <i class="mdi mdi-file-document-outline font-size-30"></i>
-                                </font> 
-                                <span>PETITE CAISSE</span>
-                            </a>
-                        </div>
-                    </div>
-
-
-                    
-
-                
-
-                 
-                  
-                    </div>
-
-                         
-
                     @endif
 
 
@@ -395,35 +506,35 @@ $TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
-
-
     @if ($documentNombre != 0)
     <div class="modal fade" id="monNotification" tabindex="-1" role="dialog" aria-labelledby="monNotificationLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="myLargeModalLabel"><i class="fa fa-list"></i> Tâches à faire en attente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
-
+                    
                     <div id="tableExample2">
                         <div class="table-responsive">
-                        <div class="input-group mb-3">
-  <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
-  <input type="text" name="recherche" id="recherche" class="form-control" placeholder="Recherche par numéro, document, date, initiateur...">
-</div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+                                <input type="text" name="recherche" id="recherche" class="form-control" placeholder="Recherche par numéro(F.E.B, D.A.P), date , Initiateur">
+                            </div>
 
-                        
                             <table class="table table-bordered table-striped table-sm fs--1 mb-0">
                                 <thead>
                                     <tr>
                                         <th class="sort border-top "><b> # </b></center>
                                         </th>
                                         <th class="sort border-top" data-sort="Document"><b>Document</b></th>
-                                        <th class="sort border-top" data-sort="febnum"><b><center>N<sup>o</sup> DOC</center></b></th>
-                                        <th class="sort border-top" data-sort="montant"><b><center>Montant</center></b></th>
+                                        <th class="sort border-top" data-sort="febnum"><b>
+                                                <center>N<sup>o</sup> DOC</center>
+                                            </b></th>
+                                        <th class="sort border-top" data-sort="montant"><b>
+                                                <center>Montant</center>
+                                            </b></th>
                                         <th class="sort border-top" data-sort="Date Doc"><b>Date Doc</b></th>
                                         <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
                                         <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
@@ -433,12 +544,12 @@ $TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
 
 
                                 <tbody id="footernotification">
-                                <tr>
-                                <td colspan="8">
-                                    <h5 class="text-center text-secondery my-5">
-                                    @include('layout.partiels.load')
-                                </td>
-                                </tr>
+                                    <tr>
+                                        <td colspan="8">
+                                            <h5 class="text-center text-secondery my-5">
+                                                @include('layout.partiels.load')
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -448,7 +559,9 @@ $TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
+
     @endif
+</div>
     @if(session('modal_message'))
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -485,21 +598,13 @@ $TOTAL_LIGNE_BUDGET = DB::table('comptes')->count();
         }
     </style>
     @endif
-
-
     <script>
         $(document).ready(function() {
             // Sélectionnez votre modal et utilisez la méthode modal('show') pour l'ouvrir
             $('#monNotification').modal('show');
         });
     </script>
-
-
-
-
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
     <script type="text/javascript">
         $(document).ready(function() {
 

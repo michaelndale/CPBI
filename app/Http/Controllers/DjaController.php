@@ -58,8 +58,10 @@ class DjaController extends Controller
         if($datas->statut==1){
           $lien='<a href="#" class="dropdown-item mx-1 editjst" id="'. $datas->numerodap.'"  data-bs-toggle="modal" data-bs-target="#editdjaModale" ><i class="far fa-edit"></i> Modifier </a>';
         }else{
-          $lien='<a href="#" class="dropdown-item mx-1 voirdja" id="'. $datas->numerodap.'"  data-bs-toggle="modal" data-bs-target="#djaModale" ><i class="far fa-edit"></i> Justificatif </a>';
+          $lien='<a href="#" class="dropdown-item mx-1 voirdja" id="'. $datas->numerodap.'"  data-bs-toggle="modal" data-bs-target="#djaModale" ><i class="fa fa-plus-circle"></i> Ajouter l\'utilisation de l\'avance  </a>';
         }
+
+        // <a href="dja/'.$cryptedId.'/view" class="dropdown-item  mx-1"><i class="far fa-eye"></i> Voir  </a> 
 
         $output .= '
         <tr>
@@ -71,13 +73,14 @@ class DjaController extends Controller
             </a>
             <div class="dropdown-menu">
                '. $lien.'
-                <a href="dja/'.$cryptedId.'/view" class="dropdown-item  mx-1"><i class="far fa-eye"></i> Voir  </a>   
+                 
             </div>
           </div>
           </center>
           </td>
           <td> ' . $datas->numerodjas . '  </td>
           <td > ' . $datas->nume_dap . ' </td>
+           <td > ' . $datas->fond_paye . ' </td>
           <td> <input type="checkbox" ' . $ov . ' class="form-check-input" disabled />  </td>
           <td><input type="checkbox" ' . $jus . ' class="form-check-input" disabled /></td>
         
@@ -400,6 +403,18 @@ class DjaController extends Controller
 
             if ($data->count() > 0) {
                 // Générer la sortie HTML pour chaque élément sélectionné
+
+                $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
+                $output.='
+                    <tr> 
+                        <td colspan="3">Fonds payés à  <input type="" name="fond_paye" id="fond_paye" class="form-control form-control-sm" /></td>
+                        <td>Addresse: <input type="text" name="addresse" id="addresse"  class="form-control form-control-sm" /></td>
+                        <td>Téléphone 1: <input type="text"  name="telephone_un" id="telephone_un" class="form-control form-control-sm" /></td>
+                        <td>Téléphone 2: <input type="text"  name="telephone_deux" id="telephone_deux" class="form-control form-control-sm"  /></td>
+                        <td>Date de justification : <input type="date" name="date_avance" id="date_avance"   class="form-control form-control-sm" /></td>
+                        <td>Description /Motif :   <input type="description_avance"   class="form-control form-control-sm" /></td>
+                    </tr>
+                    </table> <br>';
                 foreach ($data as $datas) {
                     // sommes element
                     $sommefeb = DB::table('elementfebs')
@@ -409,7 +424,8 @@ class DjaController extends Controller
 
                     $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)->first();
                     // Construire la sortie HTML pour chaque élément sélectionné
-                    $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
+                 
+                   
                     $output .= '<input type="hidden" name="febid[]" id="febid[]" value="'.$datas->idfb.'">
                                 <input type="hidden" name="iddjas[]" id="iddjas[]" value="'.$iddja->id.'">
                                 <input type="hidden" name="dpasid[]" id="dpasid[]" value="'.$datas->idedaps.'">';
@@ -419,33 +435,57 @@ class DjaController extends Controller
                         $montantavance = 0;
                     } else {
                         $montantavance = $datas->montantavance;
+                        $descriptionAvance = $datas->descriptionn;
                     }
+                    
 
+
+                    $output .='<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
                     $output .= '<tr>';
-                    $output .= '<td width="10%">Numéro FEB : ' . $datas->numerofeb . '</td>';
-                    $output .= '<td width="13%">Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" value="' .$montantavance . '" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                    $output .= '<td width="13%">Montant utilisé <input type="number" name="montant_utiliser[]" id="montant_utiliser[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                    $output .= '<td width="13%">Surplus/Manque <input type="text" name="surplus[]" id="surplus[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                    $output .= '<td width="13%">Montant Retourné <input type="text" name="montant_retourne[]" id="montant_retourne[]" style="width: 100%; border:1px solid #c0c0c0" />   <div class="error-message" style="color: red;"></div></td>';
-                    $output .= '<td width="13%">Bordereau <input type="text"  name="bordereau[]" id="bordereau[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                    $output .= '<td width="13%">Description <input type="text" id="description[]" name="description[]" class="description-input" style="width: 100%; border:1px solid #c0c0c0" /></td>                    ';
-                    $output .= '<td width="13%" style="display: none;"> Plaque  
-                                    <select type="text" name="plaque[]" id="plaque[]" class="plaque-input" style="width: 100%; border:1px solid #c0c0c0"> 
-                                    <option disabled="true" selected="true"> >Aucun</option>';
-                    foreach ($vehicules as $vehicule) 
-                    {
-                        $output .= '<option value="'. $vehicule->matricule.'">' . $vehicule->matricule . '</option>';
-                    }
-                    $output .= '</select></td>';
-                    $output .= '</tr></table>';
+                        $output .= '<td width="10%"> <labele title="FEB">Numéro F.E.B :</labele>  <input type="number" value="'. $datas->numerofeb . '" class="form-control form-control-sm"  style="background-color: #c0c0c0" disabled/></td>';
+                        $output .= '<td>Montant de l\'Avance :    <input type="number" name="montantavance[]" id="montantavance[]" value="' .$montantavance . '"  class="form-control form-control-sm"  required/></td>';
+                        $output .= '<td>Montant utilisé :         <input type="number" name="montant_utiliser[]" id="montant_utiliser[]"  class="form-control form-control-sm"  required/></td>';
+                        $output .= '<td>Surplus/Manque :          <input type="text" name="surplus[]" id="surplus[]"   class="form-control form-control-sm" required /></td>';
+                        $output .= '<td>Montant Retourné à la caisse au compte(Si Surplus)<input type="text" name="montant_retourne[]" id="montant_retourne[]"  class="form-control form-control-sm" required  />   <div class="error-message" style="color: red;"></div></td>';
+                        $output .= '<td colspan="3">Description / Motif <input type="text" id="description[]" name="description[]" value="' .$descriptionAvance . '"  class="form-control form-control-sm description-input"  required/> </td> ';
+                        $output .= '<td style="display: none" colspan="4"> Plaque  
+                                        <select type="text" name="plaque[]" id="plaque[]" class="form-control form-control-sm plaque-input" > 
+                                            <option disabled="true" selected="true"> Aucun</option>';
+                                                foreach ($vehicules as $vehicule) 
+                                                {
+                                                    $output .= '<option value="'. $vehicule->matricule.'">' . $vehicule->matricule . '</option>';
+                                                }
+                        $output .= '</select></td>';
+                    $output .='</tr>';
+                    $output .='</table> ';
+                  
                 }
 
+                   
+                $output .='<br><table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
                 $output .= '
-                <table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
-                    <tr>
-                        <td class="align-middle ps-3 name" colspan="7">
+                    <td class="align-middle ps-3 name" >
+                    <b>Réception des fonds retournés à la caisse </b>
+                    <select type="text"  class="form-control form-control-sm" name="reception_fond" id="reception_fond" style="width:100%">
+                        <option disabled="true" selected="true" value="">--Choisissez le personnel--</option>';
+                        foreach ($personnel as $personnels) {
+                            $output .= '<option value="'.$personnels->id.'">' . $personnels->nom . ' ' . $personnels->prenom . '</option>';
+                        }
+                $output .= '
+                    </select>
+                    </td>
+                ';  
+            $output .='<td width="20%">Bordereau de versement N<sup>o</sup> <input type="text"  name="bordereau" id="bordereau"  class="form-control form-control-sm"  /></td>
+                      <td width="20%">Date de bordereau <input type="date" name="date_bordereau" id="date_bordereau"  class="form-control form-control-sm"  /></td>';
+           $output .='</tr> </table>';
+           
+
+                $output .='<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
+                $output .= '
+              
+                        <td class="align-middle ps-3 name">
                             <b>Réception des pièces justificatives de l\'utilisation de l\'avance par: </b>
-                            <select type="text" class="form-control form-control-sm" name="receptionpar" id="receptionpar" style="width:100%">
+                            <select type="text"  class="form-control form-control-sm" name="receptionpar" id="receptionpar" style="width:100%">
                                 <option disabled="true" selected="true" value="">--Choisissez le personnel--</option>';
                                 foreach ($personnel as $personnels) {
                                     $output .= '<option value="'.$personnels->id.'">' . $personnels->nom . ' ' . $personnels->prenom . '</option>';
@@ -454,7 +494,9 @@ class DjaController extends Controller
                             </select>
                         </td>
                     </tr>
-                </table>';
+                </table><br>';
+
+             
             } 
         } else {
                 // Si aucune donnée n'est trouvée, retournez un message d'erreur avec une classe "danger"
@@ -474,6 +516,8 @@ class DjaController extends Controller
 
 public function getdjasto(Request $request)
 {
+
+
     try {
         $IDn = $request->id;
         $budget = session()->get('budget');
@@ -484,9 +528,7 @@ public function getdjasto(Request $request)
         // Effectuez la recherche de données pour chaque identifiant sélectionné
         $data = DB::table('elementdaps')
             ->join('febs', 'elementdaps.referencefeb', 'febs.id')
-            ->join('elementdjas','elementdaps.dapid','elementdjas.idddap')
-            ->join('personnels','elementdjas.receptionpar','personnels.id')
-            ->select('elementdaps.*', 'personnels.*', 'elementdjas.*','elementdaps.dapid as idedaps', 'febs.ligne_bugdetaire', 'febs.numerofeb', 'febs.id as idfb','febs.sous_ligne_bugdetaire','elementdaps.id as ideldaps','elementdjas.id as ideldjas')
+            ->select('elementdaps.*', 'elementdaps.dapid as idedaps', 'febs.ligne_bugdetaire', 'febs.numerofeb', 'febs.id as idfb','febs.sous_ligne_bugdetaire')
             ->where('elementdaps.dapid', $IDn)
             ->where('projetidda', $IDP)
             ->get();
@@ -502,6 +544,18 @@ public function getdjasto(Request $request)
 
             if ($data->count() > 0) {
                 // Générer la sortie HTML pour chaque élément sélectionné
+
+                $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
+                $output.='
+                    <tr> 
+                        <td colspan="3">Fonds payés à  <input type="" name="fond_paye" value="'.$iddja->fond_paye.'"  id="fond_paye" class="form-control form-control-sm" /></td>
+                        <td>Addresse: <input type="text" name="addresse" id="addresse" value="'.$iddja->addresse.'"  class="form-control form-control-sm" /></td>
+                        <td>Téléphone 1: <input type="text"  name="telephone_un" id="telephone_un"  value="'.$iddja->telephone_un.'" class="form-control form-control-sm" /></td>
+                        <td>Téléphone 2: <input type="text"  name="telephone_deux" id="telephone_deux" value="'.$iddja->telephone_deux.'" class="form-control form-control-sm"  /></td>
+                        <td>Date de justification : <input type="date" name="date_avance" id="date_avance" value="'.$iddja->date_avance.'"   class="form-control form-control-sm" /></td>
+                        <td>Description /Motif :   <input type="description_avance"  value="'.$iddja->description_avance.'"  class="form-control form-control-sm" /></td>
+                    </tr>
+                    </table> <br>';
                 foreach ($data as $datas) {
                     // sommes element
                     $sommefeb = DB::table('elementfebs')
@@ -511,46 +565,69 @@ public function getdjasto(Request $request)
 
                     $ligneinfo = Compte::where('id', $datas->ligne_bugdetaire)->first();
                     // Construire la sortie HTML pour chaque élément sélectionné
-                    $output .= '<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
+                 
+                   
                     $output .= '<input type="hidden" name="febid[]" id="febid[]" value="'.$datas->idfb.'">
                                 <input type="hidden" name="iddjas[]" id="iddjas[]" value="'.$iddja->id.'">
-                                <input type="hidden" name="dpasid[]" id="dpasid[]" value="'.$datas->idedaps.'">
-                                <input type="hidden" name="idelementdaps[]" id="idelementdaps[]" value="'.$datas->ideldaps.'">
-                                <input type="hidden" name="idelementddjas[]" id="idelementddjas[]" value="'.$datas->ideldjas.'">
-                                <input type="hidden" id="ligneid[]" name="ligneid[]" value="'. $datas->sous_ligne_bugdetaire.'" />';
+                                <input type="hidden" name="dpasid[]" id="dpasid[]" value="'.$datas->idedaps.'">';
+
+                    $output .= '<input type="hidden" id="ligneid[]" name="ligneid[]" value="'. $datas->sous_ligne_bugdetaire.'" />';
                     if ($datas->montantavance == NULL) {
                         $montantavance = 0;
                     } else {
                         $montantavance = $datas->montantavance;
+                        $descriptionAvance = $datas->descriptionn;
                     }
+                    
 
+
+                    $output .='<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
                     $output .= '<tr>';
-                    $output .= '<td width="10%">Numéro FEB : ' . $datas->numerofeb . '</td>';
-                    $output .= '<td width="13%">Montant de l\'Avance <input type="number" name="montantavance[]" id="montantavance[]" value="' .$montantavance . '" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                    $output .= '<td width="13%">Montant utilisé <input type="number" name="montant_utiliser[]" id="montant_utiliser[]"     value="'.$datas->montant_utiliser.'"  style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                    $output .= '<td width="13%">Surplus/Manque <input type="text" name="surplus[]" id="surplus[]" value="'.$datas->surplus.'" style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                    $output .= '<td width="13%">Montant Retourné <input type="text" name="montant_retourne[]" value="'.$datas->montant_retourne.'"  id="montant_retourne[]" style="width: 100%; border:1px solid #c0c0c0" />   <div class="error-message" style="color: red;"></div></td>';
-                    $output .= '<td width="13%">Bordereau <input type="text"  name="bordereau[]" id="bordereau[]" value="'.$datas->bordereau.'"  style="width: 100%; border:1px solid #c0c0c0" /></td>';
-                    $output .= '<td width="13%">Description <input type="text" id="description[]" name="description[]" value="'.$datas->description.'" class="description-input" style="width: 100%; border:1px solid #c0c0c0" /></td>  
-                                      ';
-                    $output .= '<td width="13%" style="display: none;"> Plaque  
-                                    <select type="text" name="plaque[]" id="plaque[]" class="plaque-input" style="width: 100%; border:1px solid #c0c0c0"> 
-                                    <option disabled="true" selected="true"> >Aucun</option>';
-                    foreach ($vehicules as $vehicule) 
-                    {
-                        $output .= '<option value="'. $vehicule->matricule.'">' . $vehicule->matricule . '</option>';
-                    }
-                    $output .= '</select></td>';
-                    $output .= '</tr></table>';
+                        $output .= '<td width="10%"> <labele title="FEB">Numéro F.E.B :</labele>  <input type="number" value="'. $datas->numerofeb . '" class="form-control form-control-sm"  style="background-color: #c0c0c0" disabled/></td>';
+                        $output .= '<td>Montant de l\'Avance :    <input type="number" name="montantavance[]" id="montantavance[]" value="' .$montantavance . '"  class="form-control form-control-sm"  required/></td>';
+                        $output .= '<td>Montant utilisé :         <input type="number" name="montant_utiliser[]" id="montant_utiliser[]"  value="'. $datas->montant_utiliser. '" class="form-control form-control-sm"  required/></td>';
+                        $output .= '<td>Surplus/Manque :          <input type="text" name="surplus[]" id="surplus[]"   value="'. $datas->surplus . '" class="form-control form-control-sm" required /></td>';
+                        $output .= '<td>Montant Retourné à la caisse au compte(Si Surplus)<input type="text" value="'. $datas->montant_retourne . '"  name="montant_retourne[]" id="montant_retourne[]"  class="form-control form-control-sm" required  />   <div class="error-message" style="color: red;"></div></td>';
+                        $output .= '<td colspan="3">Description / Motif <input type="text" id="description[]"  name="description[]" value="' .$descriptionAvance . '"  class="form-control form-control-sm description-input"  required/> </td> ';
+                        $output .= '<td style="display: none" colspan="4"> Plaque  
+                                        <select type="text" name="plaque[]" id="plaque[]" class="form-control form-control-sm plaque-input" > 
+                                            <option disabled="true" selected="true"> Aucun</option>';
+                                                foreach ($vehicules as $vehicule) 
+                                                {
+                                                    $output .= '<option value="'. $vehicule->matricule.'">' . $vehicule->matricule . '</option>';
+                                                }
+                        $output .= '</select></td>';
+                    $output .='</tr>';
+                    $output .='</table> ';
+                  
                 }
 
+                   
+                $output .='<br><table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
                 $output .= '
-                <table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">
-                    <tr>
-                        <td class="align-middle ps-3 name" colspan="7">
+                    <td class="align-middle ps-3 name" >
+                    <b>Réception des fonds retournés à la caisse </b>
+                    <select type="text"  class="form-control form-control-sm" name="reception_fond" id="reception_fond" style="width:100%">
+                        <option disabled="true" selected="true" value="">--Choisissez le personnel--</option>';
+                        foreach ($personnel as $personnels) {
+                            $output .= '<option value="'.$personnels->id.'">' . $personnels->nom . ' ' . $personnels->prenom . '</option>';
+                        }
+                $output .= '
+                    </select>
+                    </td>
+                ';  
+            $output .='<td width="20%">Bordereau de versement N<sup>o</sup> <input type="text"  name="bordereau" id="bordereau"  class="form-control form-control-sm"  /></td>
+                      <td width="20%">Date de bordereau <input type="date" name="date_bordereau" id="date_bordereau"  class="form-control form-control-sm"  /></td>';
+           $output .='</tr> </table>';
+           
+
+                $output .='<table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%;">';
+                $output .= '
+              
+                        <td class="align-middle ps-3 name">
                             <b>Réception des pièces justificatives de l\'utilisation de l\'avance par: </b>
-                            <select type="text" class="form-control form-control-sm" name="receptionpar" id="receptionpar" style="width:100%">
-                                <option  value="'.$datas->receptionpar.'"> ' . $datas->nom . ' ' . $datas->prenom . ' </option>'; 
+                            <select type="text"  class="form-control form-control-sm" name="receptionpar" id="receptionpar" style="width:100%">
+                                <option disabled="true" selected="true" value="">--Choisissez le personnel--</option>';
                                 foreach ($personnel as $personnels) {
                                     $output .= '<option value="'.$personnels->id.'">' . $personnels->nom . ' ' . $personnels->prenom . '</option>';
                                 }
@@ -558,7 +635,9 @@ public function getdjasto(Request $request)
                             </select>
                         </td>
                     </tr>
-                </table>';
+                </table><br>';
+
+             
             } 
         } else {
                 // Si aucune donnée n'est trouvée, retournez un message d'erreur avec une classe "danger"
@@ -573,6 +652,9 @@ public function getdjasto(Request $request)
         // Retourner un message d'erreur en cas d'exception
         return response()->json(['error' => 'Une erreur est survenue : ' . $e->getMessage()], 500);
     }
+
+
+
 }
 
 public function saveDjas(Request $request)
@@ -589,27 +671,28 @@ public function saveDjas(Request $request)
         $montantUtiliserArray = $request->montant_utiliser ?? [];
         $surplusArray = $request->surplus ?? [];
         $montantRetourneArray = $request->montant_retourne ?? [];
-        $bordereauArray = $request->bordereau ?? [];
+       
         $descriptionArray = $request->description ?? [];
         $plaqueArray = $request->has('plaque') ? $request->plaque : [];
+
+        $fondPaye = $request->fond_paye ?? '';
+        $addresse = $request->addresse ?? '';
+        $telephoneUn = $request->telephone_un ?? '';
+        $telephoneDeux = $request->telephone_deux ?? '';
+        $dateAvance = $request->date_avance ?? '';
+        $descriptionAvance = $request->description_avance ?? '';
+        
         $receptionpar = $request->receptionpar ?? '';
+        $receptionFond= $request->reception_fond ?? '';
+        $bordereau = $request->bordereau ?? '';
+        $dateBordereau = $request->date_bordereau ?? '';
+
+        $projetid = $request->projetid;
 
         // Initialiser la liste des champs vides
         $emptyFields = [];
 
-        // Vérifier si tous les champs sont remplis
-        if (empty($febidArray)) {
-            $emptyFields[] = 'febid';
-        }
-        if (empty($djasidArray)) {
-            $emptyFields[] = 'iddjas';
-        }
-        if (empty($dapsidArray)) {
-            $emptyFields[] = 'dpasid';
-        }
-        if (empty($ligneidArray)) {
-            $emptyFields[] = 'ligneid';
-        }
+      
         if (empty($montantAvanceArray)) {
             $emptyFields[] = 'montantavance';
         }
@@ -622,15 +705,11 @@ public function saveDjas(Request $request)
         if (empty($montantRetourneArray)) {
             $emptyFields[] = 'montant_retourne';
         }
-        if (empty($bordereauArray)) {
-            $emptyFields[] = 'bordereau';
-        }
+        
         if (empty($descriptionArray)) {
             $emptyFields[] = 'description';
         }
-        if (empty($receptionpar)) {
-            $emptyFields[] = 'receptionpar';
-        }
+        
 
         // Si des champs sont vides, renvoyer une erreur
         if (!empty($emptyFields)) {
@@ -642,7 +721,21 @@ public function saveDjas(Request $request)
 
         // Mettre à jour le statut des enregistrements dans la table djas
         foreach ($djasidArray as $id) {
-            DB::table('djas')->where('id', $id)->update(['statut' => 1]);
+            DB::table('djas')->where('id', $id)->update([
+                'statut' => 1,
+                'fond_paye' => $fondPaye,
+                'addresse' => $addresse,
+                'telephone_un' => $telephoneUn,
+                'telephone_deux' => $telephoneDeux,
+                'date_avance'    => $dateAvance,
+                'description_avance' => $descriptionAvance,
+                'reception_fond'   => $receptionFond,
+                'bordereau'  => $bordereau,
+                'date_bordereau' => $dateBordereau,
+                'reception_par' => $receptionpar
+                // Ajoutez d'autres colonnes ici
+            ]);
+            
         }
 
         // Parcourir les données et les enregistrer dans la base de données
@@ -650,8 +743,7 @@ public function saveDjas(Request $request)
             // Vérifier si l'index existe dans tous les tableaux avant de l'utiliser
             if (!isset(
                 $djasidArray[$key], $dapsidArray[$key], $ligneidArray[$key], $montantAvanceArray[$key], 
-                $montantUtiliserArray[$key], $surplusArray[$key], $montantRetourneArray[$key], 
-                $bordereauArray[$key], $descriptionArray[$key]
+                $montantUtiliserArray[$key], $surplusArray[$key], $montantRetourneArray[$key], $descriptionArray[$key]
             )) {
                 throw new Exception("Index $key n'existe pas dans un ou plusieurs tableaux.");
             }
@@ -660,6 +752,7 @@ public function saveDjas(Request $request)
             $plaque = isset($plaqueArray[$key]) ? $plaqueArray[$key] : null;
 
             $dja = new Elementdjas();
+            $dja->projetiddjas = $projetid;
             $dja->febid = $febid;
             $dja->iddjas = $djasidArray[$key];
             $dja->idddap = $dapsidArray[$key];
@@ -668,10 +761,8 @@ public function saveDjas(Request $request)
             $dja->montant_utiliser = $montantUtiliserArray[$key];
             $dja->surplus = $surplusArray[$key];
             $dja->montant_retourne = $montantRetourneArray[$key];
-            $dja->bordereau = $bordereauArray[$key];
             $dja->description = $descriptionArray[$key];
             $dja->plaque = $plaque;
-            $dja->receptionpar = $receptionpar;
             $dja->save();
         }
 
@@ -816,8 +907,6 @@ public function UpDjas(Request $request)
         ]);
     }
 }
-
-
 
  
 }

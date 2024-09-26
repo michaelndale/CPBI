@@ -37,9 +37,18 @@
                                         <td class="align-middle email">
                                             <select class="form-control  form-control-sm" id="compteid" name="compteid" required>
                                                 <option disabled="true" selected="true" value="">--Sélectionner Compte--</option>
-                                                @foreach ($compte as $comptes)
+                                                @forelse ($compte as $comptes)
                                                 <option value="{{ $comptes->id }}"> {{ $comptes->code }} : {{ ucfirst($comptes->libelle) }} </option>
-                                                @endforeach
+                                                @empty
+                                        
+                                                    <option disabled="true" selected="true" value="">Pas de compte disponible pour ce projet</option>
+                                            
+                                                @endforelse
+
+
+
+                                               
+
                                             </select>
 
                                         </td>

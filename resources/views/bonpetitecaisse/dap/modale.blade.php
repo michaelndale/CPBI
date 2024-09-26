@@ -14,7 +14,7 @@
     <div class="modal-dialog modal-xl  modal-fullscreen modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="far fa-file-alt "></i> Demande d'Autorisation de Paiement (DAP) </h5>
+                <h5 class="modal-title"><i class="far fa-file-alt "></i> Demande d'Autorisation de Paiement PETITE CAISSE (DAP) </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -39,6 +39,8 @@
                                             </select>
                                         </td>
 
+                                        
+
                                         <td>
                                             <b>Composante/ Projet/Section </b><br>
                                             <input value="{{ Session::get('id') }}" type="hidden" name="projetid" id="projetid" required>
@@ -47,13 +49,13 @@
 
 
                                         <td class="align-middle" style="width:20% ;  background: rgba(76, 175, 80, 0.3)">
-                                            <b>NUMERO FEB: </b> <br>
+                                            <b>NUMÉRO FEB: </b> <br>
                                             <select type="text" class="form-control form-control-sm febid" style="width: 100%" required multiple>
                                                 <option disabled="true" selected="true">--Aucun--</option>
                                                 @forelse ($feb as $febs)
                                                 <option value="{{ $febs->id }}"> {{ $febs->numero  }}</option>
                                                 @empty
-                                                <option value="">--Aucun Numero FEB trouvé--</option>
+                                                <option disabled="true" selected="true">--Aucun Numéro FEB trouvé--</option>
                                                 @endforelse
                                             </select>
                                         </td>

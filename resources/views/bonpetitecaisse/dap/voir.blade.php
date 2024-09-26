@@ -1,7 +1,7 @@
 @extends('layout/app')
 @section('page-content')
 @php
-    $cryptedId = Crypt::encrypt($data->id);
+$cryptedId = Crypt::encrypt($data->id);
 @endphp
 <div class="main-content">
     <div class="page-content">
@@ -10,28 +10,10 @@
                 <div class="col-12" style="margin:auto">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                         <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> Le details de la DAP (N° {{ $data->numerodap  }} ) </h4>
-                        <div class="page-title-right" >
-
-                          <!--  @if($data->	etablie_aunom==1)
-                            <div class="spinner-grow text-danger " role="status" style=" 
-                        width: 0.9rem; /* Définissez la largeur */
-                        height: 0.9rem; /* Définissez la hauteur */" title="Signaler le DAP en cas d'erreur ">
-                                <span class="sr-only">Loading...</span>
-                            </div> &nbsp; &nbsp;
-                            @endif
-
-
-                            <button type="button" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal" data-dapid="{{ $data->id ? $data->id : '' }}" title="Signaler le DAP en cas d'erreur ">
-                                <i class="fab fa-telegram-plane ms-1"></i> Signalé DAP
-                            </button>
-
--->
+                        <div class="page-title-right">
                             &nbsp; &nbsp;
-
-
                             <div class="btn-toolbar float-end" role="toolbar">
                                 <div class="btn-group me-2 mb-2 mb-sm-0">
-                                    <!--<a href="{{ route('generate-pdf-dap',$cryptedId  ) }}" class="btn btn-primary waves-light waves-effect" title="Générer PDF "><i class="fa fa-print"></i> </a> -->
                                     <a href="{{ route('showdappc', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect" title="Modifier le DAP"><i class="fa fa-edit"></i> </a>
                                     <a href="{{ route('dappc') }}" class="btn btn-primary waves-light waves-effect" title="Liste de DAP "><i class="fa fa-list"></i></a>
                                 </div>
@@ -44,41 +26,42 @@
             <div class="card">
                 <div class="card-body">
                     <div class="invoice-title">
-                       
-                            <div class="text-muted">
+
+                        <div class="text-muted">
                             <table class="table  table-sm fs--1 mb-0 ">
-                                    <tr>
-                                        <td style=" width:10% ;" align="right"> 
-                                            <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="50" /> </td>
-                                        <td>
-                                            <center>
+                                <tr>
+                                    <td style=" width:10% ;" align="right">
+                                        <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="50" />
+                                    </td>
+                                    <td>
+                                        <center>
                                             <p class="mb-1">
-                                                <h3>{{ $dateinfo->entete }}</h3>
-                                            </center>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <center>{{ $dateinfo->sousentete }}</center>
-                                        </td>
-                                    </tr>
-                                </table>
+                                            <h3>{{ $dateinfo->entete }}</h3>
+                                        </center>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <center>{{ $dateinfo->sousentete }}</center>
+                                    </td>
+                                </tr>
+                            </table>
 
 
-                            </div>
+                        </div>
                     </div>
                     <br>
                     <div class="row">
                         <H5>
-                            <center> 
-                                Demande d'Autorisation de Paiement (DAP) N° {{  $data->numerodap  }}/{{ $year }}
+                            <center>
+                                Demande d'Autorisation de Paiement (DAP) N° {{ $data->numerodap  }}/{{ date('Y', strtotime($data->created_at)) }}
                             </center>
                         </H5>
 
                         <div class="col-sm-12">
                             <table class="table table-striped table-sm fs--1 mb-0 table-bordered  ">
                                 <tr>
-                                    <td style= "width:55%"> Service: {{ $data->titres }}</td>
+                                    <td style="width:55%"> Service: {{ $data->titres }}</td>
                                     <td>
                                         Référence: FEB n<sup>o</sup>:
                                         @php
@@ -93,13 +76,13 @@
                                 </tr>
 
                                 <tr>
-                                    <td> 
-                                    <table>
+                                    <td>
+                                        <table>
                                             <td>
                                                 <label title="OV"> &nbsp; Moyen de Paiement : OV </label>
                                             </td>
                                             <td>
-                                                <input type="checkbox" readonly @if($data->ov==1) checked @else @endif />
+                                                <input class="form-check-input" type="checkbox" readonly @if($data->ov==1) checked @else @endif />
                                             </td>
                                             <td> &nbsp; &nbsp; &nbsp; &nbsp; Cheque: {{ $data->cho }} ; Etabli au nom : {{ $data->etablie_aunom}}</td>
                                         </table>
@@ -109,49 +92,71 @@
 
                                 <tr>
                                     <td></td>
-                                    <td>  </td>
+                                    <td></td>
                                 </tr>
 
-                               
+
                                 <tr>
                                     <td>
-                                    Créé le {{ date('d-m-Y', strtotime($data->created_at))  }}
+                                        Créé le {{ date('d-m-Y', strtotime($data->created_at))  }}
                                     </td>
-                                    <td>  Taux d’exécution globale du projet: %   </td>
+                                    <td>
+                                        Taux d’exécution globale du projet: {{ $POURCENTAGE_GLOGALE }}%
+                                    </td>
                                 </tr>
 
                             </table>
                             <br>
 
-                           
                             <font size="2px"> <u>Synthese sur l'utilisation des fonds demandes(Vr details sur FB en annexe)</u></font>
+
                             <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
                                 <thead>
-                                <tr>
-                                        <th width="13%">Numéro du FEB </th>
-                                        <th width="60%"> Libellé</th>
-                                        <th>Montant total </th>
-                                        
+                                    <tr>
+                                    <tr>
+                                        <th>Numéro du F.E.B</th>
+                                        <th style="width:30%">Description de la demande </th>
+                                        <th><center>AC/CE/CS </center> </th>
+                                        <th><center>Comptable </center> </th>
+                                        <th><center>Chef de Composante/Projet/Section </center> </th>
+                                        <th><center>Montant du F.E.B P.C</center></th>
+                                        </tr>'
+
                                     </tr>
                                 </thead>
                                 <tbody>
-                                 
                                         @foreach ($datafebElement as $datafebElements)
-                            
-                                    <tr>
-                                        <td> {{ $datafebElements->numero }}</td>
-                                        <td> {{ $datafebElements->description }}</td>
-                                        <td> {{ $datafebElements->montant }}</td>
-                                    </tr>
-                                    @endforeach
+                                        @php
+                                            $acc = $datafebElements->etabli_par_signature == 1 
+                                                ? '<i class="fa fa-check-circle text-primary"></i>' 
+                                                : '<i class="fa fa-times-circle text-danger"></i>';
+                                            
+                                            $Comptable = $datafebElements->verifie_par_signature == 1 
+                                                ? '<i class="fa fa-check-circle text-primary"></i>' 
+                                                : '<i class="fa fa-times-circle text-danger"></i>';
+                                            
+                                            $Chef = $datafebElements->approuve_par_signature == 1 
+                                                ? '<i class="fa fa-check-circle text-primary"></i>' 
+                                                : '<i class="fa fa-times-circle text-danger"></i>';
+                                        @endphp 
 
-                                </tbody>
-                                
+                                        <tr>
+                                            <td> {{ $datafebElements->numero }}</td>
+                                            <td> {{ $datafebElements->description }}</td>
+                                            <td align="center"> {!! $acc !!} </td>
+                                            <td align="center"> {!! $Comptable !!} </td>
+                                            <td align="center"> {!! $Chef !!} </td>
+                                            <td align="right"> {{ number_format($datafebElements->montant , 0, ',', ' ') }}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+
+
                             </table>
 
                             <br>
-                            <form method="POST" action="{{ route('updatesignaturedappc') }}">
 
+                            <form method="POST" action="{{ route('updatesignaturedappc') }}">
                                 @method('post')
                                 @csrf
                                 <input type="hidden" name="dapid" value="{{ $data->id }}">
@@ -164,21 +169,21 @@
                                     <tr>
                                         <td width="60%">
                                             Demande etablie par :<small>(Chef de Composante/Projet/Section)</small>
-                                             <br>
+                                            <br>
                                             Noms: {{ ucfirst($Demandeetablie->nom) }} {{ ucfirst($Demandeetablie->prenom) }}
                                         </td>
 
                                         <td width="25%">
                                             <center>
 
-                                                Signature
+                                               
                                                 <!-- poser signature -->
 
 
                                                 @if(Auth::user()->id == $data->demande_etablie )
                                                 <input class="form-check-input" type="checkbox" name="demandeetabliesignature" {{ $data->demande_etablie_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                                 @endif
-
+                                                <small> Cochez pour Poser la signature</small> 
                                                 <input type="hidden" name="clone_demandeetabliesignature" value="{{ $data->demande_etablie_signe }}" />
 
                                                 <br>
@@ -192,32 +197,32 @@
 
                                             </center>
                                         </td>
-                                        <td width="15%">Date 
-                                        @if(Auth::user()->id == $data->demande_etablie )
-                                            <input type="text" value="{{ $data->demande_etablie_date }}" name="dated" >
-                                        @else
-                                           
+                                        <td width="15%">Date
+                                            @if(Auth::user()->id == $data->demande_etablie )
+                                            <input type="text" value="{{ $data->demande_etablie_date }}" name="dated" style="width:45%; border:none; border-bottom: 2px dotted #000;" >
+                                            @else
+
                                             <input type="hidden" value="{{ $data->demande_etablie_date }}" name="dated_an">
                                             {{ $data->demande_etablie_date }}
-                                        @endif
+                                            @endif
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <td>
-                                            Vérifiée par : (<small>  Chef de Comptable   </small> ) 
-                                           <br>
+                                            Vérifiée par : (<small> Chef de Comptable </small> )
+                                            <br>
                                             Noms: {{ ucfirst($verifierpar->nom) }} {{ ucfirst($verifierpar->prenom) }}
-
-
                                         </td>
 
                                         <td>
-                                            <center>Signature
+                                            <center>
                                                 <!-- poser signature -->
                                                 @if(Auth::user()->id == $data->verifier )
                                                 <input class="form-check-input" type="checkbox" name="verifierparsignature" {{ $data->verifier_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                                 @endif
+
+                                                <small> Cochez pour Poser la signature</small> 
                                                 <br>
 
                                                 <input type="hidden" name="clone_verifierparsignature" value="{{ $data->verifier_signe }}" />
@@ -228,32 +233,32 @@
                                             </center>
 
                                         </td>
-                                        <td>Date :  
-                                        @if(Auth::user()->id == $data->verifier )
-                                            <input type="hidde" value="{{ $data->verifier_date }}" name="datev" >
-                                           
-                                        @else
-                                        
-                                          <input type="hidden" value="{{ $data->verifier_date }}" name="datev_an" >
+                                        <td>Date :
+                                            @if(Auth::user()->id == $data->verifier )
+                                            <input type="hidde" value="{{ $data->verifier_date }}"  name="datev" style="width:45%; border:none; border-bottom: 2px dotted #000;" >
+
+                                            @else
+
+                                            <input type="hidden" value="{{ $data->verifier_date }}" name="datev_an">
                                             {{ $data->verifier_date }}
-                                        @endif
-                                       
+                                            @endif
+
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <td>Approuveee par : <small> (Chef de Service)</small> <br>
-                                          
+
                                             Noms: {{ ucfirst($approuverpar->nom) }} {{ ucfirst($approuverpar->prenom) }} </td>
 
                                         <td>
                                             <center>
-                                                Signature
+                                                
                                                 <!-- poser signature -->
                                                 @if(Auth::user()->id == $data->approuver)
                                                 <input class="form-check-input" type="checkbox" name="approuverparsignature" {{ $data->approuver_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                                 @endif
-
+                                                <small> Cochez pour Poser la signature</small> 
                                                 <input type="hidden" name="clone_approuverparsignature" value="{{ $data->approuver_signe }}" />
 
                                                 <br>
@@ -265,36 +270,34 @@
 
 
                                         </td>
-                                        <td>Date : 
-                                        @if(Auth::user()->id == $data->approuver)
-                                            <input type="hidde" value="{{ $data->approuver_date }}" name="datea" ></td>
-                                        @else
-                                            {{ $data->approuver_date }}
-                                            <input type="hidden" value="{{ $data->approuver_date }}" name="datea_an" >
-                                            {{ $data->approuver_date }}
-                                         @endif
+                                        <td>Date :
+                                            @if(Auth::user()->id == $data->approuver)
+                                            <input type="hidde" value="{{ $data->approuver_date }}" name="datea" style="width:45%; border:none; border-bottom: 2px dotted #000;" >
                                         </td>
-                                       
-                                   
-                                        </tr>
+                                        @else
+                                        {{ $data->approuver_date }}
+                                        <input type="hidden" value="{{ $data->approuver_date }}" name="datea_an">
+                                        {{ $data->approuver_date }}
+                                        @endif
+                                        </td>
+
+
+                                    </tr>
 
 
                                 </table>
-
 
                                 <br>
 
                                 <table class="table table-bordered  table-sm">
                                     <tr>
-                                        <td colspan="2">Autorisation de Paiement</td>
+                                        <td colspan="3">Autorisation de Paiement</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="2" align="center">
-                                            @if (is_null($data->dateautorisation))
-                                            Autorise le ....../...../....
-                                            @else
-                                            Autorise le : {{ date('d-m-Y', strtotime($data->dateautorisation))  }}
-                                            @endif
+                                        <td colspan="3" align="center">
+
+                                        Autorise le :    <input type="hidde" value="{{ date('d-m-Y', strtotime($data->dateautorisation))  }}" name="dateautorisation" style="width:7%; border:none; border-bottom: 2px dotted #000;" >
+                                          
                                         </td>
                                     </tr>
 
@@ -303,14 +306,18 @@
                                         <td>
                                             <center>
                                                 Responsable Administratif et Financier
+
+                                                <br>
+                                                {{ ucfirst($responsable->nom) }} {{ ucfirst($responsable->prenom) }}
+                                               <br>
                                                 <!-- poser signature -->
                                                 @if(Auth::user()->id == $data->autoriser)
                                                 <input class="form-check-input" type="checkbox" name="responsablesignature" {{ $data->autoriser_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                                 @endif
-                                                <input type="hidden" name="clone_responsablesignature" value="{{ $data->autoriser_signe }}" />
+                                                
+                                               
+                                                <small>Cochez pour Poser la signature</small> <input type="hidden" name="clone_responsablesignature" value="{{ $data->autoriser_signe }}" />
 
-                                                <br> 
-                                                {{ ucfirst($responsable->nom) }} {{ ucfirst($responsable->prenom) }}
 
 
                                                 @if ($data->autoriser_signe==1)
@@ -325,20 +332,23 @@
                                         <td>
                                             <center>
                                                 Chef des Programmes
+
+                                                <br>@if($chefprogramme)
+                                                {{ ucfirst($chefprogramme->nom) }} {{ ucfirst($chefprogramme->prenom) }}
+                                                @else
+                                                <!-- Code alternatif si $chefprogramme est null -->
+                                                <p>Le chef de programme n'a pas été trouvé.</p>
+                                                @endif
                                                 <!-- POser signature -->
-                                                @if(Auth::user()->id == $data->	chefprogramme)
+                                                 <br>
+                                                @if(Auth::user()->id == $data-> chefprogramme)
                                                 <input class="form-check-input" type="checkbox" name="chefprogrammesignature" {{ $data->chefprogramme_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                                 @endif
                                                 <input type="hidden" name="clone_chefprogrammesignature" value="{{ $data->chefprogramme_signe }}" />
 
+                                                <small>Cochez pour Poser la signature</small> 
 
-
-                                                <br>@if($chefprogramme)
-                                                    {{ ucfirst($chefprogramme->nom) }} {{ ucfirst($chefprogramme->prenom) }}
-                                                @else
-                                                    <!-- Code alternatif si $chefprogramme est null -->
-                                                    <p>Le chef de programme n'a pas été trouvé.</p>
-                                                @endif
+                                                
 
                                                 @if ($data->chefprogramme_signe==1)
                                                 <br>
@@ -348,19 +358,25 @@
                                             @endif
 
                                         </td>
-                                  
-                                        <td  align="center">Secretaire General de la CEPBU
 
-                                            @if(Auth::user()->id == $data->secretaire)
-                                            <input class="form-check-input" type="checkbox" name="secretairesignature" {{ $data->secretaire_signe=="1"? 'checked':'' }} style="border:2px solid red">
+                                        <td align="center">Secretaire General de la CEPBU
 
-                                            @endif
-                                            <br>
+                                            
 
                                             <input type="hidden" name="clone_secretairesignature" value="{{ $data->secretaire_signe }}" />
                                             <input type="hidden" name="ancient_date_autorisation" value="{{ $data->dateautorisation }}" />
+                                            <br>
 
                                             {{ ucfirst($secretaire->nom) }} {{ ucfirst($secretaire->prenom) }}
+
+                                            <br>
+
+                                            @if(Auth::user()->id == $data->secretaire)
+                                            <input class="form-check-input" type="checkbox" name="secretairesignature" {{ $data->secretaire_signe=="1"? 'checked':'' }} style="border:2px solid red">
+                                            <small>Cochez pour Poser la signature</small> 
+
+                                            @endif
+                                            <br>
 
                                             @if ($data->secretaire_signe==1)
 
@@ -372,7 +388,7 @@
                                         </td>
                                     </tr>
 
-                                    <tr>
+                                 <!--   <tr>
                                         <td colspan="4">Observation/Instructions du SG <br>
 
 
@@ -387,19 +403,16 @@
                                             </a>
 
                                         </td>
-                                    </tr>
-
-
+                                    </tr>  -->
                                 </table>
 
-
-                                <input type="hidden" name="montantsFeb"  value="{{  $datafebElems->montants }}">
-                                <input type="hidden" name="compteidsFeb"  value="{{ $datafebElems->compteids }}">
+                                <input type="hidden" name="montantsFeb" value="{{  $datafebElems->montants }}">
+                                <input type="hidden" name="compteidsFeb" value="{{ $datafebElems->compteids }}">
 
                                 <hr>
                                 <center>
 
-                                  <small>{{ $dateinfo->piedpage }}</small>
+                                    <small>{{ $dateinfo->piedpage }}</small>
 
                                 </center>
 
@@ -418,15 +431,22 @@
                                     </small>
                                 </div>
 
+
+
                             </form>
+
+
+
+
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <br>
+        <br>
     </div>
-    <br>
-    <br>
-</div>
 </div>
 
 <!-- ici -->

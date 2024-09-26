@@ -29,7 +29,8 @@ class FebpetitcaisseController extends Controller
     }
 
     $title = 'FEB Petit Caisse';
-    $compte =  Comptepetitecaisse::all();
+    $compte   =Comptepetitecaisse::where('projetid', $ID)->get();
+
 
     $personnel = DB::table('users')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -82,12 +83,7 @@ class FebpetitcaisseController extends Controller
                                     <i class="far fa-edit"></i> Modifier
                                 </a>
                                
-                                <a href="'. route('generate-pdf', ['id' => $cryptedId]) .'" class="dropdown-item mx-1">
-                                    <i class="fa fa-print"></i> Générer PDF
-                                </a>
-                                <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datas->id . '" data-numero="' . $datas->numero . '" href="#" style="background-color:red">
-                                    <i class="far fa-trash-alt"></i> Supprimer
-                                </a>
+                               
                             </div>
                         </div>
                     </center>
@@ -98,9 +94,17 @@ class FebpetitcaisseController extends Controller
                 <td align="center">' . $datas->code . '</td>
                 <td align="center">' . date('d-m-Y', strtotime($datas->date_dossier)) . '</td>
                 <td align="center">' . date('d-m-Y', strtotime($datas->date_limite)) . '</td>
-                <td align="center">' . date('d-m-Y', strtotime($datas->created_at)) . '</td>
+                <td align="center">' . date('d-m-Y, H:i', strtotime($datas->created_at)) . '</td>
+                <td align="center">' . date('d-m-Y, H:i', strtotime($datas->updated_at)) . '</td>
                 <td align="left">' . ucfirst($datas->user_prenom) . '</td>
             </tr>';
+
+            // <a href="'. route('generate-pdf', ['id' => $cryptedId]) .'" class="dropdown-item mx-1">
+           // <i class="fa fa-print"></i> Générer PDF
+           // </a>
+           // <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datas->id . '" data-numero="' . $datas->numero . '" href="#" style="background-color:red">
+           //     <i class="far fa-trash-alt"></i> Supprimer
+           // </a>
       }
     } else {
       $output .= '
@@ -142,7 +146,7 @@ class FebpetitcaisseController extends Controller
       ->leftJoin('projects', 'febpetitcaisses.projet_id', '=', 'projects.id')
       ->leftJoin('users', 'febpetitcaisses.user_id', '=', 'users.id')
       ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('febpetitcaisses.*', 'comptepetitecaisses.code as codes', 'comptepetitecaisses.libelle as libelle_compte', 'projects.title as titles_projet', 'personnels.prenom', 'personnels.nom')
+      ->select('febpetitcaisses.*', 'comptepetitecaisses.code as codes', 'comptepetitecaisses.libelle as libelle_compte',  'projects.id as IDP','projects.title as titles_projet', 'personnels.prenom', 'personnels.nom')
       ->where('febpetitcaisses.id', $ids)
       ->first();
 
@@ -166,14 +170,36 @@ class FebpetitcaisseController extends Controller
 
     $dateinfo = DB::table('identifications')->first();
 
+    // RECUPERATION BU DUBGET DU PROJET
+    $IDB = $febData->IDP;
+    $chec = Project::findOrFail($IDB);
+    $budget = $chec->budget;
 
+    // RECUPERATION DU MONTANT DEJA UTILISER DANS LE BUDJET
+    $sommeallfeb = DB::table('elementfebs')
+    ->where('projetids', $IDB)
+    ->sum('montant');
+
+    $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
+    ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
+    ->where('elementboncaisses.projetid', $IDB)
+    ->where('bonpetitcaisses.approuve_par_signature', 1)
+    ->sum('elementboncaisses.montant');
+
+    $SOMMES_DEJA_UTILISE = $sommeallfeb + $SOMME_PETITE_CAISSE;
+
+    $POURCENTAGE_GLOGALE = $budget ? round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2) : 0;
+
+
+    
     return view('bonpetitecaisse.feb.show', [
       'title'          => $title,
       'febData'        => $febData,
       'dateinfo'       => $dateinfo,
       'etablie_par'    => $etablie_par,
       'verifie_par'     => $verifie_par,
-      'approuver_par'  => $approuver_par
+      'approuver_par'  => $approuver_par,
+      'POURCENTAGE_GLOGALE' => $POURCENTAGE_GLOGALE
     ]);
   }
 
@@ -221,7 +247,7 @@ class FebpetitcaisseController extends Controller
       ->leftJoin('projects', 'febpetitcaisses.projet_id', '=', 'projects.id')
       ->leftJoin('users', 'febpetitcaisses.user_id', '=', 'users.id')
       ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('febpetitcaisses.*', 'comptepetitecaisses.code as codes', 'comptepetitecaisses.libelle as libelle_compte', 'projects.title as titles_projet', 'personnels.prenom', 'personnels.nom')
+      ->select('febpetitcaisses.*', 'comptepetitecaisses.code as codes', 'comptepetitecaisses.libelle as libelle_compte', 'projects.id as IDP', 'projects.title as titles_projet', 'personnels.prenom', 'personnels.nom')
       ->where('febpetitcaisses.id', $ids)
       ->first();
 
@@ -250,7 +276,8 @@ class FebpetitcaisseController extends Controller
       ->orderBy('nom', 'ASC')
       ->get();
 
-    $compte =  Comptepetitecaisse::all();
+      $compte   =Comptepetitecaisse::where('projetid', $febData->IDP)->get();
+
 
     return view('bonpetitecaisse.feb.edit', [
       'title'          => $title,

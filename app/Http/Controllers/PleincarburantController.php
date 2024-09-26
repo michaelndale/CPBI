@@ -6,7 +6,10 @@ use App\Models\Carburant;
 use App\Models\Fournisseur;
 use App\Models\Pleincarburant;
 use App\Models\Vehicule;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PleincarburantController extends Controller
 {
@@ -14,14 +17,14 @@ class PleincarburantController extends Controller
     {
         $title = 'Carburents';
         $carburent = Carburant::all();
-        $vehicule = Vehicule::all();
+        $carburant = Vehicule::all();
         $fournisseur = Fournisseur::all();
         return view(
             'carburent.index',
             [
                 'title'     => $title,
                 'carburent' => $carburent,
-                'vehicule'  => $vehicule,
+                'vehicule'  => $carburant,
                 'fournisseur'=>$fournisseur
             ]
         );
@@ -77,4 +80,42 @@ class PleincarburantController extends Controller
         </tr>';
         }
     }
+
+    public function store(Request $request)
+    {
+       
+        try {
+
+            $carburant = new Pleincarburant();
+
+            $carburant->referenceblaque  = $request->vehicule;
+            $carburant->fournisseurid    = $request->fournisseur;
+            $carburant->carburent        = $request->carburent;
+            $carburant->quantite         = $request->quantite;
+            $carburant->prixunite        = $request->cout;
+            $carburant->kilometragedebut = $request->kilodebut;
+            $carburant->kilometragefin   = $request->kilofin;
+            $carburant->note             = $request->note;
+            $carburant->dateoperation    = $request->date;
+            $carburant->userid           = Auth::id();
+
+            $carburant->save();
+    
+            return response()->json([
+                'status' => 200,
+                'message' => 'Enregistrement réussi avec succès !',
+            ]);
+            
+        } catch (Exception $e) {
+            // Vous pouvez également loguer l'exception pour déboguer plus facilement
+            Log::error('Erreur lors de l\'enregistrement : ' . $e->getMessage());
+    
+            return response()->json([
+                'status' => 202,
+                'message' => 'Une erreur est survenue : ' . $e->getMessage(),
+            ]);
+        }
+    }
+    
+
 }

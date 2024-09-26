@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Caisse;
 use App\Models\Comptepetitecaisse;
 use App\Models\Project;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,44 +38,47 @@ class ComptepetitecaisseController extends Controller
             ->select('comptepetitecaisses.*', 'personnels.prenom as personnel_prenom')
             ->get();
 
-
         $output = '';
         $nombre = 1;
 
         if ($services->count() > 0) {
             foreach ($services as $rs) {
                 $output .= '<tr style="background-color:#F5F5F5">
+                 <td align="center" style="width:13%">
+                  <div class="btn-group me-2 mb-2 mb-sm-0">
+                      <a  data-bs-toggle="dropdown" aria-expanded="false"> <i class="mdi mdi-dots-vertical ms-2"></i> Options</a>
+                      <div class="dropdown-menu">
+                         <a class="dropdown-item mx-1 voirHistorique" id="' . $rs->id . '" data-bs-toggle="modal" data-bs-target=".bs-historique-modal-xl" title="Voir Historique">
+                            <i class="fa fa-list"></i> Mouvement encours
+                        </a>
+                        <a class="dropdown-item  mx-1 editCaisse" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#modifierLigneModal" title="Modifier le compte"><i class="far fa-edit"></i> Modifier le compte</a>
+                         <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer le compte</a>
+                        </div>
+                  </div>
+                  </td>
                
                   <td> ' . ucfirst($rs->code) . '</td>
                   <td>' . ucfirst($rs->libelle) . '</td>
-                  <td style="align-text:right">  '.number_format( $rs->solde, 0, ',', ' ').' </td>
+                  <td align="right">  ' . number_format($rs->solde, 0, ',', ' ') . ' </td>
                   <td>' . ucfirst($rs->personnel_prenom) . '</td>
-                  <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
-                  <td align="center" style="width:13%">
-                  <div class="btn-group me-2 mb-2 mb-sm-0">
-                      <a  data-bs-toggle="dropdown" aria-expanded="false">
-                          <i class="mdi mdi-dots-vertical ms-2"></i>
-                      </a>
-                      <div class="dropdown-menu">
-                          <a class="dropdown-item  mx-1 edit" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#modifierLigneModal" title="Modifier le compte"><i class="far fa-edit"></i> Modifier la ligne</a>
-                          <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
-                      </div>
-                  </div>
-                  </td>
+                  <td>' . date('d-m-Y, H:i', strtotime($rs->created_at)) . '</td>
+                  <td>' . date('d-m-Y, H:i ', strtotime($rs->updated_at)) . '</td>
+                 
               </tr>';
 
-
-
+                //    <a class="dropdown-item mx-1 PrintHistorique" data-id="'.$rs->id .'" title="Imprimer le rapport de caisse">
+                //    <i class="fa fa-print"></i> Imprimer le rapport de caisse
+                // </a>
+                //<a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
                 $ndale = 1;
-
                 $nombre++;
             }
         } else {
             $output .= '<tr>
-              <td colspan="6">
+              <td colspan="7">
                   <center>
                       <h6 style="margin-top:1%; color:#c0c0c0"> 
-                          <center><font size="50px"><i class="far fa-trash-alt"></i></font><br><br>
+                          <center><font size="50px"><i class="fa fa-info-circle"></i></font><br><br>
                           Ceci est vide !
                       </center>
                   </h6>
@@ -85,6 +90,85 @@ class ComptepetitecaisseController extends Controller
         echo $output;
     }
 
+    public function fetchHistoriqueCaisse(Request $request)
+    {
+        $projetID = session()->get('id');
+        $id = $request->input('id');
+        $dateDebut = $request->input('dateDebut');
+        $dateFin = $request->input('dateFin');
+
+        // Récupération de l'historique du compte de petite caisse
+        $historique = Comptepetitecaisse::where('projetid', $projetID)
+            ->where('comptepetitecaisses.id', $id)
+            ->join('users', 'comptepetitecaisses.userid', '=', 'users.id')
+            ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('comptepetitecaisses.*', 'comptepetitecaisses.id as compid' ,'personnels.prenom as personnel_prenom')
+            ->first();
+
+        // Initialisation de la requête pour les transactions de caisse
+        $historiqueCompteQuery = Caisse::where('projetid', $projetID)
+            ->where('caisses.compteid', $id)
+            ->where('caisses.statut', 0)
+            ->join('users', 'caisses.userid', '=', 'users.id')
+            ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('caisses.*', 'caisses.id as idcc' ,'personnels.prenom as personnel_prenom')
+            ->orderBy('caisses.id', 'ASC');
+
+        // Filtrage par dates si les deux dates sont fournies
+        if ($dateDebut && $dateFin) {
+            $dateDebut = (new \DateTime($dateDebut))->format('Y-m-d 00:00:00');
+            $dateFin = (new \DateTime($dateFin))->modify('+1 day')->format('Y-m-d 00:00:00');
+            $historiqueCompteQuery->whereBetween('caisses.created_at', [$dateDebut, $dateFin]);
+        }
+
+        // Pagination des résultats, avec 25 résultats par page
+        $historiqueCompte = $historiqueCompteQuery->paginate(1000);
+
+        $personnel = DB::table('users')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+        ->orderBy('nom', 'ASC')
+        ->get();
+
+
+        // Retourne la vue avec les données paginées
+        return view('bonpetitecaisse.compte.historique', compact('historique', 'historiqueCompte','personnel'));
+    }
+
+    // ComptepetitecaisseController.php
+    public function printHistoriqueCaisse($id)
+    {
+        $projetID = session()->get('id');
+
+        // Vérifiez que les valeurs de $projetID et $id sont bien définies
+        if (!$projetID || !$id) {
+            return redirect()->back()->withErrors('Projet ou ID non défini.');
+        }
+
+        // Récupérer les informations du rapport de caisse
+        $historique = Comptepetitecaisse::where('projetid', $projetID)
+            ->where('comptepetitecaisses.id', $id)
+            ->join('users', 'comptepetitecaisses.userid', '=', 'users.id')
+            ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('comptepetitecaisses.*', 'personnels.prenom as personnel_prenom')
+            ->first();
+
+        if (!$historique) {
+            return redirect()->back()->withErrors('Rapport non trouvé.');
+        }
+
+        // Récupérer les transactions liées au rapport de caisse
+        $historiqueCompte = Caisse::where('projetid', $projetID)
+            ->where('caisses.compteid', $id)
+            ->join('users', 'caisses.userid', '=', 'users.id')
+            ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('caisses.*', 'personnels.prenom as personnel_prenom')
+            ->orderBy('caisses.id', 'ASC')
+            ->get();
+
+        // Retourne la vue formatée pour l'impression
+        return view('bonpetitecaisse.compte.print', compact('historique', 'historiqueCompte'));
+    }
 
     public function store(Request $request)
     {
@@ -96,6 +180,7 @@ class ComptepetitecaisseController extends Controller
                 ->where('code', $code)
                 ->where('projetid', $ID)
                 ->first();
+                
             if ($check) {
                 return response()->json([
                     'status' => 201,
@@ -131,11 +216,11 @@ class ComptepetitecaisseController extends Controller
     {
         try {
 
-            $emp = Comptepetitecaisse::find($request->cidedit);
+            $emp = Comptepetitecaisse::find($request->c_id);
             if ($emp->userid == Auth::id()) {
 
-                $emp->libelle = $request->clibelle;
-                $emp->code = $request->ccode;
+                $emp->libelle = $request->c_description;
+                $emp->code = $request->c_code;
                 $emp->update();
 
                 return response()->json([
@@ -161,12 +246,28 @@ class ComptepetitecaisseController extends Controller
             $emp = Comptepetitecaisse::find($id);
             if ($emp && $emp->userid == Auth::id()) {
                 $id = $request->id;
+              
+                if($emp->solde == 0){
                 // Supprimer le projet
                 Comptepetitecaisse::destroy($id);
                 DB::commit();
                 return response()->json([
                     'status' => 200,
                 ]);
+
+               }else{
+
+                DB::rollBack();
+                return response()->json([
+                    'status' => 205,
+                    'message' => 'Vous n\'avez pas l\'autorisation de supprimer le compte qui est encours d\'exécution.'
+                ]);
+
+                
+               }
+                
+
+           
             } else {
                 DB::rollBack();
                 return response()->json([
