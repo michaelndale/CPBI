@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\attache_feb;
 use App\Models\Banque;
 use App\Models\Beneficaire;
 use App\Models\Compte;
@@ -40,45 +41,45 @@ class DapController extends Controller
 
   public function fetchAll()
   {
-      $ID = session()->get('id');
-  
-      $datadap = DB::table('daps')
-          ->leftJoin('users', 'daps.userid', '=', 'users.id')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('daps.*', 'personnels.prenom as user_prenom')
-          ->where('daps.projetiddap', $ID)
-          ->orderBy('daps.numerodp', 'asc')
-          ->get();
-  
-      $output = '';
-  
-      if ($datadap->count() > 0) {
-          $nombre = 1;
-          foreach ($datadap as $datadaps) {
-              $ov = $datadaps->ov == 1 ? "checked" : "";
-  
-              $justifier = $datadaps->justifier == 1 ? "checked" : "";
-              $nonjustifier = $datadaps->justifier == 0 ? "checked" : "";
-  
-              if ($datadaps->signaledap == 1) {
-                  $message = ' <div class="spinner-grow text-danger " role="status" style=" 
+    $ID = session()->get('id');
+
+    $datadap = DB::table('daps')
+      ->leftJoin('users', 'daps.userid', '=', 'users.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('daps.*', 'personnels.prenom as user_prenom')
+      ->where('daps.projetiddap', $ID)
+      ->orderBy('daps.numerodp', 'asc')
+      ->get();
+
+    $output = '';
+
+    if ($datadap->count() > 0) {
+      $nombre = 1;
+      foreach ($datadap as $datadaps) {
+        $ov = $datadaps->ov == 1 ? "checked" : "";
+
+        $justifier = $datadaps->justifier == 1 ? "checked" : "";
+        $nonjustifier = $datadaps->justifier == 0 ? "checked" : "";
+
+        if ($datadaps->signaledap == 1) {
+          $message = ' <div class="spinner-grow text-danger " role="status" style=" 
                   width: 0.5rem; /* Définissez la largeur */
                   height: 0.5rem; /* Définissez la hauteur */">
                   <span class="sr-only">Loading...</span>
                 </div>';
-              } else {
-                  $message = ' ';
-              }
-  
-              $numerofeb = DB::table('febs')
-                  ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
-                  ->where('elementdaps.dapid', $datadaps->id)
-                  ->get();
-  
-              $cryptedId = Crypt::encrypt($datadaps->id);
-              $totalMontant = $this->getTotalDap($datadaps->id); // Récupérer le montant total pour chaque DAP
-              
-              $output .= '
+        } else {
+          $message = ' ';
+        }
+
+        $numerofeb = DB::table('febs')
+          ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
+          ->where('elementdaps.dapid', $datadaps->id)
+          ->get();
+
+        $cryptedId = Crypt::encrypt($datadaps->id);
+        $totalMontant = $this->getTotalDap($datadaps->id); // Récupérer le montant total pour chaque DAP
+
+        $output .= '
                   <tr>
                       <td>
                           <center>' . $message . '
@@ -90,7 +91,16 @@ class DapController extends Controller
                                       <a href="dap/' . $cryptedId . '/view" class="dropdown-item mx-1 voirIcon"><i class="far fa-eye"></i> Voir</a>
                                       <a href="dap/' . $cryptedId . '/edit" class="dropdown-item mx-1 editIcon" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
                                       <a href="dap/' . $cryptedId . '/generate-pdf-dap" class="dropdown-item mx-1"><i class="fa fa-print"> </i> Générer PDF</a>
-                                      <a class="dropdown-item desactiversignale" id="' .$datadaps->id . '" href="#"><i class="fas fa-random"></i> Désactiver le signal ?</a>
+                                     ';
+        if ($datadaps->signaledap == 1) {
+          $output .=
+            '
+                                      <a class="dropdown-item desactiversignale" id="' . $datadaps->id . '" href="#"><i class="fas fa-random"></i> Désactiver le signal ?</a>
+                                     ';
+        }
+        $output .=
+          '
+                                    
                                       <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datadaps->id . '" data-numero="' . $datadaps->numerodp . '" href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
                                   </div>
                               </div>
@@ -98,33 +108,33 @@ class DapController extends Controller
                       </td>
                       <td align="center">' . $datadaps->numerodp . '</td>
                       <td align="center">';
-  
-              foreach ($numerofeb as $key => $numerofebs) {
-                  $output .= '[' . $numerofebs->numerofeb . ']';
-                  if ($key < count($numerofeb) - 1) {
-                      $output .= ',';
-                  }
-              }
-  
-              $output .= '
+
+        foreach ($numerofeb as $key => $numerofebs) {
+          $output .= '[' . $numerofebs->numerofeb . ']';
+          if ($key < count($numerofeb) - 1) {
+            $output .= ',';
+          }
+        }
+
+        $output .= '
                       </td>
                        <td align="right"><b>' . number_format($totalMontant, 0, ',', ' ') . '</b> </td> 
-                      <td align="center"><input type="checkbox" ' . $ov . ' class="form-check-input" disabled /></td>
+                      <td>' . (strlen($datadaps->lieu) > 15 ? substr($datadaps->lieu, 0, 15) . '...' : $datadaps->lieu) . '</td>
                       <td><span title="' . $datadaps->cho . '">' . (strlen($datadaps->cho) > 8 ? substr($datadaps->cho, 0, 8) . '...' : $datadaps->cho) . '</span></td>
                       <td align="right" >' . $datadaps->comptabiliteb  . '</td>
                       <td align="left">' . $datadaps->banque . '</td>
                       <td><span title="' . $datadaps->paretablie . '">' . (strlen($datadaps->paretablie) > 15 ? substr($datadaps->paretablie, 0, 8) . '...' : $datadaps->paretablie) . '</span></td>
-                      <td align="center"><input type="checkbox" ' .$justifier . ' class="form-check-input" disabled /></td>
+                      <td align="center"><input type="checkbox" ' . $justifier . ' class="form-check-input" disabled /></td>
                       <td align="center">' . date('d-m-Y', strtotime($datadaps->created_at)) . '</td>
                       <td align="left">' . ucfirst($datadaps->user_prenom) . '</td>
                     
                   </tr>
               ';
-              $nombre++;
-          }
-          echo $output;
-      } else {
-          echo '<tr>
+        $nombre++;
+      }
+      echo $output;
+    } else {
+      echo '<tr>
               <td colspan="13">
                   <center>
                       <h6 style="margin-top:1% ;color:#c0c0c0">
@@ -135,28 +145,28 @@ class DapController extends Controller
                   </center>
               </td>
           </tr>';
-      } 
+    }
   }
-  
+
   // Fonction pour récupérer le montant total des DAP en fonction de plusieurs FEB
   public function getTotalDap($dapId)
   {
-      $febIds = DB::table('elementdaps') // Suppose que vous avez une table de liaison entre DAP et FEB
-          ->where('dapid', $dapId)
-          ->pluck('referencefeb');
-      
-      return DB::table('elementfebs')
-          ->whereIn('febid', $febIds)
-          ->sum('montant');
+    $febIds = DB::table('elementdaps') // Suppose que vous avez une table de liaison entre DAP et FEB
+      ->where('dapid', $dapId)
+      ->pluck('referencefeb');
+
+    return DB::table('elementfebs')
+      ->whereIn('febid', $febIds)
+      ->sum('montant');
   }
-  
+
   public function checkDap(Request $request)
   {
     $ID = session()->get('id');
     $numero = $request->numerodap;
     $dap = Dap::where('numerodp', $numero)
-            ->where('projetiddap', $ID)
-            ->exists();
+      ->where('projetiddap', $ID)
+      ->exists();
     return response()->json(['exists' => $dap]);
   }
 
@@ -179,7 +189,7 @@ class DapController extends Controller
       $dap->projetiddap = $request->projetid;
       $dap->lieu = $request->lieu;
       $dap->comptabiliteb = $request->comptebanque;
-      $dap->ov = $ov;
+
       $dap->cho = $request->ch;
       $dap->demandeetablie = $request->demandeetablie;
       $dap->verifierpar = $request->verifier;
@@ -189,7 +199,7 @@ class DapController extends Controller
       $dap->chefprogramme = $request->chefprogramme;
       $dap->paretablie = $request->paretablie;
       $dap->banque = $request->banque;
-     
+
       if ($justifier == 1) {
         $dap->beneficiaire = $request->filled('beneficiaire') ? $request->beneficiaire : NULL;
       }
@@ -199,6 +209,9 @@ class DapController extends Controller
       $dap->userid = Auth::id();
       $dap->save();
       $IDdap = $dap->id;
+
+
+      
 
       if ($request->has('febid')) {
         foreach ($request->febid as $key => $febid) {
@@ -212,12 +225,12 @@ class DapController extends Controller
             $existingDapE->referencefeb = $febid;
             $existingDapE->projetidda = $request->projetid;
 
-            if ($justifier == 1) {
+            /*if ($justifier == 1) {
               $existingDapE->ligneided = $request->ligneid[$key] ?? null;
               $existingDapE->montantavance = $request->montantavance[$key] ?? null;
               $existingDapE->duree_avance = $request->duree_avance[$key] ?? null;
               $existingDapE->descriptionn = $request->descriptionel[$key] ?? null;
-            }
+            } */
 
             $existingDapE->save();
 
@@ -226,28 +239,25 @@ class DapController extends Controller
             if ($element) {
               $element->statut = 1;
               $element->save();
-
-
-              if ($justifier == 1 ||  $justifier == 0) {
-                // Enregistrement des informations de justification
-                $justification = new Dja();
-                $justification->numerodjas = $request->numerodap;
-                $justification->projetiddja = $request->projetid;
-                $justification->numerodap = $IDdap;  // numero dap est IDDAP
-                $justification->numeroov = $ov;
-
-                if ($justifier == 1) {
-                  $justification->justifie = 1;
-                } else {
-                  $justification->justifie = 0;
-                }
-
-                $justification->userid = Auth::id();
-                $justification->save();
-              }
             }
           }
         }
+      }
+
+
+      if ($justifier == 1 ||  $justifier == 0) {
+        // Enregistrement des informations de justification
+        $justification = new Dja();
+        $justification->projetiddja = $request->projetid;
+        $justification->dapid = $IDdap;  //  IDDAP
+        $justification->numerodjas = $request->numerodap;
+        $justification->montant_avance_un = $request->montantavance;
+        $justification->duree_avance = $request->duree_avance;
+        $justification->fonds_demande_par = $request->beneficiaire;
+        $justification->description_avance = $request->descriptionel;
+        if ($justifier == 1) { $justification->justifie = 1; } else {  $justification->justifie = 0; }
+        $justification->userid = Auth::id();
+        $justification->save();
       }
 
 
@@ -272,178 +282,177 @@ class DapController extends Controller
   // insert a new employee ajax request
   public function updatestore(Request $request)
   {
-      try {
-          // Début de la transaction
-          DB::beginTransaction();
-  
-          $IDpp = session()->get('id');
-          $lead = session()->get('lead');
+    try {
+      // Début de la transaction
+      DB::beginTransaction();
 
-          $dap = Dap::where('id', $request->dapid)->first();
-          $dja = Dja::where('numerodap', $request->dapid)
-                    ->where('projetiddja', $IDpp)->first(); // Changer après service
-  
-          // Vérifier si les enregistrements DAP et DJA existent
-          if (!$dap || !$dja) {
-              return back()->with('failed', 'DAP non trouvé.');
-          }
-  
-          // Vérifier si l'utilisateur a le droit de modifier le DAP
+      $IDpp = session()->get('id');
+      $lead = session()->get('lead');
 
-          $get_lead =  DB::table('daps')
-          ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-          ->select( 'projects.lead as lead')
-          ->where('daps.id', $request->dapid)
-          ->first();
+      $dap = Dap::where('id', $request->dapid)->first();
+      $dja  = Dja::where('id', $request->iddjass)->first();
 
-        
-          $projet_lead= $get_lead->lead;
-         
-    
-          if ($dap && $dap->userid != Auth::id() || $projet_lead  != $lead  ) {
-        
-              return back()->with('failed', 'Vous n\'avez pas l\'accréditation pour modifier ce DAP.');
-          }
+      
 
-          if($request->demandeetablie==$request->ancien_demandeetablie){ 
-            $demandeetablie= $request->demandeetablie_signe;
-          }
-          else
-          {  
-            $demandeetablie=0;
-          }
-    
-          if($request->verifier==$request->ancien_verifierpar){ 
-            $verifier= $request->verifierpar_signe;
-          }
-          else
-          {  
-            $verifier=0;
-          }
-
-          if($request->approuver==$request->approuverpar_signe){ 
-            $approuver= $request->ancien_approuverpar;
-          }
-          else
-          {  
-            $approuver=0;
-          }
-
-          if($request->resposablefinancier==$request->responsable_signe){ 
-            $resposablefinancier= $request->ancien_responsable;
-          }
-          else
-          {  
-            $resposablefinancier=0;
-          }
-
-          if($request->secretairegenerale==$request->secretaire_signe){ 
-            $secretairegenerale= $request->ancien_secretaire;
-          }
-          else
-          {  
-            $secretairegenerale=0;
-          }
-
-          if($request->chefprogramme==$request->chefprogramme_signe){ 
-            $chefprogramme= $request->ancien_chefprogramme;
-          }
-          else
-          {  
-            $chefprogramme=0;
-          }
-
-
-          $justifier = $request->has('justifier') ? 1 : 0;
-          $nonjustifier = $request->has('nonjustifier') ? 1 : 0;
-    
-    
-    
-    
-  
-          // Mettre à jour les champs du DAP
-          $dap->numerodp = $request->numerodap;
-          $dap->serviceid = $request->serviceid;
-          $dap->lieu = $request->lieu;
-          $dap->comptabiliteb = $request->comptebanque;
-          $dap->ov = $request->has('ov') ? 1 : 0;
-          $dap->cho = $request->ch;
-         
-          $dap->demandeetablie = $request->demandeetablie;
-          $dap->verifierpar = $request->verifier;
-          $dap->approuverpar = $request->approuver;
-          $dap->responsable = $request->resposablefinancier;
-          $dap->secretaire = $request->secretairegenerale;
-          $dap->chefprogramme = $request->chefprogramme;
-          $dap->observation = $request->observation;
-          $dap->paretablie = $request->paretablie;
-          $dap->banque = $request->banque;
-
-          $dap->demandeetablie_signe = $demandeetablie;
-          $dap->verifierpar_signe = $verifier;
-          $dap->approuverpar_signe = $approuver;
-          $dap->responsable_signe =$resposablefinancier;
-          $dap->chefprogramme_signe =$secretairegenerale;
-          $dap->secretaure_general_signe =$chefprogramme;
-          if ($justifier == 1) {
-            $dap->beneficiaire = $request->filled('beneficiaire') ? $request->beneficiaire : NULL;
-          }
-          $dap->justifier = $justifier;
-          $dap->nonjustifier = $nonjustifier;
-
-          $dap->update();
-  
-          // Mettre à jour les champs du DJA
-          $dja->numerodjas = $request->numerodap;
-          $dja->numerodap = $request->dapid;
-          $dja->numeroov = $dap->ov;
-          $dja->justifie = $justifier;
-         
-          $dja->update();
-
-          if ($request->has('febid')) {
-            foreach ($request->febid as $key => $febid) {
-              // Vérifier si un enregistrement avec la même référencefeb existe déjà
-              $existingDapE = Elementdap::where('referencefeb', $febid)->first();
-    
-              if ($existingDapE) {
-              
-                $existingDapE->dapid = $request->dapid;
-                $existingDapE->numerodap = $request->numerodap;
-                $existingDapE->referencefeb = $febid;
-               
-    
-                if ($justifier == 1) {
-                  $existingDapE->ligneided = $request->ligneid[$key] ?? null;
-                  $existingDapE->montantavance = $request->montantavance[$key] ?? null;
-                  $existingDapE->duree_avance = $request->duree_avance[$key] ?? null;
-                  $existingDapE->descriptionn = $request->descriptionel[$key] ?? null;
-                }else{
-               
-                  $existingDapE->montantavance = null;
-                  $existingDapE->duree_avance =  null;
-                  $existingDapE->descriptionn =  null;
-                }
-    
-                $existingDapE->update();
-    
-                // Mettre à jour le statut de l'élément Feb correspondant
-               
-              }
-            }
-          }
-  
-          // Valider la transaction
-          DB::commit();
-  
-          return back()->with('success', 'Mises à jour effectuées avec succès.');
-      } catch (Exception $e) {
-          // En cas d'erreur, annuler la transaction
-          DB::rollBack();
-          return back()->with('failed', 'Échec ! ' . $e->getMessage());
+      // Vérifier si les enregistrements DAP et DJA existent
+      if (!$dap ) {
+        return back()->with('failed', 'DAP non trouvé.');
       }
+
+      // Vérifier si l'utilisateur a le droit de modifier le DAP
+
+      $get_lead =  DB::table('daps')
+        ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+        ->select('projects.lead as lead')
+        ->where('daps.id', $request->dapid)
+        ->first();
+
+
+      $projet_lead = $get_lead->lead;
+
+
+      if ($dap && $dap->userid != Auth::id() || $projet_lead  != $lead) {
+
+        return back()->with('failed', 'Vous n\'avez pas l\'accréditation pour modifier ce DAP.');
+      }
+
+      if ($request->demandeetablie == $request->ancien_demandeetablie) {
+        $demandeetablie = $request->demandeetablie_signe;
+      } else {
+        $demandeetablie = 1;
+      }
+
+      if ($request->verifier == $request->ancien_verifierpar) {
+        $verifier = $request->verifierpar_signe;
+      } else {
+        $verifier = 1;
+      }
+
+      if ($request->approuver == $request->approuverpar_signe) {
+        $approuver = $request->ancien_approuverpar;
+      } else {
+        $approuver = 1;
+      }
+
+      if ($request->resposablefinancier == $request->responsable_signe) {
+        $resposablefinancier = $request->ancien_responsable;
+      } else {
+        $resposablefinancier = 1;
+      }
+
+      if ($request->secretairegenerale == $request->secretaire_signe) {
+        $secretairegenerale = $request->ancien_secretaire;
+      } else {
+        $secretairegenerale = 1;
+      }
+
+      if ($request->chefprogramme == $request->chefprogramme_signe) {
+        $chefprogramme = $request->ancien_chefprogramme;
+      } else {
+        $chefprogramme = 1;
+      }
+
+
+      $justifier = $request->has('justifier') ? 1 : 0;
+      $nonjustifier = $request->has('nonjustifier') ? 1 : 0;
+
+
+
+
+
+      // Mettre à jour les champs du DAP
+      $dap->numerodp = $request->numerodap;
+      $dap->serviceid = $request->serviceid;
+      $dap->lieu = $request->lieu;
+      $dap->comptabiliteb = $request->comptebanque;
+     
+      $dap->cho = $request->ch;
+
+      $dap->demandeetablie = $request->demandeetablie;
+      $dap->verifierpar = $request->verifier;
+      $dap->approuverpar = $request->approuver;
+      $dap->responsable = $request->resposablefinancier;
+      $dap->secretaire = $request->secretairegenerale;
+      $dap->chefprogramme = $request->chefprogramme;
+      $dap->observation = $request->observation;
+      $dap->paretablie = $request->paretablie;
+      $dap->banque = $request->banque;
+
+      $dap->demandeetablie_signe = $demandeetablie;
+      $dap->verifierpar_signe = $verifier;
+      $dap->approuverpar_signe = $approuver;
+      $dap->responsable_signe = $resposablefinancier;
+      $dap->chefprogramme_signe = $secretairegenerale;
+      $dap->secretaure_general_signe = $chefprogramme;
+      $dap->statut = 1;
+      
+      if ($justifier == 1) {
+        $dap->beneficiaire = $request->filled('beneficiaire') ? $request->beneficiaire : NULL;
+      }
+      $dap->justifier = $justifier;
+      $dap->nonjustifier = $nonjustifier;
+
+      $dap->update();
+
+      if($dja) {
+        // Mettre à jour les champs du DJA
+        $dja->numerodjas = $request->numerodap;
+        $dja->montant_avance_un = $request->montantavance;
+        $dja->duree_avance = $request->duree_avance;
+        $dja->description_avance = $request->descriptionel;
+        $dja->fonds_demande_par = $request->beneficiaire;
+        $dja->justifie = $justifier;
+
+        $dja->update();
+
+        }else{
+
+          // creer Nouveau
+          $New_dja = new Dja();
+          $New_dja->projetiddja = $IDpp;
+          $New_dja->dapid = $request->dapid;
+          $New_dja->numerodjas = $request->numerodap;
+          $New_dja->montant_avance_un  = $request->montantavance;
+          $New_dja->duree_avance = $request->duree_avance;
+          $New_dja->description_avance = $request->descriptionel;
+          $New_dja->fonds_demande_par = $request->beneficiaire;
+          $New_dja->justifie = $justifier;
+          $New_dja->userid = Auth::id();
+          $New_dja->save();
+
+      }
+
+
+      if ($request->has('febid')) {
+        foreach ($request->febid as $key => $febid) {
+          // Vérifier si un enregistrement avec la même référencefeb existe déjà
+          $existingDapE = Elementdap::where('referencefeb', $febid)->first();
+
+          if ($existingDapE) {
+
+            $existingDapE->dapid = $request->dapid;
+            $existingDapE->numerodap = $request->numerodap;
+            $existingDapE->referencefeb = $febid;
+
+            $existingDapE->update();
+
+            // Mettre à jour le statut de l'élément Feb correspondant
+
+          }
+        }
+      }
+
+      // Valider la transaction
+      DB::commit();
+
+      return back()->with('success', 'Mises à jour effectuées avec succès.');
+    } catch (Exception $e) {
+      // En cas d'erreur, annuler la transaction
+      DB::rollBack();
+      return back()->with('failed', 'Échec ! ' . $e->getMessage());
+    }
   }
-  
+
   public function list()
   {
     // Récupérer les valeurs de la session
@@ -639,52 +648,52 @@ class DapController extends Controller
 
   public function delete(Request $request)
   {
-      DB::beginTransaction();
-  
-      try {
+    DB::beginTransaction();
 
-        $id = $request->id;
-        $emp =   dap::find($id);
+    try {
 
-         
-          if ($emp && $emp->userid == Auth::id()) {
-          
+      $id = $request->id;
+      $emp =   dap::find($id);
 
-               // Trouver tous les enregistrements Elementdap associés au dap
-              $elements = Elementdap::where('dapid', $id)->get();
-              // Collecter les ids des Feb à mettre à jour
-              $febIds = $elements->pluck('referencefeb')->toArray();
-              // Mettre à jour les enregistrements Feb en une seule fois
-              Feb::whereIn('id', $febIds)->update(['statut' => 0]);
-  
-              dap::destroy($id);
-               // Trouver tous les enregistrements Elementdap associés au dap
-              Elementdap::where('dapid', $id)->delete();
-              Elementdjas::where('idddap', $id)->delete();
 
-              Dja::where('numerodap',$id)->delete();
+      if ($emp && $emp->userid == Auth::id()) {
 
-              DB::commit();
-  
-              return response()->json([
-                  'status' => 200,
-              ]);
-          } else {
-              DB::rollBack();
-              return response()->json([
-                  'status' => 205,
-                  'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le DAP. Veuillez contacter le créateur  pour procéder à la suppression.'
-              ]);
-          }
-      } catch (\Exception $e) {
-          DB::rollBack();
-          return response()->json([
-              'status' => 500,
-              'message' => 'Erreur lors de la suppression du DAP.',
-              'error' => $e->getMessage(), // Message d'erreur de l'exception
-              'exception' => (string) $e // Détails de l'exception convertis en chaîne
-          ]);
+
+        // Trouver tous les enregistrements Elementdap associés au dap
+        $elements = Elementdap::where('dapid', $id)->get();
+        // Collecter les ids des Feb à mettre à jour
+        $febIds = $elements->pluck('referencefeb')->toArray();
+        // Mettre à jour les enregistrements Feb en une seule fois
+        Feb::whereIn('id', $febIds)->update(['statut' => 0]);
+
+        dap::destroy($id);
+        // Trouver tous les enregistrements Elementdap associés au dap
+        Elementdap::where('dapid', $id)->delete();
+        Elementdjas::where('idddap', $id)->delete();
+
+        Dja::where('numerodap', $id)->delete();
+
+        DB::commit();
+
+        return response()->json([
+          'status' => 200,
+        ]);
+      } else {
+        DB::rollBack();
+        return response()->json([
+          'status' => 205,
+          'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le DAP. Veuillez contacter le créateur  pour procéder à la suppression.'
+        ]);
       }
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return response()->json([
+        'status' => 500,
+        'message' => 'Erreur lors de la suppression du DAP.',
+        'error' => $e->getMessage(), // Message d'erreur de l'exception
+        'exception' => (string) $e // Détails de l'exception convertis en chaîne
+      ]);
+    }
   }
 
   public function show($idd)
@@ -700,7 +709,9 @@ class DapController extends Controller
       ->select('daps.*', 'services.title as titres', 'projects.budget as montantprojet', 'projects.title as projettitle', 'projects.devise as devise')
       ->where('daps.id', $idd)
       ->first();
-   
+
+    $dajshow = Dja::where('dapid', $idd)->first();
+
 
     $budget = $datadap->montantprojet;
     $ID = $datadap->projetiddap;
@@ -708,7 +719,7 @@ class DapController extends Controller
 
     $elementfeb = DB::table('febs')
       ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
-      ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire' ,  'febs.acce_signe', 'febs.comptable_signe' , 'febs.chef_signe')
+      ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire',  'febs.acce_signe', 'febs.comptable_signe', 'febs.chef_signe')
       ->where('elementdaps.dapid', $datadap->id)
       ->get();
 
@@ -738,31 +749,31 @@ class DapController extends Controller
       ->Where('projetids', $ID)
       ->SUM('montant');
 
-      $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
-    ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
-    ->where('elementboncaisses.projetid',$ID)
-    ->where('bonpetitcaisses.approuve_par_signature', 1)
-    ->sum('elementboncaisses.montant');
-    
+    $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
+      ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
+      ->where('elementboncaisses.projetid', $ID)
+      ->where('bonpetitcaisses.approuve_par_signature', 1)
+      ->sum('elementboncaisses.montant');
+
     $SOMMES_DEJA_UTILISE = $somme_gloable + $SOMME_PETITE_CAISSE;
 
-      if ($budget != 0) {
-        $pourcentage_globale = round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2);
+    if ($budget != 0) {
+      $pourcentage_globale = round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2);
     } else {
-        $pourcentage_globale = 0;
+      $pourcentage_globale = 0;
     }
-  
-    
+
+
     // Calcul du solde comptable
     $solde_comptable = $budget - $SOMMES_DEJA_UTILISE;
 
-  
-    
+
+
     // Calcul du pourcentage en cours
     if ($somme_ligne_principale != 0) {
-        $pourcentage_encours = round(($sommeGrandLigne * 100) / $somme_ligne_principale, 2);
+      $pourcentage_encours = round(($sommeGrandLigne * 100) / $somme_ligne_principale, 2);
     } else {
-        $pourcentage_encours = 0;
+      $pourcentage_encours = 0;
     }
 
     //etablie par 
@@ -771,14 +782,14 @@ class DapController extends Controller
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->Where('users.id', $datadap->userid)
       ->first();
-    
-      $fond_reussi = DB::table('users')
+
+    $fond_reussi = DB::table('users')
       ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->Where('users.id', $datadap->beneficiaire)
       ->first();
 
-     
+
 
     $Demandeetablie =  DB::table('users')
       ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -836,7 +847,8 @@ class DapController extends Controller
         'solde_comptable' => $solde_comptable,
         'pourcentage_encours' => $pourcentage_encours,
         'devise' => $devise,
-        'fond_reussi' => $fond_reussi
+        'fond_reussi' => $fond_reussi,
+        'dajshow' => $dajshow
 
 
 
@@ -856,34 +868,36 @@ class DapController extends Controller
       ->where('daps.id', $idd)
       ->first();
 
+    $dajshow = Dja::where('dapid', $idd)->first();
+
     $budget = $datadap->montantprojet;
     $ID = $datadap->projetiddap;
     $devise  = $datadap->devise;
 
     $fond_reussi = DB::table('users')
-    ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-    ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
-    ->Where('users.id', $datadap->beneficiaire)
-    ->first();
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
+      ->Where('users.id', $datadap->beneficiaire)
+      ->first();
 
-   // dd($fond_reussi);
+    // dd($fond_reussi);
 
     $title = "Modification DAP";
     $service = Service::all();
 
     $banque = Banque::all();
 
-   
+
     $compte =  DB::table('comptes')
-    ->where('comptes.projetid', $ID)
-    ->where('compteid', '=', 0)
-    ->get();
+      ->where('comptes.projetid', $ID)
+      ->where('compteid', '=', 0)
+      ->get();
     // utilisateur
     $personnel = DB::table('users')
-    ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-    ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-    ->orderBy('nom', 'ASC')
-    ->get();
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+      ->orderBy('nom', 'ASC')
+      ->get();
 
 
     $initiateur = DB::table('users')
@@ -963,13 +977,13 @@ class DapController extends Controller
       ->where('statut', 0)
       ->get();
 
-      $elementfeb = DB::table('febs')
+    $elementfeb = DB::table('febs')
       ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
       ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire')
       ->where('elementdaps.dapid', $datadap->id)
       ->get();
 
-     
+
 
 
     return view(
@@ -991,11 +1005,12 @@ class DapController extends Controller
         'secretaire'  => $secretaire,
         'chefprogramme' => $chefprogramme,
         'initiateur' => $initiateur,
-        'feb' => $feb, 
+        'feb' => $feb,
         'banque' => $banque,
         'fond_reussi' => $fond_reussi,
-        'elementfeb' => $elementfeb
-        
+        'elementfeb' => $elementfeb,
+        'dajshow'  => $dajshow
+
       ]
     );
   }
@@ -1011,6 +1026,8 @@ class DapController extends Controller
       ->where('daps.id', $id)
       ->first();
 
+      $dajshow = Dja::where('dapid', $id)->first();
+
     $budget = $datadap->montantprojet;
     $IDb = $datadap->projetiddap;
     $devise = $datadap->devise;
@@ -1018,11 +1035,11 @@ class DapController extends Controller
 
     $datafebElement = DB::table('febs')
       ->leftJoin('elementdaps', 'febs.id', '=', 'elementdaps.referencefeb')
-      ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire' )
+      ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire')
       ->where('elementdaps.dapid', $id)
       ->get();
 
- 
+
 
     $elementfebencours = DB::table('febs')
       ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
@@ -1051,35 +1068,35 @@ class DapController extends Controller
       ->sum('montant');
 
 
-      $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
-    ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
-    ->where('elementboncaisses.projetid',$IDb)
-    ->where('bonpetitcaisses.approuve_par_signature', 1)
-    ->sum('elementboncaisses.montant');
-    
+    $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
+      ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
+      ->where('elementboncaisses.projetid', $IDb)
+      ->where('bonpetitcaisses.approuve_par_signature', 1)
+      ->sum('elementboncaisses.montant');
+
     $SOMMES_DEJA_UTILISE = $somme_gloable + $SOMME_PETITE_CAISSE;
 
     $pourcetage_globale = $budget ? round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2) : 0;
-    
+
     // Calcul du solde comptable
-  
+
     $relicat = $budget - $SOMMES_DEJA_UTILISE;
-    
+
     // Calcul du pourcentage en cours
 
     $pourcentage_encours = $somme_ligne_principale ? round(($sommeGrandLigne * 100) / $somme_ligne_principale, 2) : 0;
-    
+
     $infoglo = DB::table('identifications')->first();
 
     $fond_reussi = DB::table('users')
-    ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-    ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
-    ->where('users.id', $datadap->beneficiaire)
-    ->first();
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
+      ->where('users.id', $datadap->beneficiaire)
+      ->first();
 
 
     $etablienom = DB::table('users')
-    ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->where('users.id', $datadap->iduser)
       ->first();
@@ -1158,7 +1175,8 @@ class DapController extends Controller
       'chefcomptable',
       'chefservice',
       'somme_ligne_principale',
-      'fond_reussi'
+      'fond_reussi',
+      'dajshow'
     ));
 
     $pdf->setPaper('A4', 'landscape');
@@ -1170,109 +1188,107 @@ class DapController extends Controller
 
   public function getFebDetails(Request $request)
   {
-      
-    $id = $request->input('id');
-      $dataFeb = $check = Feb::findOrFail($id);
-
-      // Récupérer les ID et les détails associés
-      $idl = $check->sous_ligne_bugdetaire;
-      $id_gl = $check->ligne_bugdetaire;
-      $idfeb = $check->id;
-      $numero_classe_feb =  $check->numerofeb;
-
-      $datElement = Elementfeb::where('febid', $idfeb)->get();
-
-      $IDB = $check->projetid;
-      $project = Project::findOrFail($IDB);
-      $budget = $project->budget;
-
-      $somme_ligne_principale = DB::table('rallongebudgets')
-          ->where('compteid', $id_gl)
-          ->sum('budgetactuel');
-
-      $onebeneficaire = Beneficaire::find($check->beneficiaire);
-
-      $sommeallfeb = DB::table('elementfebs')
-          ->where('numero', '<=', $numero_classe_feb)
-          ->where('projetids', $IDB)
-          ->sum('montant');
-
-      $dataLigne = Compte::find($idl);
-
     
+    $id = $request->input('id');
+    $dataFeb = $check = Feb::findOrFail($id);
 
-          $sommelign = DB::table('elementfebs')
-          ->where('grandligne', $id_gl)
-          ->where('numero', '<=', $numero_classe_feb)
-          ->where('projetids', $IDB)
-          ->sum('montant');
+    // Récupérer les ID et les détails associés
+    $idl = $check->sous_ligne_bugdetaire;
+    $id_gl = $check->ligne_bugdetaire;
+    $idfeb = $check->id;
+    $numero_classe_feb =  $check->numerofeb;
 
-     
+    $datElement = Elementfeb::where('febid', $idfeb)->get();
 
-      if ($somme_ligne_principale != 0) {
-        $sommelignpourcentage = round(($sommelign * 100) / $somme_ligne_principale, 2);
+    $IDB = $check->projetid;
+    $project = Project::findOrFail($IDB);
+    $budget = $project->budget;
+
+    $somme_ligne_principale = DB::table('rallongebudgets')
+      ->where('compteid', $id_gl)
+      ->sum('budgetactuel');
+
+    $onebeneficaire = Beneficaire::find($check->beneficiaire);
+
+    $sommeallfeb = DB::table('elementfebs')
+      ->where('numero', '<=', $numero_classe_feb)
+      ->where('projetids', $IDB)
+      ->sum('montant');
+
+    $dataLigne = Compte::find($idl);
+
+    $sommelign = DB::table('elementfebs')
+      ->where('grandligne', $id_gl)
+      ->where('numero', '<=', $numero_classe_feb)
+      ->where('projetids', $IDB)
+      ->sum('montant');
+
+    if ($somme_ligne_principale != 0) {
+      $sommelignpourcentage = round(($sommelign * 100) / $somme_ligne_principale, 2);
     } else {
       $sommelignpourcentage = 0;
     }
 
-      $sommefeb = DB::table('elementfebs')
-          ->where('febid', $idfeb)
-          ->where('projetids', $IDB)
-          ->sum('montant');
+    $sommefeb = DB::table('elementfebs')
+      ->where('febid', $idfeb)
+      ->where('projetids', $IDB)
+      ->sum('montant');
 
-          $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
-          ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
-          ->where('elementboncaisses.projetid',$IDB)
-          ->where('bonpetitcaisses.approuve_par_signature', 1)
-          ->sum('elementboncaisses.montant');
-
+    $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
+      ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
+      ->where('elementboncaisses.projetid', $IDB)
+      ->where('bonpetitcaisses.approuve_par_signature', 1)
+      ->sum('elementboncaisses.montant');
 
     $SOMMES_DEJA_UTILISE = $sommeallfeb + $SOMME_PETITE_CAISSE;
 
-    
-      if ($budget != 0) {
-        $POURCENTAGE_GLOGALE = round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2);
+    if ($budget != 0) {
+      $POURCENTAGE_GLOGALE = round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2);
     } else {
       $POURCENTAGE_GLOGALE = 0;
     }
 
-    
+    // Récupérer les informations sur l'utilisateur
+    $createur = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'users.id as useridp')
+      ->where('users.id', $check->userid)
+      ->first();
 
-      // Récupérer les informations sur l'utilisateur
-      $createur = DB::table('users')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('personnels.nom', 'personnels.prenom', 'users.id as useridp')
-          ->where('users.id', $check->userid)
-          ->first();
+    $etablienom = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
+      ->where('users.id', $check->acce)
+      ->first();
 
-      $etablienom = DB::table('users')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
-          ->where('users.id', $check->acce)
-          ->first();
+    $comptable_nom = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+      ->where('users.id', $check->comptable)
+      ->first();
 
-      $comptable_nom = DB::table('users')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
-          ->where('users.id', $check->comptable)
-          ->first();
+    $checcomposant_nom = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+      ->where('users.id', $check->chefcomposante)
+      ->first();
 
-      $checcomposant_nom = DB::table('users')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
-          ->where('users.id', $check->chefcomposante)
-          ->first();
+    // Fetch attached documents
+    $documents  = attache_feb::join('apreviations', 'attache_febs.annexid', 'apreviations.id')
+      ->select('apreviations.abreviation', 'apreviations.libelle', 'attache_febs.urldoc')
+      ->where('attache_febs.febid',  $id)
+      ->get();
 
-      // Initialiser la variable de sortie
-      $output = '';
+    // Initialiser la variable de sortie
+    $output = '';
 
-      if ($dataFeb) {
-          $datElementFeb = Elementfeb::where('febid', $id)->get();
-          $n = 1;
-          $sommefeb = 0;
+    if ($dataFeb) {
+      $datElementFeb = Elementfeb::where('febid', $id)->get();
+      $n = 1;
+      $sommefeb = 0;
 
-          // Créer l'en-tête du tableau
-          $output .= '
+      // Créer l'en-tête du tableau
+      $output .= '
               <div class="row">
                   <h5><center>FICHE D’EXPRESSION DES BESOINS (FEB) N° ' . $dataFeb->numerofeb . '
                   <a href="' . route('generate-pdf-feb', $dataFeb->id) . '" class="btn btn-primary waves-light waves-effect" title="Générer PDF">
@@ -1291,207 +1307,30 @@ class DapController extends Controller
                           </tr>
                           <tr>
                               <td>Code: ' . $dataLigne->numero . ' Ligne budgétaire: ' . $dataLigne->libelle . '</td>
-                              <td>';
-
-          // Créer la section des cases à cocher avec les descriptions dans les titres
-          $output .= '<label title="Bon de commande">';
-
-          $bc_ur = $dataFeb->url_bon_commande;
-          $imagePath_bc = public_path($bc_ur);
-          
-          $output .= '<label title="Bon de commande">';
-          if (file_exists($imagePath_bc)) {
-              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($bc_ur) . '"> BC:</a>';
-          } else {
-              $output .= 'BC ';
-          }
-          $output .= '</label>';
-          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->bc == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-          
-          $facture_ur = $dataFeb->url_facture;
-          $imagePath_facture = public_path($facture_ur);
-          
-          $output .= '<label title="Facture">';
-          if (file_exists($imagePath_facture)) {
-              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($facture_ur) . '"> Facture:</a>';
-          } else {
-              $output .= 'Facture ';
-          }
-          $output .= '</label>';
-          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->facture == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-          
-          $om_ur = $dataFeb->url_ordre_mission;
-          $imagePath_om = public_path($om_ur);
-          
-          $output .= '<label title="Ordre de mission">';
-          if (file_exists($imagePath_om)) {
-              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($om_ur) . '"> O.M:</a>';
-          } else {
-              $output .= 'O.M ';
-          }
-          $output .= '</label>';
-          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->om == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-          
-          $pva_ur = $dataFeb->url_pva;
-          $imagePath_pva = public_path($pva_ur);
-          
-          $output .= '<label title="Procès-verbal d\'analyse">';
-          if (file_exists($imagePath_pva)) {
-              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($pva_ur) . '">  P.V.A:</a>';
-          } else {
-              $output .= 'P.V.A ';
-          }
-          $output .= '</label>';
-          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->nec == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-          
-          $fpdevis_ur = $dataFeb->url_fpdevis;
-          $imagePath_fpdevis = public_path($fpdevis_ur);
-          
-          $output .= '<label title="Dévis/Liste">';
-          if (file_exists($imagePath_fpdevis)) {
-              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($fpdevis_ur) . '"> Dévis/Liste:</a>';
-          } else {
-              $output .= 'Dévis/Liste ';
-          }
-          $output .= '</label>';
-        
-          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->fpdevis == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-          
-
-          $fp_ur = $dataFeb->url_fp;
-          $imagePath_fp = public_path($fp_ur);
-          
-          $output .= '<label title="Facture proformat">';
-          if (file_exists($imagePath_fp)) {
-              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($fp_ur) . '"> FP :</a>';
-          } else {
-              $output .= 'FP:';
-          }
-          $output .= '</label>';
-        
-          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->fp == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-          
+                             <td>Documents attachés: <br>';
 
 
-          $rm_ur = $dataFeb->url_rm;
-          $imagePath_rm = public_path($rm_ur);
-          
-          $output .= '<label title="Rapport de mission">';
-          if (file_exists($imagePath_rm)) {
-              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($rm_ur) . '"> R.M:</a>';
+      if ($documents->isNotEmpty()) {
+        foreach ($documents as $doc) {
+          if ($doc->urldoc !== null) {
+            // Lien cliquable si `urldoc` est disponible
+            $output .= '<i class="fa fa-check-circle" style="color: green;" title="' . $doc->libelle . '"></i>  <a href="' . asset($doc->urldoc) . '" target="_blank" title="' . $doc->libelle . '">'
+              . $doc->abreviation .
+              '</a>, ';
           } else {
-              $output .= 'R.M ';
+            // Icône rouge si aucun document n'est disponible
+            $output .= '<i class="fa fa-times-circle" style="color: red;" title="Aucun document disponible"></i> '
+              . $doc->abreviation . ', ';
           }
-          $output .= '</label>';
-          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->rm == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-          
-          $tdr_ur = $dataFeb->url_tdr;
-          $imagePath_tdr = public_path($tdr_ur);
-          
-          $output .= '<label title="Termes de Référence">';
-          if (file_exists($imagePath_tdr)) {
-              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($tdr_ur) . '"> T.D.R:</a>';
-          } else {
-              $output .= 'T.D.R ';
-          }
-          $output .= '</label>';
-          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->tdr == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-          
-          $bv_ur = $dataFeb->url_bv;
-          $imagePath_bv = public_path($bv_ur);
-          
-          $output .= '<label title="Bordereau de versement">';
-          if (file_exists($imagePath_bv)) {
-              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($bv_ur) . '"> B.V:</a>';
-          } else {
-              $output .= 'B.V ';
-          }
-          $output .= '</label>';
-          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->bv == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-          
-
-
-          $recu_ur = $dataFeb->url_recu;
-          $imagePath_recu = public_path($recu_ur);
-          
-          $output .= '<label title="Reçu">';
-          if (file_exists($imagePath_recu)) {
-              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($recu_ur) . '"> Reçu:</a>';
-          } else {
-              $output .= 'Reçu ';
-          }
-          $output .= '</label>';
-          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->recu == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-          
-          $ar_ur = $dataFeb->url_ar;
-          $imagePath_ar = public_path($ar_ur);
-          
-          $output .= '<label title="Accusé de réception">';
-          if (file_exists($imagePath_ar)) {
-              $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($ar_ur) . '"> A.R:</a>';
-          } else {
-              $output .= 'A.R ';
-          }
-          $output .= '</label>';
-          $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->ar == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
-          
-          $be_ur = $dataFeb->url_be;
-          $imagePath_be = public_path($be_ur);
-          
-          $output .= '<label title="Bordereau d\'expédition">';
-          if (file_exists($imagePath_be)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($be_ur) . '"> B.E:</a>';
-        } else {
-            $output .= 'B.E ';
         }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->be == 1 ? 'checked' : '') . ' /> &nbsp;&nbsp;';
+        // Suppression de la virgule finale
+        $output = rtrim($output, ', ');
+      } else {
+        // Message si aucun document n'est disponible
+        $output .= '<i class="fa fa-times-circle" style="color: red;" title="Aucun fichier attaché disponible"></i>';
+      }
 
-        // Vérification pour Appel à la participation à la construction au CFK
-        $apc_ur = $dataFeb->url_appel_cfk;
-        $imagePath_apc = public_path($apc_ur);
-
-        $output .= '<label title="Appel à la participation à la construction au CFK">';
-        if (file_exists($imagePath_apc)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($apc_ur) . '"> A.P.C:</a>';
-        } else {
-            $output .= 'A.P.C ';
-        }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->apc == 1 ? 'checked' : '') . ' />';
-
-          
-        $ra_ur = $dataFeb->url_ra;
-        $imagePath_ra = public_path($ra_ur);
-
-        $output .= '<label title="Rapport d\'activites">';
-        if (file_exists($imagePath_ra)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($ra_ur) . '"> R.A:</a>';
-        } else {
-            $output .= 'R.A';
-        }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->ra == 1 ? 'checked' : '') . ' />';
-
-          
-
-        $autres_ur = $dataFeb->url_autres;
-        $imagePath_autres = public_path($autres_ur);
-
-        $output .= '<label title="Autres">';
-        if (file_exists($imagePath_autres)) {
-            $output .= '<a href="javascript:void(0)" onclick="openPopup(this)" data-document-url="' . asset($autres_ur) . '"> Autres :</a>';
-        } else {
-            $output .= 'Autres';
-        }
-        $output .= '</label>';
-        $output .= ' <input type="checkbox" class="form-check-input" disabled ' . ($dataFeb->autres== 1 ? 'checked' : '') . ' />';
-
-          
-
-
-
-          $output .= '</td>
+      $output .= '</td>
                           </tr>
                           <tr>
                               <td>Taux d’exécution globale de la ligne et sous ligne budgétaire: ' . $sommelignpourcentage . ' %</td>
@@ -1505,8 +1344,8 @@ class DapController extends Controller
                   </div>
               </div>';
 
-          // Ajouter les éléments de la FEB
-          $output .= '
+      // Ajouter les éléments de la FEB
+      $output .= '
               <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
                   <thead style="background-color:#3CB371; color:white">
                       <tr>
@@ -1522,13 +1361,13 @@ class DapController extends Controller
                   </thead>
                   <tbody>';
 
-          foreach ($datElementFeb as $data) {
-              $activite = DB::table('activities')->where('id', $data->libellee)->first();
-              $titreActivite = $activite ? ucfirst($activite->titre) : '';
+      foreach ($datElementFeb as $data) {
+        $activite = DB::table('activities')->where('id', $data->libellee)->first();
+        $titreActivite = $activite ? ucfirst($activite->titre) : '';
 
-              $sommefeb += $data->montant;
+        $sommefeb += $data->montant;
 
-              $output .= '
+        $output .= '
                   <tr>
                       <td style="width:3%">' . $n . '</td>
                       <td style="width:40%">' . $titreActivite . '</td>
@@ -1539,11 +1378,11 @@ class DapController extends Controller
                       <td style="width:10%" align="center">' . number_format($data->pu, 0, ',', ' ') . '</td>
                       <td style="width:20%" align="center">' . number_format($data->montant, 0, ',', ' ') . '</td>
                   </tr>';
-              $n++;
-          }
+        $n++;
+      }
 
-          // Ajouter la ligne de total
-          $output .= '
+      // Ajouter la ligne de total
+      $output .= '
                   <tr>
                       <td colspan="7"><b>Total général</b></td>
                       <td align="center"><b>' . number_format($sommefeb, 0, ',', ' ') . '</b></td>
@@ -1551,8 +1390,8 @@ class DapController extends Controller
                   </tbody>
               </table>';
 
-          // Ajouter la section de signature
-          $output .= '
+      // Ajouter la section de signature
+      $output .= '
               <table style="width:100%; margin:auto">
                   <tr>
                       <td>
@@ -1562,15 +1401,15 @@ class DapController extends Controller
                               ' . ucfirst($etablienom->nom) . ' ' . ucfirst($etablienom->prenom) . '
                               <br>';
 
-          if ($dataFeb->acce_signe == 1) {
-              $output .= '
+      if ($dataFeb->acce_signe == 1) {
+        $output .= '
                               <br>
                               <img src="' . asset($etablienom->signature) . '" width="200px" />';
-          } else {
-              $output .= '<p>Signature non disponible</p>';
-          }
+      } else {
+        $output .= '<p>Signature non disponible</p>';
+      }
 
-          $output .= '
+      $output .= '
                           </center>
                       </td>
                       <td>
@@ -1580,15 +1419,15 @@ class DapController extends Controller
                               ' . $comptable_nom->nom . ' ' . $comptable_nom->prenom . '
                               <br>';
 
-          if ($dataFeb->comptable_signe == 1) {
-              $output .= '
+      if ($dataFeb->comptable_signe == 1) {
+        $output .= '
                               <br>
                               <img src="' . asset($comptable_nom->signature) . '" width="200px" />';
-          } else {
-              $output .= '<p>Signature non disponible</p>';
-          }
+      } else {
+        $output .= '<p>Signature non disponible</p>';
+      }
 
-          $output .= '
+      $output .= '
                           </center>
                       </td>
                       <td>
@@ -1598,21 +1437,21 @@ class DapController extends Controller
                               ' . $checcomposant_nom->nom . ' ' . $checcomposant_nom->prenom . '
                               <br>';
 
-          if ($dataFeb->chef_signe == 1) {
-              $output .= '
+      if ($dataFeb->chef_signe == 1) {
+        $output .= '
                               <br>
                               <img src="' . asset($checcomposant_nom->signature) . '" width="200px" />';
-          } else {
-              $output .= '<p>Signature non disponible</p>';
-          }
+      } else {
+        $output .= '<p>Signature non disponible</p>';
+      }
 
-          $output .= '
+      $output .= '
                           </center>
                       </td>
                   </tr>
               </table>';
-      } else {
-          $output .= '
+    } else {
+      $output .= '
               <tr>
                   <td colspan="8">
                       <h5 class="text-center text-secondary my-5">
@@ -1620,32 +1459,32 @@ class DapController extends Controller
                       </h5>
                   </td>
               </tr>';
-      }
+    }
 
-      // Retourne la réponse JSON contenant le code HTML généré
-      return response()->json($output);
+    // Retourne la réponse JSON contenant le code HTML généré
+    return response()->json($output);
   }
 
   public function fetchAllsignaledap($dapid)
   {
-      $signale = Sigaledap::where('dapid', $dapid)
-          ->orderBy('id', 'ASC')
-          ->leftJoin('users', 'sigaledaps.userid', '=', 'users.id')
-          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-          ->select('sigaledaps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'users.avatar as avatar')
-          ->get();
+    $signale = Sigaledap::where('dapid', $dapid)
+      ->orderBy('id', 'ASC')
+      ->leftJoin('users', 'sigaledaps.userid', '=', 'users.id')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('sigaledaps.*', 'personnels.nom as user_nom', 'personnels.prenom as user_prenom', 'users.avatar as avatar')
+      ->get();
 
-      $output = '';
+    $output = '';
 
-      if ($signale->count() > 0) {
-          foreach ($signale as $rs) {
-            if ($rs->userid ==  Auth::id()) {
-              $supprimerMOi =  '<a class="dropdown-item text-danger mx-1 deleteMessageSend" id="' . $rs->id . '" href="#" ><i class="far fa-trash-alt"></i> Supprimer</a>';
-            }else{
-              $supprimertoi =  '<a class="dropdown-item text-danger mx-1 deleteMessageSend" id="' . $rs->id . '" href="#" ><i class="far fa-trash-alt"></i> Supprimer</a>';
-            }
-              if ($rs->userid == $rs->notisid) {
-                  $output .= '
+    if ($signale->count() > 0) {
+      foreach ($signale as $rs) {
+        if ($rs->userid ==  Auth::id()) {
+          $supprimerMOi =  '<a class="dropdown-item text-danger mx-1 deleteMessageSend" id="' . $rs->id . '" href="#" ><i class="far fa-trash-alt"></i> Supprimer</a>';
+        } else {
+          $supprimertoi =  '<a class="dropdown-item text-danger mx-1 deleteMessageSend" id="' . $rs->id . '" href="#" ><i class="far fa-trash-alt"></i> Supprimer</a>';
+        }
+        if ($rs->userid == $rs->notisid) {
+          $output .= '
                       <li class="right" >
                           <div class="conversation-list">
                               <div class="chat-avatar">
@@ -1659,14 +1498,14 @@ class DapController extends Controller
                                       <p class="mb-0">' . ucfirst($rs->message) . '</p>
                                   </div>
                                   <p class="chat-time mb-0">
-                                  <i class="mdi mdi-clock-outline align-middle me-1"></i> ' .date(' H:i:s d-m-Y', strtotime($rs->created_at)) . ' 
-                                    '.@$supprimerMOi.'
+                                  <i class="mdi mdi-clock-outline align-middle me-1"></i> ' . date(' H:i:s d-m-Y', strtotime($rs->created_at)) . ' 
+                                    ' . @$supprimerMOi . '
                                   </p>
                               </div>
                           </div>
                       </li>';
-              } else {
-                  $output .= '
+        } else {
+          $output .= '
                       <li data-simplebar>
                           <div class="conversation-list">
                               <div class="chat-avatar">
@@ -1678,53 +1517,53 @@ class DapController extends Controller
                                       <p class="mb-0">' . ucfirst($rs->message) . '
                                       </p>
                                   </div>
-                                  <p class="chat-time mb-0"><i class="mdi mdi-clock-outline me-1"></i> ' .date(' H:i:s d-m-Y', strtotime($rs->created_at)) . '
-                                  '.@$supprimertoi.'
+                                  <p class="chat-time mb-0"><i class="mdi mdi-clock-outline me-1"></i> ' . date(' H:i:s d-m-Y', strtotime($rs->created_at)) . '
+                                  ' . @$supprimertoi . '
                                   </p>
                               </div>
                           </div>
                       </li>';
-              }
-          }
-      } else {
-          $output = '<li>No data available</li>';
+        }
       }
+    } else {
+      $output = '<li>No data available</li>';
+    }
 
-      return $output;
+    return $output;
   }
 
   public function storeSignaleDap(Request $request)
   {
-      DB::beginTransaction(); // Démarre la transaction
+    DB::beginTransaction(); // Démarre la transaction
 
-      try {
-          $signale = new Sigaledap();
-          $signale->userid = Auth()->user()->id;
-          $signale->notisid = $request->createdaps;
-          $signale->dapid = $request->dapids;
-          $signale->message = $request->messagesignale;
+    try {
+      $signale = new Sigaledap();
+      $signale->userid = Auth()->user()->id;
+      $signale->notisid = $request->createdaps;
+      $signale->dapid = $request->dapids;
+      $signale->message = $request->messagesignale;
 
-          $do = $signale->save();
+      $do = $signale->save();
 
-          if($do){
-              $checkfeb = Dap::find($request->dapids);
-              $checkfeb->signaledap = 1;
-              $checkfeb->update();
+      if ($do) {
+        $checkfeb = Dap::find($request->dapids);
+        $checkfeb->signaledap = 1;
+        $checkfeb->update();
 
-              DB::commit(); // Valide la transaction si tout réussit
+        DB::commit(); // Valide la transaction si tout réussit
 
-              return response()->json([
-                  'status' => 200,
-                  'dapid' => $request->dapids,
-              ]);
-          }
-      } catch (Exception $e) {
-          DB::rollback(); // Annule la transaction en cas d'erreur
-          return response()->json([
-              'status' => 202,
-              'error' => $e->getMessage(), // Retourne l'erreur spécifique
-          ]);
+        return response()->json([
+          'status' => 200,
+          'dapid' => $request->dapids,
+        ]);
       }
+    } catch (Exception $e) {
+      DB::rollback(); // Annule la transaction en cas d'erreur
+      return response()->json([
+        'status' => 202,
+        'error' => $e->getMessage(), // Retourne l'erreur spécifique
+      ]);
+    }
   }
 
   public function desacctiveSignale(Request $request)
@@ -1734,11 +1573,11 @@ class DapController extends Controller
 
       $emp = dap::find($request->id);
       if ($emp->userid == Auth::id()) {
-        
+
         $id = $request->id;
         $emp->signaledap = 2;
         $emp->update();
-        
+
         return response()->json([
           'status' => 200,
         ]);
@@ -1791,12 +1630,21 @@ class DapController extends Controller
           if ($elements->isNotEmpty()) {
               // Collecter les IDs des Feb à mettre à jour
               $febIds = $elements->pluck('referencefeb')->toArray();
+              
               // Mettre à jour les enregistrements Feb en une seule fois
-              Feb::whereIn('id', $febIds)->update(['statut' => 0]);
+              if (!empty($febIds)) {
+                  Feb::whereIn('id', $febIds)->update(['statut' => 0]);
+              }
   
-              // Supprimer les enregistrements associés dans Elementdap et Elementdjas
-              Elementdap::where('referencefeb', $id)->delete();
-              Elementdjas::where('febid', $id)->delete();
+              // Supprimer les enregistrements dans Elementdap s'ils existent
+              if (Elementdap::where('referencefeb', $id)->exists()) {
+                  Elementdap::where('referencefeb', $id)->delete();
+              }
+  
+              // Supprimer les enregistrements dans Elementdjas s'ils existent
+              if (Elementdjas::where('febid', $id)->exists()) {
+                  Elementdjas::where('febid', $id)->delete();
+              }
   
               DB::commit();
   
@@ -1817,10 +1665,11 @@ class DapController extends Controller
           return response()->json([
               'status' => 500,
               'message' => 'Erreur lors de la suppression de l\'élément.',
-              'error' => $e->getMessage(), // Message d'erreur de l'exception
-              'exception' => (string) $e // Détails de l'exception convertis en chaîne
+              'error' => $e->getMessage(),
+              'exception' => (string) $e
           ]);
       }
   }
   
+
 }

@@ -26,7 +26,7 @@
                     <div id="tableExample2">
                         <div class="table-responsive">
                             <table class="table table-striped table-sm fs--1 mb-0">
-                                <tbody class="list">
+                                <tbody  >
                                     <tr>
                                         <td style="width:300px"> Service <br>
                                             <select type="text" name="serviceid" id="serviceid" style="width: 100%" class="form-control form-control-sm" required>
@@ -39,14 +39,14 @@
                                             </select>
                                         </td>
 
-                                        <td>
+                                        <td colspan="6">
                                             <b>Composante/ Projet/Section </b><br>
                                             <input value="{{ Session::get('id') }}" type="hidden" name="projetid" id="projetid" required>
                                             <input value="{{ Session::get('title') }}" class="form-control form-control-sm" disabled>
                                         </td>
 
 
-                                        <td class="align-middle" style="width:20% ;  background: rgba(76, 175, 80, 0.3)">
+                                        <td class="align-middle" style="width:20% ;  background: rgba(76, 175, 80, 0.3)" rowspan="2">
                                             <b>NUMERO FEB: </b> <br>
                                             <select type="text" class="form-control form-control-sm febid" style="width: 100%" required multiple>
                                                 <option disabled="true" selected="true">--Aucun--</option>
@@ -58,9 +58,7 @@
                                             </select>
                                         </td>
 
-                            </table>
-
-                            <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+                         
                                 <tr>
 
                                     <td> Numéro du DAP
@@ -81,14 +79,11 @@
                                         <input type="text" min="0" class="form-control form-control-sm" name="soldecompte" value="{{ $somfeb }}" style="background-color:#c0c0c0" disabled>
                                     </td>
 
-                                    <td> Numéro cheque:
+                                    <td> OV/Numéro cheque :
                                         <input type="text" name="ch" id="ch" class="form-control form-control-sm">
                                     </td>
 
-                                    <td align="center"> OV nº : <br>
-                                        <input type="checkbox" class="form-check-input" name="ov" id="ov">
-                                    </td>
-
+                                  
                                     <td> Etabli au nom de: 
                                         <input type="text" name="paretablie" id="paretablie" class="form-control form-control-sm">
                                     </td>
@@ -108,7 +103,7 @@
 
                             </table>
 
-                            <hr>
+                       
 
                             <div id="Showpoll" class="Showpoll">
                                 <h6 style="margin-top:1% ;color:#c0c0c0">
@@ -128,15 +123,9 @@
                                 </tr>
                             </table>
                             <table class="table table-striped table-sm fs--1 mb-0 table-bordered" id="facture-column" style="display: none; width:100%">
-                                <!-- <tr> 
-                                    <td> Facture  &nbsp;  <input type="number" name="facture" id="facture" style="width: 100% ;  border:1px solid #c0c0c0"   /></td>
-                                    <td> Dure avance &nbsp;  <input type="number" name="duree_avence" id="duree_avence" style="width: 100% ;  border:1px solid #c0c0c0"  /></td>
-                                    <td style="width:15%"> Montant de l'Avance &nbsp;  <input type="number" name="montantavance" id="montantavance" style="width: 100%; border:1px solid #c0c0c0"   /></td>
-                                    <td> Montant utilisé* &nbsp;  <input type="number" name="montantutiliser" id="montantutiliser" style="width: 100%  ; border:1px solid #c0c0c0"    /></td>
-                                    <td> Surplus/Manque* &nbsp;  <input type="number" name="surplus" id="surplus" style="width: 100% ; border:1px solid #c0c0c0"     /></td>
-                                    <td> Bordereau de versement &nbsp;  <input type="texte" name="bordereau" id="bordereau" style="width: 100% ;  border:1px solid #c0c0c0"  /></td>
-                                    <td> Du &nbsp;  <input type="number" name="datedu" id="datedu" style="width: 100% ;  border:1px solid #c0c0c0" /></td>
-                                </tr> -->
+                                 <tr> 
+                                  
+                                </tr> 
                             </table>
 
                             <div id="Showretour" style="display: none;">

@@ -193,6 +193,17 @@
                         </li>
 
                         <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-file-ppt-2-line "></i>
+                              <span>Rapports </span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                              <li><a href="{{ route('rapport_carnet_bord') }}"><i class="fa fa-chart-pie"></i> Consommation</a></li>
+                              
+                            </ul>
+                          </li>
+
+                        <li>
                             <a href="{{ route('outilspa') }}">
                             <i class="fa fa-cog"></i>
 

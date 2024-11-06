@@ -45,75 +45,81 @@ class CarnetbordController extends Controller
 
   public function fetchAll()
   {
-    $entretien = Carnetbord::orderBy('id', 'DESC')
-      ->leftjoin('services', 'carnetbords.service_id', 'services.id')
-      ->leftjoin('projects', 'carnetbords.projetid', 'projects.id')
-      ->join('users', 'carnetbords.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('carnetbords.*', 'projects.title as projec_title', 'services.title as service_name', 'personnels.prenom as user_prenom')
-      ->get();
-
-    $output = '';
-    if ($entretien->count() > 0) {
-
-      $nombre = 1;
-      foreach ($entretien as $rs) {
-        $chef_mission = DB::table('users')
-          ->leftjoin('personnels', 'personnels.id', 'users.personnelid')
-          ->select('users.*', 'personnels.nom', 'users.id as idu', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
-          ->where('users.id', $rs->chefmission)
-          ->first();
-
-        $nom = $chef_mission->nom . ' ' . $chef_mission->prenom;
-        $cryptedId = Crypt::encrypt($rs->id);
-        $output .= '
-            <tr>
-                <td class="align-middle ps-3 name">' . $nombre . '</td>
-                <td>' . ucfirst($rs->numero_plaque) . '</td>
-                 <td>' . ucfirst($rs->datejour) . '</td>
-                <td>' . ucfirst($rs->service_name) . '</td>
-                <td>' . ucfirst($rs->itineraire) . '</td>
-                <td>' . ucfirst($rs->objectmission) . '</td>
-                <td>' . ucfirst($nom) . '</td>
-                <td>' . ucfirst($rs->projec_title) . '</td>
-                <td>' . ucfirst($rs->index_depart) . '</td>
-                <td>' . ucfirst($rs->index_retour) . '</td>
-                <td>' . ucfirst($rs->kms_parcourus) . '</td>
-                <td>' . ucfirst($rs->carburant_littre) . '</td>
-                <td>' . ucfirst($rs->user_prenom) . '</td>
-                <td>' . date('d.m.Y', strtotime($rs->created_at)) . '</td>
-                <td>
-                    <center>
-                        <div class="btn-group me-2 mb-2 mb-sm-0">
-                            <a  data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="mdi mdi-dots-vertical ms-2"></i>
-                            </a>
-                            <div class="dropdown-menu">
-                                 <a href="carnetbord/' . $cryptedId . '/view" class="dropdown-item mx-1 voirIcon"><i class="far fa-eye"></i> Voir</a>
-                                <a class="dropdown-item  mx-1 editIcon"  id="' . $rs->id . '"  href="#" data-bs-toggle="modal" data-bs-target="#EditDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent" ><i class="fa fa-edit"></i> Modifier</a>
-                                <a class="dropdown-item text-white mx-1 deleteIcon"  id="' . $rs->id . '"  href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
-                            </div>
-                        </div>
-                    </center>
-                </td>
-            </tr>';
-        $nombre++;
+      $entretien = Carnetbord::orderBy('id', 'DESC')
+          ->leftjoin('services', 'carnetbords.service_id', 'services.id')
+          ->leftjoin('projects', 'carnetbords.projetid', 'projects.id')
+          ->join('users', 'carnetbords.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('carnetbords.*', 'projects.title as projec_title', 'services.title as service_name', 'personnels.prenom as user_prenom')
+          ->get();
+  
+      $output = '';
+      if ($entretien->count() > 0) {
+  
+          $nombre = 1;
+          foreach ($entretien as $rs) {
+              $chef_mission = DB::table('users')
+                  ->leftjoin('personnels', 'personnels.id', 'users.personnelid')
+                  ->select('users.*', 'personnels.nom', 'users.id as idu', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
+                  ->where('users.id', $rs->chefmission)
+                  ->first();
+  
+              // Vérifier si nom ou prénom est null
+              $nom = ($chef_mission->nom ?? '') . ' ' . ($chef_mission->prenom ?? '');
+              if (trim($nom) == '') {
+                  $nom = 'Inconnu'; // Valeur par défaut si nom ou prénom est vide
+              }
+  
+              $cryptedId = Crypt::encrypt($rs->id);
+              $output .= '
+              <tr>
+                  <td class="align-middle ps-3 name">' . $nombre . '</td>
+                  <td>' . ucfirst($rs->numero_plaque) . '</td>
+                  <td>' . ucfirst($rs->datejour) . '</td>
+                  <td>' . ucfirst($rs->service_name) . '</td>
+                  <td>' . ucfirst($rs->itineraire) . '</td>
+                  <td>' . ucfirst($rs->objectmission) . '</td>
+                  <td>' . ucfirst($nom) . '</td>
+                  <td>' . ucfirst($rs->projec_title) . '</td>
+                  <td>' . ucfirst($rs->index_depart) . '</td>
+                  <td>' . ucfirst($rs->index_retour) . '</td>
+                  <td>' . ucfirst($rs->kms_parcourus) . '</td>
+                  <td>' . ucfirst($rs->carburant_littre) . '</td>
+                  <td>' . ucfirst($rs->user_prenom) . '</td>
+                  <td>' . date('d.m.Y', strtotime($rs->created_at)) . '</td>
+                  <td>
+                      <center>
+                          <div class="btn-group me-2 mb-2 mb-sm-0">
+                              <a  data-bs-toggle="dropdown" aria-expanded="false">
+                                  <i class="mdi mdi-dots-vertical ms-2"></i>
+                              </a>
+                              <div class="dropdown-menu">
+                                  <a href="carnetbord/' . $cryptedId . '/view" class="dropdown-item mx-1 voirIcon"><i class="far fa-eye"></i> Voir</a>
+                                  <a class="dropdown-item mx-1 editIcon" id="' . $rs->id . '" href="#" data-bs-toggle="modal" data-bs-target="#EditDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><i class="fa fa-edit"></i> Modifier</a>
+                                  <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $rs->id . '" href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
+                              </div>
+                          </div>
+                      </center>
+                  </td>
+              </tr>';
+              $nombre++;
+          }
+  
+          echo $output;
+      } else {
+          echo '
+          <tr>
+              <td colspan="13">
+                  <center>
+                  <h6 style="margin-top:1% ;color:#c0c0c0"> 
+                  <center><font size="50px"><i class="fa fa-info-circle"></i></font><br><br>
+                      Ceci est vide  !</center> </h6>
+                  </center>
+              </td>
+          </tr> ';
       }
-
-      echo $output;
-    } else {
-      echo '
-        <tr>
-            <td colspan="13">
-                <center>
-                <h6 style="margin-top:1% ;color:#c0c0c0"> 
-                <center><font size="50px"><i class="fa fa-info-circle"  ></i> </font><br><br>
-                    Ceci est vide  !</center> </h6>
-                </center>
-            </td>
-        </tr> ';
-    }
   }
+  
 
   public function store(Request $request)
   {
@@ -236,4 +242,34 @@ class CarnetbordController extends Controller
 
 
   }
+
+  public function rapportcarnet()
+  {
+
+    $title = 'Rapport Carnet de bord';
+
+    $vehicule = Vehicule::all();
+    $founisseur = Fournisseur::all();
+    $service = Service::all();
+    $projet = Project::all();
+
+    $personnel = DB::table('users')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+      ->orderBy('nom', 'ASC')
+      ->get();
+
+    return view(
+      'carnet_bord.rapport',
+      [
+        'title'       => $title,
+        'vehicule'    => $vehicule,
+        'founisseur' => $founisseur,
+        'service'     => $service,
+        'projet'      => $projet,
+        'personnel'   => $personnel
+      ]
+    );
+  }
+
 }

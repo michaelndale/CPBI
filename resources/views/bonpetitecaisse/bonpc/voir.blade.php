@@ -256,7 +256,7 @@
                                         <small>{{ $dateinfo->piedpage }}</small>
                                     </p>
                                     <br>
-                                    @if(Auth::user()->id == $dataPetiteCaisse->verifie_par && Auth::user()->id == $dataPetiteCaisse->	approuve_par )
+                                    @if(Auth::user()->id == $dataPetiteCaisse->verifie_par || Auth::user()->id == $dataPetiteCaisse->approuve_par )
                                     <div class="float-end">
                                         <button type="submit" name="save" id="dave" class="btn btn-primary w-md"> <i class="fas fa-cloud-download-alt"> </i> Sauvegarder la sinatgure </button>
                                         <br>

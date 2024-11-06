@@ -35,7 +35,7 @@ class ProjectController extends Controller
 {
   public function new()
   {
-    $title = 'New project';
+    $title = 'Nouveau projet';
     $members = DB::table('users')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
@@ -156,7 +156,7 @@ class ProjectController extends Controller
   
   public function list()
   {
-    $title = "List project";
+    $title = "Liste des projects";
     $data = DB::table('projects')
     ->join('users', 'projects.lead', '=', 'users.id')
     ->join('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -201,9 +201,6 @@ class ProjectController extends Controller
     // Si le projet n'existe pas, redirection avec un message d'erreur
     if (!$check) {
 
-
-
-
       return redirect()->back()->with('modal_message', "Projet non trouvé.");
     }
 
@@ -233,15 +230,16 @@ class ProjectController extends Controller
 
     // Récupération des intervenants du projet
     $intervennant = DB::table('affectations')
-      ->join('users', 'affectations.memberid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('affectations.*', 'personnels.nom', 'personnels.prenom', 'users.avatar')
-      ->where('affectations.projectid', $check->id)
-      ->get();
+    ->join('users', 'affectations.memberid', '=', 'users.id')
+    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->select('affectations.*', 'personnels.nom', 'personnels.prenom', 'users.avatar', 'users.is_connected')
+    ->where('affectations.projectid', $check->id)
+    ->get();
+    $title = $check->title;
 
     // Retourne la vue avec les données du projet
     return view('project.voir', [
-      'title' => 'Voir le projet',
+      'title' => $title,
       'active' => 'Project',
       'dataProject' => $check,
       'responsable' => $user,
@@ -252,7 +250,7 @@ class ProjectController extends Controller
 
   public function editshow($key)
   {
-    $title = "Show project";
+   
     $active = 'Project';
 
     $key = Crypt::decrypt($key);
@@ -266,6 +264,7 @@ class ProjectController extends Controller
     session()->put('budget', $check->budget);
     session()->put('periode', $check->periode);
     session()->put('lead', $check->lead);
+    $title = "Modification du project : ".$check->title;
 
     $act = DB::table('activities')
       ->orderby('id', 'DESC')

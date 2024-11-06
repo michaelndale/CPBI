@@ -6,6 +6,8 @@ use App\Models\Caisse;
 use App\Models\Comptepetitecaisse;
 use App\Models\rappotage;
 use App\Models\Rappotagecaisse;
+use App\Models\Rapprochement;
+use App\Models\Service;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
@@ -48,7 +50,7 @@ class RapportController extends Controller
             ]
         );
     }
-
+    
     public function cloturecaisse()
     {
         $title = 'Rapport de caisse';
@@ -119,11 +121,12 @@ class RapportController extends Controller
             $cloture->dernier_solde = $request->soldeCaisse;
             $cloture->verifier_par = $request->verifie_par;
             $cloture->approver_par = $request->approuver_par;
-            $cloture->numero_groupe = $numero . '/' . date('d-m-Y');
-            $cloture->le = date('Y-m-d');
+            $cloture->numero_groupe = $numero . '/' . date('Y');
+           
             $cloture->userid = Auth::id();
             $cloture->projetid = $IDP;
             $cloture->compteid = $request->compteId;
+            $cloture->moianne = $request->moiAnne;
             $cloture->save();
             $idRapportage = $cloture->id;
 
@@ -162,9 +165,19 @@ class RapportController extends Controller
 
                 $emp->verifier_signature  = $verifierPar;
                 $emp->approver_signature = $approver;
-                $emp->fait_a = $request->lieu;
-                $emp->le = $request->le;
-                $emp->cloture = 1;
+               
+                if($verifierPar==1){
+                    $emp->le_etablie = $request->le_etablie;
+                }
+
+                if($approver==1){
+                    $emp->le_verifier = $request->le_verifier;
+                }
+
+                if($verifierPar==1 && $approver==1){
+                    $emp->cloture = 1;
+                 }
+              
                 $do = $emp->update();
 
                 if ($do) {
@@ -190,7 +203,11 @@ class RapportController extends Controller
                         $CompteUpdate->cloture = 1;
                         $CompteUpdate->update();
                     }
+                    if($verifierPar==1 && $approver==1){
                     return redirect()->route('Rapport.caisse')->with('success', 'Très bien! La signature a bien été enregistrée avec une clotube de la caisse');
+                    }else{
+                        return redirect()->back()->with('success', 'Très bien! La signature a bien été enregistrée avec une clotube de la caisse'); 
+                    }
                 } else {
                 }
             } else {
@@ -346,8 +363,7 @@ class RapportController extends Controller
             return response('<p>Une erreur est survenue : ' . $e->getMessage() . '</p>', 500);
         }
     }
-
-    */
+  */
 
     public function generatePrintableFile(Request $request) {
 
@@ -415,5 +431,220 @@ class RapportController extends Controller
 
     
     }
+
+    public function rapprochement()
+    {
+        $title = 'Rapport de caisse';
+        $ID = session()->get('id');
+        // Vérifier si l'ID de la session n'est pas défini
+        if (!$ID) {
+            // Rediriger vers la route nommée 'dashboard'
+            return redirect()->route('dashboard');
+        }
+        $data =  DB::table('djas')
+                ->leftJoin('elementdjas', 'djas.id','elementdjas.iddjas')
+                ->join('users', 'djas.userid', '=', 'users.id')
+                ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+                ->select('djas.*', 'personnels.prenom as user_prenom','elementdjas.montant_avance as montantAvance','elementdjas.montant_utiliser as montantJustifie','elementdjas.montant_retourne as montantRetourne')
+                ->where('djas.projetiddja', $ID)
+                ->get();
+
+
+        $service = Service::all();
+
+        $personnel = DB::table('users')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+        ->orderBy('nom', 'ASC')
+        ->get();
+
+        return view(
+            'rapport.rapprochement.index',
+            [
+                'title'     => $title,
+                'dataDjas'  => $data,
+                'service'   => $service,
+                'personnel' => $personnel
+            ]
+        );
+    }
+
+    public function rapartitiooncouts()
+    {
+        $title = 'Rapport de caisse';
+        $ID = session()->get('id');
+        // Vérifier si l'ID de la session n'est pas défini
+        if (!$ID) {
+            // Rediriger vers la route nommée 'dashboard'
+            return redirect()->route('dashboard');
+        }
+        $dataDjas =  DB::table('djas')
+        ->orderBy('daps.numerodp', 'asc')
+        ->join('users', 'djas.userid', '=', 'users.id')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->join('daps','djas.numerodap' ,'daps.id')
+        ->select('djas.*', 'personnels.prenom as user_prenom', 'daps.numerodp as nume_dap')
+        ->where('djas.projetiddja', $ID)
+        ->get();
+
+
+        return view(
+            'rapport.rapartitiooncouts.index',
+            [
+                'title'     => $title,
+                'dataDjas'  => $dataDjas
+
+            ]
+        );
+    }
+
+    public function rapporRapprochement($id)
+    {
+        $title = 'Rapport de caisse';
+        $IDp = session()->get('id');
+        // Vérifier si l'ID de la session n'est pas défini
+        if (!$IDp) {
+            // Rediriger vers la route nommée 'dashboard'
+            return redirect()->route('dashboard');
+        }
+        $rapport = Rapprochement::join('users as user_creator', 'rapprochements.userid', '=', 'user_creator.id')
+            ->join('personnels as creator_personnel', 'user_creator.personnelid', '=', 'creator_personnel.id')
+            ->join('users as user_established', 'rapprochements.etabliepar', '=', 'user_established.id')
+            ->join('personnels as estab_personnel', 'user_established.personnelid', '=', 'estab_personnel.id')
+
+            ->join('users as user_verifier', 'rapprochements.verifier', '=', 'user_verifier.id')
+            ->join('personnels as verif_personnel', 'user_verifier.personnelid', '=', 'verif_personnel.id')
+            
+            ->join('services', 'rapprochements.serviceid','services.id')
+            ->select(
+                'rapprochements.*',
+                'creator_personnel.prenom as creator_prenom', 
+                'creator_personnel.nom as creator_nom', // Prénom et nom de l'utilisateur qui a créé
+                'estab_personnel.prenom as estab_prenom', 
+                'estab_personnel.nom as estab_nom',   // Prénom et nom de l'utilisateur qui a établi
+                'verif_personnel.prenom as verifier_prenom',
+                'verif_personnel.nom as verifier_nom',   // Prénom et nom de l'utilisateur qui a vérifié
+                'services.title as title_service'
+            )
+            ->where('rapprochements.id', '=', $id)
+            ->where('rapprochements.projetid', '=', $IDp)
+            ->first();
+
+
+            $datede = $rapport->datede; // Date de début (datetime)
+            $dateau = $rapport->dateau; // Date de fin (datetime)
+            
+            $dataDjas = DB::table('djas')
+                ->orderBy('djas.numerodjas', 'asc')
+                ->leftjoin('daps','djas.numerodjas', 'daps.numerodp')
+
+                ->join('users', 'djas.userid', '=', 'users.id')
+                ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+
+                ->leftjoin('users as user_beneficier', 'daps.beneficiaire', '=', 'user_beneficier.id')
+                ->leftJoin('personnels as benef_personnel', 'user_beneficier.personnelid', '=', 'benef_personnel.id')
+
+                ->leftJoin('elementdjas', 'djas.id','elementdjas.iddjas')
+
+                ->select('djas.*', 
+                        'personnels.prenom as user_prenom', 
+                        'elementdjas.montant_avance as montantAvance',
+                        'elementdjas.montant_utiliser as montantJustifie',
+                        'elementdjas.montant_retourne as montantRetourne', 
+                        'daps.comptabiliteb',
+                        'daps.id as refdapid',
+                        'daps.cho as cheque',
+                        'daps.justifier as dapjustifier',
+                        'daps.created_at  as datecreation',
+                        'daps.dateautorisation  as dateautorisations',
+                        'benef_personnel.id as idb',
+                        'benef_personnel.prenom as benef_prenom',
+                        'benef_personnel.nom as benef_nom' ,
+
+                        )
+
+                ->where('djas.projetiddja', $IDp)
+                ->where(function ($query) use ($datede, $dateau) {  
+                    $query->whereBetween('djas.created_at', [$datede, $dateau]) // Intervalle entre les deux dates
+                          ->orWhere('djas.created_at', '=', $datede) // Date de début (datetime)
+                          ->orWhere('djas.created_at', '=', $dateau); // Date de fin (datetime)
+                })
+                ->get(); // Exécuter la requête
+            
+
+
+        return view(
+            'rapport.rapprochement.rapport',
+            [
+                'title'     => $title,
+                'rapport'   => $rapport,
+                'datailrapport' =>$dataDjas
+               
+
+            ]
+        );
+    }
+
+
+    public function storeRecherche(Request $request)
+    {
+        $IDp = session()->get('id'); 
+        $nombreEnregistrements = Rapprochement::where('projetid', $IDp)->count(); 
+        $num = $nombreEnregistrements + 1;
+        $rapprochement = new Rapprochement();
+
+        $rapprochement->projetid = $request->projetid;
+        $rapprochement->serviceid = $request->serviceid;
+        $rapprochement->numero = $num;
+        $rapprochement->datede = $request->datede;
+        $rapprochement->dateau = $request->dateau;
+        $rapprochement->etabliepar = $request->etabliepar;
+        $rapprochement->verifier = $request->verifier;
+        $rapprochement->userid = Auth::id();
+        $rapprochement->save();
+
+        return response()->json([
+          'status' => 200,
+        ]);
+
+
+      
+    }
+
+
+    public function getRapprochement()
+{
+    $IDp = session()->get('id');
+    // Vérifier si l'ID de la session n'est pas défini
+    if (!$IDp) {
+        // Rediriger vers la route nommée 'dashboard'
+        return redirect()->route('dashboard');
+    }
+
+    $rapports = Rapprochement::join('users as user_creator', 'rapprochements.userid', '=', 'user_creator.id')
+    ->join('personnels as creator_personnel', 'user_creator.personnelid', '=', 'creator_personnel.id')
+    ->join('users as user_established', 'rapprochements.etabliepar', '=', 'user_established.id')
+    ->join('personnels as estab_personnel', 'user_established.personnelid', '=', 'estab_personnel.id')
+    ->join('users as user_verifier', 'rapprochements.verifier', '=', 'user_verifier.id')
+    ->join('personnels as verif_personnel', 'user_verifier.personnelid', '=', 'verif_personnel.id')
+    ->select(
+        'rapprochements.*',
+        'creator_personnel.prenom as creator_prenom', 'creator_personnel.nom as creator_nom', // Prénom de l'utilisateur qui a créé
+        'estab_personnel.prenom as estab_prenom', 'estab_personnel.nom as estab_nom',   // Prénom de l'utilisateur qui a établi
+        'verif_personnel.prenom as verifier_prenom','verif_personnel.nom as verifier_nom'   // Prénom de l'utilisateur qui a vérifié
+    )
+    ->where('rapprochements.projetid', $IDp)
+    ->get();
+
+
+    return view('rapport.rapprochement.liste', compact('rapports')); // Renvoyer la vue avec les rapports
+}
+
+
+
+
+
+    
+
     
 }

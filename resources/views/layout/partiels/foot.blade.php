@@ -45,7 +45,19 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-
+<div class="modal fade bs-signalisation" tabindex="-1" id="bs-signalisation" role="dialog" aria-labelledby="bs-signalisation" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"> <i class="ri-chat-voice-line"></i> Signalisation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        @include('signalisation.index')
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <div class="modal fade" id="verticallyCentered" tabindex="-1" aria-labelledby="verticallyCenteredModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -185,9 +197,6 @@
     </form>
   </div>
 </div>
-
-
-
 
 
 <div class="modal fade" id="editMotdepasseModal" tabindex="-1" aria-hidden="true">
@@ -652,6 +661,8 @@
 
 <!-- Datatable init js -->
 <script src="{{ asset('element/assets/js/pages/datatables.init.js') }}"></script>
+
+<script src="{{ asset('element/assets/libs/select2/js/select2.min.js') }}"></script>
 
 
 <script src="{{ asset('element/assets/js/app.js') }}"></script>

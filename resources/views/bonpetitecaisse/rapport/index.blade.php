@@ -101,9 +101,9 @@
                         // toastr.success('Les numéros ont été récupérés avec succès.');
                     },
                     error: function(xhr, status, error) {
-                        var errorMessage = xhr.status + ': ' + xhr.responseJSON.message || error;
+                        var errorMessage =  xhr.responseJSON.message || error;
                         $('#results').html('<div class="card-body"><div class=""><div class="alert alert-warning alert-dismissible fade show" role="alert"> <i class="mdi mdi-alert-outline me-2"></i>Erreur lors de la récupération des données , Aucun classement trouvé pour les critères spécifiés a votre recherche <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> </div></div> </div>');
-                        toastr.error('Erreur : ' + errorMessage);
+                        toastr.error('Infos : ' + errorMessage);
 
                     }
                 });

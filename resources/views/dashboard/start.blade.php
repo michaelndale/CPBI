@@ -179,7 +179,7 @@ $personnelData = DB::table('personnels')
 
                         @php
                         $currentDate = date('Y-m-d');
-                        $limitDate = '2024-10-25';
+                        $limitDate = '2024-12-10';
                         $limitDateTime = new DateTime($limitDate);
                         $currentDateTime = new DateTime($currentDate);
 
@@ -212,11 +212,12 @@ $personnelData = DB::table('personnels')
                                 <div data-countdown="2024/10/30" class="counter-number"></div>
                             </div>
                         </div>
-                    </div>
+                    </div> 
 
                     @endif
 
-                    <!-- end row -->
+                   
+                   
                 </div>
             </div>
         </div>

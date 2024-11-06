@@ -1,8 +1,9 @@
-
+<center> <h4> <u> RAPPORT DE CAISSE N<sup>o</sup> {{ $classement->numero_groupe }}  </u></h4></center>
 <table class="table table-bordered table-striped table-sm fs--1 mb-0">
     <tr>
         <td> Compte caisse : {{ $classement->codes }}: {{ $classement->libelles }}</td>
         <td> Numéro de classement : {{ $classement->numero_groupe }}</td>
+        <td> Mois: {{ date('m/Y', strtotime($classement->moianne))  }} </td>
        
     </tr>
 </table>
@@ -54,7 +55,8 @@
             @if ($classement->verifier_signature==1)
             <img src="{{ asset($verifie_par->signature) }}" width="150px" />
             @endif
-            @endif
+            @endif <br>
+            Le {{ date('d-m-Y', strtotime($classement->le_etablie))  }}
         </td>
         <td align="center">
             Vérifié par<br>
@@ -64,11 +66,13 @@
             @if ($classement->approver_signature==1)
             <img src="{{ asset($approuver_par->signature) }}" width="150px" />
             @endif
-            @endif
+            @endif <br>
+            Le {{ date('d-m-Y', strtotime($classement->le_verifier))  }}
         </td>
     </tr>
 </table>
+<!--
 <center>
     <br> Fait à {{ $classement->fait_a }} , le {{ date('d-m-Y', strtotime($classement->le))  }}
-</center>
+</center> -->
 <br>

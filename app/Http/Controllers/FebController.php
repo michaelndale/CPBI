@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\activitefeb;
 use App\Models\Activity;
+use App\Models\Apreviation;
+use App\Models\attache_feb;
 use App\Models\Beneficaire;
 use App\Models\Compte;
 use App\Models\Elementdap;
@@ -35,157 +37,188 @@ use Illuminate\Support\Str;
 
 class FebController extends Controller
 {
-  public function fetchAll()
+
+  public function create()
   {
-    $devise = session()->get('devise');
-    $budget = session()->get('budget');
+    // Récupérer l'ID de la session
     $ID = session()->get('id');
 
+    // Vérifier si l'ID de la session n'est pas défini
+    if (!$ID) {
+      // Rediriger vers la route nommée 'dashboard'
+      return redirect()->route('dashboard');
+    }
+
+    $title = "Nouvel Fiche F.E.B";
+    $personnel = DB::table('users')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+      ->orderBy('nom', 'ASC')
+      ->get();
+
+    $activite = DB::table('activities')
+      ->orderBy('id', 'DESC')
+      ->where('projectid', $ID)
+      ->get();
+
+    $attache = Apreviation::all();
+
+    $compte =  DB::table('comptes')
+      ->where('comptes.projetid', $ID)
+      ->where('compteid', '=', 0)
+      ->get();
+
+    $beneficaire = Beneficaire::orderBy('libelle')->get();
+
+    return view(
+      'document.feb.new',
+      [
+        'title' => $title,
+        'activite' => $activite,
+        'personnel' => $personnel,
+        'compte' => $compte,
+        'beneficaire' => $beneficaire,
+        'attache' => $attache
+      ]
+    );
+  }
+
+  public function fetchAll()
+  {
+    // Retrieve session variables
+    $devise = session()->get('devise');
+    $budget = session()->get('budget');
+    $projectId = session()->get('id');
+
+    // Query to fetch data from 'febs' and related tables
     $data = DB::table('febs')
       ->orderBy('numerofeb', 'asc')
-      ->join('comptes', 'febs.sous_ligne_bugdetaire' , 'comptes.id')
+      ->join('comptes', 'febs.sous_ligne_bugdetaire', 'comptes.id')
       ->join('users', 'febs.userid', '=', 'users.id')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('febs.*',  'personnels.prenom as user_prenom','comptes.numero as code')
-      ->where('febs.projetid', $ID)
+      ->select('febs.*', 'personnels.prenom as user_prenom', 'comptes.numero as code')
+      ->where('febs.projetid', $projectId)
       ->get();
 
     $output = '';
+
+    // Check if data is not empty
     if ($data->isNotEmpty()) {
       foreach ($data as $datas) {
+        // Calculate the total amount for the current FEB
         $sommefeb = DB::table('elementfebs')
           ->where('febid', $datas->id)
           ->sum('montant');
 
+        // Fetch attached documents
+        $getDocument = attache_feb::join('apreviations', 'attache_febs.annexid', 'apreviations.id')
+          ->select('apreviations.abreviation', 'apreviations.libelle')
+          ->where('attache_febs.febid', $datas->id)
+          ->get();
+
+        // Calculate the percentage of the budget
         $pourcentage = round(($sommefeb * 100) / $budget, 2);
-        $sommefeb = number_format($sommefeb, 0, ',', ' ');
+        $sommefebFormatted = number_format($sommefeb, 0, ',', ' ');
 
-        $facture = $datas->facture ? "checked" : "";
-        $om = $datas->om ? "checked" : "";
-        $bc = $datas->bc ? "checked" : "";
-        $nec = $datas->nec ? "checked" : "";
-        $fp = $datas->fp ? "checked" : "";
-        $recu = $datas->recu ? "checked" : "";
-        $rm = $datas->rm ? "checked" : "";
-
-        $checkedElements = [];
-
-        if ($datas->facture) {
-            $checkedElements[] = "facture";
-        }
-        if ($datas->om) {
-            $checkedElements[] = "om";
-        }
-        if ($datas->bc) {
-            $checkedElements[] = "bc";
-        }
-        if ($datas->nec) {
-            $checkedElements[] = "nec";
-        }
-        if ($datas->fp) {
-            $checkedElements[] = "fp";
-        }
-        if ($datas->recu) {
-            $checkedElements[] = "recu";
-        }
-        if ($datas->rm) {
-            $checkedElements[] = "rm";
-        }
-
-        // Convertir en chaîne de caractères pour affichage
-        // Vérification s'il y a des éléments cochés
-        if (!empty($checkedElements)) {
-          $checkedString = implode(', <i class="fa fa-check-circle" style="color: green;"></i> ', $checkedElements);
-
-
-          $checkedString=strtoupper($checkedString);
-          
+        // Generate checked string for attached documents
+        if ($getDocument->isNotEmpty()) {
+          $checkedString = implode(', ', $getDocument->map(function ($doc) {
+            return '<i class="fa fa-check-circle" style="color: green;" title="' . $doc->libelle . '"></i> ' . $doc->abreviation . '';
+          })->toArray());
+          $checkedString = strtoupper($checkedString);
         } else {
-          $checkedString = '<i class="fa fa-times-circle" style="color: red;" title="Aucun fichier attache disponible"></i>';  // Affiche un message si aucun élément n'est coché
+          $checkedString = '<i class="fa fa-times-circle" style="color: red;" title="Aucun fichier attache disponible"></i>';
         }
 
-
-
-
+        // Limit the description length
         $description = Str::limit($datas->descriptionf, 100, '...');
 
-        if ($datas->signale == 1) {
-          $message = ' <div class="spinner-grow text-danger " role="status" style=" 
-          width: 0.5rem; /* Définissez la largeur */
-          height: 0.5rem; /* Définissez la hauteur */">
-          <span class="sr-only">Loading...</span>
-        </div>';
-        } else {
-          $message = ' ';
-        }
+        // Display loading spinner if signaled
+        $message = $datas->signale == 1 ? '<div class="spinner-grow text-danger" role="status" style="width: 0.5rem; height: 0.5rem;"><span class="sr-only">Loading...</span></div>' : '';
 
+        // Encrypt the ID for secure URL generation
         $cryptedId = Crypt::encrypt($datas->id);
 
+        // Build the output row
         $output .= '
-            <tr>
-                <td>
-                    <center>' . $message . '
-                     
-                        <div class="btn-group me-2 mb-2 mb-sm-0">
-                            <a  data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="mdi mdi-dots-vertical ms-2"></i> Options
-                            </a>
-                            <div class="dropdown-menu">
-                                <a href="feb/' . $cryptedId . '/view" class="dropdown-item mx-1" id="' . $datas->id . '">
-                                    <i class="fas fa-eye"></i> Voir 
+                <tr>
+                    <td>
+                        <center>' . $message . '
+                            <div class="btn-group me-2 mb-2 mb-sm-0">
+                                <a data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="mdi mdi-dots-vertical ms-2"></i> Options
                                 </a>
-                                <a href="feb/' . $cryptedId . '/showannex" class="dropdown-item mx-1" id="' . $datas->id . '">
-                                <i class="fas fa-paperclip"></i> Attachez les annex
-                            </a>
-                                <a href="feb/' . $cryptedId . '/edit" class="dropdown-item mx-1" id="' . $datas->id . '" title="Modifier">
-                                    <i class="far fa-edit"></i> Modifier
-                                </a>
-                                <a href="feb/' . $datas->id . '/generate-pdf-feb" class="dropdown-item mx-1">
-                                    <i class="fa fa-print"></i> Générer PDF
-                                </a>
-                                 
-                                <a class="dropdown-item desactiversignale" id="' . $datas->id . '" href="#">
-                                <i class="fas fa-random"></i>  Désactiver le signal ?
-                            </a>
-                                <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datas->id . '" data-numero="' . $datas->numerofeb . '" href="#" style="background-color:red">
-                                    <i class="far fa-trash-alt"></i> Supprimer
-                                </a>
+                                <div class="dropdown-menu">
+                                    <a href="feb/' . $cryptedId . '/view" class="dropdown-item mx-1" id="' . $datas->id . '">
+                                        <i class="fas fa-eye"></i> Voir
+                                    </a>';
+        if ($getDocument->isNotEmpty()) {
+          $output .=
+            '
+                                                <a href="feb/' . $cryptedId . '/showannex" class="dropdown-item mx-1" id="' . $datas->id . '">
+                                                    <i class="fas fa-paperclip"></i> Attachez les annex
+                                                </a>
+                                    ';
+        }
+        $output .=
+          ' <a href="feb/' . $cryptedId . '/edit" class="dropdown-item mx-1" id="' . $datas->id . '" title="Modifier">
+                                        <i class="far fa-edit"></i> Modifier
+                                    </a>
+                                    <a href="feb/' . $datas->id . '/generate-pdf-feb" class="dropdown-item mx-1">
+                                        <i class="fa fa-print"></i> Générer PDF
+                                    </a>
+                                    ';
+        if ($datas->signale == 1) {
+          $output .=
+            '
+                                    <a class="dropdown-item desactiversignale" id="' . $datas->id . '" href="#">
+                                        <i class="fas fa-random"></i> Désactiver le signal ?
+                                    </a>
+                                     ';
+        }
+        $output .=
+          '
+                                    <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datas->id . '" data-numero="' . $datas->numerofeb . '" href="#" style="background-color:red">
+                                        <i class="far fa-trash-alt"></i> Supprimer
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    </center>
-                </td>
-                <td align="center">  <a href="feb/' . $cryptedId . '/view" class="dropdown-item mx-1" id="' . $datas->id . '"><b>' . $datas->numerofeb . '</b></a></td>
-                <td  align="right"><b>' . $sommefeb . '</b></td>
-                <td align="center">' . $datas->periode . '</td>
-                <td align="center">' . $datas->code . '</td>
-                <td><label title="'.$datas->descriptionf.'">' . $description . '</label></td>
-                <td> ' . $checkedString . ' </td>
-                <td align="center">' . date('d-m-Y', strtotime($datas->datefeb)) . '</td>
-                <td align="center">' . date('d-m-Y', strtotime($datas->created_at)) . '</td>
-                <td  align="left" >' . ucfirst($datas->user_prenom) . '</td>
-                <td align="center">' . $pourcentage . '%</td>
-            </tr>';
+                        </center>
+                    </td>
+                    <td align="center"><a href="feb/' . $cryptedId . '/view" class="dropdown-item mx-1" id="' . $datas->id . '"><b>' . $datas->numerofeb . '</b></a></td>
+                    <td align="right"><b>' . $sommefebFormatted . '</b></td>
+                    <td align="center">' . $datas->periode . '</td>
+                    <td align="center">' . $datas->code . '</td>
+                    <td><label title="' . $datas->descriptionf . '">' . $description . '</label></td>
+                    <td>' . $checkedString . '</td>
+                    <td align="center">' . date('d-m-Y', strtotime($datas->datefeb)) . '</td>
+                    <td align="center">' . date('d-m-Y', strtotime($datas->created_at)) . '</td>
+                    <td align="left">' . ucfirst($datas->user_prenom) . '</td>
+                    <td align="center">' . $pourcentage . '%</td>
+                </tr>';
       }
     } else {
+      // Output when no data is found
       $output .= '
-        <tr>
-            <td colspan="15">
-                <center>
-                    <h6 style="margin-top:1%; color:#c0c0c0">
-                        <center>
+            <tr>
+                <td colspan="15">
+                    <center>
+                        <h6 style="margin-top:1%; color:#c0c0c0">
                             <font size="50px">
                                 <i class="fas fa-info-circle"></i>
                             </font>
                             <br><br>
                             Ceci est vide !
-                        </center>
-                    </h6>
-                </center>
-            </td>
-        </tr>';
+                        </h6>
+                    </center>
+                </td>
+            </tr>';
     }
+
+    // Output the generated HTML
     echo $output;
   }
+
 
   public function notificationdoc()
   {
@@ -341,7 +374,7 @@ class FebController extends Controller
       $item->total = getTotalDap($item->id);
     });
 
-  /* FEB PETIT CAISS
+    /* FEB PETIT CAISS
     $documentfeb_pc = DB::table('febpetitcaisses')
     ->join('users', 'febpetitcaisses.userid', '=', 'users.id')
     ->join('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -452,7 +485,7 @@ class FebController extends Controller
 
     try {
 
-    
+
       $IDP = session()->get('id');
 
       $numerofeb = $request->numerofeb;
@@ -520,22 +553,7 @@ class FebController extends Controller
           'status' => 201
         ]);
       } else {
-        $bc = $request->has('bc') ? 1 : 0;
-        $om = $request->has('om') ? 1 : 0;
-        $facture = $request->has('facture') ? 1 : 0;
-        $fpdevis = $request->has('fpdevis') ? 1 : 0;
-        $nec = $request->has('nec') ? 1 : 0;
-        $rm = $request->has('rm') ? 1 : 0;
-        $tdr = $request->has('tdr') ? 1 : 0;
-        $bv = $request->has('bv') ? 1 : 0;
-        $recu = $request->has('recu') ? 1 : 0;
-        $ar = $request->has('ar') ? 1 : 0;
-        $be = $request->has('be') ? 1 : 0;
-        $apc = $request->has('apc') ? 1 : 0;
-        $ra = $request->has('ra') ? 1 : 0;
-        $autres = $request->has('autres') ? 1 : 0;
-
-        $fp = $request->has('fp') ? 1 : 0;
+        
 
         $activity = new Feb();
         $activity->numerofeb = $request->numerofeb;
@@ -546,21 +564,6 @@ class FebController extends Controller
         $activity->ligne_bugdetaire = $grandcompte;
         $activity->sous_ligne_bugdetaire = $souscompte;
         $activity->descriptionf = $request->descriptionf;
-        $activity->bc = $bc;
-        $activity->facture = $facture;
-        $activity->om = $om;
-        $activity->fpdevis = $fpdevis;
-        $activity->nec = $nec;
-        $activity->rm = $rm;
-        $activity->tdr = $tdr;
-        $activity->bv = $bv;
-        $activity->recu = $recu;
-        $activity->ar = $ar;
-        $activity->be = $be;
-        $activity->apc = $apc;
-        $activity->ra = $ra;
-        $activity->fp = $fp;
-        $activity->autres = $autres;
         $activity->acce = $request->acce;
         $activity->comptable = $request->comptable;
         $activity->chefcomposante = $request->chefcomposante;
@@ -591,6 +594,16 @@ class FebController extends Controller
           $elementfeb->save();
         }
 
+        if ($request->has('annex')) {
+          foreach ($request->annex as $key => $annexid) {
+            $newAnnex = new attache_feb();
+            $newAnnex->febid = $IDf;
+            $newAnnex->annexid = $annexid;
+            $newAnnex->save(); // Enregistre chaque nouvelle instance
+          }
+        }
+
+
         DB::commit();
 
         return response()->json([
@@ -614,198 +627,197 @@ class FebController extends Controller
       $activity = Feb::find($request->febid);
 
       $get_lead =  DB::table('febs')
-      ->join('projects', 'febs.projetid', '=', 'projects.id')
-      ->select( 'projects.lead as lead')
-      ->where('febs.id', $request->febid)
-      ->first();
+        ->join('projects', 'febs.projetid', '=', 'projects.id')
+        ->select('projects.lead as lead')
+        ->where('febs.id', $request->febid)
+        ->first();
 
-      
+
       $lead = session()->get('lead');
-      $projet_lead= $get_lead ->lead;
-
-     
-
-      if ($activity && $activity->userid == Auth::id() || $projet_lead  == $lead  ) {
-      $comp = $request->ligneid;
-      $compp = explode("-", $comp);
-
-      $grandcompte = $compp[0];
-      $souscompte  = $compp[1];
-
-
-      $IDP = session()->get('id');
-      $activityTwo = Elementdap::where('referencefeb', $request->febid)->get();
-      // Vérifier si des éléments existent
-      if ($activityTwo->isNotEmpty()) {
-        // Mettre à jour les éléments FEB existants
-        foreach ($activityTwo as $element) {
-          $element->update([
-            'ligneided' =>  $souscompte,
-          ]);
-        }
-      }
-
-      $activityTree = Elementdjas::where('febid', $request->febid)->get();
-      // Vérifier si des éléments existent
-      if ($activityTree->isNotEmpty()) {
-        // Mettre à jour les éléments FEB existants
-        foreach ($activityTree as $elementTree) {
-          $elementTree->update([
-            'ligneid' => $souscompte,
-          ]);
-        }
-      }
-
-     
-
-      $bc = $request->has('bc') ? 1 : 0;
-      $om = $request->has('om') ? 1 : 0;
-      $facture = $request->has('facture') ? 1 : 0;
-      $fpdevis = $request->has('fpdevis') ? 1 : 0;
-      $nec = $request->has('nec') ? 1 : 0;
-      $rm = $request->has('rm') ? 1 : 0;
-      $tdr = $request->has('tdr') ? 1 : 0;
-      $bv = $request->has('bv') ? 1 : 0;
-      $recu = $request->has('recu') ? 1 : 0;
-      $ar = $request->has('ar') ? 1 : 0;
-      $be = $request->has('be') ? 1 : 0;
-      $apc = $request->has('apc') ? 1 : 0;
-      $apc = $request->has('apc') ? 1 : 0;
-      $ra = $request->has('ra') ? 1 : 0;
-      $autres = $request->has('autres') ? 1 : 0;
-      $fp = $request->has('fp') ? 1 : 0;
-
-      if ($request->acce == $request->ancien_acce) {
-        $acce_signe = $request->acce_signe;
-      } else {
-        $acce_signe = 0;
-      }
-
-
-      if ($request->comptable == $request->ancien_comptable) {
-        $comptable_signe = $request->comptable_signe;
-      } else {
-        $comptable_signe = 0;
-      }
-
-
-      if ($request->chefcomposante == $request->ancien_chefcomposante) {
-        $chef_signe = $request->chef_signe;
-      } else {
-        $chef_signe = 0;
-      }
+      $projet_lead = $get_lead->lead;
 
 
 
-      $sum = 0;
-      foreach ($request->numerodetail as $key => $items) {
-        $element1 = $request->pu[$key];
-        $element2 = $request->qty[$key];
-        $element3 = $request->frenquency[$key];
-        $somme = $element1 * $element2 * $element3;
-        $sum += $somme;
-      }
+      if ($activity && $activity->userid == Auth::id() || $projet_lead  == $lead) {
+        $comp = $request->ligneid;
+        $compp = explode("-", $comp);
+
+        $grandcompte = $compp[0];
+        $souscompte  = $compp[1];
 
 
-    if($sum != $activity->total) {
-        $acce_signe = 0;
-        $comptable_signe = 0;
-        $chef_signe = 0;
-      } 
-
-    
-      $activity->numerofeb = $request->numerofeb;
-      $activity->periode = $request->periode;
-      $activity->datefeb = $request->datefeb;
-      $activity->datelimite = $request->datelimite;
-      $activity->bc = $bc;
-      $activity->facture = $facture;
-      $activity->om = $om;
-      $activity->fpdevis = $fpdevis;
-      $activity->nec = $nec;
-      $activity->rm = $rm;
-      $activity->tdr = $tdr;
-      $activity->bv = $bv;
-      $activity->recu = $recu;
-      $activity->ar = $ar;
-      $activity->be = $be;
-      $activity->apc = $apc;
-      $activity->ra = $ra;
-      $activity->fp = $fp;
-      $activity->autres = $autres;
-      $activity->total = $sum;
-
-      $activity->comptable = $request->comptable;
-      $activity->acce = $request->acce;
-      $activity->chefcomposante = $request->chefcomposante;
-      $activity->descriptionf = $request->descriptionf;
-      $activity->beneficiaire = $request->beneficiaire;
-      $activity->sous_ligne_bugdetaire   = $souscompte;
-      $activity->ligne_bugdetaire = $grandcompte;
-
-      //signature
-
-      $activity->acce_signe   =  $acce_signe;
-      $activity->comptable_signe   =  $comptable_signe;
-      $activity->chef_signe   =  $chef_signe;
-
-      $activity->update();
-
-      $dataToUpdate = [];
-
-      foreach ($request->numerodetail as $key => $itemID) {
-        if (isset($request->idelements[$key]) && !empty($request->idelements[$key])) {
-          $idelements = $request->idelements[$key];
-          $elementfeb = Elementfeb::find($idelements);
-          if ($elementfeb) {
-            $dataToUpdate[] = [
-              'id' => $idelements,
-              'libelle_description' => $request->libelle_description[$key],
-              'unite' => $request->unit_cost[$key],
-              'quantite' => $request->qty[$key],
-              'frequence' => $request->frenquency[$key],
-              'pu' => $request->pu[$key],
-              'montant' => $request->amount[$key],
-              'libellee' => $request->libelleid[$key],
-              'tperiode' => $request->periode,
-              'numero' => $request->numerofeb,
-              'grandligne' => $grandcompte,
-              'eligne' => $souscompte
-            ];
+        $IDP = session()->get('id');
+        $activityTwo = Elementdap::where('referencefeb', $request->febid)->get();
+        // Vérifier si des éléments existent
+        if ($activityTwo->isNotEmpty()) {
+          // Mettre à jour les éléments FEB existants
+          foreach ($activityTwo as $element) {
+            $element->update([
+              'ligneided' =>  $souscompte,
+            ]);
           }
-        } else {
-          $newfeb = new Elementfeb();
-          $newfeb->febid = $request->febid;
-          $newfeb->projetids = $request->projetid;
-          $newfeb->tperiode = $request->periode;
-          $newfeb->grandligne = $grandcompte;
-          $newfeb->eligne = $souscompte;
-          $newfeb->numero = $request->numerofeb;
-          
-          $newfeb->libelle_description = $request->libelle_description[$key];
-          $newfeb->unite = $request->unit_cost[$key];
-          $newfeb->quantite = $request->qty[$key];
-          $newfeb->frequence = $request->frenquency[$key];
-          $newfeb->pu = $request->pu[$key];
-          $newfeb->montant = $request->amount[$key];
-          $newfeb->libellee = $request->libelleid[$key];
-          $newfeb->userid = Auth::id();
-          $newfeb->save();
         }
+
+        $activityTree = Elementdjas::where('febid', $request->febid)->get();
+        // Vérifier si des éléments existent
+        if ($activityTree->isNotEmpty()) {
+          // Mettre à jour les éléments FEB existants
+          foreach ($activityTree as $elementTree) {
+            $elementTree->update([
+              'ligneid' => $souscompte,
+            ]);
+          }
+        }
+
+
+
+        $bc = $request->has('bc') ? 1 : 0;
+        $om = $request->has('om') ? 1 : 0;
+        $facture = $request->has('facture') ? 1 : 0;
+        $fpdevis = $request->has('fpdevis') ? 1 : 0;
+        $nec = $request->has('nec') ? 1 : 0;
+        $rm = $request->has('rm') ? 1 : 0;
+        $tdr = $request->has('tdr') ? 1 : 0;
+        $bv = $request->has('bv') ? 1 : 0;
+        $recu = $request->has('recu') ? 1 : 0;
+        $ar = $request->has('ar') ? 1 : 0;
+        $be = $request->has('be') ? 1 : 0;
+        $apc = $request->has('apc') ? 1 : 0;
+        $apc = $request->has('apc') ? 1 : 0;
+        $ra = $request->has('ra') ? 1 : 0;
+        $autres = $request->has('autres') ? 1 : 0;
+        $fp = $request->has('fp') ? 1 : 0;
+
+        if ($request->acce == $request->ancien_acce) {
+          $acce_signe = $request->acce_signe;
+        } else {
+          $acce_signe = 0;
+        }
+
+
+        if ($request->comptable == $request->ancien_comptable) {
+          $comptable_signe = $request->comptable_signe;
+        } else {
+          $comptable_signe = 0;
+        }
+
+
+        if ($request->chefcomposante == $request->ancien_chefcomposante) {
+          $chef_signe = $request->chef_signe;
+        } else {
+          $chef_signe = 0;
+        }
+
+
+
+        $sum = 0;
+        foreach ($request->numerodetail as $key => $items) {
+          $element1 = $request->pu[$key];
+          $element2 = $request->qty[$key];
+          $element3 = $request->frenquency[$key];
+          $somme = $element1 * $element2 * $element3;
+          $sum += $somme;
+        }
+
+
+        if ($sum != $activity->total) {
+          $acce_signe = 0;
+          $comptable_signe = 0;
+          $chef_signe = 0;
+        }
+
+
+        $activity->numerofeb = $request->numerofeb;
+        $activity->periode = $request->periode;
+        $activity->datefeb = $request->datefeb;
+        $activity->datelimite = $request->datelimite;
+        $activity->bc = $bc;
+        $activity->facture = $facture;
+        $activity->om = $om;
+        $activity->fpdevis = $fpdevis;
+        $activity->nec = $nec;
+        $activity->rm = $rm;
+        $activity->tdr = $tdr;
+        $activity->bv = $bv;
+        $activity->recu = $recu;
+        $activity->ar = $ar;
+        $activity->be = $be;
+        $activity->apc = $apc;
+        $activity->ra = $ra;
+        $activity->fp = $fp;
+        $activity->autres = $autres;
+        $activity->total = $sum;
+
+        $activity->comptable = $request->comptable;
+        $activity->acce = $request->acce;
+        $activity->chefcomposante = $request->chefcomposante;
+        $activity->descriptionf = $request->descriptionf;
+        $activity->beneficiaire = $request->beneficiaire;
+        $activity->sous_ligne_bugdetaire   = $souscompte;
+        $activity->ligne_bugdetaire = $grandcompte;
+
+        //signature
+
+        $activity->acce_signe   =  $acce_signe;
+        $activity->comptable_signe   =  $comptable_signe;
+        $activity->chef_signe   =  $chef_signe;
+
+        $activity->update();
+
+        $dataToUpdate = [];
+
+        foreach ($request->numerodetail as $key => $itemID) {
+          if (isset($request->idelements[$key]) && !empty($request->idelements[$key])) {
+            $idelements = $request->idelements[$key];
+            $elementfeb = Elementfeb::find($idelements);
+            if ($elementfeb) {
+              $dataToUpdate[] = [
+                'id' => $idelements,
+                'libelle_description' => $request->libelle_description[$key],
+                'unite' => $request->unit_cost[$key],
+                'quantite' => $request->qty[$key],
+                'frequence' => $request->frenquency[$key],
+                'pu' => $request->pu[$key],
+                'montant' => $request->amount[$key],
+                'libellee' => $request->libelleid[$key],
+                'tperiode' => $request->periode,
+                'numero' => $request->numerofeb,
+                'grandligne' => $grandcompte,
+                'eligne' => $souscompte
+              ];
+            }
+          } else {
+            $newfeb = new Elementfeb();
+            $newfeb->febid = $request->febid;
+            $newfeb->projetids = $request->projetid;
+            $newfeb->tperiode = $request->periode;
+            $newfeb->grandligne = $grandcompte;
+            $newfeb->eligne = $souscompte;
+            $newfeb->numero = $request->numerofeb;
+
+            $newfeb->libelle_description = $request->libelle_description[$key];
+            $newfeb->unite = $request->unit_cost[$key];
+            $newfeb->quantite = $request->qty[$key];
+            $newfeb->frequence = $request->frenquency[$key];
+            $newfeb->pu = $request->pu[$key];
+            $newfeb->montant = $request->amount[$key];
+            $newfeb->libellee = $request->libelleid[$key];
+            $newfeb->userid = Auth::id();
+            $newfeb->save();
+          }
+        }
+
+        foreach ($dataToUpdate as $data) {
+          Elementfeb::where('id', $data['id'])->update($data);
+        }
+
+        DB::commit();
+
+        return redirect()->back()->with('success', 'FEB mises à jour avec succès');
+      } else {
+        DB::rollBack();
+        return redirect()->back()->with('failed', 'Vous n\'avez pas l\'autorisation nécessaire pour Modifier le FEB. Veuillez contacter le créateur  pour procéder à la suppression.');
       }
-
-      foreach ($dataToUpdate as $data) {
-        Elementfeb::where('id', $data['id'])->update($data);
-      }
-
-      DB::commit();
-
-      return redirect()->back()->with('success', 'FEB mises à jour avec succès');
-   } else {
-      DB::rollBack();
-      return redirect()->back()->with('failed', 'Vous n\'avez pas l\'autorisation nécessaire pour Modifier le FEB. Veuillez contacter le créateur  pour procéder à la suppression.');
-    } 
-      
     } catch (\Exception $e) {
       DB::rollBack();
 
@@ -945,10 +957,16 @@ class FebController extends Controller
     $devise = session()->get('devise');
     $budget = session()->get('budget');
     $IDP = session()->get('id');
+    
+    $personnel = DB::table('users')
+    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+    ->orderBy('nom', 'ASC')
+    ->get();
 
     // Initialisez une variable pour stocker les sorties de tableau
     $output = '';
-    $output .= '
+  /*  $output .= '
     <table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%">
     ';
 
@@ -987,9 +1005,9 @@ class FebController extends Controller
           $pourcentage_total += $pourcentage;
 
           // Construire la sortie HTML pour chaque élément sélectionné
-          $output .= '<input type="hidden" name="febid[]" value="' . $datas->id . '" />';
-          $output .= '<input type="hidden" name="ligneid[]" value="' . $datas->sous_ligne_bugdetaire . '" />';
-          $output .= '<tr>';
+         /// $output .= '<input type="hidden" name="febid[]" value="' . $datas->id . '" />';
+         // $output .= '<input type="hidden" name="ligneid[]" value="' . $datas->sous_ligne_bugdetaire . '" />';
+         // $output .= '<tr>';
           $output .= '<td width="10%"> Numéro FEB : ' . $datas->numerofeb . '</td>';
           $output .= '<td width="20%"> Montant de l\'Avance <input type="number" min="0" name="montantavance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
           $output .= '<td width="20%"> Durée avance <input type="number"  min="0" name="duree_avance[]" style="width: 100%; border:1px solid #c0c0c0" /></td>';
@@ -999,18 +1017,19 @@ class FebController extends Controller
         }
       }
     }
-    $output .= '</table>';
+    $output .= '</table>'; */
 
     $output .= '
     <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+        
         <tr>
-            <td><b>Fonds reçus par</b></td>
-        </tr>
-        <tr>
-            <td>
+        <td width="20%"> Montant de l\'Avance <input  class="form-control form-control-sm" type="number" min="0" value="0" name="montantavance" style="width: 100%; border:1px solid #c0c0c0" /></td>
+        <td width="20%"> Durée avance <input  class="form-control form-control-sm" type="number"  min="0" value="0" name="duree_avance" style="width: 100%; border:1px solid #c0c0c0" /></td>
+        <td colspan="3">Description <input class="form-control form-control-sm" type="text" name="descriptionel" style="width: 100%; border:1px solid #c0c0c0" /> </td>
+            <td> Fonds reçus par
                 <select class="form-control form-control-sm" name="beneficiaire" id="beneficiaire">
                     <option disabled="true" selected="true" >-- Fonds reçus par --</option>';
-    foreach ($personnels as $personnel) {
+    foreach ($personnel as $personnel) {
       $output .= '<option value="' . $personnel->userid . '">' . $personnel->nom . ' ' . $personnel->prenom . '</option>';
     }
     $output .= '
@@ -1034,33 +1053,13 @@ class FebController extends Controller
     }
 
     // Si l'ID de la session est défini, continuer avec le reste de la fonction
-    $title = "FEB";
-    $compte =  DB::table('comptes')
-      ->where('comptes.projetid', $ID)
-      ->where('compteid', '=', 0)
-      ->get();
-
-    $beneficaire = Beneficaire::orderBy('libelle')->get();
-
-    $personnel = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-      ->orderBy('nom', 'ASC')
-      ->get();
-
-    $activite = DB::table('activities')
-      ->orderBy('id', 'DESC')
-      ->where('projectid', $ID)
-      ->get();
-
+    $title = "Liste des FEB";
+   
     return view(
       'document.feb.list',
       [
         'title' => $title,
-        'activite' => $activite,
-        'personnel' => $personnel,
-        'compte' => $compte,
-        'beneficaire' => $beneficaire
+
       ]
     );
   }
@@ -1093,13 +1092,13 @@ class FebController extends Controller
       ->where('projetids', $IDB)
       ->sum('montant');
 
-      // recuperation la somme de
-      $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
+    // recuperation la somme de
+    $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
       ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
       ->where('elementboncaisses.projetid', $IDB)
       ->where('bonpetitcaisses.approuve_par_signature', 1)
       ->sum('elementboncaisses.montant');
-  
+
 
     $dataLigne = Compte::find($idl);
 
@@ -1118,7 +1117,7 @@ class FebController extends Controller
 
     $SOMMES_DEJA_UTILISE = $sommeallfeb + $SOMME_PETITE_CAISSE;
 
-    $POURCENTAGE_GLOGALE = $budget ? round(( $SOMMES_DEJA_UTILISE * 100) / $budget, 2) : 0;
+    $POURCENTAGE_GLOGALE = $budget ? round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2) : 0;
 
     $createur = DB::table('users')
       ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -1146,6 +1145,12 @@ class FebController extends Controller
 
     $dateinfo = Identification::all();
 
+    // Fetch attached documents
+    $getDocument = attache_feb::join('apreviations', 'attache_febs.annexid', 'apreviations.id')
+      ->select('apreviations.abreviation', 'apreviations.libelle', 'attache_febs.urldoc')
+      ->where('attache_febs.febid', $idfeb)
+      ->get();
+
     return view('document.feb.voir', [
       'title' => $title,
       'dataFeb' => $check,
@@ -1161,6 +1166,8 @@ class FebController extends Controller
       'dateinfo' => $dateinfo,
       'createur' => $createur,
       'onebeneficaire' => $onebeneficaire,
+      'getDocument' => $getDocument
+
     ]);
   }
 
@@ -1171,9 +1178,16 @@ class FebController extends Controller
     $key = Crypt::decrypt($key);
     $check = Feb::findOrFail($key);
 
+    $getDocument = attache_feb::join('apreviations', 'attache_febs.annexid', 'apreviations.id')
+      ->select('apreviations.abreviation', 'apreviations.libelle', 'attache_febs.id', 'attache_febs.urldoc')
+      ->where('attache_febs.febid', $check->id)
+      ->get();
+
     return view('document.feb.addanex', [
       'title' => $title,
+      'getDocument' => $getDocument,
       'dataFeb' => $check
+
     ]);
   }
 
@@ -1233,15 +1247,15 @@ class FebController extends Controller
       ->sum('montant');
 
 
-    $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
-    ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
-    ->where('elementboncaisses.projetid', $IDB)
-    ->where('bonpetitcaisses.approuve_par_signature', 1)
-    ->sum('elementboncaisses.montant');
+    $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
+      ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
+      ->where('elementboncaisses.projetid', $IDB)
+      ->where('bonpetitcaisses.approuve_par_signature', 1)
+      ->sum('elementboncaisses.montant');
 
-      $SOMMES_DEJA_UTILISE = $datafebs + $SOMME_PETITE_CAISSE;
+    $SOMMES_DEJA_UTILISE = $datafebs + $SOMME_PETITE_CAISSE;
 
-   
+
 
     $POURCENTAGE_GLOGALE = $budget ? round(($SOMMES_DEJA_UTILISE * 100) / $budget) : 0;
 
@@ -1358,13 +1372,13 @@ class FebController extends Controller
       ->where('projetids', $IDB)
       ->sum('montant');
 
-      $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
+    $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
       ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
       ->where('elementboncaisses.projetid', $IDB)
       ->where('bonpetitcaisses.approuve_par_signature', 1)
       ->sum('elementboncaisses.montant');
 
-      $SOMMES_DEJA_UTILISE = $sommeallfeb + $SOMME_PETITE_CAISSE;
+    $SOMMES_DEJA_UTILISE = $sommeallfeb + $SOMME_PETITE_CAISSE;
 
     $POURCENTAGE_GLOGALE = $budget ? round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2) : 0;
 
@@ -1468,7 +1482,7 @@ class FebController extends Controller
     $fileName = 'FEB_NUMERO_' . $datafeb->numerofeb . '.pdf';
 
     // Télécharge le PDF
-  
+
     return $pdf->download($fileName);
   }
 
@@ -1866,189 +1880,45 @@ class FebController extends Controller
 
   public function updat_annex(Request $request)
   {
-    DB::beginTransaction(); // Démarre la transaction
+    DB::beginTransaction(); // Start the transaction
     try {
+      // Loop through each document input
+      foreach ($request->annexid as $index => $id) {
+        // Retrieve the annex record by ID
+        $UpAnnex = attache_feb::find($id);
 
-      $UpAnnex = Feb::find($request->febid);
-      if (!empty($request->boncommande)) {
-        $originalName = $request->boncommande->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->boncommande->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->boncommande->move(public_path('projet/bomcommande/'), $imageName);
-        $boncommande = 'projet/bomcommande/' . $imageName;
-      }
+        // Ensure the record exists before proceeding
+        if (!$UpAnnex) {
+          return redirect()->back()->with('danger', "Annexe ID {$id} non trouvée.");
+        }
 
-      if (!empty($request->facture)) {
-        $originalName = $request->facture->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->facture->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->facture->move(public_path('projet/facture/'), $imageName);
-        $facture = 'projet/facture/' . $imageName;
-      }
+        // Check if a new file was uploaded for this document
+        if (isset($request->doc[$index]) && $request->doc[$index]->isValid()) {
+          $originalName = $request->doc[$index]->getClientOriginalName();
+          $timestamp = time();
+          $extension = $request->doc[$index]->getClientOriginalExtension(); // Correct extension
+          $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
+          $request->doc[$index]->move(public_path('projet/doc/'), $imageName);
+          $docPath = 'projet/doc/' . $imageName;
+        } else {
+          // Use the old document path if no new file is uploaded
+          $docPath = $request->ancientdoc[$index];
+        }
 
-      if (!empty($request->ordreM)) {
-        $originalName = $request->ordreM->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->ordreM->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->ordreM->move(public_path('projet/ordremission/'), $imageName);
-        $ordremission = 'projet/ordremission/' . $imageName;
-      }
-
-      if (!empty($request->url_pva)) {
-        $originalName = $request->url_pva->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->url_pva->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->url_pva->move(public_path('projet/pva/'), $imageName);
-        $pva = 'projet/pva/' . $imageName;
+        // Update the document path in the database
+        $UpAnnex->urldoc = $docPath;
+        $UpAnnex->update();
       }
 
-      if (!empty($request->factureP)) {
-        $originalName = $request->factureP->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->factureP->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->factureP->move(public_path('projet/facture_proformat/'), $imageName);
-        $factureProformat = 'projet/facture_proformat/' . $imageName;
-      }
-
-      if (!empty($request->rapportM)) {
-        $originalName = $request->rapportM->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->rapportM->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->rapportM->move(public_path('projet/rapport_mission/'), $imageName);
-        $rapport_mission = 'projet/rapport_mission/' . $imageName;
-      }
-
-      if (!empty($request->termeR)) {
-        $originalName = $request->termeR->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->termeR->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->termeR->move(public_path('projet/terme_reference/'), $imageName);
-        $terme_reference = 'projet/terme_reference/' . $imageName;
-      }
-
-      if (!empty($request->bordereauV)) {
-        $originalName = $request->bordereauV->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->bordereauV->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->bordereauV->move(public_path('projet/bordereau_versement/'), $imageName);
-        $bordereau_versement = 'projet/bordereau_versement/' . $imageName;
-      }
-
-      if (!empty($request->recu)) {
-        $originalName = $request->recu->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->recu->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->recu->move(public_path('projet/recu/'), $imageName);
-        $recu = 'projet/recu/' . $imageName;
-      }
-
-      if (!empty($request->auccuseR)) {
-        $originalName = $request->auccuseR->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->auccuseR->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->auccuseR->move(public_path('projet/accuse_reception/'), $imageName);
-        $accuse_reception = 'projet/accuse_reception/' . $imageName;
-      }
-
-      if (!empty($request->bordereauE)) {
-        $originalName = $request->bordereauE->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->bordereauE->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->bordereauE->move(public_path('projet/bordereau_expediction/'), $imageName);
-        $bordereau_expediction = 'projet/bordereau_expediction/' . $imageName;
-      }
-
-      if (!empty($request->appelP)) {
-        $originalName = $request->appelP->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->appelP->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->appelP->move(public_path('projet/appel_cfk/'), $imageName);
-        $appel_cfk = 'projet/appel_cfk/' . $imageName;
-      }
-
-      if (!empty($request->ra)) {
-        $originalName = $request->ra->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->ra->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->ra->move(public_path('projet/ra/'), $imageName);
-        $ra = 'projet/ra/' . $imageName;
-      }
-
-      if (!empty($request->autres)) {
-        $originalName = $request->autres->getClientOriginalName();
-        $timestamp = time();
-        $extension = $request->ra->getClientOriginalExtension(); // Conserver l'extension correcte
-        $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_' . $timestamp . '.' . $extension;
-        $request->autres->move(public_path('projet/autres/'), $imageName);
-        $autres = 'projet/autres/' . $imageName;
-      }
-
-
-      if (!empty($request->boncommande)) {
-        $UpAnnex->url_bon_commande =  $boncommande;
-      }
-      if (!empty($request->facture)) {
-        $UpAnnex->url_facture =  $facture;
-      }
-      if (!empty($request->ordreM)) {
-        $UpAnnex->url_ordre_mission =  $ordremission;
-      }
-      if (!empty($request->url_pva)) {
-        $UpAnnex->url_pva =  $pva;
-      }
-      if (!empty($request->factureP)) {
-        $UpAnnex->url_factureProformat = $factureProformat;
-      }
-      if (!empty($request->rapportM)) {
-        $UpAnnex->url_rapport_mission =  $rapport_mission;
-      }
-      if (!empty($request->termeR)) {
-        $UpAnnex->url_terme_reference =   $terme_reference;
-      }
-      if (!empty($request->bordereauV)) {
-        $UpAnnex->url_bordereau_versement =  $bordereau_versement;
-      }
-      if (!empty($request->recu)) {
-        $UpAnnex->url_recu =  $recu;
-      }
-      if (!empty($request->auccuseR)) {
-        $UpAnnex->url_accusse_reception =  $accuse_reception;
-      }
-      if (!empty($request->bordereauE)) {
-        $UpAnnex->url_bordereau_expediction = $bordereau_expediction;
-      }
-      if (!empty($request->appelP)) {
-        $UpAnnex->url_appel_cfk  =  $appel_cfk;
-      }
-      if (!empty($request->ra)) {
-        $UpAnnex->url_ra  =  $ra;
-      }
-
-      if (!empty($request->appelP)) {
-        $UpAnnex->url_autres  =  $autres;
-      }
-
-      $UpAnnex->update();
-
-      DB::commit();
-      return redirect()->back()->with('success', 'Mises ajour reussi .');
+      DB::commit(); // Commit the transaction if successful
+      return redirect()->back()->with('success', 'Mises à jour réussies.');
     } catch (Exception $e) {
-      return redirect()->back()->with('danger', 'Erreur de mises ajours ');
+      DB::rollBack(); // Rollback the transaction if there's an error
+      return redirect()->back()->with('danger', 'Erreur de mise à jour.');
     }
   }
+
+
 
   public function deleteelementsfeb(Request $request)
   {
@@ -2090,5 +1960,4 @@ class FebController extends Controller
       ]);
     }
   }
-  
 }

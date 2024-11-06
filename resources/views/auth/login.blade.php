@@ -67,7 +67,7 @@
                         @csrf
                         <div class="mb-2">
                           <label for="email" class="form-label">Identifiant</label>
-                          <input type="text" class="form-control" id="email" name="email" placeholder="Identifiant" autocomplete="Identtifiant" readonly onfocus="this.removeAttribute('readonly');">
+                          <input type="text" class="form-control" id="email" name="email" placeholder="Identifiant ou E-mail" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" autofocus>
                           <small id="erroremail" style="color:red"></small>
                         </div>
 

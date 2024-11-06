@@ -152,12 +152,10 @@
                     <td>
                         <table style="margin:0px; padding:0px;">
                             <td style="margin:0px; padding:0px; border:0px; background-color:white; width:28%">
-                                <label title="OV"> &nbsp; Moyen de Paiement : OV </label>
+                                OV/Cheque :  {{ $datadap->cho }}
                             </td>
-                            <td style="margin:0px; padding:0px; border:0px; background-color:white; width:10%">
-                                <input type="checkbox" class="form-check-input" @if($datadap->ov==1) checked @else @endif />
-                            </td>
-                            <td style="margin:0px; padding:0px; border:0px; background-color:white"> &nbsp; &nbsp; &nbsp; &nbsp; Cheque: {{ $datadap->cho }}</td>
+                            
+                            <td style="margin:0px; padding:0px; border:0px; background-color:white"> &nbsp; &nbsp;</td>
                             <td style="margin:0px; padding:0px; border:0px; background-color:white">&nbsp; &nbsp; &nbsp; &nbsp; Etabli au nom : {{ $datadap->	paretablie }}</td>
                         </table>
                     </td>
@@ -263,16 +261,17 @@
                         &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" class="form-check-input" @if($datadap->justifier==1) checked @endif >
                         &nbsp; &nbsp; &nbsp; Non <input type="checkbox" class="form-check-input" @if($datadap->justifier==0) checked @endif ></td>
                 </tr>
-                @foreach ($datafebElement as $datafebElements)
-
-
+                @if ($dajshow)
                 <tr>
-                    <td> Numéro FEB : {{ $datafebElements->numerofeb }} </td>
-                    <td> Montant de l'Avance : {{ number_format($datafebElements->montantavance, 0, ',', ' ');  }} </td>
-                    <td> Durée avance : {{ $datafebElements->duree_avance }} Jours</td>
-                    <td> Description : {{ $datafebElements->descriptionn }}</td>
+                    <td> Montant de l'Avance : {{ number_format($dajshow->montant_avance_un, 0, ',', ' ') }} </td>
+                    <td> Durée avance : {{ $dajshow->duree_avance }} Jours</td>
+                    <td> Description : {{ $dajshow->description_avance }}</td>
                 </tr>
-                @endforeach
+                @else
+                    <tr>
+                        <td colspan="3">Aucune information disponible pour cette avance.</td>
+                    </tr>
+                @endif
                 <tr>
                     <td colspan="4"> Fonds reçus par :
                         @php

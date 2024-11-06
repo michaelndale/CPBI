@@ -32,10 +32,7 @@
 
         }
 
-        /* ici c'est bon Ajout de marge en haut pour compenser la hauteur de l'en-tête */
-        .content-after-header {
-            padding-top: 50px;
-        }
+        
 
         /* Ajout de marge en bas pour compenser la hauteur du pied de page */
         .content-before-footer {
@@ -88,7 +85,7 @@
         h2,
         h3 {
             font-family: 'Open Sans', sans-serif;
-            font-size: 25px
+            
 
             /* Utilisation d'une autre police web légère pour les titres */
         }
@@ -103,13 +100,13 @@
 <body>
 
  
-        <table style="width:90%; margin-top:-30px" align="center">
+        <table style="width:95%; margin-top:-30px" align="center">
             <tr>
                 <td style="width:6%" align="right">
                      <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="45px" />
                 </td>
                 <td align="center">
-                    <h1>{{ $infoglo->entete }}</h1>
+                    <h2>{{ $infoglo->entete }}</h2>
                 </td>
             </tr>
             <tr>
@@ -121,17 +118,23 @@
                 </td>
             </tr>
         </table>
-  
+
     <!-- Pied de page fixe -->
     <footer id="page-footer">
         <small>{{ $infoglo->piedpage }}</small>
     </footer>
 
-    <div class="main-content content-after-header " id="main-content">
+
+
+    <div class="main-content content-after-header " id="main-content" style="margin-top:-30px">
+        <br>
+
+        <center> <h4> RAPPORT DE CAISSE N<sup>o</sup> {{ $classement->numero_groupe }}  </h4></center>
         <table class="table table-bordered table-striped table-sm fs--1 mb-0" id="mytable">
         <tr>
             <td>Compte caisse : {{ $classement->codes }}: {{ $classement->libelles }}</td>
             <td>Numéro de classement : {{ $classement->numero_groupe }}</td>
+            <td> Mois: {{ date('m/Y', strtotime($classement->moianne))  }} </td>
         </tr>
     </table>
 
@@ -177,7 +180,8 @@
                     <br>
                     <img src="{{  asset($verifie_par->signature) }}" width="150px" alt="Signature" />  
                     @endif
-
+                    <br>
+                    Le {{ date('d-m-Y', strtotime($classement->le_etablie))  }}
                 </center>
               
             </td>
@@ -188,6 +192,8 @@
                 @if($approuver_par && $classement->approver_signature == 1)
                 <img src="{{ asset($approuver_par->signature) }}" width="150px" alt="Signature" />  
                 @endif
+                <br>
+                Le {{ date('d-m-Y', strtotime($classement->le_verifier))  }}
 
                 </center>
               
@@ -197,9 +203,9 @@
 
     <br> <br>
 
-    <center>
+  <!--  <center>
         <p>Fait à {{ $classement->fait_a }}, le {{ date('d-m-Y', strtotime($classement->le)) }}</p>
-    </center>
+    </center>  -->
 
     </div>
 

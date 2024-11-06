@@ -27,9 +27,10 @@
                             <table id="datatable"
                                 class="table table-bordered dt-responsive nowrap   fs--1 mb-0" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
-                                    <th>Projets ( {{ $data->count() }} )</th>
+                                    <th>Projets  ( {{ $data->count() }} )</th>
                                     <th>Responsable du projet</th>
-                                    <th>Statut</th>
+                                    <th><center>Accès</center></th>
+                                    <th><center>Statut</center></th>
                                     <th>Date début</th>
                                     <th>Date fin</th>
                                     <!-- <th>Action</th> -->
@@ -50,14 +51,48 @@
                                             {{ ucfirst($datas->nom) }} {{ ucfirst($datas->prenom) }}
                                         </td>
 
-                                        <td>
-                                            @if($datas->autorisation==1)
-                                                    <span class="badge rounded-pill bg-primary"> &nbsp;&nbsp; Ouvert &nbsp;&nbsp; </span>
-                                            @else
-                                                    <span class="badge rounded-pill bg-danger"> Fermer </span>
-                                            @endif
-                                            </small>
+
+                                        <td align="center">
+                                           
+                                            @php
+                                            $accessCount = DB::table('affectations')
+                                                            ->where('memberid', Auth::id())
+                                                            ->where('projectid', $datas->idpr)
+                                                            ->count();
+                                        @endphp
+
+                                       
+                                        
+                                        @if($accessCount == 1)
+                                            <font size="2px" color="green">
+                                                <i class="mdi mdi-check-decagram"></i>
+                                            </font>
+                                        @else
+                                            <font size="2px" color="red">
+                                                <i class="mdi mdi-close-circle"></i>
+                                            </font>
+                                        @endif
+                                        
+                                        
                                         </td>
+
+
+                                        <td align="center">
+                                         
+
+                                                @if($datas->autorisation==1)
+                                                <span class="badge rounded-pill bg-primary"> &nbsp;&nbsp; Ouvert &nbsp;&nbsp; </span>
+                                        @else
+                                                <span class="badge rounded-pill bg-danger"> Fermer </span>
+                                        @endif
+                                        </small>
+                                           
+                                           
+                                        </td>
+
+
+
+
 
                                         <td>
                                             {{ date('d-m-Y', strtotime($datas->start_date))  }}

@@ -13,7 +13,7 @@
       <div class="card-header p-4 border-bottom border-300 bg-soft">
         <div class="row g-3 justify-content-between align-items-end">
           <div class="col-12 col-md">
-            <h6 class="text-900 mb-0" data-anchor="data-anchor"><i class="fas fa-car-crash"></i> GESTION DU CARNET DE BORD </h6>
+            <h6 class="text-900 mb-0" data-anchor="data-anchor"><i class="fas fa-car-crash"></i> GESTION DU CARNET DE BORD DETAILS </h6>
           </div>
           <div class="col col-md-auto">
             <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>

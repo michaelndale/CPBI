@@ -93,12 +93,10 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                     <td>
                                         <table>
                                             <td>
-                                                <label title="OV"> &nbsp; Moyen de Paiement : OV </label>
+                                                 &nbsp;OV/Cheque {{ $datadap->cho }} , 
                                             </td>
-                                            <td>
-                                                <input type="checkbox" readonly @if($datadap->ov==1) checked @else @endif />
-                                            </td>
-                                            <td> &nbsp; &nbsp; &nbsp; &nbsp; Cheque: {{ $datadap->cho }} ; Etabli au nom : {{ $datadap->	paretablie }}</td>
+                                          
+                                            <td> &nbsp;  Etabli au nom : {{ $datadap->	paretablie }}</td>
                                         </table>
                                     </td>
                                     <td> Compte bancaire : {{ $datadap->comptabiliteb }} ; Banque : {{ $datadap->banque }}</td>
@@ -218,16 +216,22 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                         &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" class="form-check-input" @if($datadap->justifier==1) checked @endif disabled>
                                         &nbsp; &nbsp; &nbsp; Non <input type="checkbox" class="form-check-input" @if($datadap->justifier==0) checked @endif disabled ></td>
                                 </tr>
-                                @foreach ($datafebElement as $datafebElements)
+                               
 
 
-                                <tr>
-                                    <td> Numéro FEB : {{ $datafebElements->numerofeb }} </td>
-                                    <td> Montant de l'Avance : {{ number_format($datafebElements->montantavance, 0, ',', ' ');  }} </td>
-                                    <td> Durée avance : {{ $datafebElements->duree_avance }} Jours</td>
-                                    <td> Description : {{ $datafebElements->descriptionn }}</td>
-                                </tr>
-                                @endforeach
+                                @if ($dajshow)
+                                    <tr>
+                                        <td> Montant de l'Avance : {{ number_format($dajshow->montant_avance_un, 0, ',', ' ') }} </td>
+                                        <td> Durée avance : {{ $dajshow->duree_avance }} Jours</td>
+                                        <td> Description : {{ $dajshow->description_avance }}</td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td colspan="3">Aucune information disponible pour cette avance.</td>
+                                    </tr>
+                                @endif
+                            
+                            
                                 <tr>
                                     <td colspan="4"> Fonds reçus par :
                                         @if(isset($fond_reussi->nom) && !empty($fond_reussi->nom) && isset($fond_reussi->prenom) && !empty($fond_reussi->prenom))

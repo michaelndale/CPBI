@@ -27,9 +27,22 @@
                                 <tbody class="list">
                                     <tr>
                                         <td class="align-middle ps-3 name" style="width:15%">Composante/ Projet/Section</td>
-                                        <td class="align-middle email" colspan="15">
+                                        <td class="align-middle email" colspan="15" style="width:55%"> 
                                             <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
                                             <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
+                                        </td>
+                                        <td rowspan="2" style="width:40%">
+
+                                            Référence des documents à attacher
+
+                                            <select class="form-control form-control-sm" id="annex" name="annex[]" multiple>
+                                                <option disabled selected value="">-- Sélectionner les documents attachés --</option>
+                                                @foreach ($attache as $attaches)
+                                                    <option value="{{ $attaches->id }}">{{ $attaches->libelle }}</option>
+                                                @endforeach    
+                                            </select>
+                                            
+
                                         </td>
                                         
                                     </tr>
@@ -71,7 +84,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="align-middle ps-3 name" colspan="1"></td>
+                                        <td class="align-middle ps-3 name" colspan="1" ></td>
                                         <td class="align-middle ps-3 name" colspan="3">
                                             Numéro du fiche FEB<span class="text-danger">*</span> <br>
                                             <input type="number" name="numerofeb" id="numerofeb" class="form-control form-control-sm" style="width: 100% ;">
@@ -93,17 +106,12 @@
                                         <td class="align-middle ps-3 name"> Date limite:<span class="text-danger">*</span><br>
                                             <input type="date" class="form-control form-control-sm" name="datelimite" id="datelimite" style="width: 100%">
                                         </td>
-                                        <td class="align-middle ps-3 name"> <br> </td>
-                                        <td class="align-middle ps-3 name"> <br></td>
-                                        <td class="align-middle ps-3 name"> <br> </td>
-                                        <td class="align-middle ps-3 name"> <br></td>
-                                        <td class="align-middle ps-3 name"> <br></td>
-                                        <td class="align-middle ps-3 name"> <br> </td>
-                                        <td class="align-middle ps-3 name"> <br> </td>
-                                        <td class="align-middle ps-3 name"> <br> </td>
-                                        <td class="align-middle ps-3 name"> <br> </td>
+                                        
+                                      
+                                    
+                                      
                                     </tr>
-                                    <tr>
+                                  <!--  <tr>
                                         <td class="align-middle ps-3 name" colspan="1"></td>
                                         <td class="align-middle ps-3 name" style="width:4%">
                                             <center><label title="Bon de commande">B.C</label><br>
@@ -184,10 +192,10 @@
                                                 <input type="checkbox" class="form-check-input" name="autres" id="autres">
                                             </center>
                                         </td>
-                                    </tr>
+                                    </tr>  -->
                                 </tbody>
                             </table>
-                            <hr>
+                           
                             <div class="table-responsive">
                                 <table class="table table-striped table-sm fs--1 mb-0" id="tableEstimate">
                                     <thead style="background-color:#3CB371; color:white">

@@ -70,7 +70,7 @@ class SignalefebController extends Controller
                 }
             }
         } else {
-            $output = '<li>No data available</li>';
+            $output = '<li>Ceci est vide , pas de message disponible </li>';
         }
 
         return $output;

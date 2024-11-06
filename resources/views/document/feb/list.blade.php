@@ -14,16 +14,11 @@
       <div class="card-header p-4 border-bottom border-300 bg-soft">
         <div class="row g-3 justify-content-between align-items-end">
           <div class="col-12 col-md">
-          <h4 class="card-title mb-0"> <i class="mdi mdi-book-open-page-variant-outline"></i> Fiche d'Expression des Besoins "FEB"  </h4>
-           
+            <h4 class="card-title mb-0"> <i class="mdi mdi-book-open-page-variant-outline"></i> Fiche d'Expression des Besoins "FEB"  </h4>
           </div>
           <div class="col col-md-auto">
-
-            <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>
-
-
-            <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addfebModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle"></span> Nouvel fiche FEB</a>
-
+            <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            <a href="{{ route('nouveau.feb') }}" id="fetchDataLink"> <span class="fa fa-plus-circle"></span> Nouvel fiche FEB</a>
           </div>
         </div>
       </div>
@@ -63,13 +58,13 @@
                     <center><b>Période</b></center>
                   </th>
                   <th class="sort border-top" data-sort="code">
-                    <center><b>CODE</b></center>
+                    <center><b>Code</b></center>
                   </th>
                   <th class="sort border-top" data-sort="Description">
                    <b>Description</b>
                   </th>
                   <th class="sort border-top ps-3" data-sort="facture">
-                   <b>Document Attachez</b>
+                   <b>Pièce jointe</b>
                   </th>
                   
                 
@@ -112,15 +107,7 @@
   </div>
 </div>
 
-
-
-
-@include('document.feb.modale')
-
-<BR><BR>
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
 <script>
     function adjustTableHeight() {
         var windowHeight = window.innerHeight;
@@ -137,320 +124,10 @@
     window.onresize = adjustTableHeight;
 </script>
 
-
 <script>
-  document.addEventListener('DOMContentLoaded', (event) => {
-    // Par défaut, le bouton "Non" sera sélectionné grâce à l'attribut 'checked' dans le HTML.
-
-    // Si vous souhaitez ajouter un comportement spécifique lors de la sélection des boutons radio
-    const radioOui = document.getElementById('alimentantionOui');
-    const radioNon = document.getElementById('alimentantionNon');
-
-    radioOui.addEventListener('change', function() {
-      if (this.checked) {
-        console.log('Option "Oui" sélectionnée');
-      }
-    });
-
-    radioNon.addEventListener('change', function() {
-      if (this.checked) {
-        console.log('Option "Non" sélectionnée');
-      }
-    });
-  });
-</script>
-
-<script type="text/javascript">
-  $('#numerofeb').blur(function() {
-    var numerofeb = $(this).val();
-    // Vérification si le champ est vide
-    if (numerofeb.trim() === '') {
-      $('#numerofeb_error').text('Renseigner le champ numéro F.E.B');
-      $('#numerofeb').removeClass('has-success has-error'); // Supprime toutes les classes de succès ou d'erreur
-      $('#numerofeb_info').text('');
-      return; // Sortir de la fonction si le champ est vide
-    }
-
-    // Envoi de la requête AJAX au serveur
-    $.ajax({
-      url: '{{ route("check.feb") }}',
-      method: 'POST',
-      data: {
-        _token: '{{ csrf_token() }}', // CSRF token pour Laravel
-        numerofeb: numerofeb
-      },
-      success: function(response) {
-        if (response.exists) {
-
-          $("#numerofeb_error").html('<i class="fa fa-times-circle"></i> Numéro FEB existe déjà');
-          $('#numerofeb').removeClass('has-success') // Supprime la classe de succès
-          $('#numerofeb').addClass('has-error');
-          $('#numerofeb_info').text('');
-          document.getElementById("addfebbtn").disabled = true;
-        } else {
-
-          $("#numerofeb_info").html('<i class="fa fa-check-circle"></i> Numéro Disponible');
-          $('#numerofeb').removeClass('has-error') // Supprime la classe de succès
-          $('#numerofeb').addClass('has-success');
-          $('#numerofeb_error').text('');
-          document.getElementById("addfebbtn").disabled = false;
-        }
-      },
-      error: function(xhr, status, error) {
-        console.error(error);
-      }
-    });
-  });
-
-
-  $(document).ready(function() {
-
-    $(document).on('change', '.ligneid', function() {
-      var cat_id = $(this).val();
-      var div = $(this).parent();
-
-      $.ajax({
-        type: 'get',
-        url: "{{ route ('condictionsearch') }}",
-        data: {
-          'id': cat_id
-        },
-        success: function(reponse) {
-          if (reponse.trim() !== "") {
-            // La réponse n'est pas vide, mettre à jour le contenu HTML
-            $("#showcondition").html(reponse);
-          } else {
-            // La réponse est vide ou nulle, faire quelque chose d'autre ou ne rien faire
-            console.log("La réponse est vide ou nulle.");
-          }
-        }
-      });
-    });
-
-    $(document).on('change', '.ligneid', function() {
-      var ligid = $(this).val();
-      var div = $(this).parent();
-      var op = " ";
-      $.ajax({
-        type: 'get',
-        url: "{{ route ('getactivite') }}",
-        data: {
-          'id': ligid
-        },
-        success: function(reponse) {
-          $("#Showpoll").html(reponse);
-        },
-        error: function() {
-          alert("Attention! \n Erreur de connexion a la base de donnee ,\n verifier votre connection");
-        }
-      });
-    });
-  });
-</script>
-
-<script>
-  // Variable pour stocker le numéro de ligne actuel
-  var rowIdx = 2;
-
-  // Ajouter une ligne au clic sur le bouton "Ajouter"
-  // Ajouter une ligne au clic sur le bouton "Ajouter"
-  $("#addBtn").on("click", function() {
-    // Ajouter une nouvelle ligne au tableau
-    $("#tableEstimate tbody").append(`
-        <tr id="R${rowIdx}">
-            <td><input style="width:100%" type="number" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="${rowIdx}" ></td>
-            <td><div id="Showpoll${rowIdx}" class="Showpoll"> </div> </td>
-            <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required></td>
-            <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm" required></td>
-            <td><input style="width:100%" type="text" id="qty" name="qty[]" class="form-control form-control-sm qty" required ></td>
-            <td><input style="width:100%" type="number"  min="1" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency"  required ></td>
-            <td><input style="width:100%" type="number"  min="0" id="pu" name="pu[]" class="form-control form-control-sm pu"  required></td>
-            <td><input style="width:100%" type="number"  min="0" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
-            <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
-        </tr>
-    `);
-
-    // Cloner le contenu de l'élément Showpoll dans la nouvelle ligne
-    var $originalShowpoll = $('#Showpoll');
-    var $newShowpoll = $originalShowpoll.clone().attr('id', `Showpoll${rowIdx}`);
-    $(`#R${rowIdx}`).find('.Showpoll').replaceWith($newShowpoll);
-
-    // Incrémenter le numéro de ligne
-    rowIdx++;
-  });
-
-
-  // Supprimer une ligne au clic sur le bouton "Enlever"
-  $("#tableEstimate tbody").on("click", ".remove", function() {
-    // Récupérer toutes les lignes suivant la ligne supprimée
-    var child = $(this).closest("tr").nextAll();
-
-    // Modifier les numéros de ligne des lignes suivantes
-    child.each(function() {
-      var id = $(this).attr("id");
-      var dig = parseInt(id.substring(1));
-      $(this).attr("id", `R${dig - 1}`);
-      $(this).find(".row-index").text(dig - 1);
-    });
-
-    // Supprimer la ligne
-    $(this).closest("tr").remove();
-
-    // Mettre à jour le numéro de ligne
-    rowIdx--;
-  });
-
-  // Mettre à jour les totaux lors de la modification des champs "pu", "qty", et "frenquency"
-  $("#tableEstimate tbody").on("input", ".pu, .qty, .frenquency", function() {
-    var pu = parseFloat($(this).closest("tr").find(".pu").val()) || 0;
-    var qty = parseFloat($(this).closest("tr").find(".qty").val()) || 0;
-    var frenquency = parseFloat($(this).closest("tr").find(".frenquency").val()) || 0;
-    var total = pu * qty * frenquency;
-    $(this).closest("tr").find(".total").val(total.toFixed(2));
-
-    calc_total();
-  });
-
-  // Fonction pour calculer le total
-
-
-  function calc_total() {
-    var sum = 0;
-    $(".total").each(function() {
-      sum += parseFloat($(this).val()) || 0;
-    });
-    $(".subtotal").text(sum.toFixed(2));
-
-    // Mettre à jour le total global
-    $(".total-global").text(sum.toFixed(2));
-  }
-
-
-
 
   $(function() {
-    $(document).on('change', '.soldeligne', function() {
-      var cat_id = $(this).val();
-      var div = $(this).parent();
-      var op = " ";
-      $.ajax({
-        type: 'get',
-        url: "{{ route ('findligne') }}",
-        data: {
-          'id': cat_id
-        },
-        success: function(data) {
-          console.log(data);
-
-          if (status == 200) {
-            if (data.length == 0) {
-              op += '<input value="0" selected disabled />';
-              document.getElementById("tauxexecution").innerHTML = op
-            } else {
-
-              for (var i = 0; i < data.length; i++) {
-                op += '<input  value="' + data[i].annee + '" />';
-                document.getElementById("tauxecution").innerHTML = op
-              }
-            }
-
-
-          }
-          if (status == 201) {
-            alerte('aucune');
-          }
-
-          if (status == 202) {
-            toastr.success("Feb ajouté avec succès !", "Enregistrement");
-          }
-
-
-
-
-        },
-        error: function() {
-          alert("Attention! \n Erreur de connexion a la base de donnee ,\n verifier votre connection");
-        }
-      });
-    });
-
-    $("#addfebForm").submit(function(e) {
-      e.preventDefault();
-      const fd = new FormData(this);
-      $("#addfebbtn").html('<i class="fas fa-spinner fa-spin"></i>');
-      document.getElementById("addfebbtn").disabled = true;
-      $("#loadingModal").modal('show'); // Affiche le popup de chargement
-
-      $.ajax({
-        url: "{{ route('storefeb') }}",
-        method: 'post',
-        data: fd,
-        cache: false,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-          if (response.status == 200) {
-            fetchAllfeb();
-            Sommefeb();
-            $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            $("#numerofeb_error").text("");
-            $('#numerofeb').removeClass('has-error has-success'); // Supprime les classes de validation
-            $("#numerofeb_info").text(''); // Réinitialise le texte d'info
-            $("#addfebForm")[0].reset();
-            $("#addfebModal").modal('hide');
-            document.getElementById("addfebbtn").disabled = false;
-            toastr.success("Feb ajouté avec succès !", "Enregistrement");
-          } else if (response.status == 201) {
-            toastr.error("Attention: FEB numéro existe déjà !", "Attention");
-            $("#addfebModal").modal('show');
-            $("#numerofeb_error").text("Numéro existe");
-            $('#numerofeb').addClass('has-error');
-            document.getElementById("addfebbtn").disabled = false;
-            $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i>  Sauvegarder');
-          } else if (response.status == 202) {
-            toastr.error("Erreur d'exécution: " + response.error, "Erreur");
-            $("#addfebModal").modal('show');
-            document.getElementById("addfebbtn").disabled = false;
-            $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-          } else if (response.status == 203) {
-            if (confirm(response.message)) {
-              $('<input>').attr({
-                type: 'hidden',
-                name: 'confirm_ligne',
-                value: '1'
-              }).appendTo('#addfebForm');
-              $('#addfebForm').submit();
-            } else {
-              toastr.info("Vous avez annulé l'opération.", "Info");
-              $("#addfebModal").modal('show');
-              document.getElementById("addfebbtn").disabled = false;
-              $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-            }
-          } else if (response.status == 204) {
-            toastr.error(response.message, "Attention");
-            $("#addfebModal").modal('show');
-            document.getElementById("addfebbtn").disabled = false;
-            $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-          }
-
-          $("#addfebbtn").text('Sauvegarder');
-          $("#loadingModal").modal('hide');
-          setTimeout(function() {
-            $("#loadingModal").modal('hide');
-          }, 600); // 600 millisecondes = 0.6 secondes
-        },
-        error: function(xhr, status, error) {
-          console.error(error);
-          toastr.error("Erreur de communication avec le serveur.", "Erreur");
-          document.getElementById("addfebbtn").disabled = false;
-          $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-          $("#loadingModal").modal('hide');
-        }
-      });
-    });
-
-
+   
     // Delete feb ajax request
 
     $(document).on('click', '.deleteIcon', function(e) {
@@ -524,9 +201,6 @@
       });
     });
 
-
-
-
     $(document).on('click', '.desactiversignale', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
@@ -534,7 +208,6 @@
       Swal.fire({
         title: 'Êtes-vous sûr ?',
         text: "Vous êtes sur le point de désactiver le signal ",
-
         showCancelButton: true,
         confirmButtonColor: 'green',
         cancelButtonColor: '#d33',
@@ -598,10 +271,7 @@
         }
       });
     }
-
-
     Sommefeb();
-
     function Sommefeb() {
       $.ajax({
         url: "{{ route('Sommefeb') }}",
@@ -611,18 +281,12 @@
         }
       });
     }
-
-
-
   });
 </script>
-
-
 <style>
   .swal-custom-content .swal-text {
     font-size: 14px;
     /* Ajustez la taille selon vos besoins */
   }
 </style>
-
 @endsection

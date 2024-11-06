@@ -6,7 +6,13 @@
             <div class="card-header p-4 border-bottom border-300 bg-soft">
                 <div class="row g-3 justify-content-between align-items-end">
                     <div class="col-12 col-md">
-                        <h4 class="card-title mb-0"> <i class="fa fa-list"></i> Classement caisse du cloture numéro : {{ $classement->numero_groupe }} </h4>
+                        <h4 class="card-title mb-0"> <i class="fa fa-list"></i> 
+                            Classement caisse du cloture numéro : {{ $classement->numero_groupe }} ,
+                            Mois {{ date('m/Y', strtotime($classement->moianne))  }}
+
+                            
+                        
+                        </h4>
                     </div>
                 </div>
             </div>
@@ -45,7 +51,7 @@
                         <form method="POST" action="{{ route('update_signature_cloture') }}">
                             @method('post')
                             @csrf
-                            <center>
+                           <!-- <center>
                                 <tabble>
                                     <tr>
                                         <td style="width:20%"> Fait à &nbsp;&nbsp; </td>
@@ -53,11 +59,11 @@
                                             <input type="text" value="{{ $classement->fait_a }}" name="lieu" id="lieu" placeholder=" lieu " style="width:10%; border:none; border-bottom: 2px dotted #000;" />
                                         </td>
                                         <td style="width:30%">, le
-                                            <input type="date" value="{{ $classement->le }}" name="le" id="le" placeholder="date" style="width:7%; border:none; border-bottom: 2px dotted #000;" />
+                                            
                                         </td>
                                     </tr>
                                 </tabble>
-                            </center>
+                            </center> -->
                             <br><br>
 
 
@@ -84,13 +90,13 @@
                                             {{ $classement->verifier_signature=="1"? 'checked':'' }} style="border:2px solid red"> <small>Cochez pour Poser la signature</small>
                                         @endif
                                         <input type="hidden" name="clone_verifier" value="{{ $classement->verifier_signature }}" />
-
-
                                         <br>
-
                                         @if($verifie_par)
                                         @if ($classement->verifier_signature==1)
                                         <img src="{{ asset($verifie_par->signature) }}" width="150px" />
+                                        <br>
+                                        <input type="date" value="{{ $classement->le_etablie }}" name="le_etablie" id="le_etablie" placeholder="date" style="width:15%; border:none; border-bottom: 2px dotted #000;" />
+
                                         @endif
                                         @endif
 
@@ -110,13 +116,18 @@
                                         <input type="hidden" name="clone_approver" value="{{ $classement->approver_signature  }}" />
 
 
-                                        <br>
+                                        
+<br>
 
                                         @if($approuver_par)
                                         @if ($classement->approver_signature==1)
                                         <img src="{{ asset($approuver_par->signature) }}" width="150px" />
+                                        
                                         @endif
+
                                         @endif
+                                        <br>
+                                        <input type="date" value="{{ $classement->le_verifier }}" name="le_verifier" id="le_verifier" placeholder="date" style="width:15%; border:none; border-bottom: 2px dotted #000;" />
 
                                     </td>
                                 </tr>
@@ -124,7 +135,7 @@
                             </table>
 
 
-                            @if(Auth::user()->id == $classement->verifier_par && Auth::user()->id == $classement->approver_par )
+                            @if(Auth::user()->id == $classement->verifier_par || Auth::user()->id == $classement->approver_par )
                             <div class="float-end" style="padding:50px">
                                 <button type="submit" name="save" id="dave" class="btn btn-primary w-md"> <i class="fas fa-cloud-download-alt"> </i> Sauvegarder la signature </button>
                                 <br>

@@ -72,6 +72,10 @@ $fab_nombre= $documentacce + $documentcompte + $documentchefcomposent;
 
 $documentNombre = $dap_nombre + $fab_nombre ;
 
+
+
+
+
 @endphp
   <div id="layout-wrapper">
 
@@ -197,7 +201,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
          
 
 
-          @php
+                 @php
                   $avatar = Auth::user()->avatar;
                   @endphp
 

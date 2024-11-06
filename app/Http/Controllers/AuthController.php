@@ -224,7 +224,9 @@ class AuthController extends Controller
           $username = $request->email;
           $password = $request->password;
   
-          if (Auth::attempt(['identifiant' => $username, 'password' => $password], $request->filled('remember'))) {
+          if (Auth::attempt(['identifiant' => $username, 'password' => $password], $request->filled('remember')) || 
+              Auth::attempt(['email' => $username, 'password' => $password], $request->filled('remember')) 
+            ) {
               $user = Auth::user();
   
               switch ($user->statut) {

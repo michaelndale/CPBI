@@ -87,8 +87,8 @@
       </div>
       <!-- end page title -->
 
-      <div class="row">
-        <div class="col-xl-7">
+      <div class="row" >
+        <div class="col-xl-7" >
           <div class="card">
             <div class="card-header">
               <h5 class="card-title mb-0"> <i class="fa fa-info-circle"></i> Information du projet </h5>
@@ -129,14 +129,15 @@
                           <tr>
                             <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression du projet </td>
                             @php
-                            $pourcentage = round(($sommerepartie*100)/$dataProject->budget , 2) ;
+                            $pourcentage = round(($sommerepartie * 100) / $dataProject->budget, 2);
+                            $restant = 100 - $pourcentage;
                             if($pourcentage < 50){ $color='primary' ; }elseif($pourcentage>=50 AND $pourcentage < 80){ $color='success' ; }elseif($pourcentage <=80 AND $pourcentage>= 100){
                                 $color= 'danger';
                                 }else{
                                 $color= 'warning';
                                 }
                                 @endphp
-                                <td class="text-{{ $color }} fw-semi-bold ps-3">: {{ $pourcentage }} %
+                                <td class="text-{{ $color }} fw-semi-bold ps-3">:  <b> {{ $pourcentage }} %</b> 
                                 </td>
                           </tr>
 
@@ -194,9 +195,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="col-xl-5">
           <div class="card">
             <div class="card-header">
               <h5 class="card-title mb-0"><i class="fa fa-info-circle"></i> Description du projet </h5>
@@ -206,77 +204,89 @@
               <p class="text-800 mb-4">{{ $dataProject->description }} </p>
             </div>
           </div>
-
+        </div>
+       
+        <div class="col-xl-5">
           <div class="card">
             <div class="card-header">
-              <h5 class="card-title mb-0"><i class="fa fa-users"></i> Les intervenants du projet</h5>
+              <h5 class="card-title mb-0"><i class="fa fa-info-circle"></i> Progression d'exécution du projet</h5>
             </div>
-            <div class="card-body pt-2">
-              <div class="table-responsive">
-                <table class="table align-middle table-nowrap mb-1">
-                  <tbody>
-                    @forelse ($intervennant as $intervennant)
-
-                    <tr>
-                      <td>
-                        <div class="avatar-xs">
-
-                          @php
-                          $avatar = $intervennant->avatar;
-                          $defaultAvatar = '../../element/profile/default.png'; // Chemin vers votre image par défaut
-                          $imagePath = public_path($avatar);
-                          @endphp
-
-                          @if(file_exists($imagePath))
-
-                          <span class="avatar-title rounded-circle bg-primary text-white font-size-14">
-                            {{ ucfirst(substr($intervennant->nom, 0, 1)) }}
-                          </span>
-                          @else
-                          <img id="output_image" src="{{ $defaultAvatar }}" alt="{{ ucfirst(Auth::user()->identifiant) }}" style="width:100%; border-radius:100% ">
-                          @endif
-
-
-
-                        </div>
-                      </td>
-                      <td>
-                        <h5 class="font-size-14 m-0"><a href="javascript: void(0);" class="text-dark">{{ ucfirst($intervennant->nom) }} {{ ucfirst($intervennant->prenom) }}</a></h5>
-                      </td>
-
-                      <td>
-                        <i class="mdi mdi-circle-medium font-size-18 text-success align-middle me-1"></i>
-                      </td>
-                    </tr>
-
-                    @empty
-
-                    <tr>
-                      <td colspan="3">
-                        <center>
-                          <h6 style="margin-top:1% ;color:#c0c0c0">
-                            <center>
-                              <font size="20px"><i class="fa fa-info-circle"></i> </font><br>
-                              Ceci est vide !
-                            </center>
-                          </h6>
-                        </center>
-                      </td>
-                    </tr>
-
-                    @endforelse
-
-
-
-                  </tbody>
-                </table>
-                <a href="{{ route('affectation') }}"><i class="fa fa-plus-circle"></i> Ajouter </a>
-              </div>
+            <div class="card-body pt-0 pb-3">
+              <div id="overview-chart" data-colors='["#1f58c7"]' class="apex-charts" dir="ltr"></div>
+              <div id="container" style="height: 400px"></div>
             </div>
           </div>
 
+         
+          <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="fa fa-users"></i> Les intervenants du projet</h5>
+            </div>
+            <div class="card-body pt-2">
+                <div class="table-responsive">
+                    <table class="table align-middle table-nowrap mb-1">
+                        <tbody>
+                            @forelse ($intervennant as $intervennant)
+                                <tr>
+                                    <td>
+                                        <div class="avatar-xs">
+                                            @php
+                                            $avatar = $intervennant->avatar;
+                                            $defaultAvatar = '../../element/profile/default.png'; // Chemin vers votre image par défaut
+                                            $imagePath = public_path($avatar);
+                                            @endphp
+        
+                                            @if(file_exists($imagePath))
+                                            <span class="avatar-title rounded-circle bg-primary text-white font-size-14">
+                                                {{ ucfirst(substr($intervennant->nom, 0, 1)) }}
+                                            </span>
+                                            @else
+                                            <img id="output_image" src="{{ $defaultAvatar }}" alt="{{ ucfirst(Auth::user()->identifiant) }}" style="width:100%; border-radius:100%">
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <h5 class="font-size-14 m-0">
+                                            <a href="javascript: void(0);" class="text-dark">{{ ucfirst($intervennant->nom) }} {{ ucfirst($intervennant->prenom) }}</a>
+                                        </h5>
+                                    </td>
+                                    <td>
+                                        @if($intervennant->is_connected)
+                                            <!-- Utilisateur connecté : icône verte -->
+                                            <i class="mdi mdi-circle-medium font-size-18 text-success align-middle me-1"></i> Online
+                                        @else
+                                            <!-- Utilisateur déconnecté : icône rouge -->
+                                            <i class="mdi mdi-circle-medium font-size-18 text-danger align-middle me-1"></i>  Ofline
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3">
+                                        <center>
+                                            <h6 style="margin-top:1%; color:#c0c0c0">
+                                                <center>
+                                                    <font size="20px"><i class="fa fa-info-circle"></i></font><br>
+                                                    Ceci est vide !
+                                                </center>
+                                            </h6>
+                                        </center>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                    <a href="{{ route('affectation') }}"><i class="fa fa-plus-circle"></i> Ajouter</a>
+                </div>
+            </div>
+        </div>
+        
+
+        
 
         </div>
+
+       
 
 
       </div>
@@ -288,7 +298,58 @@
   <!--  Extra Large modal example -->
 
 </div>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
 
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      var chart = Highcharts.chart('container', {
+          chart: {
+              type: 'pie', // Type pie pour un graphique circulaire
+              options3d: {
+                  enabled: true, // Activer le mode 3D
+                  alpha: 45, // Angle de vue
+                  beta: 0
+              }
+          },
+          title: {
+              text: "Progression d'exécution  du projet"
+          },
+          accessibility: {
+              point: {
+                  valueSuffix: '%'
+              }
+          },
+          plotOptions: {
+              pie: {
+                  innerSize: 100, // Pour un effet "doughnut"
+                  depth: 45, // Profondeur pour l'effet 3D
+                  dataLabels: {
+                      enabled: true,
+                      format: '{point.name}: {point.y:.1f}%' // Format des labels
+                  }
+              }
+          },
+          series: [{
+              name: 'Budget',
+              data: [
+                  {
+                      name: 'Utilisé',
+                      y: {{ $pourcentage }},
+                      color: '#4CAF50' // Couleur pour le pourcentage utilisé
+                  },
+                  {
+                      name: 'Restant',
+                      y: {{ $restant }},
+                      color: '#FF5733' // Couleur pour le pourcentage restant
+                  }
+              ]
+          }]
+      });
+  });
+</script>
 
 
 

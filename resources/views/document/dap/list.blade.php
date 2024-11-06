@@ -63,7 +63,7 @@
                   </th>
                   <th class="sort border-top "> <b><center>Montant</center> </b></th>
                   <th class="sort border-top "> <b>Lieu </b></th>
-                  <th class="sort border-top"> <b>Cheque </b></th>
+                  <th class="sort border-top"> <b>OV/Chèque</b></th>
                   <th class="sort border-top"> <b>Compte bancaire </b></th>
                   <th class="sort border-top"> <b>Banque </b></th>
                   <th class="sort border-top"> <b>Etabli au nom</b></th>
@@ -163,42 +163,42 @@
       }
     });
   });
+  
   document.addEventListener('DOMContentLoaded', function() {
-    var justifierCheckbox = document.getElementById('justifier');
-    var nonjustifierCheckbox = document.getElementById('nonjustifier');
-    var factureColumn = document.getElementById('facture-column');
-    var showRetourDiv = document.getElementById('Showretour');
+  var justifierCheckbox = document.getElementById('justifier');
+  var nonjustifierCheckbox = document.getElementById('nonjustifier');
+  var factureColumn = document.getElementById('facture-column');
+  var showRetourDiv = document.getElementById('Showretour');
 
-    function updateDisplay() {
-      if (justifierCheckbox.checked) {
-        factureColumn.style.display = 'table';
-        showRetourDiv.style.display = 'block';
-        nonjustifierCheckbox.checked = false;
-      } else if (nonjustifierCheckbox.checked) {
-        factureColumn.style.display = 'none';
-        showRetourDiv.style.display = 'none';
-        justifierCheckbox.checked = false;
-      } else {
-        factureColumn.style.display = 'none';
-        showRetourDiv.style.display = 'none';
-      }
+  // La table `factureColumn` est affichée par défaut dans tous les cas
+  factureColumn.style.display = 'table';
+
+  function updateDisplay() {
+    if (justifierCheckbox.checked) {
+      showRetourDiv.style.display = 'block';
+      nonjustifierCheckbox.checked = false;
+    } else {
+      showRetourDiv.style.display = 'block';
+      nonjustifierCheckbox.checked = false;
     }
+  }
 
-    justifierCheckbox.addEventListener('change', function() {
-      updateDisplay();
-    });
-
-    nonjustifierCheckbox.addEventListener('change', function() {
-      if (nonjustifierCheckbox.checked) {
-        factureColumn.style.display = 'none';
-        showRetourDiv.style.display = 'none';
-        justifierCheckbox.checked = false;
-      }
-    });
-
-    // Au chargement initial, assurez-vous que les éléments restent masqués
+  justifierCheckbox.addEventListener('change', function() {
     updateDisplay();
   });
+
+  nonjustifierCheckbox.addEventListener('change', function() {
+    if (nonjustifierCheckbox.checked) {
+      justifierCheckbox.checked = false;
+      showRetourDiv.style.display = 'block';
+
+    }
+  });
+
+  // Initialisation de l'affichage
+  updateDisplay();
+});
+
 
   function toggleInputs() {
     var checkboxes = document.querySelectorAll('.seleckbox');

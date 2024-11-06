@@ -4,8 +4,9 @@
   <div class="page-content">
     <div class="card-header p-4 border-bottom border-300 bg-soft">
       <div class="row g-3 justify-content-between align-items-end">
+        
         <div class="col-3 col-md">
-          <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="mdi mdi-search-open-page-variant-outline"></i> Rapport cumulatif </h4>
+          <h4 class="text-900 mb-0" data-anchor="data-anchor"><i class="fa fa-list"></i> Rapport cumulatif </h4>
         </div>
 
         <div class="col-8 col-md">

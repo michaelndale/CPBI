@@ -89,7 +89,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [AppCOntroller::class, 'index'])->name('dashboard');
         Route::get('/findClaseur', [AppCOntroller::class, 'findClaseur'])->name('findClaseur');
         Route::get('/findAnnee', [AppCOntroller::class, 'findAnnee'])->name('findAnnee');
+        Route::get('/feb-chart', [AppCOntroller::class, 'febData']);
+        
     });
+    Route::get('/fetch-feb-details', [AppCOntroller::class, 'fetchFebDetails'])->name('fetch-signalisation-details');
+
 
     Route::get('/rh', [AppCOntroller::class, 'rh'])->name('rh');
     Route::get('/archivages', [AppCOntroller::class, 'archivage'])->name('archivages');
@@ -98,6 +102,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('rapportcumule')->group(function () {
         Route::get('/', [RapportcummuleController::class, 'index'])->name('rapportcumule');
         Route::get('/getcumule', [RapportcummuleController::class, 'findcumule'])->name('getcumule');
+      
     });
 
     Route::prefix('indentification')->group(function () {
@@ -309,7 +314,9 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('feb')->group(function () {
         Route::get('/', [FebController::class, 'list'])->name('listfeb');
+        Route::get('nouvel', [FebController::class, 'create'])->name('nouveau.feb');
         Route::post('/storefeb', [FebController::class, 'store'])->name('storefeb');
+
         Route::get('/fetchAllfeb', [FebController::class, 'fetchAll'])->name('fetchAllfeb');
         Route::get('/Sommefeb', [FebController::class, 'Sommefeb'])->name('Sommefeb');
         Route::get('/findligne', [FebController::class, 'findligne'])->name('findligne');
@@ -361,6 +368,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('dap')->group(function () {
         Route::get('/', [DapController::class, 'list'])->name('listdap');
         Route::get('/fetchdap', [DapController::class, 'fetchAll'])->name('fetchdap');
+      
         Route::post('/storedap', [DapController::class, 'store'])->name('storedap');
         Route::delete('/deletedap', [DapController::class, 'delete'])->name('deletedap');
         Route::get('/{id}/view/', [DapController::class, 'show'])->name('viewdap');
@@ -384,8 +392,10 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('dja')->group(function () {
         Route::get('/', [DjaController::class, 'list'])->name('listdja');
+        Route::get('/{id}/nouveau/', [DjaController::class, 'nouveau'])->name('nouveau');
+        Route::get('/{id}/misesajour/', [DjaController::class, 'misesajour'])->name('misesajour');
         Route::post('/storejustification', [DjaController::class, 'saveDjas'])->name('storejustification');
-        Route::post('/updatejustification', [DjaController::class, 'UpDjas'])->name('updatejustification');
+        Route::post('/updatejustification/{id}', [DjaController::class, 'UpDjas'])->name('updatejustification');
 
         Route::get('/fetchdja', [DjaController::class, 'fetchAll'])->name('fetchdja');
         Route::delete('/deletedja', [DjaController::class, 'delete'])->name('deletedja');
@@ -414,8 +424,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/update_signature_cloture', [RapportController::class, 'updateSignatureCloture'])->name('update_signature_cloture');
         Route::get('/get-nums/{compteId}', [RapportController::class, 'getNumeros'])->name('get.nums');
         Route::get('/filter-data', [RapportController::class, 'filterData'])->name('filterData');
-    
+        Route::get('rapprochement', [RapportController::class, 'rapprochement'])->name('rapprochement');
+        Route::get('rapartitiooncouts', [RapportController::class, 'rapartitiooncouts'])->name('rapartitiooncouts');
+        Route::post('/storeRapprochement', [RapportController::class, 'storeRecherche'])->name('storeRapprochement');  
+        Route::get('getlisteRapportage', [RapportController::class, 'getRapprochement'])->name('getlisteRapportage');
+        Route::get('{id}/Rapprochement', [RapportController::class, 'rapporRapprochement'])->name('rapporRapprochement');
+        
+        
     });
+
     Route::post('/clotureCaisse', [RapportController::class, 'store'])->name('clotureCaisse');
    
     Route::post('/generate-printable-rapport', [RapportController::class, 'generatePrintableFile'])->name('generate.print.raport');
@@ -529,6 +546,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/deleteCarnet', [CarnetbordController::class, 'delete'])->name('delete_carnet');
         Route::get('/showCarnet', [CarnetbordController::class, 'showCarnet'])->name('showCarnet');
         Route::post('/updateCarnet', [CarnetbordController::class, 'updateCarnet'])->name('updateCarnet');
+        Route::get('/rapportcarnetbord', [CarnetbordController::class, 'rapportcarnet'])->name('rapport_carnet_bord');
     });
 
 
@@ -649,6 +667,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/showft', [FeuilletempsController::class, 'editf'])->name('showft');
         Route::delete('/deleteftemps', [FeuilletempsController::class, 'deleteftemps'])->name('deleteftemps');
     });
+
 
     Route::get('/active-users', [AuthController::class, 'activeUsers'])->name('active-users');
 

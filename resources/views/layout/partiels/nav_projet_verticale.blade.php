@@ -188,6 +188,22 @@ if(session()->has('id')){
 }
 
 
+  $feb_signale = DB::table('febs')
+    ->join('projects', 'febs.projetid', '=', 'projects.id')
+    ->join('affectations', 'febs.projetid', '=', 'affectations.projectid')
+    ->where('febs.signale', '=', 1)
+    ->distinct() // Ajoute distinct pour éviter la duplication
+    ->count('febs.id'); // Compter uniquement les enregistrements uniques de 'febs'
+
+    $dap_signale = DB::table('daps')
+    ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+    ->join('affectations', 'daps.projetiddap', '=', 'affectations.projectid')
+    ->where('daps.signaledap', '=', 1)
+    ->distinct() // Ajoute distinct pour éviter la duplication
+    ->count('daps.id'); // Compter uniquement les enregistrements uniques de 'DAPs'
+
+
+$total_signalisation = $feb_signale+$dap_signale;
 
 @endphp
   <div id="layout-wrapper">
@@ -358,6 +374,17 @@ if(session()->has('id')){
               </li>
             @endif
 
+
+            @if ( $total_signalisation != 0)
+            <li class="nav-item">
+              <a href="#" class="waves-effect" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-signalisation">
+                <i class="ri-chat-voice-line"></i><span class="badge rounded-pill bg-danger float-end">{{ $total_signalisation }}</span>
+              <span>Signalisation</span>
+            </a>
+            </li>
+          @endif
+
+
             <li>
               <a href="{{ route('dashboard') }}" class="waves-effect">
                 <i class="ri-dashboard-fill"></i>
@@ -417,7 +444,7 @@ if(session()->has('id')){
                 <li><a href="{{ route('activity') }}"><i class="fa fa-running"></i> Activités</a></li>  
                 <li><a href="{{ route('affectation') }}"><i class="fa fa-users"></i> Intervenants</a></li>  
                 <li><a href="{{ route('planoperationnel') }}"><i class="fa fa-tasks"></i> Plan d'action</a></li>  
-                <li><a href="{{ route('rapportcumule') }}"><i class="fa fa-chart-pie"></i> Cummulatif</a></li>  
+                
             
              
               </ul>
@@ -475,7 +502,7 @@ if(session()->has('id')){
             
 
 
-              <li> <a href="{{ route('Rapport.caisse') }}" class="dropdown-item">Rapport de caisse</a></li>
+            
                
              
               </ul>
@@ -487,8 +514,10 @@ if(session()->has('id')){
                 <span>Rapports </span>
               </a>
               <ul class="sub-menu" aria-expanded="false">
-                <li><a href="{{ route('rapportcumule') }}">Rapport Commulatif</a></li>
-                <li><a href="{{ route('Rapport.caisse') }}">Rapport Caisse</a></li>
+                <li><a href="{{ route('rapprochement') }}"><i class="fa fa-chart-pie"></i> Rapprochement</a></li>
+                <li><a href="{{ route('rapartitiooncouts') }}"><i class="fa fa-chart-pie"></i>  Répartition Coûts</a></li>
+                <li><a href="{{ route('rapportcumule') }}"><i class="fa fa-chart-pie"></i> Cummulatif</a></li> 
+                <li><a href="{{ route('Rapport.caisse') }}"><i class="fa fa-chart-pie"></i> Petite caisse</a></li> 
               </ul>
             </li>
             @else
