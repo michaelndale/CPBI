@@ -1,413 +1,444 @@
 @extends('layout/app')
 @section('page-content')
-<div class="main-content">
-    <br>
-    <div class="content">
-        <div class="card">
-            <div class="card-body">
-                <div class="invoice-title">
-                    <center>
-                        <div class="text-muted">
-                            <table style=" width:100%">
-                                <tr>
-                                    <td style=" width:10% ;"> <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="50" /> </td>
-
-                                    <td>
-                                        <center>
-                                            <h3>{{ $dateinfo->entete }}</h3>
-                                        </center>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <hr>
-                                        <center>{{ $dateinfo->sousentete }}</center>
-                                    </td>
-                                </tr>
-                            </table>
+    <div class="main-content">
+        <div class="page-content">
+            <div class="row">
+                <div class="col-12" style="margin:auto">
+                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> MOdification du DEMANDE ET JUSTIFICATION
+                            D'AVANCE (DJA) N<sup>o</sup> : {{ $data->numerudja }} </h4>
+                        <div class="page-title-right">
+                            <div class="btn-toolbar float-end" role="toolbar">
+                            </div>
                         </div>
-                </div>
-                <hr class="my-4">
-                <div class="row">
-                    <H5>
-                        <center> DEMANDE DE JUSTIFICATION D'AVANCE (DJA) N° {{ $datadap->numerodap }}/{{ date('Y')}} </center>
-                    </H5>
-                    <div class="col-sm-12">
-                        <table class="table table-bordered  table-sm">
-                            <tr>
-                                <td width="55%">
-                                    Service: {{ $datadap->titres }} <BR>
-                                    Composante/ Projet/Section: {{ ucfirst(Session::get('title')) }} <br>
-                                    Moyen de Paiement :
-
-                                    OV : <input type="checkbox" class="form-check-input" readonly @if ( $datadap->ov==1)
-                                    checked value="{{ $datadap->ov }}"
-                                    @else
-                                    value="{{ $datadap->ov }}"
-                                    @endif /> &nbsp; &nbsp;&nbsp;
-
-                                    Cheque :{{ $datadap->cho }}
-                                    <br>
-                                    Devise : {{ Session::get('devise') }} <br>
-
-
-                                    Source de creation : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }} <br>
-
-
-                                </td>
-                                <td>
-                                    Référence: FEB n<sup>o</sup>:
-                                    @php
-                                    foreach ($datafebElement as $key => $datafebElements) {
-                                    echo '['.$datafebElements->numerofeb.']';
-
-                                    if ($key < count($datafebElement) - 1) { echo ',' ; } } @endphp <BR>
-                                        Lieu: {{ $datadap->lieu }} <br>
-
-                                        Compte bancaire(BQ) : {{ $datadap->comptabiliteb }} <br>
-                                       
-                                        Taux execution globale : {{ $pourcetage_globale }}% <br>
-
-                                        Relicat budgetaire: {{ number_format($solde_comptable, 0, ',', ' ')  }}
-
-                                </td>
-                            </tr>
-                        </table>
-
-
-
-                        <h6> <u>Synthese sur l'utilisation des fonds demandes(Vr details sur FB en avance)</u></h6>
-
-                        <table class="table table-striped table-sm fs--1 mb-0 table-bordered  ">
-                            <thead>
-                                <tr>
-                                    <th width="13%">Numéro du FEB </th>
-                                    <th width="60%">Activité </th>
-                                    <th>Montant total </th>
-                                    <th>
-                                        <center>T.E/projet</center>
-                                    </th>
-                                </tr>
-                            </thead><!-- end thead -->
-                            <tbody>
-                                @php
-                                $totoglobale = 0; // Initialiser le total global à zéro
-                                $pourcentage_total = 0; // Initialiser le pourcentage total à zéro
-
-                                @endphp
-                                @foreach ($datafebElement as $datafebElements)
-                                @php
-
-                                $totoSUM = DB::table('elementfebs')
-                                ->orderBy('id', 'DESC')
-                                ->where('febid', $datafebElements->fid)
-                                ->sum('montant');
-
-
-                                $totoglobale += $totoSUM;
-                                $pourcentage = round(($totoSUM * 100) / $budget, 2);
-                                // Ajouter le pourcentage de cette itération au pourcentage total
-                                $pourcentage_total += $pourcentage;
-
-                                @endphp
-                                <tr>
-                                    <td>{{ $datafebElements->numerofeb }}</td>
-                                    <td>{{ $datafebElements->descriptionf }}</td>
-
-                                    <td align="right">
-                                        @php
-                                        $totoSUM = DB::table('elementfebs')
-                                        ->orderBy('id', 'DESC')
-                                        ->where('febid', $datafebElements->fid)
-                                        ->sum('montant');
-                                        @endphp
-                                        {{ number_format($totoSUM, 0, ',', ' ')  }}
-
-                                    </td>
-                                    <td align="center">{{ $pourcentage }} %</td>
-                                </tr>
-                                @endforeach
-                                <tr style=" background-color: #040895;">
-                                    <td style="color:white" colspan="2" align="center"> Total </td>
-                                    <td align="right" style="color:white"> {{ number_format($totoglobale, 0, ',', ' ')  }}</td>
-                                    <td style="color:white" align="center"> {{ $pourcentage_total }} %</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <br>
-
-                        <p> C'est montant est une avance ? &nbsp; &nbsp;&nbsp;
-                            Oui : <input type="checkbox" class="form-check-input" readonly @if ( $datadap->justifier==1)
-                            checked
-                            @endif /> &nbsp; &nbsp;&nbsp;
-
-                            Non : <input type="checkbox" class="form-check-input" readonly @if ( $datadap->justifier==0)
-                            checked
-                            @endif /> &nbsp; &nbsp;&nbsp;
-                            <br>
-
-                        </p>
-
-                        @if ( $datadap->justifier==1)
-
-                        <table class="table table-striped table-sm fs--1 mb-0 table-bordered  ">
-                            <thead>
-                                <tr>
-                                    <th>F.E.B </th>
-                                    <th>Facture </th>
-                                    <th>Montant de l'Avance </th>
-                                    <th>Montant utilisé*</th>
-                                    <th>Surplus/Manque*</th>
-                                    <th>Montant retourné</th>
-                                    <th>Bordereau</th>
-                                    <th>Duré avance</th>
-                                    <th>Date du</th>
-                                    <th>Description</th>
-                                    <th>Véhicule</th>
-                                </tr>
-                            </thead><!-- end thead -->
-                            <tbody>
-                                @foreach ($liste_justification as $liste_justifications)
-                                <tr>
-                                    <td>{{ $liste_justifications->numerodap }}</td>
-                                    <td>{{ $liste_justifications->numfacture }}</td>
-                                    <td>{{ $liste_justifications->montantavance }}</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td>{{ $liste_justifications->duree_avance }}</td>
-                                    <td></td>
-                                    <td>{{ $liste_justifications->descriptionn }}</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-
-
-                        @endif
-                        <br>
-
-
-
-
-
-                        <table class="table table-bordered  table-sm">
-                            <tr>
-                                <td colspan="3"> Verification et Approbation de Demande de paiement</td>
-                            </tr>
-
-                            <tr>
-                                <td width="60%">Demande etablie par : {{ ucfirst($etablienom->nom) }} {{ ucfirst($etablienom->prenom) }} <br>
-                                    Chef de Composante/Projet/Section <br>
-                                    Noms: {{ ucfirst($Demandeetablie->nom) }} {{ ucfirst($Demandeetablie->prenom) }}
-
-
-                                </td>
-
-                                <td width="25%">
-                                    <center>
-
-                                        Signature
-                                        <!-- poser signature -->
-
-
-                                        @if(Auth::user()->id == $datadap->demandeetablie )
-                                        <input class="form-check-input" type="checkbox" name="demandeetabliesignature" {{ $datadap->demandeetablie_signe=="1"? 'checked':'' }}>
-                                        @endif
-
-                                        <input type="hidden" name="clone_demandeetabliesignature" value="{{ $datadap->demandeetablie_signe }}" />
-
-                                        <br>
-
-
-
-                                        @if ($datadap->demandeetablie_signe==1)
-                                        <img src="{{ asset($Demandeetablie->signature) }}" width="120px" />
-                                        @endif
-
-
-                                    </center>
-                                </td>
-                                <td width="15%">Date : {{ $datadap->demandeetablie_signe_date }}
-                                    <input type="hidden" value="{{ $datadap->demandeetablie_signe_date }}" name="dated">
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    Vérifiée par : <br>
-                                    Chef de Comptable <br>
-                                    Noms: {{ ucfirst($verifierpar->nom) }} {{ ucfirst($verifierpar->prenom) }}
-
-
-                                </td>
-
-                                <td>
-                                    <center>Signature
-                                        <!-- poser signature -->
-                                        @if(Auth::user()->id == $datadap->verifierpar )
-                                        <input class="form-check-input" type="checkbox" name="verifierparsignature" {{ $datadap->verifierpar_signe=="1"? 'checked':'' }}>
-                                        @endif
-                                        <br>
-
-                                        <input type="hidden" name="clone_verifierparsignature" value="{{ $datadap->verifierpar_signe }}" />
-
-                                        @if ($datadap->verifierpar_signe==1)
-                                        <img src="{{  asset($verifierpar->signature) }}" width="120px" />
-                                        @endif
-                                    </center>
-
-                                </td>
-                                <td>Date : {{ $datadap->verifierpar_signe_date }}
-                                    <input type="hidden" value="{{ $datadap->verifierpar_signe_date }}" name="datev">
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>Approuveee par : <br>
-                                    Chef de Service <br>
-                                    Noms: {{ ucfirst($approuverpar->nom) }} {{ ucfirst($approuverpar->prenom) }} </td>
-
-                                <td>
-                                    <center>
-                                        Signature
-                                        <!-- poser signature -->
-                                        @if(Auth::user()->id == $datadap->approuverpar)
-                                        <input class="form-check-input" type="checkbox" name="approuverparsignature" {{ $datadap->approuverpar_signe=="1"? 'checked':'' }}>
-                                        @endif
-
-                                        <input type="hidden" name="clone_approuverparsignature" value="{{ $datadap->approuverpar_signe }}" />
-
-                                        <br>
-
-                                        @if ($datadap->approuverpar_signe==1)
-                                        <img src="{{ asset( $approuverpar->signature) }}" width="120px" />
-                                        @endif
-                                    </center>
-
-
-                                </td>
-                                <td>Date : {{ $datadap->approuverpar_signe_date }} <input type="hidden" value="{{ $datadap->approuverpar_signe_date }}" name="datea"></td>
-                            </tr>
-
-                        </table>
-
-
-                        <table class="table table-bordered  table-sm">
-                            <tr>
-                                <td colspan="3">Autorisation de Paiement</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" align="center">
-
-                                    @if (is_null($datadap->dateautorisation))
-                                    Autorise le ....../...../....
-                                    @else
-                                    Autorise le : {{ date('d-m-Y', strtotime($datadap->dateautorisation))  }}
-                                    @endif
-
-
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <center>
-                                        Responsable Administratif et Financier
-                                        <!-- poser signature -->
-                                      
-                                        <br> {{ ucfirst($responsable->nom) }} {{ ucfirst($responsable->prenom) }}
-
-
-                                        @if ($datadap->responsable_signe==1)
-                                        <br>
-
-                                        <img src="{{  asset($responsable->signature) }}" width="120px" />
-                                    </center>
-                                    @endif
-
-
-                                </td>
-                                <td>
-                                    <center>
-                                        Chef des Programmes
-                                        <!-- POser signature -->
-                                        
-
-                                        <br> {{ ucfirst($chefprogramme->nom) }} {{ ucfirst($chefprogramme->prenom) }}
-
-                                        @if ($datadap->chefprogramme_signe==1)
-                                        <br>
-
-                                        <img src="{{ asset($chefprogramme->signature) }}" width="120px" />
-                                    </center>
-                                    @endif
-
-                                </td>
-
-                                <td align="center">Secretaire General de la CEPBU
-
-                                  
-                                    <br>
-
-
-
-                                    {{ ucfirst($secretaire->nom) }} {{ ucfirst($secretaire->prenom) }}
-
-                                    @if ($datadap->secretaure_general_signe==1)
-
-                                    <center>
-                                        <img src="{{  asset($secretaire->signature) }}" width="120px" />
-                                    </center>
-                                    @endif
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="4">Observation/Instructions du SG <br>
-
-
-                                    @if (is_null($datadap->observation))
-
-                                    @else
-                                    {{ $datadap->observation  }}
-                                    @endif
-
-
-
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="2"><small>FEB: Fiche d'Expression des Besoins , preparee par l'assistant de composante(Ac) ou charge d'execution (CE) ou Chef de Session (CS) ou assimilee &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; BQ.Banque </small> </td>
-                            </tr>
-                        </table>
-
-
-                        <hr>
-                        <center>
-
-                            <center><small>{{ $dateinfo->piedpage }}</small></center>
-
-                        </center>
-
-                        <br>
-
                     </div>
-
                 </div>
             </div>
+
+            <form class="needs-validation" novalidate method="POST" id="EditdjdaForm">
+                @method('post')
+                @csrf
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-xl-6">
+                                        <table class="table table-bordered table-striped table-sm fs--1 mb-0">
+                                            <tr>
+                                                <td colspan="2">
+                                                    <label class="form-label">Présumé Bénéficiaire/Fournisseur/Prestataire à
+                                                        payer:</label> <br>
+                                                    @php
+                                                        // Join the 'numerofeb' values with commas
+                                                        $benefNom = $numerofeb->pluck('beneficiaireNom')->join(', ');
+                                                    @endphp
+
+                                                    {{ $benefNom }}
+
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    Adresse :
+                                                    @php
+                                                        $adresse_benef = collect($numerofeb)
+                                                            ->pluck('adresse')
+                                                            ->join(', ');
+                                                    @endphp
+
+                                                    {{ $adresse_benef }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label class="form-label">Téléphone1:</label>
+                                                    @php
+                                                        // Join the 'numerofeb' values with commas
+                                                        $benefPhone_un = $numerofeb->pluck('telephoneone')->join(', ');
+                                                    @endphp
+
+                                                    {{ $benefPhone_un }}
+
+                                                </td>
+                                                <td>
+                                                    <label class="form-label">Téléphone2:</label>
+                                                    @php
+                                                        // Join the 'numerofeb' values with commas
+                                                        $benefPhone_deux = $numerofeb
+                                                            ->pluck('telephonedeux')
+                                                            ->join(', ');
+                                                    @endphp
+
+                                                    {{ $benefPhone_deux }}
+
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <label>DESCRIPTION/MOTIF:</label> <br>
+                                                    @php
+                                                        // Join the 'numerofeb' values with commas
+                                                        $benefPhone_decription = $numerofeb
+                                                            ->pluck('description')
+                                                            ->join(', ');
+                                                    @endphp
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <!-- end card -->
+                                    </div> <!-- end col -->
+
+                                    <div class="col-xl-6">
+                                        <table class="table table-bordered table-striped table-sm fs--1 mb-0">
+                                            <tr>
+                                                <td>
+                                                    <label class="form-label">Les fonds devront être reçus le
+                                                        {{ $data->fond_recu_le }}</label>
+                                                </td>
+                                                <td>
+                                                    <label class="form-label"> Référence (s) : FEB Nº</label>
+                                                    @php
+                                                        // Join the 'numerofeb' values with commas
+                                                        $referenceFeb = $numerofeb->pluck('numerofeb')->join(', ');
+                                                    @endphp
+
+                                                    {{ $referenceFeb }}
+                                                </td>
+                                                <td>
+                                                    DAP Nº {{ $data->nume_dap }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>OV/CHQ Nº {{ $data->cho }} </td>
+                                                <td colspan="2">
+                                                    @php
+                                                        // Join the 'numerofeb' values with commas
+                                                        $ligneB = $numerofeb->pluck('libelle_compte')->join(', ');
+                                                    @endphp
+                                                    Ligne budgétaire: {{ $ligneB }} </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Montant de l'avance :
+                                                    {{ $data->montant_avance_un }}
+                                                </td>
+                                                <td>Dévise: {{ $devise }} </td>
+                                                <td>
+                                                    Durée de l’avance:(Jours) : {{ $data->duree_avance }}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <br>
+                                        <br>
+                                    </div>
+                                    <div class="col-xl-12">
+
+                                        <table style="width:100%">
+                                            <tr>
+                                                <td>
+                                                    Fonds demandes par : <br>
+                                                    {{ $data->fonds_demandes_nom }} {{ $data->fonds_demandes_prenom }}
+                                                </td>
+                                                <td>
+                                                    Signature
+                                                </td>
+                                                <td>
+                                                    Date: <br>
+                                                    {{ $data->date_fonds_demande_par }}
+
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Avance Approuvée par (2 personnes au moins) : <br>
+                                                    {{ $data->avance_approuver_un_nom }}
+                                                    {{ $data->avance_approuver_un_prenom }}</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+
+                                        </table>
+
+
+                                        <div class="card">
+                                            <div class="card-body">
+
+
+
+                                                <hr>
+
+                                                <div class="row">
+                                                    <!-- Approval by the first person -->
+                                                    <div class="col-md-4">
+                                                        <div class="mb-2">
+                                                            <label class="form-label">Avance Approuvée par (2 personnes au
+                                                                moins) :</label>
+                                                            <select type="text" class="form-control form-control-sm"
+                                                                name="avance_approuver_par_un" id="acce" required>
+                                                                <option value="{{ $data->avance_approuver_un_userid }}">
+
+                                                                </option>
+                                                                @foreach ($personnel as $personnels)
+                                                                    <option value="{{ $personnels->userid }}">
+                                                                        {{ $personnels->nom }} {{ $personnels->prenom }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-1"></div>
+                                                    <div class="col-md-2">
+                                                        <div class="mb-2">
+                                                            <label class="form-label">Date</label>
+                                                            <input name="date_signature_avance_approuver_un"
+                                                                value="{{ $data->date_avance_approuver_par }}"
+                                                                type="date" class="form-control form-control-sm" />
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-3"></div>
+
+                                                    <!-- Approval by the second person -->
+                                                    <div class="col-md-4">
+                                                        <div class="mb-2">
+                                                            <label class="form-label">Nom</label>
+                                                            <select type="text" class="form-control form-control-sm"
+                                                                name="avance_approuver_par_deux" id="acce" required>
+                                                                <option value="{{ $data->avance_approuver_par_deux }}">
+                                                                    {{ $data->avance_approuver_par_deux_nom }}
+                                                                    {{ $data->avance_approuver_par_deux_prenom }}
+                                                                </option>
+                                                                @foreach ($personnel as $personnels)
+                                                                    <option value="{{ $personnels->userid }}">
+                                                                        {{ $personnels->nom }} {{ $personnels->prenom }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-1"></div>
+                                                    <div class="col-md-2">
+                                                        <div class="mb-2">
+                                                            <label class="form-label">Date</label>
+                                                            <input name="date_signature_avance_approuver_deux"
+                                                                value="{{ $data->date_avance_approuver_par_deux }}"
+                                                                type="date" class="form-control form-control-sm" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <hr>
+
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="mb-2">
+                                                            <label class="form-label">Fonds déboursés par: </label>
+                                                            <select type="text" class="form-control form-control-sm"
+                                                                name="fond_debourse_par" required>
+                                                                <option value="{{ $data->fond_debourser_par }}">
+
+                                                                    {{ $data->fond_debourser_nom }}
+                                                                    {{ $data->fond_debourser_prenom }}
+
+                                                                </option>
+                                                                @foreach ($personnel as $personnels)
+                                                                    <option value="{{ $personnels->userid }}">
+                                                                        {{ $personnels->nom }} {{ $personnels->prenom }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-1">
+
+                                                    </div>
+
+                                                    <div class="col-md-2">
+                                                        <div class="mb-2">
+                                                            <label class="form-label"> Date</label>
+                                                            <input name="date_signe_fond_debourses" type="date"
+                                                                value="{{ $data->date_fond_debourser_par }}"
+                                                                class="form-control form-control-sm" />
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+            </form>
         </div>
     </div>
-</div>
-<br>
-<br>
-</div>
-</div>
+    <!-- end card -->
+    </div> <!-- end col -->
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-2">
+                            <label class="form-label">Fonds demandes par : </label>
+                            <select type="text" class="form-control form-control-sm" name="fondPayea" id="acce"
+                                required>
+                                <option value="{{ $data->pfond_paye }}"> {{ $data->pfond_paye_nom }}
+                                    {{ $data->pfond_paye_prenom }}
+                                </option>
+                                @foreach ($personnel as $personnels)
+                                    <option value="{{ $personnels->userid }}">
+                                        {{ $personnels->nom }} {{ $personnels->prenom }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <!-- DESCRIPTION/MOTIF Field -->
+                    <div class="col-md-5">
+                        <div class="mb-2">
+                            <label>DESCRIPTION/MOTIF:</label>
+                            <div>
+                                <textarea name="fondPayeDescription" id="descriptionMotif" required class="form-control" rows="2">{{ $data->description_avance }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Plaque vehicule Field (Initially Hidden) -->
+                    <div class="col-md-3" id="plaqueVehiculeDiv" style="display: none;">
+                        <div class="mb-2">
+                            <label class="form-label">Plaque vehicule utilisat</label>
+                            <select type="text" class="form-control form-control-sm" name="plaque" id="acce"
+                                required>
+                                <option value="{{ $data->plaque }}">{{ $data->plaque }}</option>
+                                @foreach ($vehicule as $vehicules)
+                                    <option value="{{ $vehicules->matricule }}">
+                                        {{ $vehicules->matricule }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="col-md-3">
+                        <div class="mb-2">
+                            <label class="form-label">Montant de l'Avance</label>
+                            <input name="montantAvancedeux" value="{{ $data->montant_avance }}" type="text"
+                                class="form-control form-control-sm" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="mb-2">
+                            <label class="form-label">Montant utilisé*</label>
+                            <input name="montantUtilise" value="{{ $data->montant_utiliser }}" type="text"
+                                class="form-control form-control-sm" />
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="mb-2">
+                            <label class="form-label">Surplus/Manque*</label>
+                            <input name="surplusManque" value="{{ $data->montant_surplus }}" type="text"
+                                class="form-control form-control-sm" />
+
+                        </div>
+                    </div>
 
 
+                    <div class="col-md-3">
+                        <div class="mb-2">
+                            <label class="form-label">Montant retourné
+                                à la caisse ou au compte(Si Surplus)
+                            </label>
+                            <input name="montantRetourne" value="{{ $data->montant_retourne }}" type="text"
+                                class="form-control form-control-sm" />
 
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="mb-2">
+                            <label class="form-label">Réception des fonds retournés à la caisse par: <br>Noms de la
+                                Caissière :
+                            </label>
+                            <select type="text" class="form-control form-control-sm" name="fond_retourne"
+                                id="acce" required>
+                                <option disabled="true" selected="true"
+                                    value="{{ $data->fonds_retournes_caisse_par }} ">
+                                    {{ $data->fonds_retournes_caisse_nom }} {{ $data->fonds_retournes_caisse_prenom }}
+                                </option>
+                                @foreach ($personnel as $personnels)
+                                    <option value="{{ $personnels->userid }}">{{ $personnels->nom }}
+                                        {{ $personnels->prenom }}</option>
+                                @endforeach
+                            </select>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="mb-2">
+                            <label class="form-label">ou Borderau de versement <br>nº <br>
+                            </label>
+                            <input name="bordereauVersement" value="{{ $data->bordereau_versement }}" type="text"
+                                class="form-control form-control-sm" />
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="mb-2">
+                            <label class="form-label">Du <br>nº <br>
+                            </label>
+                            <input name="du" type="date" value="{{ $data->du_num }}"
+                                class="form-control form-control-sm" />
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            <label class="form-label">Réception des pièces justificatives de l'utilisation de l'avance
+                                par:
+                            </label>
+                            <select type="text" class="form-control form-control-sm" name="reception_pieces_par"
+                                id="acce" required>
+                                <option disabled="true" selected="true"
+                                    value="{{ $data->reception_pieces_justificatives }} ">
+                                    {{ $data->reception_pieces_nom }} {{ $data->reception_pieces_prenom }}</option>
+                                @foreach ($personnel as $personnels)
+                                    <option value="{{ $personnels->userid }}">{{ $personnels->nom }}
+                                        {{ $personnels->prenom }}</option>
+                                @endforeach
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+
+                <br><br>
+                <button id="edjitustifierbtn" name="editjustifierbtn" class="btn btn-primary editjustifierbtn"
+                    type="submit"><i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
+                <br><br>
+
+                </form>
+            </div>
+        </div>
+        <!-- end card -->
+    </div> <!-- end col -->
+    </div>
+    </div>
+    </div>
+    <!-- end card -->
+    </div> <!-- end col -->
+    </div>
+    </form>
+    </div>
+    </div>
 @endsection

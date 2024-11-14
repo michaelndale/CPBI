@@ -236,6 +236,9 @@ $cryptedId = Crypt::encrypt($datadap->id);
                                     <td colspan="4"> Fonds reçus par :
                                         @if(isset($fond_reussi->nom) && !empty($fond_reussi->nom) && isset($fond_reussi->prenom) && !empty($fond_reussi->prenom))
                                         {{ ucfirst($fond_reussi->nom) }} {{ ucfirst($fond_reussi->prenom) }}
+
+                                        @else
+                                        {{ $dajshow->autresBeneficiaireFond }}
                                         @endif
 
                                     </td>

@@ -12,6 +12,7 @@
                     <div class="page-title-right">
                         <div class="btn-toolbar float-end" role="toolbar">
                             <div class="btn-group me-2 mb-2 mb-sm-0">
+                                <a href="{{ route('nouveau.feb') }}" type="button" class="btn btn-primary waves-light waves-effect"><i class="fa fa-plus-circle"></i></a>
                                 <a href="{{ route('generate-pdf-feb', $dataFe->id) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-print"></i> </a>
                                 <a href="{{ route('key.viewFeb', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-eye"></i> </a>
                                 <a href="{{ route('listfeb') }}" type="button" class="btn btn-primary waves-light waves-effect"><i class="fa fa-list"></i></a>
@@ -33,15 +34,28 @@
                                 <table class="table table-striped table-sm fs--1 mb-0">
                                     <tbody class="list">
                                         <tr>
-                                            <td class="align-middle ps-3 name" colspan="4">Composante/ Projet/Section</td>
-                                            <td class="align-middle email" colspan="13">
+                                            <td class="align-middle ps-3 name" colspan="2">Composante/ Projet/Section </br>
                                                 <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
                                                 <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
                                             </td>
+                                            <td rowspan="2" style="width:40%">
+                                                Référence des documents à attacher
+                                                
+                                                <select class="form-control form-control-sm" id="annex" name="annex[]" multiple>
+                                                    <option disabled selected value="">-- Sélectionner les documents attachés --</option>
+                                                    @foreach ($attache as $attaches)
+                                                        <option value="{{ $attaches->id }}" 
+                                                                class="{{ in_array($attaches->id, $attachedDocIds) ? 'attached-option' : '' }}" 
+                                                                {{ in_array($attaches->id, $attachedDocIds) ? 'selected' : '' }}>
+                                                            {{ $attaches->libelle }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <td class="align-middle ps-3 name" colspan="4">Ligne budgétaire: </td>
-                                            <td class="align-middle email" colspan="14">
+                                            <td class="align-middle ps-3 name" colspan="2">Ligne budgétaire: 
                                                 <select class="form-control  form-control-sm" id="ligneid" name="ligneid" required>
                                                     <option value="{{ $dataFe->ligne_bugdetaire }} - {{ $dataFe->sous_ligne_bugdetaire }}">{{ $dataFe->numeroc }}: {{ $dataFe->libellec }}</option>
                                                     @foreach ($compte as $comptes)
@@ -74,32 +88,46 @@
                                         </tr>
 
                                         <tr>
-                                            <td colspan="4" class="align-middle ps-3 name">Activités </td>
-                                            <td colspan="5">
+                                            <td colspan="0" class="align-middle ps-3 name">Activités
                                                 <input type="text" class="form-control form-control-sm" name="descriptionf" id="descriptionf" value="{{ $dataFe->descriptionf}}" required>
                                             </td>
-                                            <td class="align-middle ps-3 name" colo>Bénéficiaire </td>
-                                            <td colspan="10">
-                                                <select class="form-control  form-control-sm" id="beneficiaire" name="beneficiaire" required>
-                                                    @if (isset($onebeneficaire->libelle) && !empty($onebeneficaire->libelle))
-                                                    <option value="{{ $onebeneficaire->id }}">{{ $onebeneficaire->libelle }} </option>
-                                                    @else
-                                                    <option> Sélectionner un bénéficiaire </option>
-                                                    @endif
-                                                    @foreach ($beneficaire as $beneficaires)
-                                                    <option value="{{ $beneficaires->id }}">{{ $beneficaires->libelle }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
+                                            <!-- Dans la vue Blade -->
+                                                <td class="align-middle ps-3 name" colo>
+                                                    Bénéficiaire
+                                                    <select class="form-control form-control-sm" id="beneficiaire" name="beneficiaire" >
+                                                        @if (isset($onebeneficaire->libelle) && !empty($onebeneficaire->libelle))
+                                                            <option value="{{ $onebeneficaire->id }}">{{ $onebeneficaire->libelle }} </option>
+                                                        @else
+                                                            <option value="autres">Sélectionner un bénéficiaire</option>
+                                                        @endif
+                                                        @foreach ($beneficaire as $beneficaires)
+                                                            <option value="{{ $beneficaires->id }}">{{ $beneficaires->libelle }}</option>
+                                                        @endforeach
+                                                        <option value="autres">Autres</option>
+                                                    </select>
+                                                </td>
+
+                                                <td colspan="0">
+                                                    <!-- Conteneur du champ Nom & Prénom, caché par défaut en CSS -->
+                                                    <div id="nomPrenomContainer" style="display: {{ isset($dataFe->beneficiaire) && !empty($dataFe->beneficiaire) ? 'none' : 'block' }};">
+                                                        Nom & Prénom du bénéficiaire<br>
+                                                        <input type="text" name="autresBeneficiaire" id="nomPrenomBeneficiaire" value="{{ $dataFe->autresBeneficiaire }} "
+                                                            class="form-control form-control-sm" style="width: 100%;">
+                                                    </div>
+                                                </td>
                                         </tr>
+                                    </tbody>
+                                </table>
+                                <table style="width:50%">
+                                    <tbody>
                                         <tr>
-                                            <td class="align-middle ps-3 name" colspan="4"></td>
-                                            <td class="align-middle ps-3 name" colspan="2">
+                                            
+                                            <td class="align-middle ps-3 name" colspan="0">
                                                 Numéro FEB <br>
                                                 <input type="text" class="form-control form-control-sm" name="numerofeb" id="numerofeb" value="{{ $dataFe->numerofeb }}">
                                             </td>
 
-                                            <td class="align-middle ps-3 name" colspan="3">Période: <br>
+                                            <td class="align-middle ps-3 name" >Période: <br>
                                                 <select type="text" class="form-control form-control-sm" name="periode" id="periode" style="width: 100%" required>
                                                     <option value="{{ $dataFe->periode }}"> {{ $dataFe->periode }} </option>
                                                     @php
@@ -129,6 +157,7 @@
 
                               
                                 <div class="table-responsive">
+                                    <br>
                                     <table class="table table-striped table-sm fs--1 mb-0" id="tableEstimate">
                                         <thead>
                                             <tr style="background-color:#3CB371; color:white">
@@ -261,10 +290,26 @@
 
 @include('document.feb.annex')
 
+<style>
+    .attached-option {
+    color: blue; /* Changez la couleur selon votre préférence */
+    font-weight: bold; /* Ajout de gras pour les distinguer encore plus */
+}
+</style>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-
+<script>
+    document.getElementById('beneficiaire').addEventListener('change', function () {
+        const nomPrenomContainer = document.getElementById('nomPrenomContainer');
+        if (this.value === 'autres' || this.value === '') {
+            nomPrenomContainer.style.display = 'block';  // Affiche le champ si "Autres" est sélectionné
+        } else {
+            nomPrenomContainer.style.display = 'none';  // Cache le champ pour les autres options
+        }
+    });
+</script>
 
 <script>
     // Variable pour stocker le numéro de ligne actuel

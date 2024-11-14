@@ -114,8 +114,8 @@
                                                                 <i class="fa fa-times-circle" style="color: red;" title="Aucun document disponible"></i> 
                                                                 {{ $doc->abreviation }} ,
                                                         @else
-                                                        <a href="{{ asset($doc->urldoc) }}" target="_blank" title="{{ $doc->urldoc }}">
-                                                            {{ $doc->abreviation }}
+                                                        <a href="#" onclick="viewDocument('{{ asset($doc->urldoc) }}'); return false;" title="{{ $doc->abreviation }}">
+                                                            <i class="fa fa-link"></i>  {{ $doc->libelle }}
                                                         </a>
                                                          ,
                                                             @endif
@@ -152,6 +152,12 @@
                                                     Bénéficiaire :
                                                     @if (isset($onebeneficaire->libelle) && !empty($onebeneficaire->libelle))
                                                         {{ $onebeneficaire->libelle }}
+                                                    @else
+                                                        @if (isset($dataFeb->autresBeneficiaire) && !empty($dataFeb->autresBeneficiaire))
+                                                            {{ $dataFeb->autresBeneficiaire }}
+                                                        @else
+                                                            Pas de bénéficiaire disponible.
+                                                        @endif
                                                     @endif
                                                 </td>
                                             </tr>
@@ -406,7 +412,56 @@
             <br>
             <br>
 
+            <div class="modal fade" id="documentModal" tabindex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="documentModalLabel">Visualisation du Document</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <iframe id="documentFrame" style="width: 100%; height: 500px;" frameborder="0"></iframe>
+                            <div id="noDocumentMessage" style="color: red; display: none;">Il n'existe pas de document.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+            <script>
+               
+                function viewDocument(url) {
+                    const documentFrame = document.getElementById('documentFrame');
+                    const noDocumentMessage = document.getElementById('noDocumentMessage');
+            
+                    // Clear previous message
+                    noDocumentMessage.style.display = 'none';
+            
+                    // AJAX request to check if the document exists
+                    fetch(url)
+                        .then(response => {
+                            if (response.ok) {
+                                documentFrame.src = url; // Load the PDF in the iframe
+                                $('#documentModal').modal('show'); // Show the modal
+                            } else {
+                                noDocumentMessage.style.display = 'block'; // Show error message
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error checking document:', error);
+                            noDocumentMessage.style.display = 'block'; // Show error message
+                        });
+                }
+            </script>
+            
+            <!-- Include Bootstrap JS and CSS (needed for modal functionality) -->
+            <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
             <script>
                 function openPopup(element) {
                     var documentUrl = element.getAttribute('data-document-url');

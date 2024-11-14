@@ -28,6 +28,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DapController extends Controller
 {
@@ -173,111 +174,114 @@ class DapController extends Controller
   // insert a new employee ajax request
   public function store(Request $request)
   {
-    try {
-      // Commencer une transaction de base de données
-      DB::beginTransaction();
+      try {
+          // Commencer une transaction de base de données
+          DB::beginTransaction();
+  
+          // Détermination des valeurs pour les champs ov, justifier et nonjustifier
+         
+          $justifier = $request->has('justifier') ? 1 : 0;
+          $nonjustifier = $request->has('nonjustifier') ? 1 : 0;
+  
+          // Création d'une nouvelle instance de modèle Dap et attribution des valeurs
+          $dap = new Dap();
+          $dap->numerodp = $request->numerodap;
+          $dap->serviceid = $request->serviceid;
+          $dap->projetiddap = $request->projetid;
+          $dap->lieu = $request->lieu;
+          $dap->comptabiliteb = $request->comptebanque;
+          $dap->cho = $request->ch;
+          $dap->demandeetablie = $request->demandeetablie;
+          $dap->verifierpar = $request->verifier;
+          $dap->approuverpar = $request->approuver;
+          $dap->responsable = $request->resposablefinancier;
+          $dap->secretaire = $request->secretairegenerale;
+          $dap->chefprogramme = $request->chefprogramme;
+          $dap->paretablie = $request->paretablie;
+          $dap->banque = $request->banque;
+  
+          if ($justifier == 1) {
+              
 
-      // Détermination des valeurs pour les champs ov, justifier et nonjustifier
-      $ov = $request->has('ov') ? 1 : 0;
-      $justifier = $request->has('justifier') ? 1 : 0;
-      $nonjustifier = $request->has('nonjustifier') ? 1 : 0;
-
-      // Création d'une nouvelle instance de modèle Dap et attribution des valeurs
-      $dap = new Dap();
-      $dap->numerodp = $request->numerodap;
-      $dap->serviceid = $request->serviceid;
-      $dap->projetiddap = $request->projetid;
-      $dap->lieu = $request->lieu;
-      $dap->comptabiliteb = $request->comptebanque;
-
-      $dap->cho = $request->ch;
-      $dap->demandeetablie = $request->demandeetablie;
-      $dap->verifierpar = $request->verifier;
-      $dap->approuverpar = $request->approuver;
-      $dap->responsable = $request->resposablefinancier;
-      $dap->secretaire = $request->secretairegenerale;
-      $dap->chefprogramme = $request->chefprogramme;
-      $dap->paretablie = $request->paretablie;
-      $dap->banque = $request->banque;
-
-      if ($justifier == 1) {
-        $dap->beneficiaire = $request->filled('beneficiaire') ? $request->beneficiaire : NULL;
-      }
-
-      $dap->justifier = $justifier;
-      $dap->nonjustifier = $nonjustifier;
-      $dap->userid = Auth::id();
-      $dap->save();
-      $IDdap = $dap->id;
-
-
-      
-
-      if ($request->has('febid')) {
-        foreach ($request->febid as $key => $febid) {
-          // Vérifier si un enregistrement avec la même référencefeb existe déjà
-          $existingDapE = Elementdap::where('referencefeb', $febid)->first();
-
-          if (!$existingDapE) {
-            $existingDapE = new Elementdap();
-            $existingDapE->dapid = $IDdap;
-            $existingDapE->numerodap = $request->numerodap;
-            $existingDapE->referencefeb = $febid;
-            $existingDapE->projetidda = $request->projetid;
-
-            /*if ($justifier == 1) {
-              $existingDapE->ligneided = $request->ligneid[$key] ?? null;
-              $existingDapE->montantavance = $request->montantavance[$key] ?? null;
-              $existingDapE->duree_avance = $request->duree_avance[$key] ?? null;
-              $existingDapE->descriptionn = $request->descriptionel[$key] ?? null;
-            } */
-
-            $existingDapE->save();
-
-            // Mettre à jour le statut de l'élément Feb correspondant
-            $element = Feb::where('id', $febid)->first();
-            if ($element) {
-              $element->statut = 1;
-              $element->save();
+              if ($request->beneficiaire == 'autres') {
+               
+                $dap->autresBeneficiaire = $request->beneficiaire;
+            } else {
+                 $dap->beneficiaire = $request->filled('beneficiaire') ? $request->beneficiaire : null;
             }
+
           }
-        }
+  
+          $dap->justifier = $justifier;
+          $dap->nonjustifier = $nonjustifier;
+          $dap->userid = Auth::id();
+          $dap->save();
+          $IDdap = $dap->id;
+  
+          if ($request->has('febid')) {
+              foreach ($request->febid as $key => $febid) {
+                  $existingDapE = Elementdap::where('referencefeb', $febid)->first();
+  
+                  if (!$existingDapE) {
+                      $existingDapE = new Elementdap();
+                      $existingDapE->dapid = $IDdap;
+                      $existingDapE->numerodap = $request->numerodap;
+                      $existingDapE->referencefeb = $febid;
+                      $existingDapE->projetidda = $request->projetid;
+                      $existingDapE->save();
+  
+                      $element = Feb::where('id', $febid)->first();
+                      if ($element) {
+                          $element->statut = 1;
+                          $element->save();
+                      }
+                  }
+              }
+          }
+  
+          if ($justifier == 1 || $justifier == 0) {
+              $justification = new Dja();
+              $justification->projetiddja = $request->projetid;
+              $justification->dapid = $IDdap;
+              $justification->numerodjas = $request->numerodap;
+              $justification->montant_avance_un = $request->montantavance;
+              $justification->duree_avance = $request->duree_avance;
+  
+              if ($request->beneficiaire == 'autres') {
+                  $justification->autresBeneficiaireFond = $request->autresBeneficiaire;
+              } else {
+                  $justification->fonds_demande_par = $request->beneficiaire;
+              }
+  
+              $justification->description_avance = $request->descriptionel;
+              $justification->justifie = $justifier == 1 ? 1 : 0;
+              $justification->userid = Auth::id();
+              $justification->save();
+          }
+  
+          DB::commit();
+  
+          return response()->json([
+              'status' => 200,
+              'message' => 'Données enregistrées avec succès.'
+          ]);
+  
+      } catch (\Exception $e) {
+          DB::rollback();
+  
+          // Logging l'exception pour un suivi plus détaillé
+          Log::error('Erreur lors de l\'enregistrement des données DAP : ' . $e->getMessage(), [
+              'stackTrace' => $e->getTraceAsString()
+          ]);
+  
+          return response()->json([
+              'status' => 500,
+              'error' => $e->getMessage(),
+              'trace' => $e->getTraceAsString()
+          ]);
       }
-
-
-      if ($justifier == 1 ||  $justifier == 0) {
-        // Enregistrement des informations de justification
-        $justification = new Dja();
-        $justification->projetiddja = $request->projetid;
-        $justification->dapid = $IDdap;  //  IDDAP
-        $justification->numerodjas = $request->numerodap;
-        $justification->montant_avance_un = $request->montantavance;
-        $justification->duree_avance = $request->duree_avance;
-        $justification->fonds_demande_par = $request->beneficiaire;
-        $justification->description_avance = $request->descriptionel;
-        if ($justifier == 1) { $justification->justifie = 1; } else {  $justification->justifie = 0; }
-        $justification->userid = Auth::id();
-        $justification->save();
-      }
-
-
-
-      // Confirmer la transaction
-      DB::commit();
-
-      return response()->json([
-        'status' => 200,
-      ]);
-    } catch (Exception $e) {
-      // En cas d'erreur, annuler la transaction
-      DB::rollback();
-
-      return response()->json([
-        'status' => 500,
-        'error' => $e->getMessage()
-      ]);
-    }
   }
+  
 
   // insert a new employee ajax request
   public function updatestore(Request $request)

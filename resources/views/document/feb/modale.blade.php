@@ -73,6 +73,7 @@
                                         <td colspan="8">
                                             <input type="text" class="form-control form-control-sm" name="descriptionf" id="descriptionf" required>
                                         </td>
+                                       
                                         <td class="align-middle ps-3 name">Bénéficiaire </td>
                                         <td colspan="8">
                                             <select class="form-control  form-control-sm" id="beneficiaire" name="beneficiaire">

@@ -567,7 +567,13 @@ class FebController extends Controller
         $activity->acce = $request->acce;
         $activity->comptable = $request->comptable;
         $activity->chefcomposante = $request->chefcomposante;
-        $activity->beneficiaire = $request->beneficiaire;
+        
+        if($request->beneficiaire !== 'autres'){
+          $activity->beneficiaire = $request->beneficiaire;
+        }else{
+          $activity->autresBeneficiaire = $request->autresBeneficiaire;
+        }
+     
         $activity->total = $sum;
         $activity->userid = Auth()->user()->id;
         $activity->save();
@@ -603,6 +609,7 @@ class FebController extends Controller
           }
         }
 
+        
 
         DB::commit();
 
@@ -625,6 +632,7 @@ class FebController extends Controller
     DB::beginTransaction();
     try {
       $activity = Feb::find($request->febid);
+      $IDf = $request->febid;
 
       $get_lead =  DB::table('febs')
         ->join('projects', 'febs.projetid', '=', 'projects.id')
@@ -671,41 +679,24 @@ class FebController extends Controller
 
 
 
-        $bc = $request->has('bc') ? 1 : 0;
-        $om = $request->has('om') ? 1 : 0;
-        $facture = $request->has('facture') ? 1 : 0;
-        $fpdevis = $request->has('fpdevis') ? 1 : 0;
-        $nec = $request->has('nec') ? 1 : 0;
-        $rm = $request->has('rm') ? 1 : 0;
-        $tdr = $request->has('tdr') ? 1 : 0;
-        $bv = $request->has('bv') ? 1 : 0;
-        $recu = $request->has('recu') ? 1 : 0;
-        $ar = $request->has('ar') ? 1 : 0;
-        $be = $request->has('be') ? 1 : 0;
-        $apc = $request->has('apc') ? 1 : 0;
-        $apc = $request->has('apc') ? 1 : 0;
-        $ra = $request->has('ra') ? 1 : 0;
-        $autres = $request->has('autres') ? 1 : 0;
-        $fp = $request->has('fp') ? 1 : 0;
-
         if ($request->acce == $request->ancien_acce) {
           $acce_signe = $request->acce_signe;
         } else {
-          $acce_signe = 0;
+          $acce_signe = 1;
         }
 
 
         if ($request->comptable == $request->ancien_comptable) {
           $comptable_signe = $request->comptable_signe;
         } else {
-          $comptable_signe = 0;
+          $comptable_signe = 1;
         }
 
 
         if ($request->chefcomposante == $request->ancien_chefcomposante) {
           $chef_signe = $request->chef_signe;
         } else {
-          $chef_signe = 0;
+          $chef_signe = 1;
         }
 
 
@@ -721,9 +712,9 @@ class FebController extends Controller
 
 
         if ($sum != $activity->total) {
-          $acce_signe = 0;
-          $comptable_signe = 0;
-          $chef_signe = 0;
+          $acce_signe = 1;
+          $comptable_signe = 1;
+          $chef_signe = 1;
         }
 
 
@@ -731,30 +722,24 @@ class FebController extends Controller
         $activity->periode = $request->periode;
         $activity->datefeb = $request->datefeb;
         $activity->datelimite = $request->datelimite;
-        $activity->bc = $bc;
-        $activity->facture = $facture;
-        $activity->om = $om;
-        $activity->fpdevis = $fpdevis;
-        $activity->nec = $nec;
-        $activity->rm = $rm;
-        $activity->tdr = $tdr;
-        $activity->bv = $bv;
-        $activity->recu = $recu;
-        $activity->ar = $ar;
-        $activity->be = $be;
-        $activity->apc = $apc;
-        $activity->ra = $ra;
-        $activity->fp = $fp;
-        $activity->autres = $autres;
+      
         $activity->total = $sum;
 
         $activity->comptable = $request->comptable;
         $activity->acce = $request->acce;
         $activity->chefcomposante = $request->chefcomposante;
         $activity->descriptionf = $request->descriptionf;
-        $activity->beneficiaire = $request->beneficiaire;
+       
         $activity->sous_ligne_bugdetaire   = $souscompte;
         $activity->ligne_bugdetaire = $grandcompte;
+
+        if($request->beneficiaire !== 'autres'){
+          $activity->beneficiaire = $request->beneficiaire;
+          $activity->autresBeneficiaire ='';
+        }else{
+          $activity->autresBeneficiaire = $request->autresBeneficiaire;
+          $activity->beneficiaire = NULL;
+        }
 
         //signature
 
@@ -806,6 +791,31 @@ class FebController extends Controller
             $newfeb->save();
           }
         }
+
+        if ($request->has('annex')) {
+          $selectedAnnexes = $request->annex; // Les annexes sélectionnées
+          $existingAnnexes = attache_feb::where('febid', $IDf)->pluck('annexid')->toArray(); // Annexes déjà dans la base de données
+      
+          // Supprimer les annexes qui ne sont plus sélectionnées
+          $toDelete = array_diff($existingAnnexes, $selectedAnnexes);
+          attache_feb::where('febid', $IDf)->whereIn('annexid', $toDelete)->delete();
+      
+          // Créer ou mettre à jour les annexes sélectionnées
+          foreach ($selectedAnnexes as $annexid) {
+              attache_feb::updateOrCreate(
+                  [
+                      'febid' => $IDf,
+                      'annexid' => $annexid,
+                  ],
+                  [
+                      'febid' => $IDf,
+                      'annexid' => $annexid,
+                  ]
+              );
+          }
+      }
+      
+      
 
         foreach ($dataToUpdate as $data) {
           Elementfeb::where('id', $data['id'])->update($data);
@@ -1033,8 +1043,15 @@ class FebController extends Controller
       $output .= '<option value="' . $personnel->userid . '">' . $personnel->nom . ' ' . $personnel->prenom . '</option>';
     }
     $output .= '
+                <option  value="autres" >--Autres --</option>
                 </select>
             </td>
+              <td width="20%" id="nomPrenomContainer" style="display: non;"> 
+                Nom & Prénom du bénéficiaire<br>
+                  <input type="text" name="autresBeneficiaire" id="nomPrenomBeneficiaire"class="form-control form-control-sm" style="width: 100%;">
+                                    
+              
+              </td>
         </tr>
     </table>';
 
@@ -1147,9 +1164,13 @@ class FebController extends Controller
 
     // Fetch attached documents
     $getDocument = attache_feb::join('apreviations', 'attache_febs.annexid', 'apreviations.id')
-      ->select('apreviations.abreviation', 'apreviations.libelle', 'attache_febs.urldoc')
-      ->where('attache_febs.febid', $idfeb)
-      ->get();
+    ->select('apreviations.id', 'apreviations.abreviation', 'apreviations.libelle', 'attache_febs.urldoc')
+    ->where('attache_febs.febid', $idfeb)
+    ->get();
+
+    $attachedDocIds = $getDocument->pluck('id')->toArray(); // Récupérer les IDs des documents attachés 
+
+
 
     return view('document.feb.voir', [
       'title' => $title,
@@ -1166,7 +1187,8 @@ class FebController extends Controller
       'dateinfo' => $dateinfo,
       'createur' => $createur,
       'onebeneficaire' => $onebeneficaire,
-      'getDocument' => $getDocument
+      'getDocument' => $getDocument,
+      'attachedDocIds' => $attachedDocIds
 
     ]);
   }
@@ -1299,6 +1321,15 @@ class FebController extends Controller
     $beneficaire = Beneficaire::orderBy('libelle')->get();
 
     $onebeneficaire = Beneficaire::where('id', $dataJosonfeb->beneficiaire)->first();
+    $attache = Apreviation::all();
+
+    $getDocument = attache_feb::join('apreviations', 'attache_febs.annexid', 'apreviations.id')
+    ->select('apreviations.id', 'apreviations.abreviation', 'apreviations.libelle', 'attache_febs.urldoc')
+    ->where('attache_febs.febid', $idfeb)
+    ->get();
+
+    $attachedDocIds = $getDocument->pluck('id')->toArray(); // Récupérer les IDs des documents attachés 
+
 
     return view('document.feb.edit', [
       'title' => $title,
@@ -1317,7 +1348,9 @@ class FebController extends Controller
       'activiteligne' => $activiteligne,
       'beneficaire' => $beneficaire,
       'onebeneficaire' => $onebeneficaire,
-      'all_activitis' => $all_activitis
+      'all_activitis' => $all_activitis,
+      'attache'  => $attache,
+      'attachedDocIds' => $attachedDocIds
     ]);
   }
 
@@ -1918,8 +1951,6 @@ class FebController extends Controller
     }
   }
 
-
-
   public function deleteelementsfeb(Request $request)
   {
 
@@ -1960,4 +1991,6 @@ class FebController extends Controller
       ]);
     }
   }
+
+
 }

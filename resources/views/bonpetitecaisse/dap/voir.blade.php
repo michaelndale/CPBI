@@ -176,10 +176,6 @@ $cryptedId = Crypt::encrypt($data->id);
                                         <td width="25%">
                                             <center>
 
-                                               
-                                                <!-- poser signature -->
-
-
                                                 @if(Auth::user()->id == $data->demande_etablie )
                                                 <input class="form-check-input" type="checkbox" name="demandeetabliesignature" {{ $data->demande_etablie_signe=="1"? 'checked':'' }} style="border:2px solid red">
                                                 @endif

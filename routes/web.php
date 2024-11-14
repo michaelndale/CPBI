@@ -393,6 +393,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('dja')->group(function () {
         Route::get('/', [DjaController::class, 'list'])->name('listdja');
         Route::get('/{id}/nouveau/', [DjaController::class, 'nouveau'])->name('nouveau');
+        
+        Route::get('/{id}/voir', [DjaController::class, 'voir'])->name('voir');
+
         Route::get('/{id}/misesajour/', [DjaController::class, 'misesajour'])->name('misesajour');
         Route::post('/storejustification', [DjaController::class, 'saveDjas'])->name('storejustification');
         Route::post('/updatejustification/{id}', [DjaController::class, 'UpDjas'])->name('updatejustification');

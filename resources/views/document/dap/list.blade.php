@@ -102,9 +102,12 @@
 <BR><BR>
 
 
+  
+  
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 
 
 <script>
@@ -445,6 +448,18 @@
 
   });
 </script>
+
+<script>
+  document.getElementById('beneficiaire').addEventListener('change', function () {
+      const nomPrenomContainer = document.getElementById('nomPrenomContainer');
+      if (this.value === 'autres') {
+          nomPrenomContainer.style.display = 'block';  // Affiche le conteneur avec le texte et l'input
+      } else {
+          nomPrenomContainer.style.display = 'none';  // Cache le conteneur pour toutes les autres options
+      }
+  });
+</script>
+
 
 <style>
   .swal-custom-content .swal-text {

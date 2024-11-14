@@ -167,8 +167,16 @@
                 </td>
                 <td>
                     Période: {{ $datafeb->periode }} ; Date : {{ date('d-m-Y', strtotime($datafeb->datefeb))  }} ;
+
+                    Bénéficiaire :
                     @if (isset($onebeneficaire->libelle) && !empty($onebeneficaire->libelle))
-                    Bénéficiaire : {{ $onebeneficaire->libelle }}
+                        {{ $onebeneficaire->libelle }}
+                    @else
+                        @if (isset($datafeb->autresBeneficiaire) && !empty($datafeb->autresBeneficiaire))
+                            {{ $datafeb->autresBeneficiaire }}
+                        @else
+                            Pas de bénéficiaire disponible.
+                        @endif
                     @endif
                 </td>
             </tr>
@@ -181,102 +189,32 @@
                
 
                 <td style="margin:0px;padding:0px;background-color:white">
-                    <table style="margin:0px;padding:0px; border:0px; background-color:white">
-                        <tr style="margin:0px;padding:0px; border:0px; background-color:white">
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><label title="Bon de commande">BC:</label> </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
-                                <input type="checkbox" class="form-check-input" readonly @if ($datafeb->bc==1) checked  @endif />
-                            </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><label>&nbsp; Facture:</label></td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
-                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->facture==1) checked @endif
-                                />
-                            </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Bon de commande">&nbsp; O.M: </label> </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
-                                <input type="checkbox" name="om" id="om" class="form-check-input" readonly @if($datafeb->om==1) checked @endif
-                                />
-                            </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><label title="Termes de référence"> &nbsp; P.V.A :</label></td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
-                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->nec==1) checked  @endif />
-                            </td>
-
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Facture proforma"> &nbsp;FP</label> </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
-                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->fp==1) checked @endif
-                                />
-                            </td>
-
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Dévis/Liste"> &nbsp;Dévis/Liste: </label> </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
-                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->fpdevis==1) checked @endif
-                                />
-                            </td>
-
-
-
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><label title="Termes de référence"> &nbsp;R.M: </label></td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
-                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->rm==1) checked  @endif />
-
-                            </td>
-
-
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Termes de Référence"> &nbsp;T.D.R: </label> </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white">
-                                <input type="checkbox" class="form-check-input" readonly @if($datafeb->tdr==1) checked @endif />
-
-                            </td>
-
-                        </tr>
-
-                        <tr>
-
-
-
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Bordereau de versement"> B.V:</label> </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <input type="checkbox" class="form-check-input" readonly @if($datafeb->bv==1) checked  @endif />
-                            </td>
-
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Reçu">&nbsp; Reçu : </label> </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><input type="checkbox" class="form-check-input" readonly @if($datafeb->recu==1) checked 
-                                @endif /></td>
-
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><label title="Accussé de reception"> &nbsp;A.R:</label> </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"><input type="checkbox" class="form-check-input" readonly @if($datafeb->recu==1)
-                                checked
-                                @endif /> </td>
-
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Bordereau d'expédition">&nbsp; B.E:</label> </td>
-                            <td style="margin:0px;padding:0px; border:0px; background-color:white"> <input type="checkbox" class="form-check-input" readonly @if($datafeb->be==1)
-                                checked 
+                    <td>
+                        Document en annexe : <br>
+                    
+                    @if ($getDocument->isNotEmpty()) 
+                        @foreach ($getDocument as $doc) 
+                            @if ($doc->urldoc === NULL)
+                                    <i class="fa fa-times-circle" style="color: red;" title="Aucun document disponible"></i> 
+                                    {{ $doc->abreviation }} ,
+                            @else
+                            <a href="#" onclick="viewDocument('{{ asset($doc->urldoc) }}'); return false;" title="{{ $doc->abreviation }}">
+                                <i class="fa fa-link"></i>  {{ $doc->libelle }}
+                            </a>
+                             ,
                                 @endif
-                                /></td>
+                        @endforeach
+                    @else 
+                        Pas de document disponible
+                    @endif
+                    
+                    
+                    
 
-                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Procès-verbal d'analyse">&nbsp; A.P.C:</label> </td>
-                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <input type="checkbox" class="form-check-input" readonly @if($datafeb->apc==1)
-                                checked 
-                                @endif
-                                /></td>
 
-                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Rapport d'activités">&nbsp; R.A:</label> </td>
-                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <input type="checkbox" class="form-check-input" readonly @if($datafeb->ra==1)
-                                checked 
-                                @endif
-                                /></td>
 
-                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <label title="Autres">&nbsp; Autres:</label> </td>
-                                <td style="margin:0px;padding:0px; border:0px; background-color:white"> <input type="checkbox" class="form-check-input" readonly @if($datafeb->autres==1)
-                                checked 
-                                @endif
-                                /></td>
 
-                                
-
-                        </tr>
-
-                    </table>
+                    </td>
                 </td>
 
             </tr>

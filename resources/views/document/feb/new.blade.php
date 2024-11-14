@@ -10,7 +10,6 @@
             </div>
             <div class="col col-md-auto">
                 <a href="{{ route('listfeb') }}" id="fetchDataLink"> <span class="fa fa-list"></span> Listee FEB</a>
-
             </div>
           </div>
         </div>
@@ -20,22 +19,18 @@
             <div class="card-body p-0">
                 <div id="tableExample2">
                     <div class="table-responsive">
-                    
                             <table class="table table-striped table-sm fs--1 mb-0">
                                 <tbody class="list">
                                     <tr>
-                                        <td class="align-middle ps-3 name" style="width:15%">Composante/ Projet/Section
-                                        </td>
-                                        <td class="align-middle email" colspan="15" style="width:55%">
+                                        <td class="align-middle ps-3 name" colspan="3" > <label>Composante/ Projet/Section</label>  <br>
+                                     
                                             <input value="{{ Session::get('id') }} " type="hidden" name="projetid"
                                                 id="projetid">
                                             <input value="{{ Session::get('title') }} "
                                                 class="form-control form-control-sm" disabled>
                                         </td>
                                         <td rowspan="2" style="width:40%">
-
                                             Référence des documents à attacher
-
                                             <select class="form-control form-control-sm" id="annex" name="annex[]"
                                                 multiple>
                                                 <option disabled selected value="">-- Sélectionner les documents
@@ -45,15 +40,11 @@
                                                     </option>
                                                 @endforeach
                                             </select>
-
-
                                         </td>
-
                                     </tr>
                                     <tr>
-                                        <td class="align-middle ps-3 name">Ligne budgétaire: <span
-                                                class="text-danger">*</span></td>
-                                        <td class="align-middle email" colspan="15">
+                                        <td class="align-middle ps-3 name" colspan="3">Ligne budgétaire: <span
+                                                class="text-danger">*</span>
                                             <select class="form-control  form-control-sm ligneid" id="referenceid"
                                                 name="referenceid" required>
                                                 <option disabled="true" selected="true" value="">Sélectionner la
@@ -79,28 +70,43 @@
                                     </tr>
 
                                     <tr>
-                                        <td class="align-middle ps-3 name">Activités <span class="text-danger">*</span>
-                                        </td>
-                                        <td colspan="8">
+                                        <td colspan="2" class="align-middle ps-3 name">Activités <span class="text-danger">*</span>
+                                        
                                             <input type="text" class="form-control form-control-sm"
                                                 name="descriptionf" id="descriptionf" required>
                                         </td>
-                                        <td class="align-middle ps-3 name">Bénéficiaire </td>
-                                        <td colspan="8">
+                                      
+
+
+                                        <td colspan="0">Bénéficiaire <br>
+                                      
                                             <select class="form-control  form-control-sm" id="beneficiaire"
                                                 name="beneficiaire">
-                                                <option disabled="true" selected="true" value="">--Sélectionner
-                                                    bénéficiaire--</option>';
+                                                <option disabled="true" selected="true" value="">--Sélectionner  bénéficiaire--</option>';
                                                 @foreach ($beneficaire as $beneficaires)
                                                     <option value="{{ $beneficaires->id }}">
                                                         {{ $beneficaires->libelle }}</option>
                                                 @endforeach
+                                                <option value="autres">Autres</option>
                                             </select>
                                         </td>
+                                        <td colspan="0">
+                                          <div id="nomPrenomContainer" style="display: none;">
+                                            Nom & Prénom du bénéficiaire<br>
+                                            <input type="text" name="autresBeneficiaire" id="nomPrenomBeneficiaire"
+                                                   class="form-control form-control-sm" style="width: 100%;">
+                                        </div>
+                                        
+                                        </td>
                                     </tr>
+                                </tbody>
+                            </table>
+
+                            <table style="width:50%">
+                              <tbody> 
                                     <tr>
-                                        <td class="align-middle ps-3 name" colspan="1"></td>
-                                        <td class="align-middle ps-3 name" colspan="3">
+                                       
+                                        <td class="align-middle ps-3 name" colspan="0">
                                             Numéro du fiche FEB<span class="text-danger">*</span> <br>
                                             <input type="number" name="numerofeb" id="numerofeb"
                                                 class="form-control form-control-sm" style="width: 100% ;">
@@ -108,8 +114,7 @@
                                             </smal>
                                             <smal id="numerofeb_info" class="text text-primary"> </smal>
                                         </td>
-                                        <td class="align-middle ps-3 name" >Période: <span
-                                                class="text-danger">*</span> &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <br>
+                                        <td class="align-middle ps-3 name" >Période: <span class="text-danger">*</span> &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; <br>
                                             <select type="text" class="form-control form-control-sm" name="periode"
                                                 id="periode" style="width: 100%" required>
                                                 @php
@@ -141,6 +146,7 @@
                             </table>
 
                             <div class="table-responsive">
+                              <br>
                                 <table class="table table-striped table-sm fs--1 mb-0" id="tableEstimate">
                                     <thead style="background-color:#3CB371; color:white">
                                         <tr>
@@ -161,8 +167,8 @@
                                             <th style="width:150px;  color:white"><b>P.T<span
                                                         class="text-danger">*</span></b></th>
 
-                                            <th> <a href="javascript:void(0)" class="text-default font-18" title="Add" id="addBtn" style="color:white;">
-                                                <i class="fa fa-plus-circle fa-2x"></i>
+                                            <th> <a href="javascript:void(0)" class="text-default font-18" title="Ajouter la ligne" id="addBtn" style="color:white;">
+                                                <i class="fa fa-plus-circle fa-1x"></i>
                                             </a>
                                             </th>
                                         </tr>
@@ -218,6 +224,7 @@
                             </div>
                             <div class="table-repsonsive">
                                 <span id="error"></span>
+                               
                                 <table class="table table-striped table-sm fs--1 mb-0">
                                     <tr>
                                     <tr>
@@ -289,6 +296,17 @@
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+  document.getElementById('beneficiaire').addEventListener('change', function () {
+      const nomPrenomContainer = document.getElementById('nomPrenomContainer');
+      if (this.value === 'autres') {
+          nomPrenomContainer.style.display = 'block';  // Affiche le conteneur avec le texte et l'input
+      } else {
+          nomPrenomContainer.style.display = 'none';  // Cache le conteneur pour toutes les autres options
+      }
+  });
+</script>
 
 
 <script>
@@ -651,8 +669,6 @@ function calc_total() {
     /* Ajustez la taille selon vos besoins */
   }
 </style>
-
-
 
 
 @endsection
