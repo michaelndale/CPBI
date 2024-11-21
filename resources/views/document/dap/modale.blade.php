@@ -47,7 +47,7 @@
 
 
                                         <td class="align-middle" style="width:20% ;  background: rgba(76, 175, 80, 0.3)" rowspan="2">
-                                            <b>NUMERO FEB: </b> <br>
+                                            <b>Numéro F.E.B: <small>(Disponible)</small> </b> <br>
                                             <select type="text" class="form-control form-control-sm febid" style="width: 100%" required multiple>
                                                 <option disabled="true" selected="true">--Aucun--</option>
                                                 @forelse ($feb as $febs)

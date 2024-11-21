@@ -59,13 +59,11 @@
                                             <table style=" width:100%" class="table table-sm fs--1 mb-0 ">
                                                 <tr>
                                                     <td style=" width:10% ; margin:0px;padding:0px;">
-                                                        <center> <img src="{{ asset('element/logo/logo.png') }}"
-                                                                alt="logo" height="50" /> </center>
+                                                        <center> <img src="{{ asset('element/logo/logo.png') }}" alt="logo" height="50" /> </center>
                                                     </td>
 
                                                     <td style="margin:0px;padding:0px;">
                                                         <center>
-
                                                             <h4>{{ $dateinfo->entete }}</h4>
                                                         </center>
                                                     </td>
@@ -265,7 +263,6 @@
                                             @csrf
                                             <input type="hidden" name="febid" id="febid"
                                                 value="{{ $dataFeb->id }}">
-
 
                                             <table>
                                                 <table style="width:100%; margin:auto">

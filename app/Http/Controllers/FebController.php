@@ -131,7 +131,7 @@ class FebController extends Controller
         }
 
         // Limit the description length
-        $description = Str::limit($datas->descriptionf, 100, '...');
+        $description = Str::limit($datas->descriptionf, 50, '...');
 
         // Display loading spinner if signaled
         $message = $datas->signale == 1 ? '<div class="spinner-grow text-danger" role="status" style="width: 0.5rem; height: 0.5rem;"><span class="sr-only">Loading...</span></div>' : '';
@@ -189,7 +189,11 @@ class FebController extends Controller
                     <td align="right"><b>' . $sommefebFormatted . '</b></td>
                     <td align="center">' . $datas->periode . '</td>
                     <td align="center">' . $datas->code . '</td>
-                    <td><label title="' . $datas->descriptionf . '">' . $description . '</label></td>
+                   <td>
+                        <label title="' . $datas->descriptionf . '">
+                            ' . (strlen($description) > 30 ? substr($description, 0, 30) . '...' : $description) . '
+                        </label>
+                    </td>
                     <td>' . $checkedString . '</td>
                     <td align="center">' . date('d-m-Y', strtotime($datas->datefeb)) . '</td>
                     <td align="center">' . date('d-m-Y', strtotime($datas->created_at)) . '</td>
@@ -218,7 +222,6 @@ class FebController extends Controller
     // Output the generated HTML
     echo $output;
   }
-
 
   public function notificationdoc()
   {
@@ -553,7 +556,7 @@ class FebController extends Controller
           'status' => 201
         ]);
       } else {
-        
+
 
         $activity = new Feb();
         $activity->numerofeb = $request->numerofeb;
@@ -567,13 +570,13 @@ class FebController extends Controller
         $activity->acce = $request->acce;
         $activity->comptable = $request->comptable;
         $activity->chefcomposante = $request->chefcomposante;
-        
-        if($request->beneficiaire !== 'autres'){
+
+        if ($request->beneficiaire !== 'autres') {
           $activity->beneficiaire = $request->beneficiaire;
-        }else{
+        } else {
           $activity->autresBeneficiaire = $request->autresBeneficiaire;
         }
-     
+
         $activity->total = $sum;
         $activity->userid = Auth()->user()->id;
         $activity->save();
@@ -609,7 +612,7 @@ class FebController extends Controller
           }
         }
 
-        
+
 
         DB::commit();
 
@@ -646,188 +649,186 @@ class FebController extends Controller
 
 
 
-      if ($activity && $activity->userid == Auth::id() || $projet_lead  == $lead) {
-        $comp = $request->ligneid;
-        $compp = explode("-", $comp);
-
-        $grandcompte = $compp[0];
-        $souscompte  = $compp[1];
-
-
-        $IDP = session()->get('id');
-        $activityTwo = Elementdap::where('referencefeb', $request->febid)->get();
-        // Vérifier si des éléments existent
-        if ($activityTwo->isNotEmpty()) {
-          // Mettre à jour les éléments FEB existants
-          foreach ($activityTwo as $element) {
-            $element->update([
-              'ligneided' =>  $souscompte,
-            ]);
-          }
-        }
-
-        $activityTree = Elementdjas::where('febid', $request->febid)->get();
-        // Vérifier si des éléments existent
-        if ($activityTree->isNotEmpty()) {
-          // Mettre à jour les éléments FEB existants
-          foreach ($activityTree as $elementTree) {
-            $elementTree->update([
-              'ligneid' => $souscompte,
-            ]);
-          }
-        }
-
-
-
-        if ($request->acce == $request->ancien_acce) {
-          $acce_signe = $request->acce_signe;
-        } else {
-          $acce_signe = 1;
-        }
-
-
-        if ($request->comptable == $request->ancien_comptable) {
-          $comptable_signe = $request->comptable_signe;
-        } else {
-          $comptable_signe = 1;
-        }
-
-
-        if ($request->chefcomposante == $request->ancien_chefcomposante) {
-          $chef_signe = $request->chef_signe;
-        } else {
-          $chef_signe = 1;
-        }
-
-
-
-        $sum = 0;
-        foreach ($request->numerodetail as $key => $items) {
-          $element1 = $request->pu[$key];
-          $element2 = $request->qty[$key];
-          $element3 = $request->frenquency[$key];
-          $somme = $element1 * $element2 * $element3;
-          $sum += $somme;
-        }
-
-
-        if ($sum != $activity->total) {
-          $acce_signe = 1;
-          $comptable_signe = 1;
-          $chef_signe = 1;
-        }
-
-
-        $activity->numerofeb = $request->numerofeb;
-        $activity->periode = $request->periode;
-        $activity->datefeb = $request->datefeb;
-        $activity->datelimite = $request->datelimite;
-      
-        $activity->total = $sum;
-
-        $activity->comptable = $request->comptable;
-        $activity->acce = $request->acce;
-        $activity->chefcomposante = $request->chefcomposante;
-        $activity->descriptionf = $request->descriptionf;
-       
-        $activity->sous_ligne_bugdetaire   = $souscompte;
-        $activity->ligne_bugdetaire = $grandcompte;
-
-        if($request->beneficiaire !== 'autres'){
-          $activity->beneficiaire = $request->beneficiaire;
-          $activity->autresBeneficiaire ='';
-        }else{
-          $activity->autresBeneficiaire = $request->autresBeneficiaire;
-          $activity->beneficiaire = NULL;
-        }
-
-        //signature
-
-        $activity->acce_signe   =  $acce_signe;
-        $activity->comptable_signe   =  $comptable_signe;
-        $activity->chef_signe   =  $chef_signe;
-
-        $activity->update();
-
-        $dataToUpdate = [];
-
-        foreach ($request->numerodetail as $key => $itemID) {
-          if (isset($request->idelements[$key]) && !empty($request->idelements[$key])) {
-            $idelements = $request->idelements[$key];
-            $elementfeb = Elementfeb::find($idelements);
-            if ($elementfeb) {
-              $dataToUpdate[] = [
-                'id' => $idelements,
-                'libelle_description' => $request->libelle_description[$key],
-                'unite' => $request->unit_cost[$key],
-                'quantite' => $request->qty[$key],
-                'frequence' => $request->frenquency[$key],
-                'pu' => $request->pu[$key],
-                'montant' => $request->amount[$key],
-                'libellee' => $request->libelleid[$key],
-                'tperiode' => $request->periode,
-                'numero' => $request->numerofeb,
-                'grandligne' => $grandcompte,
-                'eligne' => $souscompte
-              ];
-            }
-          } else {
-            $newfeb = new Elementfeb();
-            $newfeb->febid = $request->febid;
-            $newfeb->projetids = $request->projetid;
-            $newfeb->tperiode = $request->periode;
-            $newfeb->grandligne = $grandcompte;
-            $newfeb->eligne = $souscompte;
-            $newfeb->numero = $request->numerofeb;
-
-            $newfeb->libelle_description = $request->libelle_description[$key];
-            $newfeb->unite = $request->unit_cost[$key];
-            $newfeb->quantite = $request->qty[$key];
-            $newfeb->frequence = $request->frenquency[$key];
-            $newfeb->pu = $request->pu[$key];
-            $newfeb->montant = $request->amount[$key];
-            $newfeb->libellee = $request->libelleid[$key];
-            $newfeb->userid = Auth::id();
-            $newfeb->save();
-          }
-        }
-
-        if ($request->has('annex')) {
-          $selectedAnnexes = $request->annex; // Les annexes sélectionnées
-          $existingAnnexes = attache_feb::where('febid', $IDf)->pluck('annexid')->toArray(); // Annexes déjà dans la base de données
-      
-          // Supprimer les annexes qui ne sont plus sélectionnées
-          $toDelete = array_diff($existingAnnexes, $selectedAnnexes);
-          attache_feb::where('febid', $IDf)->whereIn('annexid', $toDelete)->delete();
-      
-          // Créer ou mettre à jour les annexes sélectionnées
-          foreach ($selectedAnnexes as $annexid) {
-              attache_feb::updateOrCreate(
-                  [
-                      'febid' => $IDf,
-                      'annexid' => $annexid,
-                  ],
-                  [
-                      'febid' => $IDf,
-                      'annexid' => $annexid,
-                  ]
-              );
-          }
-      }
-      
-      
-
-        foreach ($dataToUpdate as $data) {
-          Elementfeb::where('id', $data['id'])->update($data);
-        }
-
-        DB::commit();
-
-        return redirect()->back()->with('success', 'FEB mises à jour avec succès');
-      } else {
-        DB::rollBack();
+      /* if ($activity && $activity->userid !== Auth::id() || $projet_lead  !== $lead) { 
+     
         return redirect()->back()->with('failed', 'Vous n\'avez pas l\'autorisation nécessaire pour Modifier le FEB. Veuillez contacter le créateur  pour procéder à la suppression.');
+      } */
+      $comp = $request->ligneid;
+      $compp = explode("-", $comp);
+
+      $grandcompte = $compp[0];
+      $souscompte  = $compp[1];
+
+
+      $IDP = session()->get('id');
+      $activityTwo = Elementdap::where('referencefeb', $request->febid)->get();
+      // Vérifier si des éléments existent
+      if ($activityTwo->isNotEmpty()) {
+        // Mettre à jour les éléments FEB existants
+        foreach ($activityTwo as $element) {
+          $element->update([
+            'ligneided' =>  $souscompte,
+          ]);
+        }
       }
+
+      $activityTree = Elementdjas::where('febid', $request->febid)->get();
+      // Vérifier si des éléments existent
+      if ($activityTree->isNotEmpty()) {
+        // Mettre à jour les éléments FEB existants
+        foreach ($activityTree as $elementTree) {
+          $elementTree->update([
+            'ligneid' => $souscompte,
+          ]);
+        }
+      }
+
+
+      if ($request->acce == $request->ancien_acce) {
+        $acce_signe = $request->acce_signe;
+      } else {
+        $acce_signe = 0;
+      }
+
+
+      if ($request->comptable == $request->ancien_comptable) {
+        $comptable_signe = $request->comptable_signe;
+      } else {
+        $comptable_signe = 0;
+      }
+
+
+      if ($request->chefcomposante == $request->ancien_chefcomposante) {
+        $chef_signe = $request->chef_signe;
+      } else {
+        $chef_signe = 0;
+      }
+
+
+
+      $sum = 0;
+      foreach ($request->numerodetail as $key => $items) {
+        $element1 = $request->pu[$key];
+        $element2 = $request->qty[$key];
+        $element3 = $request->frenquency[$key];
+        $somme = $element1 * $element2 * $element3;
+        $sum += $somme;
+      }
+
+
+      /*  if ($sum != $activity->total) {
+          $acce_signe = 1;
+          $comptable_signe = 1;
+          $chef_signe = 1;
+        }
+*/
+
+      $activity->numerofeb = $request->numerofeb;
+      $activity->periode = $request->periode;
+      $activity->datefeb = $request->datefeb;
+      $activity->datelimite = $request->datelimite;
+
+      $activity->total = $sum;
+
+      $activity->comptable = $request->comptable;
+      $activity->acce = $request->acce;
+      $activity->chefcomposante = $request->chefcomposante;
+      $activity->descriptionf = $request->descriptionf;
+
+      $activity->sous_ligne_bugdetaire   = $souscompte;
+      $activity->ligne_bugdetaire = $grandcompte;
+
+      if ($request->beneficiaire !== 'autres') {
+        $activity->beneficiaire = $request->beneficiaire;
+        $activity->autresBeneficiaire = '';
+      } else {
+        $activity->autresBeneficiaire = $request->autresBeneficiaire;
+        $activity->beneficiaire = NULL;
+      }
+
+      //signature
+
+      /*$activity->acce_signe   =  $acce_signe;
+        $activity->comptable_signe   =  $comptable_signe;
+        $activity->chef_signe   =  $chef_signe;  */
+
+      $activity->update();
+
+      $dataToUpdate = [];
+
+      foreach ($request->numerodetail as $key => $itemID) {
+        if (isset($request->idelements[$key]) && !empty($request->idelements[$key])) {
+          $idelements = $request->idelements[$key];
+          $elementfeb = Elementfeb::find($idelements);
+          if ($elementfeb) {
+            $dataToUpdate[] = [
+              'id' => $idelements,
+              'libelle_description' => $request->libelle_description[$key],
+              'unite' => $request->unit_cost[$key],
+              'quantite' => $request->qty[$key],
+              'frequence' => $request->frenquency[$key],
+              'pu' => $request->pu[$key],
+              'montant' => $request->amount[$key],
+              'libellee' => $request->libelleid[$key],
+              'tperiode' => $request->periode,
+              'numero' => $request->numerofeb,
+              'grandligne' => $grandcompte,
+              'eligne' => $souscompte
+            ];
+          }
+        } else {
+          $newfeb = new Elementfeb();
+          $newfeb->febid = $request->febid;
+          $newfeb->projetids = $request->projetid;
+          $newfeb->tperiode = $request->periode;
+          $newfeb->grandligne = $grandcompte;
+          $newfeb->eligne = $souscompte;
+          $newfeb->numero = $request->numerofeb;
+
+          $newfeb->libelle_description = $request->libelle_description[$key];
+          $newfeb->unite = $request->unit_cost[$key];
+          $newfeb->quantite = $request->qty[$key];
+          $newfeb->frequence = $request->frenquency[$key];
+          $newfeb->pu = $request->pu[$key];
+          $newfeb->montant = $request->amount[$key];
+          $newfeb->libellee = $request->libelleid[$key];
+          $newfeb->userid = Auth::id();
+          $newfeb->save();
+        }
+      }
+
+      if ($request->has('annex')) {
+        $selectedAnnexes = $request->annex; // Les annexes sélectionnées
+        $existingAnnexes = attache_feb::where('febid', $IDf)->pluck('annexid')->toArray(); // Annexes déjà dans la base de données
+
+        // Supprimer les annexes qui ne sont plus sélectionnées
+        $toDelete = array_diff($existingAnnexes, $selectedAnnexes);
+        attache_feb::where('febid', $IDf)->whereIn('annexid', $toDelete)->delete();
+
+        // Créer ou mettre à jour les annexes sélectionnées
+        foreach ($selectedAnnexes as $annexid) {
+          attache_feb::updateOrCreate(
+            [
+              'febid' => $IDf,
+              'annexid' => $annexid,
+            ],
+            [
+              'febid' => $IDf,
+              'annexid' => $annexid,
+            ]
+          );
+        }
+      }
+
+
+
+      foreach ($dataToUpdate as $data) {
+        Elementfeb::where('id', $data['id'])->update($data);
+      }
+
+      DB::commit();
+
+      return redirect()->back()->with('success', 'FEB mises à jour avec succès');
     } catch (\Exception $e) {
       DB::rollBack();
 
@@ -951,9 +952,10 @@ class FebController extends Controller
 
     // Ajouter la ligne pour afficher le total global
     $output .= '
-          <tr style=" background-color: #040895;">
-          <td style="color:white"> Montant total global</td> <td colspan="2" align="right"  style="color:white">  ' . number_format($totoglobale, 0, ',', ' ')  . '</td>
-          <td style="color:white" align="center">' . $pourcentage_total . ' %</td>
+          <tr style=" background: rgba(76, 175, 80, 0.3); color:black">
+          <td > Montant total global</td> 
+          <td colspan="2" align="right">  ' . number_format($totoglobale, 0, ',', ' ')  . '</td>
+          <td align="center">' . $pourcentage_total . ' %</td>
           </tr> 
         </table>';
 
@@ -967,16 +969,16 @@ class FebController extends Controller
     $devise = session()->get('devise');
     $budget = session()->get('budget');
     $IDP = session()->get('id');
-    
+
     $personnel = DB::table('users')
-    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-    ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-    ->orderBy('nom', 'ASC')
-    ->get();
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+      ->orderBy('nom', 'ASC')
+      ->get();
 
     // Initialisez une variable pour stocker les sorties de tableau
     $output = '';
-  /*  $output .= '
+    /*  $output .= '
     <table class="table table-striped table-sm fs--1 mb-0 table-bordered" style="width:100%">
     ';
 
@@ -1043,12 +1045,13 @@ class FebController extends Controller
       $output .= '<option value="' . $personnel->userid . '">' . $personnel->nom . ' ' . $personnel->prenom . '</option>';
     }
     $output .= '
-                <option  value="autres" >--Autres --</option>
+                <option selected  value="autres" >--Autres --</option>
                 </select>
             </td>
               <td width="20%" id="nomPrenomContainer" style="display: non;"> 
-                Nom & Prénom du bénéficiaire<br>
+               Autres  Nom & Prénom  de Fonds reçus <br>
                   <input type="text" name="autresBeneficiaire" id="nomPrenomBeneficiaire"class="form-control form-control-sm" style="width: 100%;">
+                  <small> Dans le mesure ou la personne n\'est pas sur la liste </small>
                                     
               
               </td>
@@ -1071,7 +1074,7 @@ class FebController extends Controller
 
     // Si l'ID de la session est défini, continuer avec le reste de la fonction
     $title = "Liste des FEB";
-   
+
     return view(
       'document.feb.list',
       [
@@ -1164,9 +1167,9 @@ class FebController extends Controller
 
     // Fetch attached documents
     $getDocument = attache_feb::join('apreviations', 'attache_febs.annexid', 'apreviations.id')
-    ->select('apreviations.id', 'apreviations.abreviation', 'apreviations.libelle', 'attache_febs.urldoc')
-    ->where('attache_febs.febid', $idfeb)
-    ->get();
+      ->select('apreviations.id', 'apreviations.abreviation', 'apreviations.libelle', 'attache_febs.urldoc')
+      ->where('attache_febs.febid', $idfeb)
+      ->get();
 
     $attachedDocIds = $getDocument->pluck('id')->toArray(); // Récupérer les IDs des documents attachés 
 
@@ -1324,9 +1327,9 @@ class FebController extends Controller
     $attache = Apreviation::all();
 
     $getDocument = attache_feb::join('apreviations', 'attache_febs.annexid', 'apreviations.id')
-    ->select('apreviations.id', 'apreviations.abreviation', 'apreviations.libelle', 'attache_febs.urldoc')
-    ->where('attache_febs.febid', $idfeb)
-    ->get();
+      ->select('apreviations.id', 'apreviations.abreviation', 'apreviations.libelle', 'attache_febs.urldoc')
+      ->where('attache_febs.febid', $idfeb)
+      ->get();
 
     $attachedDocIds = $getDocument->pluck('id')->toArray(); // Récupérer les IDs des documents attachés 
 
@@ -1991,6 +1994,4 @@ class FebController extends Controller
       ]);
     }
   }
-
-
 }

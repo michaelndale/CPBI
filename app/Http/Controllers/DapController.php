@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+
 class DapController extends Controller
 {
 
@@ -47,7 +48,8 @@ class DapController extends Controller
     $datadap = DB::table('daps')
       ->leftJoin('users', 'daps.userid', '=', 'users.id')
       ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('daps.*', 'personnels.prenom as user_prenom')
+      ->leftJoin('djas', 'daps.id', 'djas.dapid')
+      ->select('daps.*', 'personnels.prenom as user_prenom', 'djas.montant_avance as avance')
       ->where('daps.projetiddap', $ID)
       ->orderBy('daps.numerodp', 'asc')
       ->get();
@@ -93,15 +95,14 @@ class DapController extends Controller
                                       <a href="dap/' . $cryptedId . '/edit" class="dropdown-item mx-1 editIcon" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
                                       <a href="dap/' . $cryptedId . '/generate-pdf-dap" class="dropdown-item mx-1"><i class="fa fa-print"> </i> Générer PDF</a>
                                      ';
-        if ($datadaps->signaledap == 1) {
-          $output .=
-            '
-                                      <a class="dropdown-item desactiversignale" id="' . $datadaps->id . '" href="#"><i class="fas fa-random"></i> Désactiver le signal ?</a>
-                                     ';
-        }
-        $output .=
-          '
-                                    
+                                      if ($datadaps->signaledap == 1) {
+                                        $output .=
+                                          '
+                                          <a class="dropdown-item desactiversignale" id="' . $datadaps->id . '" href="#"><i class="fas fa-random"></i> Désactiver le signal ?</a>
+                                        ';
+                                      }
+                                      $output .=
+                                        '
                                       <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datadaps->id . '" data-numero="' . $datadaps->numerodp . '" href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
                                   </div>
                               </div>
@@ -118,19 +119,19 @@ class DapController extends Controller
         }
 
         $output .= '
-                      </td>
-                       <td align="right"><b>' . number_format($totalMontant, 0, ',', ' ') . '</b> </td> 
-                      <td>' . (strlen($datadaps->lieu) > 15 ? substr($datadaps->lieu, 0, 15) . '...' : $datadaps->lieu) . '</td>
-                      <td><span title="' . $datadaps->cho . '">' . (strlen($datadaps->cho) > 8 ? substr($datadaps->cho, 0, 8) . '...' : $datadaps->cho) . '</span></td>
-                      <td align="right" >' . $datadaps->comptabiliteb  . '</td>
-                      <td align="left">' . $datadaps->banque . '</td>
-                      <td><span title="' . $datadaps->paretablie . '">' . (strlen($datadaps->paretablie) > 15 ? substr($datadaps->paretablie, 0, 8) . '...' : $datadaps->paretablie) . '</span></td>
-                      <td align="center"><input type="checkbox" ' . $justifier . ' class="form-check-input" disabled /></td>
-                      <td align="center">' . date('d-m-Y', strtotime($datadaps->created_at)) . '</td>
-                      <td align="left">' . ucfirst($datadaps->user_prenom) . '</td>
-                    
-                  </tr>
-              ';
+                    </td>
+                    <td align="right"><b>' . number_format($totalMontant, 0, ',', ' ') . '</b></td>
+                    <td>' . (strlen($datadaps->lieu) > 15 ? substr($datadaps->lieu, 0, 15) . '...' : $datadaps->lieu) . '</td>
+                    <td><span title="' . $datadaps->cho . '">' . (strlen($datadaps->cho) > 8 ? substr($datadaps->cho, 0, 8) . '...' : $datadaps->cho) . '</span></td>
+                    <td align="right">' . $datadaps->comptabiliteb . '</td>
+                    <td align="left">' . $datadaps->banque . '</td>
+                    <td><span title="' . $datadaps->paretablie . '">' . (strlen($datadaps->paretablie) > 15 ? substr($datadaps->paretablie, 0, 8) . '...' : $datadaps->paretablie) . '</span></td>
+                    <td align="right"><b>' . number_format(isset($datadaps->avance) ? $datadaps->avance : 0, 0, ',', ' ') . '</b></td>
+                    <td align="center"><input type="checkbox" ' . $justifier . ' class="form-check-input" disabled /></td>
+                    <td align="center">' . date('d-m-Y', strtotime($datadaps->created_at)) . '</td>
+                    <td align="left">' . ucfirst($datadaps->user_prenom) . '</td>
+                </tr>
+                ';
         $nombre++;
       }
       echo $output;
@@ -204,7 +205,6 @@ class DapController extends Controller
               
 
               if ($request->beneficiaire == 'autres') {
-               
                 $dap->autresBeneficiaire = $request->beneficiaire;
             } else {
                  $dap->beneficiaire = $request->filled('beneficiaire') ? $request->beneficiaire : null;
@@ -315,10 +315,11 @@ class DapController extends Controller
       $projet_lead = $get_lead->lead;
 
 
-      if ($dap && $dap->userid != Auth::id() || $projet_lead  != $lead) {
+    /*  if ($dap && $dap->userid != Auth::id() || $projet_lead  != $lead) {
 
         return back()->with('failed', 'Vous n\'avez pas l\'accréditation pour modifier ce DAP.');
       }
+        
 
       if ($request->demandeetablie == $request->ancien_demandeetablie) {
         $demandeetablie = $request->demandeetablie_signe;
@@ -356,6 +357,7 @@ class DapController extends Controller
         $chefprogramme = 1;
       }
 
+      */
 
       $justifier = $request->has('justifier') ? 1 : 0;
       $nonjustifier = $request->has('nonjustifier') ? 1 : 0;
@@ -382,12 +384,12 @@ class DapController extends Controller
       $dap->paretablie = $request->paretablie;
       $dap->banque = $request->banque;
 
-      $dap->demandeetablie_signe = $demandeetablie;
+    /*  $dap->demandeetablie_signe = $demandeetablie;
       $dap->verifierpar_signe = $verifier;
       $dap->approuverpar_signe = $approuver;
       $dap->responsable_signe = $resposablefinancier;
       $dap->chefprogramme_signe = $secretairegenerale;
-      $dap->secretaure_general_signe = $chefprogramme;
+      $dap->secretaure_general_signe = $chefprogramme; */
       $dap->statut = 1;
       
       if ($justifier == 1) {
@@ -1674,6 +1676,93 @@ class DapController extends Controller
           ]);
       }
   }
+
+  public function printDapList()
+  {
+      $ID = session()->get('id');
+  
+      // Récupérer les données DAP
+      $datadap = DB::table('daps')
+          ->leftJoin('users', 'daps.userid', '=', 'users.id')
+          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->leftJoin('djas', 'daps.id', 'djas.dapid')
+          ->select('daps.*', 'personnels.prenom as user_prenom', 'djas.montant_avance as avance')
+          ->where('daps.projetiddap', $ID)
+          ->orderBy('daps.numerodp', 'asc')
+          ->get();
+  
+      // Initialisation du contenu de la liste à afficher
+
+      $dateinfo = Identification::all()->first();
+      $output = '';
+  
+      if ($datadap->count() > 0) {
+          foreach ($datadap as $datadaps) {
+              // Déterminer les états
+              $ov = $datadaps->ov == 1 ? "checked" : "";
+              $justifier = $datadaps->justifier == 1 ? "checked" : "";
+              $nonjustifier = $datadaps->justifier == 0 ? "checked" : "";
+  
+              // Message d'alerte si signalé
+              $message = $datadaps->signaledap == 1 ? 
+                  '<div class="spinner-grow text-danger" role="status" style="width: 0.5rem; height: 0.5rem;">
+                      <span class="sr-only">Loading...</span>
+                  </div>' : '';
+  
+              // Récupérer les numéros FEB associés à chaque DAP
+              $numerofeb = DB::table('febs')
+                  ->leftJoin('elementdaps', 'febs.id', '=', 'elementdaps.referencefeb')
+                  ->where('elementdaps.dapid', $datadaps->id)
+                  ->get();
+  
+              // Initialisation des variables pour les numéros FEB
+              $febNumbers = [];
+              foreach ($numerofeb as $feb) {
+                  $febNumbers[] = $feb->numerofeb;  // Ajouter le numéro FEB
+              }
+  
+              // Crypter l'ID du DAP pour l'utiliser dans les liens
+              $cryptedId = Crypt::encrypt($datadaps->id);
+  
+              // Calculer le montant total pour ce DAP
+              $totalMontant = $this->getTotalDap($datadaps->id);
+  
+              // Générer la ligne de la liste
+              $output .= '
+                  <tr>
+                  <td align="center">' . $datadaps->numerodp . '</td>
+                      <td align="center">';
+
+                        foreach ($numerofeb as $key => $numerofebs) {
+                          $output .= '[' . $numerofebs->numerofeb . ']';
+                          if ($key < count($numerofeb) - 1) {
+                            $output .= ',';
+                          }
+                        }
+
+                        $output .= '
+                    </td>
+                    <td style="text-align: right;"><b>' . number_format($totalMontant, 0, ',', ' ') . '</b></td>
+                    <td>' . (strlen($datadaps->lieu) > 15 ? substr($datadaps->lieu, 0, 15) . '...' : $datadaps->lieu) . '</td>
+                    <td><span title="' . $datadaps->cho . '">' . $datadaps->cho. '</span></td>
+                    <td align="right">'. $datadaps->comptabiliteb . '</td>
+                    <td align="left">'. $datadaps->banque . '</td>
+                    <td><span title="'. $datadaps->paretablie . '">' . $datadaps->paretablie. '</span></td>
+                    <td style="text-align: right;"><b>'. number_format(isset($datadaps->avance) ? $datadaps->avance : 0, 0, ',', ' ') . '</b></td>
+                    <td style="text-align: center;"><input type="checkbox" ' . $justifier . ' class="form-check-input" disabled /></td>
+                    <td style="text-align: center;">'. date('d-m-Y', strtotime($datadaps->created_at)) . '</td>
+                    <td align="left">'. ucfirst($datadaps->user_prenom) . '</td>
+                  </tr>';
+          }
+      }
+  
+      // Retourner la vue avec la liste générée
+      return view('document.dap.print_liste', compact('output','dateinfo'));
+  }
+  
+  
+  
+  
   
 
 }

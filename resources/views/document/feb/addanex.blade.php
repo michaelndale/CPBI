@@ -16,7 +16,7 @@
                         <i class="mdi mdi-alert-circle-outline me-2"></i>
                         Pour continuer le processus d'ajout du document en annexe.<br>
                         Assurez-vous d'avoir le document à votre disposition.<br>
-                        Vous pouvez le prendre en photo ou le scanner et l'envoyer en format (IMAGE, PDF, WORD, EXCEL, POWERPOINT).
+                        Vous pouvez le prendre en photo ou le scanner et l'envoyer en format (PDF, WORD, EXCEL, POWERPOINT).
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <br>
@@ -31,6 +31,11 @@
                                     </h2>
                                 </div>
                                 <div class="col col-md-auto">
+                                   
+                                    <a href=" {{ route('key.viewFeb', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+
                                     <a href="{{ route('generate-pdf-feb', $dataFeb->id) }}" class="btn btn-primary waves-light waves-effect">
                                         <i class="fa fa-print"></i>
                                     </a>
@@ -74,7 +79,8 @@
                                                             </a>
                                                         @endif
                                                     </label>
-                                                    <input class="form-control" name="doc[]" type="file" onchange="validateFiles(this)" accept=".pdf" />
+                                                    <input class="form-control" name="doc[]" type="file" onchange="validateFiles(this)" 
+                                                    accept=".pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx" />
                                                     <div class="error-message" style="color: red; display: none;"></div>
                                                     <br>
                                                 </div>

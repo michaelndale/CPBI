@@ -47,10 +47,13 @@
                                         <th>
                                             <center><b>Montant</b></center>
                                         </th>
-                                        <th><b>Fonds payés à</b></th>
+                                        <th>
+                                            <center><b>Avance</b></center>
+                                        </th>
+                                        <th><b>Fonds reçus par</b></th>
                                         <th><b>OV/Chèque </b></th>
                                         <th><b>
-                                                <center>Justifié ?</center>
+                                                <center>Justifiée ?</center>
                                             </b></th>
                                         <th><b>Créé le. </b></th>
                                         <th><b>Créé par </b></th>
@@ -61,7 +64,7 @@
 
                                 <tbody class="show_all" id="show_all">
                                     <tr>
-                                        <td colspan="10">
+                                        <td colspan="11">
                                             <h5 class="text-center text-secondery my-5">
                                                 @include('layout.partiels.load')
                                         </td>

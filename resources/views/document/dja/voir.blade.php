@@ -1,444 +1,341 @@
 @extends('layout/app')
 @section('page-content')
-    <div class="main-content">
-        <div class="page-content">
-            <div class="row">
-                <div class="col-12" style="margin:auto">
-                    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> MOdification du DEMANDE ET JUSTIFICATION
-                            D'AVANCE (DJA) N<sup>o</sup> : {{ $data->numerudja }} </h4>
-                        <div class="page-title-right">
-                            <div class="btn-toolbar float-end" role="toolbar">
+<div class="main-content">
+    <div class="page-content">
+        <div class="col-12" style="margin:auto">
+            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> Modification du DEMANDE ET JUSTIFICATION D'AVANCE (DJA)</h4>
+                <div class="page-title-right">
+                    <div class="btn-toolbar float-end" role="toolbar">
+
+                   
+                            <div class="btn-group me-2 mb-2 mb-sm-0">
+                               
+
+                                <a href="{{ route('generate-pdf-dja', $data->iddjas) }}"
+                                    class="btn btn-warning waves-light waves-effect" title="Imprimer le document DJA"><i
+                                        class="fa fa-print"></i> </a>
+
+
+                                <a href="{{ route('voir', $data->iddjas) }}"
+                                    class="btn btn-primary waves-light waves-effect" title="Voir le DJA"><i class="fa fa-eye"></i></a>
+
+                                <a href="{{ route('nouveau', $data->iddjas) }}"
+                                        class="btn btn-primary waves-light waves-effect" title="Demande / Approbation"><i
+                                            class="fa fa-edit"></i> </a>
+
+
+                                <a href="{{ route('nouveau.utilisation', $data->iddjas) }}"
+                                    class="btn btn-primary waves-light waves-effect" title="Utilisation de l'avance"><i
+                                        class="fas fa-edit"></i> </a>
+
+                              
+                                <a href="{{ route('listdja') }}" class="btn btn-primary waves-light waves-effect"
+                                    title="Liste de DJA"><i class="fa fa-list"></i></a>
                             </div>
-                        </div>
+                       
+
+
                     </div>
                 </div>
             </div>
-
-            <form class="needs-validation" novalidate method="POST" id="EditdjdaForm">
-                @method('post')
-                @csrf
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-xl-6">
-                                        <table class="table table-bordered table-striped table-sm fs--1 mb-0">
-                                            <tr>
-                                                <td colspan="2">
-                                                    <label class="form-label">Présumé Bénéficiaire/Fournisseur/Prestataire à
-                                                        payer:</label> <br>
-                                                    @php
-                                                        // Join the 'numerofeb' values with commas
-                                                        $benefNom = $numerofeb->pluck('beneficiaireNom')->join(', ');
-                                                    @endphp
-
-                                                    {{ $benefNom }}
-
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2">
-                                                    Adresse :
-                                                    @php
-                                                        $adresse_benef = collect($numerofeb)
-                                                            ->pluck('adresse')
-                                                            ->join(', ');
-                                                    @endphp
-
-                                                    {{ $adresse_benef }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <label class="form-label">Téléphone1:</label>
-                                                    @php
-                                                        // Join the 'numerofeb' values with commas
-                                                        $benefPhone_un = $numerofeb->pluck('telephoneone')->join(', ');
-                                                    @endphp
-
-                                                    {{ $benefPhone_un }}
-
-                                                </td>
-                                                <td>
-                                                    <label class="form-label">Téléphone2:</label>
-                                                    @php
-                                                        // Join the 'numerofeb' values with commas
-                                                        $benefPhone_deux = $numerofeb
-                                                            ->pluck('telephonedeux')
-                                                            ->join(', ');
-                                                    @endphp
-
-                                                    {{ $benefPhone_deux }}
-
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2">
-                                                    <label>DESCRIPTION/MOTIF:</label> <br>
-                                                    @php
-                                                        // Join the 'numerofeb' values with commas
-                                                        $benefPhone_decription = $numerofeb
-                                                            ->pluck('description')
-                                                            ->join(', ');
-                                                    @endphp
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <!-- end card -->
-                                    </div> <!-- end col -->
-
-                                    <div class="col-xl-6">
-                                        <table class="table table-bordered table-striped table-sm fs--1 mb-0">
-                                            <tr>
-                                                <td>
-                                                    <label class="form-label">Les fonds devront être reçus le
-                                                        {{ $data->fond_recu_le }}</label>
-                                                </td>
-                                                <td>
-                                                    <label class="form-label"> Référence (s) : FEB Nº</label>
-                                                    @php
-                                                        // Join the 'numerofeb' values with commas
-                                                        $referenceFeb = $numerofeb->pluck('numerofeb')->join(', ');
-                                                    @endphp
-
-                                                    {{ $referenceFeb }}
-                                                </td>
-                                                <td>
-                                                    DAP Nº {{ $data->nume_dap }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>OV/CHQ Nº {{ $data->cho }} </td>
-                                                <td colspan="2">
-                                                    @php
-                                                        // Join the 'numerofeb' values with commas
-                                                        $ligneB = $numerofeb->pluck('libelle_compte')->join(', ');
-                                                    @endphp
-                                                    Ligne budgétaire: {{ $ligneB }} </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    Montant de l'avance :
-                                                    {{ $data->montant_avance_un }}
-                                                </td>
-                                                <td>Dévise: {{ $devise }} </td>
-                                                <td>
-                                                    Durée de l’avance:(Jours) : {{ $data->duree_avance }}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <br>
-                                        <br>
-                                    </div>
-                                    <div class="col-xl-12">
-
-                                        <table style="width:100%">
-                                            <tr>
-                                                <td>
-                                                    Fonds demandes par : <br>
-                                                    {{ $data->fonds_demandes_nom }} {{ $data->fonds_demandes_prenom }}
-                                                </td>
-                                                <td>
-                                                    Signature
-                                                </td>
-                                                <td>
-                                                    Date: <br>
-                                                    {{ $data->date_fonds_demande_par }}
-
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Avance Approuvée par (2 personnes au moins) : <br>
-                                                    {{ $data->avance_approuver_un_nom }}
-                                                    {{ $data->avance_approuver_un_prenom }}</td>
-                                                <td></td>
-                                                <td></td>
-                                            </tr>
-
-                                        </table>
-
-
-                                        <div class="card">
-                                            <div class="card-body">
-
-
-
-                                                <hr>
-
-                                                <div class="row">
-                                                    <!-- Approval by the first person -->
-                                                    <div class="col-md-4">
-                                                        <div class="mb-2">
-                                                            <label class="form-label">Avance Approuvée par (2 personnes au
-                                                                moins) :</label>
-                                                            <select type="text" class="form-control form-control-sm"
-                                                                name="avance_approuver_par_un" id="acce" required>
-                                                                <option value="{{ $data->avance_approuver_un_userid }}">
-
-                                                                </option>
-                                                                @foreach ($personnel as $personnels)
-                                                                    <option value="{{ $personnels->userid }}">
-                                                                        {{ $personnels->nom }} {{ $personnels->prenom }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-1"></div>
-                                                    <div class="col-md-2">
-                                                        <div class="mb-2">
-                                                            <label class="form-label">Date</label>
-                                                            <input name="date_signature_avance_approuver_un"
-                                                                value="{{ $data->date_avance_approuver_par }}"
-                                                                type="date" class="form-control form-control-sm" />
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-3"></div>
-
-                                                    <!-- Approval by the second person -->
-                                                    <div class="col-md-4">
-                                                        <div class="mb-2">
-                                                            <label class="form-label">Nom</label>
-                                                            <select type="text" class="form-control form-control-sm"
-                                                                name="avance_approuver_par_deux" id="acce" required>
-                                                                <option value="{{ $data->avance_approuver_par_deux }}">
-                                                                    {{ $data->avance_approuver_par_deux_nom }}
-                                                                    {{ $data->avance_approuver_par_deux_prenom }}
-                                                                </option>
-                                                                @foreach ($personnel as $personnels)
-                                                                    <option value="{{ $personnels->userid }}">
-                                                                        {{ $personnels->nom }} {{ $personnels->prenom }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-1"></div>
-                                                    <div class="col-md-2">
-                                                        <div class="mb-2">
-                                                            <label class="form-label">Date</label>
-                                                            <input name="date_signature_avance_approuver_deux"
-                                                                value="{{ $data->date_avance_approuver_par_deux }}"
-                                                                type="date" class="form-control form-control-sm" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <hr>
-
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="mb-2">
-                                                            <label class="form-label">Fonds déboursés par: </label>
-                                                            <select type="text" class="form-control form-control-sm"
-                                                                name="fond_debourse_par" required>
-                                                                <option value="{{ $data->fond_debourser_par }}">
-
-                                                                    {{ $data->fond_debourser_nom }}
-                                                                    {{ $data->fond_debourser_prenom }}
-
-                                                                </option>
-                                                                @foreach ($personnel as $personnels)
-                                                                    <option value="{{ $personnels->userid }}">
-                                                                        {{ $personnels->nom }} {{ $personnels->prenom }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-1">
-
-                                                    </div>
-
-                                                    <div class="col-md-2">
-                                                        <div class="mb-2">
-                                                            <label class="form-label"> Date</label>
-                                                            <input name="date_signe_fond_debourses" type="date"
-                                                                value="{{ $data->date_fond_debourser_par }}"
-                                                                class="form-control form-control-sm" />
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-
-            </form>
         </div>
-    </div>
-    <!-- end card -->
-    </div> <!-- end col -->
 
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="mb-2">
-                            <label class="form-label">Fonds demandes par : </label>
-                            <select type="text" class="form-control form-control-sm" name="fondPayea" id="acce"
-                                required>
-                                <option value="{{ $data->pfond_paye }}"> {{ $data->pfond_paye_nom }}
-                                    {{ $data->pfond_paye_prenom }}
-                                </option>
-                                @foreach ($personnel as $personnels)
-                                    <option value="{{ $personnels->userid }}">
-                                        {{ $personnels->nom }} {{ $personnels->prenom }}
-                                    </option>
-                                @endforeach
-                            </select>
+        
 
+      
+        
+
+        <form  method="POST" action="{{ route('updateSignatureDja', $data->iddjas)}}">
+            @method('post')
+            @csrf
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+
+                        @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
                         </div>
-                    </div>
+                    @endif
+            
+                    @if(session('status'))
+                        <div class="alert alert-success">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+            
 
-                    <!-- DESCRIPTION/MOTIF Field -->
-                    <div class="col-md-5">
-                        <div class="mb-2">
-                            <label>DESCRIPTION/MOTIF:</label>
-                            <div>
-                                <textarea name="fondPayeDescription" id="descriptionMotif" required class="form-control" rows="2">{{ $data->description_avance }}</textarea>
+                    
+
+                        <h6><i class="fa fa-info-circle"></i> Demande d'une avance</h6>
+                                    <hr>
+                        <div class="col-xl-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <table class="table table-striped table-sm fs--1 mb-0">
+                                        <tr>
+                                            <th>Présumé Bénéficiaire / Fournisseur / Prestataire à payer:</th>
+                                            <td>{{ $numerofeb->pluck('beneficiaireNom')->join(', ') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Adresse</th>
+                                            <td>{{ $numerofeb->pluck('adresse')->join(', ') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Téléphone 1</th>
+                                            <td>{{ $numerofeb->pluck('telephoneone')->join(', ') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Téléphone 2</th>
+                                            <td>{{ $numerofeb->pluck('telephonedeux')->join(', ') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Description/Motif</th>
+                                            <td>{{ $data->description_avance }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Plaque vehicule Field (Initially Hidden) -->
-                    <div class="col-md-3" id="plaqueVehiculeDiv" style="display: none;">
-                        <div class="mb-2">
-                            <label class="form-label">Plaque vehicule utilisat</label>
-                            <select type="text" class="form-control form-control-sm" name="plaque" id="acce"
-                                required>
-                                <option value="{{ $data->plaque }}">{{ $data->plaque }}</option>
-                                @foreach ($vehicule as $vehicules)
-                                    <option value="{{ $vehicules->matricule }}">
-                                        {{ $vehicules->matricule }}
-                                    </option>
-                                @endforeach
-                            </select>
+                        <div class="col-xl-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <table class="table table-striped table-sm fs--1 mb-0">
+                                        <tr>
+                                            <th>Les fonds devront être reçus le</th>
+                                            <td>{{ !empty($data->fond_recu_le) ? \Carbon\Carbon::parse($data->fond_recu_le)->format('d-m-Y') : '' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Référence(s): FEB Nº</th>
+                                            <td>{{ $numerofeb->pluck('numerofeb')->join(', ') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>DAP Nº</th>
+                                            <td>{{ $data->nume_dap }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>OV/CHQ Nº</th>
+                                            <td>{{ $data->cho }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Ligne budgétaire</th>
+                                            <td>{{ $numerofeb->pluck('libelle_compte')->join(', ') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Montant de l'avance</th>
+                                            <td> {{ number_format($data->montant_avance_un, 0, ',', ' ') }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Devise</th>
+                                            <td>{{ $devise }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Durée de l’avance (Jours)</th>
+                                            <td>{{ $data->duree_avance }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <hr>
 
-                    <div class="col-md-3">
-                        <div class="mb-2">
-                            <label class="form-label">Montant de l'Avance</label>
-                            <input name="montantAvancedeux" value="{{ $data->montant_avance }}" type="text"
-                                class="form-control form-control-sm" />
+                        <div class="col-xl-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6><i class="fa fa-info-circle"></i> Demande/Approbation</h6>
+                                    <hr>
+                        
+                                    <table class="table table-striped table-sm fs--1 mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Information</th>
+                                                <th>Nom</th>
+                                                <th>Signature</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Fonds demandés par -->
+                                            <tr>
+                                                <td>Fonds demandés par</td>
+                                                <td>{{ $data->fonds_demandes_nom }} {{ $data->fonds_demandes_prenom }}</td>
+                                                <td> <input class="form-check-input" type="checkbox" name="signe_fonds_demande_par" style="border:1px solid red" 
+                                                     {{ $data->signe_fonds_demande_par == '1' ? 'checked' : '' }}  {{ Auth::user()->id == $data->fonds_demande_par ? '' : 'disabled' }}   > </td>
+                                                <td>
+                                                    <input type="date" value="{{ $data->date_fonds_demande_par }}" name="date_fonds_demande_par"  style="width:50%; border:none; border-bottom: 2px dotted #000;"  {{ Auth::user()->id == $data->fonds_demande_par ? '' : 'disabled' }} />
+                                                </td>
+                                            </tr>
+                        
+                                            <!-- Approbation par la première personne -->
+                                            <tr>
+                                                <td>Avance approuvée par (Chef Comptable, si A < 500 000 Fbu)</td>
+                                                <td>{{ $data->avance_approuver_un_nom }} {{ $data->avance_approuver_un_prenom }}</td>
+                                                 <td> <input class="form-check-input" type="checkbox" name="signe_avance_approuver_par" style="border:1px solid red"
+                                                    {{ $data->signe_avance_approuver_par == '1' ? 'checked' : '' }} {{ Auth::user()->id == $data->avance_approuver_par ? '' : 'disabled' }} > </td>
+                                                <td>
+                                                    <input type="date" value="{{ $data->date_avance_approuver_par }}" name="date_avance_approuver_par" style="width:50%; border:none; border-bottom: 2px dotted #000;" {{ Auth::user()->id == $data->avance_approuver_par ? '' : 'disabled' }}  />
+                                                </td>
+                                            </tr>
+                        
+                                            <!-- Approbation par la deuxième personne -->
+                                            <tr>
+                                                <td>Avance approuvée par (RAF, si A < 2 000 000 Fbu)</td>
+                                                <td>{{ $data->avance_approuver_par_deux_nom }} {{ $data->avance_approuver_par_deux_prenom }}</td>
+                                                 <td> <input class="form-check-input" type="checkbox" name="signe_avance_approuver_par_deux" style="border:1px solid red"
+                                                    {{ $data->signe_avance_approuver_par_deux == '1' ? 'checked' : '' }} {{ Auth::user()->id == $data->avance_approuver_par_deux ? '' : 'disabled' }} > </td>
+                                                <td>
+                                                 
+                                                    <input type="date" value="{{ $data->date_avance_approuver_par_deux }}" name="date_avance_approuver_par_deux"  style="width:50%; border:none; border-bottom: 2px dotted #000;"  {{ Auth::user()->id == $data->avance_approuver_par_deux ? '' : 'disabled' }}  />
+                                                </td>
+                                            </tr>
+                        
+                                            <!-- Approbation par la troisième personne -->
+                                            <tr>
+                                                <td>Avance approuvée par (SG ou SGA, si A > 2 000 000 Fbu)</td>
+                                                <td>{{ $data->avance_approuver_par_trois_nom }} {{ $data->avance_approuver_par_trois_prenom }}</td>
+
+                                                 <td> 
+                                                    <input class="form-check-input" type="checkbox" name="signe_avance_approuver_par_trois" style="border:1px solid red"
+                                                    {{ $data->signe_avance_approuver_par_trois == '1' ? 'checked' : '' }} {{ Auth::user()->id == $data->avance_approuver_par_trois ? '' : 'disabled' }}  > 
+                                                </td>
+
+                                                <td>
+                                                 
+                                                    <input type="date" value="{{ $data->date_avance_approuver_par_trois }}" name="date_avance_approuver_par_trois"  style="width:50%; border:none; border-bottom: 2px dotted #000;"  {{ Auth::user()->id == $data->avance_approuver_par_trois ? '' : 'disabled' }}  />
+                                                </td>
+                                            </tr>
+                        
+                                            <!-- Fonds déboursés par -->
+                                            <tr>
+                                                <td>Fonds déboursés par</td>
+                                                <td> {{ $data->fond_debourser_par == 0 ? $data->autres_nom_prenom_debourse : $data->fond_debourser_nom . ' ' . $data->fond_debourser_prenom }}</td>
+                                                <td> <input class="form-check-input" type="checkbox" name="signe_fond_debourser_par" style="border:1px solid red"
+                                                    {{ $data->signe_fond_debourser_par == '1' ? 'checked' : '' }} {{ Auth::user()->id == $data->fond_debourser_par ? '' : 'disabled' }}  > </td>
+                                                <td>
+                                                    <input type="date" value="{{ $data->date_fond_debourser_par }}" name="date_fond_debourser_par"  style="width:50%; border:none; border-bottom: 2px dotted #000;" {{ Auth::user()->id == $data->fond_debourser_par ? '' : 'disabled' }}  />
+                                                </td>
+                                            </tr>
+                        
+                                            <!-- Fonds reçus par -->
+                                            <tr>
+                                                <td>Fonds reçus par</td>
+                                                <td>  {{ $data->fond_recu_par == 0 ? $data->autres_nom_prenom_fond_recu : $data->fond_recu_nom . ' ' . $data->fond_recu_prenom }}</td>
+                                                 <td> <input class="form-check-input" type="checkbox" name="signe_fond_recu_par" style="border:1px solid red"
+                                                    {{ $data->signe_fond_recu_par == '1' ? 'checked' : '' }}  {{ Auth::user()->id == $data->fond_recu_par ? '' : 'disabled' }}> </td>
+                                                <td>
+                                                    <input type="date" value="{{ $data->date_fond_recu_par }}" name="date" id="date_fond_recu_par"  style="width:50%; border:none; border-bottom: 2px dotted #000;"  {{ Auth::user()->id == $data->fond_recu_par ? '' : 'disabled' }} />
+                                                   
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="col-md-3">
-                        <div class="mb-2">
-                            <label class="form-label">Montant utilisé*</label>
-                            <input name="montantUtilise" value="{{ $data->montant_utiliser }}" type="text"
-                                class="form-control form-control-sm" />
 
+                        <div class="col-xl-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6><i class="fa fa-info-circle"></i> Rapport d'utilisation d'avance </h6>
+                                    <hr>
+                                    <table class="table table-striped table-sm fs--1 mb-0">
+                                        <tbody>
+                                            <tr>
+                                                <th> </th>
+                                                <td></td>
+                                                <td align="center"> Signature</td>
+                                                <td>Date</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Fonds payés à</th>
+                                                <td>
+                                               
+                                                    {{ $data->pfond_paye == 0 ? $data->autres_nom_prenom_paye : $data->pfond_paye_nom. ' ' . $data->pfond_paye_prenom }}
+
+                                                </td>
+                                                 <td align="center"> <input class="form-check-input" type="checkbox" name="signature_pfond_paye" style="border:1px solid red"
+                                                    {{ $data->signature_pfond_paye == '1' ? 'checked' : '' }}   {{ Auth::user()->id == $data->pfond_paye ? '' : 'disabled' }}> </td>
+                                                    <td>
+                                                        <input type="date" value="{{ $data->date_pfond_paye }}" name="date_pfond_paye"  style="width:50%; border:none; border-bottom: 2px dotted #000;" {{ Auth::user()->id == $data->pfond_paye ? '' : 'disabled' }} />
+                                                    </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Description/Motif</th>
+                                                <td>{{ $data->description_avance }}</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Montant de l'Avance</th>
+                                                <td>  {{ number_format($data->montant_avance , 0, ',', ' ') }} </td>
+                                                <th> </th>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Montant utilisé</th>
+                                                <td> {{ number_format($data->montant_utiliser , 0, ',', ' ') }}</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Surplus/Manque</th>
+                                                <td> {{ number_format($data->montant_surplus, 0, ',', ' ') }} </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Montant retourné à la caisse ou au compte (Si Surplus)</th>
+                                                <td> {{ number_format($data->montant_retourne, 0, ',', ' ') }}</td>
+                                                <th></th>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Réception des fonds retournés à la caisse par</th>
+                                                <td>{{ $data->fonds_retournes_caisse_nom }} {{ $data->fonds_retournes_caisse_prenom }}</td>
+                                                 <td align="center"> <input class="form-check-input" type="checkbox" name="signe_fonds_retournes_caisse_par" style="border:1px solid red"
+                                                    {{ $data->signe_fonds_retournes_caisse_par == '1' ? 'checked' : '' }} {{ Auth::user()->id == $data->fonds_retournes_caisse_par ? '' : 'disabled' }} > </td>
+                                                    <td>
+                                                        <input type="date" value="{{ $data->date_fonds_retournes_caisse_par }}" name="date_fonds_retournes_caisse_par"  style="width:50%; border:none; border-bottom: 2px dotted #000;" {{ Auth::user()->id == $data->fonds_retournes_caisse_par ? '' : 'disabled' }} />
+                                                    </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Borderau de versement nº</th>
+                                                <td>{{ $data->bordereau_versement }}</td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Du</td>
+                                                <td>{{ \Carbon\Carbon::parse($data->du_num)->format('d-m-y') }}</td>
+                                                <td> </td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Réception des pièces justificatives de l'utilisation de l'avance par</th>
+                                                <td>{{ $data->reception_pieces_nom }} {{ $data->reception_pieces_prenom }}</td>
+                                                <td align="center"> <input class="form-check-input" type="checkbox" name="signe_reception_pieces_justificatives" style="border:1px solid red"
+                                                    {{ $data->signe_reception_pieces_justificatives == '1' ? 'checked' : '' }}  {{ Auth::user()->id == $data->reception_pieces_justificatives ? '' : 'disabled' }}> </td>
+                                                <td>
+                                                    <input type="date" value="{{ $data->date_reception_pieces_justificatives }}" name="date_reception_pieces_justificatives"  style="width:50%; border:none; border-bottom: 2px dotted #000;"  {{ Auth::user()->id == $data->reception_pieces_justificatives ? '' : 'disabled' }} />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    
+                                </div>
+                                
+                            </div>
+                            <div class="modal-footer">
+                                <button  name="save" class="btn btn-primary" type="submit" >Enregistrer la signature</button>
+                           </div>
                         </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="mb-2">
-                            <label class="form-label">Surplus/Manque*</label>
-                            <input name="surplusManque" value="{{ $data->montant_surplus }}" type="text"
-                                class="form-control form-control-sm" />
-
-                        </div>
-                    </div>
-
-
-                    <div class="col-md-3">
-                        <div class="mb-2">
-                            <label class="form-label">Montant retourné
-                                à la caisse ou au compte(Si Surplus)
-                            </label>
-                            <input name="montantRetourne" value="{{ $data->montant_retourne }}" type="text"
-                                class="form-control form-control-sm" />
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="mb-2">
-                            <label class="form-label">Réception des fonds retournés à la caisse par: <br>Noms de la
-                                Caissière :
-                            </label>
-                            <select type="text" class="form-control form-control-sm" name="fond_retourne"
-                                id="acce" required>
-                                <option disabled="true" selected="true"
-                                    value="{{ $data->fonds_retournes_caisse_par }} ">
-                                    {{ $data->fonds_retournes_caisse_nom }} {{ $data->fonds_retournes_caisse_prenom }}
-                                </option>
-                                @foreach ($personnel as $personnels)
-                                    <option value="{{ $personnels->userid }}">{{ $personnels->nom }}
-                                        {{ $personnels->prenom }}</option>
-                                @endforeach
-                            </select>
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="mb-2">
-                            <label class="form-label">ou Borderau de versement <br>nº <br>
-                            </label>
-                            <input name="bordereauVersement" value="{{ $data->bordereau_versement }}" type="text"
-                                class="form-control form-control-sm" />
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="mb-2">
-                            <label class="form-label">Du <br>nº <br>
-                            </label>
-                            <input name="du" type="date" value="{{ $data->du_num }}"
-                                class="form-control form-control-sm" />
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="mb-2">
-                            <label class="form-label">Réception des pièces justificatives de l'utilisation de l'avance
-                                par:
-                            </label>
-                            <select type="text" class="form-control form-control-sm" name="reception_pieces_par"
-                                id="acce" required>
-                                <option disabled="true" selected="true"
-                                    value="{{ $data->reception_pieces_justificatives }} ">
-                                    {{ $data->reception_pieces_nom }} {{ $data->reception_pieces_prenom }}</option>
-                                @foreach ($personnel as $personnels)
-                                    <option value="{{ $personnels->userid }}">{{ $personnels->nom }}
-                                        {{ $personnels->prenom }}</option>
-                                @endforeach
-                            </select>
-
-                        </div>
+                        
                     </div>
                 </div>
-
-                <br><br>
-                <button id="edjitustifierbtn" name="editjustifierbtn" class="btn btn-primary editjustifierbtn"
-                    type="submit"><i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
-                <br><br>
-
-                </form>
             </div>
-        </div>
-        <!-- end card -->
-    </div> <!-- end col -->
-    </div>
-    </div>
-    </div>
-    <!-- end card -->
-    </div> <!-- end col -->
-    </div>
-    </form>
-    </div>
-    </div>
+        </form>
+
 @endsection

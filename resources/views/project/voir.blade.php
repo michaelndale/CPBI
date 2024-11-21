@@ -338,12 +338,12 @@
                   {
                       name: 'Utilisé',
                       y: {{ $pourcentage }},
-                      color: '#4CAF50' // Couleur pour le pourcentage utilisé
+                      color: '#FF5733' // Couleur pour le pourcentage utilisé
                   },
                   {
                       name: 'Restant',
                       y: {{ $restant }},
-                      color: '#FF5733' // Couleur pour le pourcentage restant
+                      color: '#4CAF50' // Couleur pour le pourcentage restant
                   }
               ]
           }]

@@ -193,17 +193,19 @@
 
                                     @if ($dajshow)
 
-                                    <div
+                                    
 
                                     <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
                                         <tr>
-                                            <td colspan="5"> Ce montant est-il une avance ?
+                                            <td colspan="5"> 
+                                            Ce montant est-il une avance ?
                                                 &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" name="justifier"
                                                     id="justifier" class="form-check-input"
                                                     @if ($datadap->justifier == 1) checked @endif>
                                                 &nbsp; &nbsp; &nbsp; Non <input type="checkbox" name="nonjustifier"
                                                     id="nonjustifier" class="form-check-input"
-                                                    @if ($datadap->justifier == 0) checked @endif></td>
+                                                    @if ($datadap->justifier == 0) checked @endif>
+                                            </td>
                                         </tr>
 
 
@@ -218,10 +220,12 @@
                                             </td>
                                             <td style="width:15%"> Durée avance(Jour) : <br><input type="number"
                                                     class="form-control  form-control-sm" min="0"
-                                                    name="duree_avance" value="{{ $dajshow->duree_avance }}" /> </td>
+                                                    name="duree_avance" value="{{ $dajshow->duree_avance }}" /> 
+                                            </td>
                                             <td style="width:30%"> Description : <br><input type="text"
                                                     class="form-control  form-control-sm" name="descriptionel"
-                                                    value="{{ $dajshow->description_avance }}" style="width:100%" /></td>
+                                                    value="{{ $dajshow->description_avance }}" style="width:100%" />
+                                            </td>
 
                                         </tr>
 
@@ -244,11 +248,9 @@
                                                             {{ $personnels->prenom }}</option>
                                                     @endforeach
                                                 </select>
-
-
-
-
                                             </td>
+
+                                            
                                         </tr>
                                     </table>
 

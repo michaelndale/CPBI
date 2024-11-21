@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Caisse;
 use App\Models\Comptepetitecaisse;
+use App\Models\Identification;
 use App\Models\rappotage;
 use App\Models\Rappotagecaisse;
 use App\Models\Rapprochement;
@@ -530,55 +531,56 @@ class RapportController extends Controller
             ->where('rapprochements.projetid', '=', $IDp)
             ->first();
 
+            //dd($rapport);
+
 
             $datede = $rapport->datede; // Date de début (datetime)
             $dateau = $rapport->dateau; // Date de fin (datetime)
+
+            
             
             $dataDjas = DB::table('djas')
-                ->orderBy('djas.numerodjas', 'asc')
-                ->leftjoin('daps','djas.numerodjas', 'daps.numerodp')
-
-                ->join('users', 'djas.userid', '=', 'users.id')
-                ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-
-                ->leftjoin('users as user_beneficier', 'daps.beneficiaire', '=', 'user_beneficier.id')
-                ->leftJoin('personnels as benef_personnel', 'user_beneficier.personnelid', '=', 'benef_personnel.id')
-
-                ->leftJoin('elementdjas', 'djas.id','elementdjas.iddjas')
-
-                ->select('djas.*', 
-                        'personnels.prenom as user_prenom', 
-                        'elementdjas.montant_avance as montantAvance',
-                        'elementdjas.montant_utiliser as montantJustifie',
-                        'elementdjas.montant_retourne as montantRetourne', 
-                        'daps.comptabiliteb',
-                        'daps.id as refdapid',
-                        'daps.cho as cheque',
-                        'daps.justifier as dapjustifier',
-                        'daps.created_at  as datecreation',
-                        'daps.dateautorisation  as dateautorisations',
-                        'benef_personnel.id as idb',
-                        'benef_personnel.prenom as benef_prenom',
-                        'benef_personnel.nom as benef_nom' ,
-
-                        )
-
-                ->where('djas.projetiddja', $IDp)
-                ->where(function ($query) use ($datede, $dateau) {  
-                    $query->whereBetween('djas.created_at', [$datede, $dateau]) // Intervalle entre les deux dates
-                          ->orWhere('djas.created_at', '=', $datede) // Date de début (datetime)
-                          ->orWhere('djas.created_at', '=', $dateau); // Date de fin (datetime)
-                })
-                ->get(); // Exécuter la requête
             
+            ->orderBy('djas.numerodjas', 'asc')
+            ->leftjoin('daps', 'djas.dapid', '=', 'daps.id')
+            ->join('users', 'djas.userid', '=', 'users.id')
+            ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->leftjoin('users as user_beneficier', 'daps.beneficiaire', '=', 'user_beneficier.id')
+            ->leftJoin('personnels as benef_personnel', 'user_beneficier.personnelid', '=', 'benef_personnel.id')
+            ->leftJoin('elementdjas', 'djas.id', '=', 'elementdjas.iddjas')
+            ->select(
+                'djas.*', 
+                'personnels.prenom as user_prenom', 
+                'elementdjas.montant_avance as montantAvance',
+                'elementdjas.montant_utiliser as montantJustifie',
+                'elementdjas.montant_retourne as montantRetourne', 
+                'daps.comptabiliteb',
+                'daps.id as refdapid',
+                'daps.cho as cheque',
+                'daps.justifier as dapjustifier',
+                'daps.created_at as datecreation',
+                'daps.dateautorisation as dateautorisations',
+                'benef_personnel.id as idb',
+                'benef_personnel.prenom as benef_prenom',
+                'benef_personnel.nom as benef_nom'
+            )
+            ->where('djas.projetiddja', $IDp)
+            ->where(function ($query) use ($datede, $dateau) {  
+                $query->whereBetween('djas.created_at', [$datede, $dateau])
+                    ->orWhere('djas.created_at', '=', $datede)
+                    ->orWhere('djas.created_at', '=', $dateau);
+            })
+            ->get();
 
+            $dateinfo = Identification::all()->first();
 
         return view(
             'rapport.rapprochement.rapport',
             [
-                'title'     => $title,
-                'rapport'   => $rapport,
-                'datailrapport' =>$dataDjas
+                'title'         => $title,
+                'rapport'       => $rapport,
+                'datailrapport' =>$dataDjas,
+                'dateinfo'      =>   $dateinfo 
                
 
             ]
@@ -642,6 +644,31 @@ class RapportController extends Controller
 
 
 
+  // supresseion
+  public function destroy(Request $request)
+  {
+    try {
+
+      $emp = Rapprochement::find($request->id);
+      if ($emp->userid == Auth::id()) {
+       
+        $id = $request->id;
+        Rapprochement::destroy($id);
+        
+        return response()->json([
+          'status' => 200,
+        ]);
+      } else {
+        return response()->json([
+          'status' => 205,
+        ]);
+      }
+    } catch (Exception $e) {
+      return response()->json([
+        'status' => 202,
+      ]);
+    }
+  }
 
 
     

@@ -32,9 +32,8 @@
                                         <td rowspan="2" style="width:40%">
                                             Référence des documents à attacher
                                             <select class="form-control form-control-sm" id="annex" name="annex[]"
-                                                multiple>
-                                                <option disabled selected value="">-- Sélectionner les documents
-                                                    attachés --</option>
+                                                multiple style="height: 100px;">
+                                                <option disabled selected value="">-- Sélectionner les documents attachés --</option>
                                                 @foreach ($attache as $attaches)
                                                     <option value="{{ $attaches->id }}">{{ $attaches->libelle }}
                                                     </option>
@@ -78,10 +77,10 @@
                                       
 
 
-                                        <td colspan="0">Bénéficiaire <br>
+                                        <td colspan="0">Bénéficiaire <span class="text-danger">*</span> <br>
                                       
                                             <select class="form-control  form-control-sm" id="beneficiaire"
-                                                name="beneficiaire">
+                                                name="beneficiaire" required>
                                                 <option disabled="true" selected="true" value="">--Sélectionner  bénéficiaire--</option>';
                                                 @foreach ($beneficaire as $beneficaires)
                                                     <option value="{{ $beneficaires->id }}">
@@ -150,8 +149,7 @@
                                 <table class="table table-striped table-sm fs--1 mb-0" id="tableEstimate">
                                     <thead style="background-color:#3CB371; color:white">
                                         <tr>
-                                            <th style="width:80px; color:white; "><b>Num<span
-                                                        class="text-danger">*</span></b></th>
+                                            <th style="width:40px; color:white; "><b>N<sup>o</sup></b></th>
                                             <th style="  color:white"><b> Designation des activités de la ligne<span
                                                         class="text-danger">*</span> </b></th>
                                             <th style=" color:white"> <b> Description<span
@@ -160,9 +158,9 @@
                                                         class="text-danger">*</span></b></th>
                                             <th style="width:100px ;  color:white"><b>Q<sup>té <span
                                                             class="text-danger">*</span></b></sup></th>
-                                            <th style="width:52px; color:white"><b>Frequence<span
+                                            <th style="width:70px; color:white"><b title="Frequence">Fréq.<span
                                                         class="text-danger">*</span></b></th>
-                                            <th style="width:130px;  color:white"><b>P.U<span
+                                            <th style="width:130px;  color:white"><b title="Prix Unitaire">P.U<span
                                                         class="text-danger">*</span> </b></th>
                                             <th style="width:150px;  color:white"><b>P.T<span
                                                         class="text-danger">*</span></b></th>
@@ -175,7 +173,7 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><input style="width:100%; background-color:#c0c0c0" type="number" id="numerodetail"
+                                            <td><input style="width:100%; background-color:#c0c0c0 ; Padding:0px" type="number" id="numerodetail"
                                                     name="numerodetail[]" class="form-control form-control-sm"
                                                     value="1" ></td>
                                             <td style="width:450px;">
@@ -459,7 +457,7 @@ $("#addBtn").on("click", function() {
     // Ajouter une nouvelle ligne au tableau
     $("#tableEstimate tbody").append(`
         <tr id="R${rowIdx}">
-            <td><input style="width:100%; background-color:#c0c0c0" type="number" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="${rowIdx}" ></td>
+            <td><input style="width:100%; background-color:#c0c0c0; Padding:0px" type="number" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="${rowIdx}" ></td>
             <td><div id="Showpoll${rowIdx}" class="Showpoll"> </div> </td>
             <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required></td>
             <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm" required></td>

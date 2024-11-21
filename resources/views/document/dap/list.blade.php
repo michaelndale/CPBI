@@ -23,8 +23,15 @@
 
           </div>
           <div class="col col-md-auto">
-
-            <a href="javascript:void()" data-bs-toggle="modal" data-bs-target="#dapModale"><span class="me-2" data-feather="plus-circle"></span> <i class="fa fa-plus-circle"></i> Nouvel fiche DAP</a></nav>
+            
+            <a href="{{ route('dap.list.print', ['date' => date('dmYHis')]) }}" class="btn btn-primary btn-sm">
+              <i class="fa fa-print"></i> Imprimer la liste
+          </a>
+          
+          <a href="javascript:void()"  class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#dapModale">
+             
+              <i class="fa fa-plus-circle"></i> Nouvel fiche DAP
+          </a>
           </div>
         </div>
       </div>
@@ -67,7 +74,8 @@
                   <th class="sort border-top"> <b>Compte bancaire </b></th>
                   <th class="sort border-top"> <b>Banque </b></th>
                   <th class="sort border-top"> <b>Etabli au nom</b></th>
-                  <th class="sort border-top"> <center><b> Justifier </b></center> </th>
+                  <th class="sort border-top"> <b>Avance</b></th>
+                  <th class="sort border-top"> <center><b> Justifiée ? </b></center> </th>
                   <th class="sort border-top "> <center><b> Créé le. </b></center> </th>
                   <th class="sort border-top "> <b> Créé par </b></th>
                 </tr>
@@ -102,8 +110,7 @@
 <BR><BR>
 
 
-  
-  
+
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>

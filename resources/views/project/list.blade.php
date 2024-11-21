@@ -12,7 +12,7 @@
                         <div class="page-title-right">
                             <div class="col-xl-12">
                                 <div class="text-sm-end">
-                                    <a class="btn btn-primary" href="{{ route('new_project') }}"><i class="mdi mdi-plus me-1"></i> Créer un nouveau projet </a>
+                                    <a class="btn btn-success" href="{{ route('new_project') }}"><i class="fa fa-plus-circle"></i> Créer un nouveau projet </a>
                                 </div>
                             </div>
                         </div>

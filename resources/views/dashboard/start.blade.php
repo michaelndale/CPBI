@@ -179,7 +179,7 @@ $personnelData = DB::table('personnels')
 
                         @php
                         $currentDate = date('Y-m-d');
-                        $limitDate = '2024-12-10';
+                        $limitDate = '2025-01-10';
                         $limitDateTime = new DateTime($limitDate);
                         $currentDateTime = new DateTime($currentDate);
 

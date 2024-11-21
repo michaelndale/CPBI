@@ -12,10 +12,16 @@
                     <div class="page-title-right">
                         <div class="btn-toolbar float-end" role="toolbar">
                             <div class="btn-group me-2 mb-2 mb-sm-0">
-                                <a href="{{ route('nouveau.feb') }}" type="button" class="btn btn-primary waves-light waves-effect"><i class="fa fa-plus-circle"></i></a>
-                                <a href="{{ route('generate-pdf-feb', $dataFe->id) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-print"></i> </a>
-                                <a href="{{ route('key.viewFeb', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-eye"></i> </a>
-                                <a href="{{ route('listfeb') }}" type="button" class="btn btn-primary waves-light waves-effect"><i class="fa fa-list"></i></a>
+                                @if($attachedDocIds)
+                                    <a href="{{ route('showannex',$cryptedId) }}" type="button" class="btn btn-primary waves-light waves-effect" title="Annexer les documents"><i class="fa fa-link"></i></a>
+                                @endif
+
+                                
+
+                                <a href="{{ route('generate-pdf-feb', $dataFe->id) }}" class="btn btn-primary waves-light waves-effect" title="Imprimer FEB encours"><i class="fa fa-print"></i> </a>
+                                <a href="{{ route('key.viewFeb', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect" title="Previsualisation du FEB" ><i class="fa fa-eye"></i> </a>
+                                <a href="{{ route('listfeb') }}" type="button" class="btn btn-primary waves-light waves-effect" title="Liste des FEBS"><i class="fa fa-list"></i></a>
+                                <a href="{{ route('nouveau.feb') }}" type="button" class="btn btn-primary waves-light waves-effect" itle="Creer Nouvelle FEB" ><i class="fa fa-plus-circle"></i></a>
                             </div>
                         </div>
                     </div>
@@ -51,6 +57,11 @@
                                                         </option>
                                                     @endforeach
                                                 </select>
+
+                                                @if($attachedDocIds)
+                                                <a href="{{ route('showannex',$cryptedId) }}" title="Annexer les documents">  <i class="fa fa-plus-circle"></i> Attacher le document physique </a>
+                                                @endif
+                                               
                                                 
                                             </td>
                                         </tr>
@@ -161,14 +172,14 @@
                                     <table class="table table-striped table-sm fs--1 mb-0" id="tableEstimate">
                                         <thead>
                                             <tr style="background-color:#3CB371; color:white">
-                                                <th style="width:50px; color:white">Num</th>
-                                                <th style="width:250px; color:white">Designation de la ligne</th>
+                                                <th style="width:10px; color:white">Num</th>
+                                                <th style="width:300px; color:white">Designation de la ligne</th>
                                                 <th style="width:200px; color:white">Description</th>
-                                                <th style="width:150px; color:white">Unité</th>
-                                                <th style="width:100px; color:white">Q<sup>té</sup></th>
-                                                <th style="width:50px; color:white">Frequence</th>
-                                                <th style="width:150px; color:white">P.U</th>
-                                                <th style="width:150px; color:white">P.T</th>
+                                                <th style="width:50px; color:white">Unité</th>
+                                                <th style="width:30px; color:white">Q<sup>té</sup></th>
+                                                <th style="width:30px; color:white">Freq.</th>
+                                                <th style="width:70px; color:white">P.U</th>
+                                                <th style="width:70px; color:white">P.T</th>
 
                                                 <th> <a href="javascript:void(0)" class="text-primary font-18" title="Add" id="addBtn"><i class="fa fa-plus-circle" style="color:white"></i></a></th>
                                             </tr>

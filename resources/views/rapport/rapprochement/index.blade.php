@@ -24,9 +24,13 @@
                             <table class="table table-bordered table-striped table-sm fs--1 mb-0">
                                 <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
                                     <tr style="background-color:#82E0AA">
-                                        <th><center>Actions</center> </th>
+                                        <th>
+                                            <center>Actions</center>
+                                        </th>
                                         <th>Créé le </th>
-                                        <th><center>Numéro</center>  </th>
+                                        <th>
+                                            <center>Numéro</center>
+                                        </th>
                                         <th>Période </th>
                                         <th>Etablie </th>
                                         <th>Verifié </th>
@@ -179,75 +183,127 @@
         }
     </style>
 
-<script>
-    $(function() {
-        // Soumission du formulaire pour ajouter un rapport via AJAX
-        $("#addrapportform").submit(function(e) {
-            e.preventDefault();
-            const fd = new FormData(this);
-            $("#sendSave").html('<i class="fas fa-spinner fa-spin"></i>');
-            document.getElementById("sendSave").disabled = true;
+    <script>
+        $(function() {
+            // Soumission du formulaire pour ajouter un rapport via AJAX
+            $("#addrapportform").submit(function(e) {
+                e.preventDefault();
+                const fd = new FormData(this);
+                $("#sendSave").html('<i class="fas fa-spinner fa-spin"></i>');
+                document.getElementById("sendSave").disabled = true;
 
-            $.ajax({
-                url: "{{ route('storeRapprochement') }}", // URL de l'enregistrement
-                method: 'POST',
-                data: fd,
-                cache: false,
-                contentType: false,
-                processData: false,
-                dataType: 'json',
-                success: function(response) {
-                    try {
-                        if (response.status === 200) {
-                            toastr.success("Rapport ajouté avec succès !", "Enregistrement");
-                            $("#addrapportform")[0].reset(); // Réinitialiser le formulaire
-                            $("#addDealModal").modal('hide'); // Fermer le modal
-                            fetchRapports(); // Recharger la liste des rapports
-                        } else if (response.status === 201) {
-                            toastr.error("La ligne de compte dans ce projet existe déjà !", "Attention");
-                        } else if (response.status === 202) {
-                            toastr.error("Erreur lors de l'exécution : " + response.error, "Erreur");
-                        } else {
-                            toastr.error("Réponse inattendue du serveur.", "Erreur");
+                $.ajax({
+                    url: "{{ route('storeRapprochement') }}", // URL de l'enregistrement
+                    method: 'POST',
+                    data: fd,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        try {
+                            if (response.status === 200) {
+                                toastr.success("Rapport ajouté avec succès !",
+                                    "Enregistrement");
+                                $("#addrapportform")[0].reset(); // Réinitialiser le formulaire
+                                $("#addDealModal").modal('hide'); // Fermer le modal
+                                fetchRapports(); // Recharger la liste des rapports
+                            } else if (response.status === 201) {
+                                toastr.error("La ligne de compte dans ce projet existe déjà !",
+                                    "Attention");
+                            } else if (response.status === 202) {
+                                toastr.error("Erreur lors de l'exécution : " + response.error,
+                                    "Erreur");
+                            } else {
+                                toastr.error("Réponse inattendue du serveur.", "Erreur");
+                            }
+                        } catch (error) {
+                            toastr.error("Erreur inattendue : " + error.message, "Erreur");
+                        } finally {
+                            $("#sendSave").html(
+                                '<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                            document.getElementById("sendSave").disabled = false;
                         }
-                    } catch (error) {
-                        toastr.error("Erreur inattendue : " + error.message, "Erreur");
-                    } finally {
-                        $("#sendSave").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        let errorMessage = jqXHR.responseJSON && jqXHR.responseJSON.error ?
+                            jqXHR.responseJSON.error :
+                            errorThrown || textStatus || "Erreur inconnue";
+
+                        toastr.error("Erreur lors de la requête : " + errorMessage, "Erreur");
+                        $("#sendSave").html(
+                            '<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
                         document.getElementById("sendSave").disabled = false;
                     }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    let errorMessage = jqXHR.responseJSON && jqXHR.responseJSON.error 
-                        ? jqXHR.responseJSON.error 
-                        : errorThrown || textStatus || "Erreur inconnue";
+                });
+            });
 
-                    toastr.error("Erreur lors de la requête : " + errorMessage, "Erreur");
-                    $("#sendSave").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-                    document.getElementById("sendSave").disabled = false;
-                }
+            $(document).on('click', '.deleteIcon', function(e) {
+                e.preventDefault();
+                let id = $(this).data('id'); // Utiliser data('id') pour obtenir le bon ID
+                let csrf = '{{ csrf_token() }}';
+                Swal.fire({
+                    title: 'Êtes-vous sûr ?',
+                    text: "Une rapport de rapprochement est sur le point d'être DÉTRUITE ! Faut-il vraiment exécuter « la Suppression » ? ",
+                    showCancelButton: true,
+                    confirmButtonColor: 'green',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Oui, Supprimer !'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('deleterapprochement') }}",
+                            method: 'delete',
+                            data: {
+                                id: id,
+                                _token: csrf
+                            },
+                            success: function(response) {
+                                if (response.status == 200) {
+                                    toastr.success(
+                                        "Rapprochement supprimé avec succès.",
+                                        "Succès");
+                                    fetchRapports();
+                                } else if (response.status ==
+                                    205) { // Mettre 205 car 201 était utilisé par erreur
+                                    toastr.error(
+                                        "Vous n'avez pas l'autorisation de supprimer ce rapprochement.",
+                                        "Erreur");
+                                } else {
+                                    toastr.error(
+                                        "Une erreur est survenue lors de la suppression du rapprochement.",
+                                        "Erreur");
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                toastr.error(
+                                    "Une erreur est survenue lors de la suppression du rapprochement.",
+                                    "Erreur");
+                                console.error(xhr.responseText);
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Fonction pour récupérer et afficher les rapports
+            function fetchRapports() {
+                $.ajax({
+                    url: "{{ route('getlisteRapportage') }}", // URL pour récupérer les rapports
+                    method: 'GET',
+                    success: function(response) {
+                        $("#rapportTableContainer").html(response); // Remplacer le contenu du conteneur
+                    },
+                    error: function() {
+                        toastr.error("Erreur lors de la récupération des rapports", "Erreur");
+                    }
+                });
+            }
+
+            // Charger les rapports lorsque la page est prête
+            $(document).ready(function() {
+                fetchRapports(); // Appel initial pour charger les rapports
             });
         });
-
-        // Fonction pour récupérer et afficher les rapports
-        function fetchRapports() {
-            $.ajax({
-                url: "{{ route('getlisteRapportage') }}", // URL pour récupérer les rapports
-                method: 'GET',
-                success: function(response) {
-                    $("#rapportTableContainer").html(response); // Remplacer le contenu du conteneur
-                },
-                error: function() {
-                    toastr.error("Erreur lors de la récupération des rapports", "Erreur");
-                }
-            });
-        }
-
-        // Charger les rapports lorsque la page est prête
-        $(document).ready(function() {
-            fetchRapports(); // Appel initial pour charger les rapports
-        });
-    });
-</script>
-
+    </script>
 @endsection

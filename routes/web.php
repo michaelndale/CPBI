@@ -42,6 +42,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ObservationactiviteController;
 use App\Http\Controllers\OptiondescriptionController;
 use App\Http\Controllers\OutilsController;
+use App\Http\Controllers\PaysController;
 use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\PieceController;
 use App\Http\Controllers\PlanoperationnelController;
@@ -218,7 +219,7 @@ Route::middleware('auth')->group(function () {
     Route::get('parc', [AppCOntroller::class, 'parc'])->name('parc');
 
 
-    Route::prefix('gestioncompte')->group(function () {
+    Route::prefix('lignebudgetaire')->group(function () {
         Route::get('/', [CompteController::class, 'index'])->name('gestioncompte');
         Route::get('/fetchAllGc', [CompteController::class, 'fetchAll'])->name('fetchAllGc');
         Route::get('/Selectcompte', [CompteController::class, 'selectcompte'])->name('Selectcompte');
@@ -236,7 +237,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/updateGrandcompte', [CompteController::class, 'updateGrandcompte'])->name('updateGrandcompte');
     });
 
-    Route::prefix('rallongebudget')->group(function () {
+    Route::prefix('budgetisation')->group(function () {
         Route::get('/', [RallongebudgetController::class, 'index'])->name('rallongebudget');
         Route::post('/storerallonge', [RallongebudgetController::class, 'store'])->name('storerallonge');
         Route::get('/fetchRallonge', [RallongebudgetController::class, 'fetchAll'])->name('fetchRallonge');
@@ -276,6 +277,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/updatedevise', [DeviseController::class, 'update'])->name('updatedevise');
     });
 
+    Route::prefix('pays')->group(function () {
+        Route::get('/', [PaysController::class, 'index'])->name('pays');
+        Route::get('/liste', [PaysController::class, 'liste'])->name('liste.pays');
+        Route::post('/store', [PaysController::class, 'store'])->name('store.pays');
+        Route::delete('/delete', [PaysController::class, 'destroy'])->name('delete.pays');
+        Route::get('/edit', [PaysController::class, 'edit'])->name('edit.pays');
+        Route::post('/update', [PaysController::class, 'update'])->name('update.pays');
+    });
+
+
     Route::prefix('beneficiaire')->group(function () {
         Route::get('/', [BeneficaireController::class, 'index'])->name('beneficiaire');
         Route::get('/allbeneficiaire', [BeneficaireController::class, 'fetchAll'])->name('allbeneficiaire');
@@ -307,7 +318,7 @@ Route::middleware('auth')->group(function () {
 
     });
 
-    Route::prefix('affectation')->group(function () {
+    Route::prefix('intervenant')->group(function () {
         Route::get('/', [AffectationController::class, 'index'])->name('affectation');
         Route::post('/storeAffectation', [AffectationController::class, 'storeAffectation'])->name('storeAffectation');
     });
@@ -393,12 +404,15 @@ Route::middleware('auth')->group(function () {
     Route::prefix('dja')->group(function () {
         Route::get('/', [DjaController::class, 'list'])->name('listdja');
         Route::get('/{id}/nouveau/', [DjaController::class, 'nouveau'])->name('nouveau');
+        Route::get('/{id}/nouveauutilisation/', [DjaController::class, 'nouveauutilisation'])->name('nouveau.utilisation');
         
         Route::get('/{id}/voir', [DjaController::class, 'voir'])->name('voir');
 
         Route::get('/{id}/misesajour/', [DjaController::class, 'misesajour'])->name('misesajour');
         Route::post('/storejustification', [DjaController::class, 'saveDjas'])->name('storejustification');
         Route::post('/updatejustification/{id}', [DjaController::class, 'UpDjas'])->name('updatejustification');
+        Route::post('/declareJustificatif/{id}', [DjaController::class, 'UpdJustificatif'])->name('declareJustificatif');
+        Route::post('/updateSignatureDja/{id}', [DjaController::class, 'UpdateSignatureDja'])->name('updateSignatureDja');
 
         Route::get('/fetchdja', [DjaController::class, 'fetchAll'])->name('fetchdja');
         Route::delete('/deletedja', [DjaController::class, 'delete'])->name('deletedja');
@@ -406,6 +420,7 @@ Route::middleware('auth')->group(function () {
         Route::get('{id}/edit/', [DjaController::class, 'edit'])->name('showdja');
         Route::put('/updatalldja/{id}', [DjaController::class, 'Updatestore'])->name('updatdja');
         Route::get('{id}/generate-pdf-dja', [DjaController::class, 'generatePDFdja'])->name('generate-pdf-dja');
+       
     });
 
     Route::prefix('sqr')->group(function () {
@@ -432,7 +447,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/storeRapprochement', [RapportController::class, 'storeRecherche'])->name('storeRapprochement');  
         Route::get('getlisteRapportage', [RapportController::class, 'getRapprochement'])->name('getlisteRapportage');
         Route::get('{id}/Rapprochement', [RapportController::class, 'rapporRapprochement'])->name('rapporRapprochement');
-        
+        Route::delete('/deleterapprochement', [RapportController::class, 'destroy'])->name('deleterapprochement');
         
     });
 
@@ -490,9 +505,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('/desactiverlesignaledap', [DapController::class, 'desacctiveSignale'])->name('desactiverlesignaledap');
         Route::delete('/supprimerlesignaledap', [DapController::class, 'deleteSignale'])->name('supprimerlesignaledap');
         Route::delete('/deleteelementsdap', [DapController::class, 'deleteElement'])->name('deleteelementsdap');
+        Route::get('/dap-list/liste-dap/{date}', [DapController::class, 'printDapList'])->name('dap.list.print');
+
     });
-
-
 
     Route::prefix('ftd')->group(function () {
         Route::get('/', [FdtController::class, 'list'])->name('listftd');
@@ -610,7 +625,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/fetchalletiquette', [EtiquetteController::class, 'fetchAll'])->name('fetchalletiquette');
     });
 
-    Route::prefix('activity')->group(function () {
+    Route::prefix('activites')->group(function () {
         Route::get('/', [ActivityController::class, 'index'])->name('activity');
         Route::get('/new', [ActivityController::class, 'new'])->name('newactivity');
         Route::post('/storeact', [ActivityController::class, 'store'])->name('storeact');

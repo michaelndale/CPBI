@@ -17,8 +17,14 @@
             <h4 class="card-title mb-0"> <i class="mdi mdi-book-open-page-variant-outline"></i> Fiche d'Expression des Besoins "FEB"  </h4>
           </div>
           <div class="col col-md-auto">
-            <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            <a href="{{ route('nouveau.feb') }}" id="fetchDataLink"> <span class="fa fa-plus-circle"></span> Nouvel fiche FEB</a>
+            <a href="#" id="fetchDataLink" class="btn btn-sm btn-primary">
+              <i class="fas fa-sync-alt"></i> Actualiser
+          </a>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="{{ route('nouveau.feb') }}" class="btn btn-sm btn-success">
+              <span class="fa fa-plus-circle"></span> Nouvel fiche FEB
+          </a>
+          
           </div>
         </div>
       </div>
