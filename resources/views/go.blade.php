@@ -59,11 +59,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CEPBU - GoProject</title>
+    <title>Your  - GoProject</title>
 </head>
     <body>
         <div class="box">
-            <p class="logo-text ms-2 d-none d-sm-block"> <i class="far fa-chart-bar"></i> CEPBU</p>
+            <p class="logo-text ms-2 d-none d-sm-block"> <i class="far fa-chart-bar"></i> GoProject</p>
             <div class="y-back">
                 <div class="y-inner"></div>
             </div>

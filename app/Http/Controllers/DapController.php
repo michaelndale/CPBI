@@ -402,12 +402,22 @@ class DapController extends Controller
 
       if($dja) {
         // Mettre à jour les champs du DJA
-        $dja->numerodjas = $request->numerodap;
-        $dja->montant_avance_un = $request->montantavance;
-        $dja->duree_avance = $request->duree_avance;
-        $dja->description_avance = $request->descriptionel;
-        $dja->fonds_demande_par = $request->beneficiaire;
-        $dja->justifie = $justifier;
+        $dja->numerodjas         = $request->numerodap;
+        if ($justifier == 1) {
+          $dja->montant_avance_un  = $request->montantavance;
+          $dja->montant_avance     = $request->montantavance;
+          $dja->duree_avance       = $request->duree_avance;
+          $dja->description_avance = $request->descriptionel;
+          $dja->fonds_demande_par  = $request->beneficiaire;
+        }else{
+          $dja->montant_avance_un  = 0;
+          $dja->montant_avance     = 0;
+          $dja->duree_avance       = 0;
+          $dja->description_avance  = '';
+          $dja->fonds_demande_par   = '';
+        }
+      
+        $dja->justifie           = $justifier;
 
         $dja->update();
 
@@ -415,15 +425,25 @@ class DapController extends Controller
 
           // creer Nouveau
           $New_dja = new Dja();
-          $New_dja->projetiddja = $IDpp;
-          $New_dja->dapid = $request->dapid;
-          $New_dja->numerodjas = $request->numerodap;
-          $New_dja->montant_avance_un  = $request->montantavance;
-          $New_dja->duree_avance = $request->duree_avance;
-          $New_dja->description_avance = $request->descriptionel;
-          $New_dja->fonds_demande_par = $request->beneficiaire;
-          $New_dja->justifie = $justifier;
-          $New_dja->userid = Auth::id();
+          $New_dja->projetiddja         = $IDpp;
+          $New_dja->dapid               = $request->dapid;
+          $New_dja->numerodjas          = $request->numerodap;
+          if ($justifier == 1) {
+            $New_dja->montant_avance_un   = $request->montantavance;
+            $New_dja->montant_avance      = $request->montantavance;
+            $New_dja->duree_avance        = $request->duree_avance;
+            $New_dja->description_avance  = $request->descriptionel;
+            $New_dja->fonds_demande_par   = $request->beneficiaire;
+          }else{
+            $New_dja->montant_avance_un   = 0;
+            $New_dja->montant_avance      = 0;
+            $New_dja->duree_avance        = 0;
+            $New_dja->description_avance  = '';
+            $New_dja->fonds_demande_par   = '';
+          }
+         
+          $New_dja->justifie            = $justifier;
+          $New_dja->userid              = Auth::id();
           $New_dja->save();
 
       }

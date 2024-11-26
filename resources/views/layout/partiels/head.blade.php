@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <title> {{ @$title }} | {{ config('app.name') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Application des gestions projet CEPBU" name="GoProjet" />
+    <meta content="Application des gestions projet Your" name="GoProjet" />
     <meta content="IMPACT-JOB" name="MICHAEL NDALE" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('element/assets/images/logo.png') }}">

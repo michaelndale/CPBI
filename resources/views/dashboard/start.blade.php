@@ -34,7 +34,7 @@ $personnelData = DB::table('personnels')
                     <div>
                         <div class="text-center mb-4">
                             <font size="6px" color="green">
-                                <strong><i class="ri-menu-2-line align-middle"></i> CEPBU</strong>
+                                <strong><i class="ri-menu-2-line align-middle"></i> Your</strong>
 
                             </font>
 
@@ -229,9 +229,7 @@ $personnelData = DB::table('personnels')
     <script src="{{ asset('element/assets/libs/metismenu/metisMenu.min.js') }}"></script>
     <script src="{{ asset('element/assets/libs/simplebar/simplebar.min.js') }}"></script>
     <script src="{{ asset('element/assets/libs/node-waves/waves.min.js') }}"></script>
-
     <script src="{{ asset('element/assets/libs/jquery-countdown/jquery.countdown.min.js') }}"></script>
-
     <script src="{{ asset('element/assets/js/pages/coming-soon.init.js') }}"></script>
     <script src="{{ asset('element/assets/js/app.js') }}"></script>
 </body>

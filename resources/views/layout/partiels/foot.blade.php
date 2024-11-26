@@ -9,15 +9,16 @@
         <div id="tableExample2">
           <div class="table-responsive">
              <div class="input-group mb-3">
-                                <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
-                                <input type="text" name="recherche" id="recherche" class="form-control" placeholder="Recherche par numéro(F.E.B, D.A.P), date , Initiateur">
-                            </div>
+                  <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
+                  <input type="text" name="recherche" id="recherche" class="form-control" placeholder="Recherche par numéro(F.E.B, D.A.P), date , Initiateur">
+              </div>
             <table class="table table-bordered table-striped table-sm fs--1 mb-0">
               <thead>
                 <tr>
                   <th class="sort border-top"><b>#</b></th>
                   <th class="sort border-top" data-sort="Document"><b>Document</b></th>
-                  <th class="sort border-top" data-sort="febnum"><b>
+                  <th class="sort border-top" data-sort="febnum">
+                    <b>
                       <center>N<sup>o</sup> DOC</center>
                     </b></th>
                   <th class="sort border-top" data-sort="montant"><b>
@@ -379,6 +380,8 @@
 
 
 <script>
+
+  // VERIFICATION DE LA CONNECTION INTERNET
   window.addEventListener('load', function() {
     var messageDiv = document.getElementById('message');
 
@@ -400,7 +403,7 @@
   });
 
 
-
+// VISUALISER L'IMAGE
   function preview_image(event) {
     var reader = new FileReader();
     reader.onload = function() {

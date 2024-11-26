@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Tableau Parc Automobile <BR> COMMUNAUTÉ DES EGLISES DE PENTECÔTE AU BURUNDI “CEPBU” </h4>
+                        <h4 class="mb-sm-0">Tableau Parc Automobile <BR><!-- COMMUNAUTÉ DES EGLISES DE PENTECÔTE AU BURUNDI “CEPBU” --> </h4>
                         <div class="page-title-right">
                             <e class="form-control ps-6 "> @include('dashboard.time')</e>
                         </div>

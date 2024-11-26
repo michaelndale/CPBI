@@ -85,7 +85,7 @@ $documentNombre = $dap_nombre + $fab_nombre ;
         <div class="d-flex">
          
           <button type="button" class="btn btn-sm px-3 font-size-20 header-item waves-effect" id="vertical-menu-btn">
-           <b><i class="ri-menu-2-line align-middle"></i> CEPBU</b> 
+           <b><i class="ri-menu-2-line align-middle"></i> Your</b> 
           </button>
 
           <!-- Projet session et recherche-->

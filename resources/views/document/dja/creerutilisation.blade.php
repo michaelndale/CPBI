@@ -326,7 +326,7 @@
                                                                     </div>
                                                                 </div>
                                         
-                                                                <div class="col-md-3">
+                                                                <div class="col-md-2">
                                                                     <div class="mb-2">
                                                                         <label class="form-label">Surplus/Manque*</label>
                                                                         <input name="surplusManque"  value="{{ $data->montant_surplus }}" type="number"  min="0" class="form-control form-control-sm" />
@@ -335,7 +335,7 @@
                                                                 </div>
                                         
                                         
-                                                                <div class="col-md-3">
+                                                                <div class="col-md-4">
                                                                     <div class="mb-2">
                                                                         <label class="form-label">Montant retourné
                                                                             à la caisse ou au compte(Si Surplus)
@@ -363,16 +363,16 @@
                                         
                                                                 <div class="col-md-3">
                                                                     <div class="mb-2">
-                                                                        <label class="form-label">ou Borderau de versement <br>nº <br>
+                                                                        <label class="form-label">Borderau de versement <br>nº :
                                                                         </label>
                                                                         <input name="bordereauVersement" value="{{ $data->bordereau_versement }}" type="text" class="form-control form-control-sm" />
                                         
                                                                     </div>
                                                                 </div>
                                         
-                                                                <div class="col-md-3">
+                                                                <div class="col-md-2">
                                                                     <div class="mb-2">
-                                                                        <label class="form-label">Du <br> <br>
+                                                                        <label class="form-label">Du <br>(date bordereau) <br>
                                                                         </label>
                                                                         <input name="du" type="date" value="{{ $data->du_num }}" class="form-control form-control-sm" />
                                         
@@ -380,7 +380,7 @@
                                                                 </div>
                                                                 <hr>
                                         
-                                                                <div class="col-md-4">
+                                                                <div class="col-md-5">
                                                                     <div class="mb-2">
                                                                         <label class="form-label">Réception des pièces justificatives de l'utilisation de l'avance
                                                                             par:

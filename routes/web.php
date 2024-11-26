@@ -18,6 +18,7 @@ use App\Http\Controllers\CatactivityController;
 use App\Http\Controllers\CategoriebeneficiaireController;
 use App\Http\Controllers\ClasseurController;
 use App\Http\Controllers\CommuniqueController;
+use App\Http\Controllers\CompteBanqueController;
 use App\Http\Controllers\CompteController;
 use App\Http\Controllers\ComptepetitecaisseController;
 use App\Http\Controllers\DapbpcController;
@@ -211,13 +212,7 @@ Route::middleware('auth')->group(function () {
     });
 
 
-
-
-
-
-
     Route::get('parc', [AppCOntroller::class, 'parc'])->name('parc');
-
 
     Route::prefix('lignebudgetaire')->group(function () {
         Route::get('/', [CompteController::class, 'index'])->name('gestioncompte');
@@ -250,7 +245,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/telecharger-rapport-budget', [RallongebudgetController::class, 'telecharger_rapport_budget'])->name('telecharger-rapport-budget');
 
 
-    Route::prefix('folder')->group(function () {
+    Route::prefix('dossier')->group(function () {
         Route::get('/', [FolderController::class, 'index'])->name('folder');
         Route::get('/fetchAllfl', [FolderController::class, 'fetchAll'])->name('fetchAllfl');
         Route::post('/storefl', [FolderController::class, 'store'])->name('storefl');
@@ -422,6 +417,8 @@ Route::middleware('auth')->group(function () {
         Route::get('{id}/generate-pdf-dja', [DjaController::class, 'generatePDFdja'])->name('generate-pdf-dja');
        
     });
+    Route::get('/check-unverified-funds', [DjaController::class, 'checkUnverifiedFunds']);
+
 
     Route::prefix('sqr')->group(function () {
         Route::get('/', [SqrController::class, 'list'])->name('listsqr');
@@ -689,20 +686,27 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/active-users', [AuthController::class, 'activeUsers'])->name('active-users');
 
-    /*  Route::get('/test-update-last-activity', function() {
-        if (Auth::check()) {
-            $user = Auth::user();
-            $user->last_activity = Carbon::now();
-            $user->save();
-            return 'Last activity updated';
-        }
-        return 'Not authenticated';
-    }); */
-
+   
     //FIN RH
 
     // web.php (routes file)
     Route::get('/error-page', function () {
         return view('error-page');
     })->name('errorPage');
+
+
+
+
+    Route::prefix('compte_banque')->group(function () {
+        Route::get('/service', [CompteBanqueController::class, 'index'])->name('compte.banque');
+        Route::post('/store', [CompteBanqueController::class, 'store'])->name('store.compte.banque');
+       
+    });
+
+
+
+
+    /// ROUTE DE AUTRE APPLICATION
+
+
 });

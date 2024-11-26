@@ -73,7 +73,6 @@
 
 
                                     </table>
-
                                     <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
                                         <tr>
 
@@ -94,7 +93,7 @@
                                                     value="{{ $datadap->cho }}" class="form-control form-control-sm">
                                             </td>
 
-                                           
+
 
                                             <td> Etabli au nom de:
                                                 <input type="text" name="paretablie" value="{{ $datadap->paretablie }}"
@@ -119,7 +118,8 @@
 
                                     </table>
                                     <hr>
-                                    <h6> &nbsp;&nbsp; <u>Synthese sur l'utilisation de fonds demandes(Vr details sur FB en  avance)</u></h6>
+                                    <h6> &nbsp;&nbsp; <u>Synthese sur l'utilisation de fonds demandes(Vr details sur FB en
+                                            avance)</u></h6>
                                     <table class="table table-striped table-sm fs--1 mb-0 table-bordered  ">
                                         <thead>
                                             <tr style="background-color:#3CB371; color:white">
@@ -186,141 +186,122 @@
                                         </tbody>
                                     </table>
 
-
                                     <br>
 
                                     &nbsp;&nbsp; <u>Synthese sur les avances </u>
 
                                     @if ($dajshow)
+                                        <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+                                            <tr>
+                                                <td colspan="5"> Ce montant est-il une avance ?
+                                                    &nbsp; &nbsp; &nbsp; Oui
+                                                    <input type="radio" name="justifierChoice" id="justifier"
+                                                        class="form-check-input" value="1"
+                                                        @if ($datadap->justifier == 1) checked @endif
+                                                        onchange="toggleAdvanceTable()">
+                                                    &nbsp; &nbsp; &nbsp; Non
+                                                    <input type="radio" name="justifierChoice" id="nonjustifier"
+                                                        class="form-check-input" value="0"
+                                                        @if ($datadap->justifier == 0) checked @endif
+                                                        onchange="toggleAdvanceTable()">
+                                                </td>
+                                            </tr>
+                                        </table>
 
-                                    
+                                        <table id="advanceTable" style="display: none;"
+                                            class="table table-striped table-sm fs--1 mb-0 table-bordered">
+                                            <tr>
+                                                <td style="width:15%"> Montant de l'Avance : <br>
+                                                    <input type="hidden" name="iddjass" />
+                                                    <input type="number" class="form-control form-control-sm"
+                                                        min="0" name="montantavance" value="0" />
+                                                </td>
+                                                <td style="width:15%"> Durée avance (Jour) : <br>
+                                                    <input type="number" class="form-control form-control-sm"
+                                                        min="0" name="duree_avance" value="0" />
+                                                </td>
+                                                <td style="width:30%"> Description : <br>
+                                                    <input type="text" class="form-control form-control-sm"
+                                                        name="descriptionel" style="width:100%" />
+                                                </td>
+                                            </tr>
 
-                                    <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
-                                        <tr>
-                                            <td colspan="5"> 
-                                            Ce montant est-il une avance ?
-                                                &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" name="justifier"
-                                                    id="justifier" class="form-check-input"
-                                                    @if ($datadap->justifier == 1) checked @endif>
-                                                &nbsp; &nbsp; &nbsp; Non <input type="checkbox" name="nonjustifier"
-                                                    id="nonjustifier" class="form-check-input"
-                                                    @if ($datadap->justifier == 0) checked @endif>
-                                            </td>
-                                        </tr>
-
-
-
-                                        <tr>
-
-                                            <td style="width:15%"> Montant de l'Avance : <br>
-                                                <input type="hidden" name="iddjass" value="{{ $dajshow->id }}" />
-                                                <input type="number" class="form-control  form-control-sm"
-                                                    min="0" name="montantavance"
-                                                    value="{{ $dajshow->montant_avance_un }}" />
-                                            </td>
-                                            <td style="width:15%"> Durée avance(Jour) : <br><input type="number"
-                                                    class="form-control  form-control-sm" min="0"
-                                                    name="duree_avance" value="{{ $dajshow->duree_avance }}" /> 
-                                            </td>
-                                            <td style="width:30%"> Description : <br><input type="text"
-                                                    class="form-control  form-control-sm" name="descriptionel"
-                                                    value="{{ $dajshow->description_avance }}" style="width:100%" />
-                                            </td>
-
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="5"> Fonds reçus par :
-                                                <select type="text" class="form-control form-control-sm"
-                                                    name="beneficiaire" id="beneficiaire" required>
-                                                    <option
-                                                        value="@if (isset($fond_reussi->userid) && !empty($fond_reussi->userid)) {{ $fond_reussi->userid }} @endif">
-                                                        @if (isset($fond_reussi->nom) &&
-                                                                !empty($fond_reussi->nom) &&
-                                                                isset($fond_reussi->prenom) &&
-                                                                !empty($fond_reussi->prenom))
-                                                            {{ ucfirst($fond_reussi->nom) }}
-                                                            {{ ucfirst($fond_reussi->prenom) }}
-                                                        @endif
-                                                    </option>
-                                                    @foreach ($personnel as $personnels)
-                                                        <option value="{{ $personnels->userid }}">{{ $personnels->nom }}
-                                                            {{ $personnels->prenom }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-
+                                            <tr>
+                                                <td colspan="2">Fonds reçus par :
+                                                    <select class="form-control form-control-sm" name="beneficiaire" id="beneficiaire" required onchange="checkFunds()">
+                                                        <option value="">Choisir l'utilisateur</option>
+                                                        @foreach ($personnel as $personnels)
+                                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td style="width:30%">
+                                                    Flash info : <br>
+                                                    <!-- Utilisation d'un div pour le message -->
+                                                    <div id="flash-info" class="form-control form-control-sm" style="width:100%; display:none; color:Red"></div>
+                                                </td>
+                                            </tr>
                                             
-                                        </tr>
-                                    </table>
-
-                                        
+                                        </table>
                                     @else
+                                        <input type="hidden" name="dapid" value="{{ $datadap->iddape }}" />
 
-                                    <input type="hidden" name="dapid" value="{{ $datadap->iddape }}" />
+                                        <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
+                                            <tr>
+                                                <td colspan="5"> Ce montant est-il une avance ?
+                                                    &nbsp; &nbsp; &nbsp; Oui
+                                                    <input type="radio" name="justifierChoice" id="justifier"
+                                                        class="form-check-input" value="1"
+                                                        @if ($datadap->justifier == 1) checked @endif
+                                                        onchange="toggleAdvanceTable()">
+                                                    &nbsp; &nbsp; &nbsp; Non
+                                                    <input type="radio" name="justifierChoice" id="nonjustifier"
+                                                        class="form-check-input" value="0"
+                                                        @if ($datadap->justifier == 0) checked @endif
+                                                        onchange="toggleAdvanceTable()">
+                                                </td>
+                                            </tr>
+                                        </table>
 
-                                    <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
-                                        <tr>
-                                            <td colspan="5"> Ce montant est-il une avance ?
-                                                &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" name="justifier"
-                                                    id="justifier" class="form-check-input"
-                                                    @if ($datadap->justifier == 1) checked @endif>
-                                                &nbsp; &nbsp; &nbsp; Non <input type="checkbox" name="nonjustifier"
-                                                    id="nonjustifier" class="form-check-input"
-                                                    @if ($datadap->justifier == 0) checked @endif></td>
-                                        </tr>
+                                        <table id="advanceTable" style="display:none;">
+                                            <tr>
+                                                <td style="width:15%"> Montant de l'Avance : <br>
+                                                    <input type="hidden" name="iddjass" />
+                                                    <input type="number" class="form-control form-control-sm"
+                                                        min="0" name="montantavance" value="0" />
+                                                </td>
+                                                <td style="width:15%"> Durée avance (Jour) : <br>
+                                                    <input type="number" class="form-control form-control-sm"
+                                                        min="0" name="duree_avance" value="0" />
+                                                </td>
+                                                <td style="width:30%"> Description : <br>
+                                                    <input type="text" class="form-control form-control-sm"
+                                                        name="descriptionel" style="width:100%" />
+                                                </td>
+                                            </tr>
 
-
-
-                                        <tr>
-
-                                            <td style="width:15%"> Montant de l'Avance : <br>
-                                                <input type="hidden" name="iddjass"   />
-                                                <input type="number" class="form-control  form-control-sm"
-                                                    min="0" name="montantavance" value="0"
-                                                    />
-                                            </td>
-                                            <td style="width:15%"> Durée avance(Jour) : <br><input type="number"
-                                                    class="form-control  form-control-sm" min="0"
-                                                    name="duree_avance" value="0"  /> </td>
-                                            <td style="width:30%"> Description : <br><input type="text"
-                                                    class="form-control  form-control-sm" name="descriptionel"
-                                                    style="width:100%" />
-                                            </td>
-
-                                        </tr>
-
-                                        <tr>
-                                            <td colspan="5"> Fonds reçus par :
-                                                <select type="text" class="form-control form-control-sm" name="beneficiaire" id="beneficiaire" value="" required>
-                                                    <option >Select</option>
-                                                   
-                                                    @foreach ($personnel as $personnels)
-                                                        <option value="{{ $personnels->userid }}">{{ $personnels->nom }}
-                                                            {{ $personnels->prenom }}</option>
-                                                    @endforeach
-                                                </select>
-
-
-
-
-                                            </td>
-                                        </tr>
-                                    </table>
-
-                                        
+                                            <tr>
+                                                <td colspan="2">Fonds reçus par :
+                                                    <select class="form-control form-control-sm" name="beneficiaire" id="beneficiaire" required onchange="checkFunds()">
+                                                        <option value="">Choisir l'utilisateur</option>
+                                                        @foreach ($personnel as $personnels)
+                                                            <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </td>
+                                                <td style="width:30%">
+                                                    Flash info : <br>
+                                                    <!-- Utilisation d'un div pour le message -->
+                                                    <div id="flash-info" class="form-control form-control-sm " style="width:100%; display:none; color:red"></div>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     @endif
-
-                                  
-                                  
-
-
 
 
 
                                     <hr>
                                     <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
-
                                         <tr>
                                             <td colspan="3"><b> Vérification et Approbation de la Demande de paiement
                                                 </b></td>
@@ -333,12 +314,12 @@
 
                                             <td> <b> Vérifiée par :</b> <br>
                                                 <small> Chef Comptable</small>
-                                                
+
                                             </td>
 
                                             <td> <b> Approuvée par : </b> <br>
                                                 <small>Chef de Service</small>
-                                                
+
                                             </td>
 
 
@@ -400,8 +381,11 @@
 
 
                                         <tr>
-                                            <td colspan="3"><b> Autorisaction de paiement</b></td>
+                                            <td colspan="3">
+                                                <div id="flash-info" style="display:none;"></div> <!-- Div pour afficher le message d'info -->
+                                            </td>
                                         </tr>
+                                        
 
                                         </tr>
 
@@ -487,11 +471,77 @@
     </div>
     <br> <br>
 
+    <script>
+       document.getElementById('beneficiaire').addEventListener('change', function () {
+    var userId = this.value; // Récupérer l'ID de l'utilisateur sélectionné
+    var flashInfoDiv = document.getElementById('flash-info'); // Le div qui affichera l'info
+
+    // Vérifier si le div existe avant de manipuler ses propriétés
+    if (flashInfoDiv) {
+        // Masquer le message de flash info initialement
+        flashInfoDiv.style.display = 'none';  
+
+        if (userId) {
+            // Faire l'appel AJAX pour vérifier les fonds non justifiés
+            fetch('/check-unverified-funds?user_id=' + userId)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur lors de la récupération des données');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'error') {
+                        flashInfoDiv.classList.add('alert-success'); // Message d'erreur
+                        flashInfoDiv.classList.remove('alert-success'); // Retirer la classe de succès
+                    } else {
+                        flashInfoDiv.classList.add('alert-success'); // Message de succès
+                        flashInfoDiv.classList.remove('alert-success'); // Retirer la classe d'erreur
+                    }
+
+                    flashInfoDiv.textContent = data.message; // Mettre à jour le message
+                    flashInfoDiv.style.display = 'block'; // Afficher le message
+                })
+                .catch(error => {
+                    console.log('Erreur:', error);
+                });
+        } else {
+            flashInfoDiv.style.display = 'none'; // Masquer le message si aucun utilisateur sélectionné
+        }
+    } else {
+        console.error('Le div flash-info n\'a pas été trouvé');
+    }
+});
+
+    </script>
+    
+    
+
+
+
+    <script>
+        // Function to show or hide the advanceTable based on the selected option
+        function toggleAdvanceTable() {
+            const advanceTable = document.getElementById('advanceTable');
+            const justifier = document.getElementById('justifier');
+
+            // Show table if 'Oui' (justifier) is selected, otherwise hide it
+            if (justifier.checked) {
+                advanceTable.style.display = 'table';
+            } else {
+                advanceTable.style.display = 'none';
+            }
+        }
+
+        // Run on page load to ensure the table is hidden or shown based on the default selection
+        window.onload = function() {
+            toggleAdvanceTable();
+        };
+    </script>
+
+
     <script type="text/javascript">
         $(document).ready(function() {
-
-
-
 
             $(document).on('click', '.deleteIcon', function(e) {
                 e.preventDefault();
