@@ -14,7 +14,7 @@
                         <h4 class="card-title mb-0"> <i class="fa fa-info-circle"></i> Communication d'alerte a toutes l'equipe </h4>
                     </div>
                     <div class="col col-md-auto">
-                        <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModale" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter communique</a>
+                        <a href="javascript::;"  class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#addModale" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Créer </a>
 
                     </div>
                 </div>

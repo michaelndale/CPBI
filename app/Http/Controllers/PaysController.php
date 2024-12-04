@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PaysModel;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -163,41 +164,27 @@ class PaysController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+  
+
+    public function delete(Request $request)
     {
         try {
-            // Find the country by ID, or return a 404 if not found
-            $pays = PaysModel::findOrFail($id);
-    
-            // Delete the country
-            $pays->delete();
-    
-            // Return success response
+
+            $emp = PaysModel::find($request->id);
+            
+                $id = $request->id;
+                PaysModel::destroy($id);
+                return response()->json([
+                    'status' => 200,
+                ]);
+             
+            
+        } catch (Exception $e) {
             return response()->json([
-                'code' => 200,
-                'status' => 'success',
-                'message' => 'Country deleted successfully'
-            ], 200);
-    
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Handle the case where the country is not found
-            return response()->json([
-                'code' => 404,
-                'status' => 'error',
-                'message' => 'Country not found'
-            ], 404);
-    
-        } catch (\Exception $e) {
-            // Handle any other errors
-            return response()->json([
-                'code' => 500,
-                'status' => 'error',
-                'message' => 'An error occurred while deleting the country.',
-                'details' => $e->getMessage()
-            ], 500);
+                'status' => 202,
+            ]);
         }
     }
-
     
     
 

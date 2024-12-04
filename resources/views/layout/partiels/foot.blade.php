@@ -12,33 +12,124 @@
                   <span class="input-group-text" id="basic-addon1"><i class="fas fa-search"></i></span>
                   <input type="text" name="recherche" id="recherche" class="form-control" placeholder="Recherche par numéro(F.E.B, D.A.P), date , Initiateur">
               </div>
-            <table class="table table-bordered table-striped table-sm fs--1 mb-0">
-              <thead>
-                <tr>
-                  <th class="sort border-top"><b>#</b></th>
-                  <th class="sort border-top" data-sort="Document"><b>Document</b></th>
-                  <th class="sort border-top" data-sort="febnum">
-                    <b>
-                      <center>N<sup>o</sup> DOC</center>
-                    </b></th>
-                  <th class="sort border-top" data-sort="montant"><b>
-                      <center>Montant</center>
-                    </b></th>
-                  <th class="sort border-top" data-sort="Date Doc"><b>Date FEB</b></th>
-                  <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
-                  <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
-                  <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
-                </tr>
-              </thead>
-              <tbody id="footernotify">
-                <tr>
-                  <td colspan="8">
-                    <h5 class="text-center text-secondery my-5">
-                      @include('layout.partiels.load')
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+
+              <div id="accordion" class="custom-accordion">
+                <div class="card mb-1 shadow-none">
+                    <a href="#collapseOne" class="text-dark" data-bs-toggle="collapse"
+                                    aria-expanded="true"
+                                    aria-controls="collapseOne">
+                        <div class="card-header" id="headingOne">
+                            <h6 class="m-0">
+                                FEB #1
+                                <i class="mdi mdi-minus float-end accor-plus-icon"></i>
+                            </h6>
+                        </div>
+                    </a>
+            
+                    <div id="collapseOne" class="collapse show"
+                            aria-labelledby="headingOne" data-bs-parent="#accordion">
+                        <div class="card-body">
+             
+                            <table class="table table-bordered table-striped table-sm fs--1 mb-0">
+                              <thead>
+                                <tr>
+                                  <th class="sort border-top"><b>#</b></th>
+                                  <th class="sort border-top" data-sort="Document"><b>Document</b></th>
+                                  <th class="sort border-top" data-sort="febnum">
+                                    <b>
+                                      <center>N<sup>o</sup> DOC</center>
+                                    </b></th>
+                                  <th class="sort border-top" data-sort="montant"><b>
+                                      <center>Montant</center>
+                                    </b></th>
+                                  <th class="sort border-top" data-sort="Date Doc"><b>Date FEB</b></th>
+                                  <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
+                                  <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
+                                  <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
+                                </tr>
+                              </thead>
+                              <tbody id="footernotify">
+                                <tr>
+                                  <td colspan="8">
+                                    <h5 class="text-center text-secondery my-5">
+                                      @include('layout.partiels.load')
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-1 shadow-none">
+                    <a href="#collapseTwo" class="text-dark collapsed" data-bs-toggle="collapse"
+                                    aria-expanded="false"
+                                    aria-controls="collapseTwo">
+                        <div class="card-header" id="headingTwo">
+                            <h6 class="m-0">
+                                DAP #2
+                                <i class="mdi mdi-minus float-end accor-plus-icon"></i>
+                            </h6>
+                        </div>
+                    </a>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+                            data-bs-parent="#accordion">
+                        <div class="card-body">
+                          <table class="table table-bordered table-striped table-sm fs--1 mb-0">
+                            <thead>
+                              <tr>
+                                <th class="sort border-top"><b>#</b></th>
+                              
+                                <th class="sort border-top" data-sort="febnum">
+                                  <b>
+                                    <center>N<sup>o</sup> DOC</center>
+                                  </b></th>
+                                <th class="sort border-top" data-sort="montant"><b>
+                                    <center>Montant</center>
+                                  </b></th>
+                                <th class="sort border-top" data-sort="Date Doc"><b>Date</b></th>
+                                <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
+                                <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b></th>
+                                <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
+                              </tr>
+                            </thead>
+                            <tbody id="footernotifydap"> 
+                              <tr>
+                                <td colspan="8">
+                                  <h5 class="text-center text-secondery my-5">
+                                    @include('layout.partiels.load')
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+
+                <div class="card mb-0 shadow-none">
+                    <a href="#collapseThree" class="text-dark collapsed" data-bs-toggle="collapse"
+                                    aria-expanded="false"
+                                    aria-controls="collapseThree">
+                        <div class="card-header" id="headingThree">
+                            <h6 class="m-0">
+                                DJA #3
+                                <i class="mdi mdi-minus float-end accor-plus-icon"></i>
+                            </h6>
+                        </div>
+                    </a>
+                    <div id="collapseThree" class="collapse"
+                            aria-labelledby="headingThree" data-bs-parent="#accordion">
+                        <div class="card-body">
+                           TABLEAU
+                        </div>
+                    </div>
+                </div>
+              </div>
+
+            
+
           </div>
         </div>
       </div>
@@ -619,7 +710,6 @@
 
 
   fetchnotification();
-
   function fetchnotification() {
     $.ajax({
       url: "{{ route('allnotification') }}",
@@ -630,12 +720,23 @@
       }
     });
   }
+
+  fetchnotificationdap();
+  function fetchnotificationdap() {
+    $.ajax({
+      url: "{{ route('allnotificationdap') }}",
+      method: 'get',
+      success: function(reponse) {
+      
+        $("#footernotifydap").html(reponse);
+      }
+    });
+  }
+  
 </script>
 <!-- Right bar overlay-->
 <div class="rightbar-overlay"></div>
-
 <!-- JAVASCRIPT -->
-
 <script src="{{ asset('element/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/metismenu/metisMenu.min.js') }}"></script>
 <script src="{{ asset('element/assets/libs/simplebar/simplebar.min.js') }}"></script>

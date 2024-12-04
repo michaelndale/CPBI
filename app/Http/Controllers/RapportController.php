@@ -565,10 +565,12 @@ class RapportController extends Controller
                 'benef_personnel.nom as benef_nom'
             )
             ->where('djas.projetiddja', $IDp)
+            
             ->where(function ($query) use ($datede, $dateau) {  
                 $query->whereBetween('djas.created_at', [$datede, $dateau])
                     ->orWhere('djas.created_at', '=', $datede)
-                    ->orWhere('djas.created_at', '=', $dateau);
+                    ->orWhere('djas.created_at', '=', $dateau)
+                    ->where('daps.justifier',  '=', 1); 
             })
             ->get();
 

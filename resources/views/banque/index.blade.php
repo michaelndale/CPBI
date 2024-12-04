@@ -1,114 +1,102 @@
 @extends('layout/app')
 @section('page-content')
+
 <div class="main-content">
   <div class="page-content">
-    <div class="container-fluid">
-      <!-- start page title -->
       <div class="row">
-        <div class="col-12" style="margin:auto">
-          <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 class="mb-sm-0">Banque </h4>
-            <div class="page-title-right">
-              <a href="javascript::;" type="button" data-bs-toggle="modal" data-bs-target="#addModal" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-plus-circle"></i> Nouvelle banque</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- end page title -->
+          <div class="col-xl-7" style="margin:auto">
+              <div class="card">
+                <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+                     
+                          <h4 class="mb-sm-0"><i class="fa fa-university"></i> Listes des banques</h4>
+                          <div class="page-title-right">
+                            <button type="button" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"  data-bs-toggle="modal" data-bs-target="#addModal"><i class="fa fa-plus-circle"></i> Créer</button>
+                          </div>
+                     
+                  </div>
+                  <div class="card-body pt-0 pb-3">
+                      <div id="overview-chart" data-colors='["#1f58c7"]' class="apex-charts" dir="ltr"></div>
+                      <div class="table-responsive">
+                        <table class="table table-striped table-sm fs--1 mb-0">
+                          <thead>
+                            <tr>
+                              <th><b>#</b></th>
+                              <th><b>Nom affiché</b></th>
+                              <th><b>Créé par</b></th>
+                              <th><b>Créé le</b></th>
+                              <th><b>Actions</b></th>
+                            </tr>
+                          </thead>
+                          <tbody id="show_all">
+                            <tr>
+                              <td colspan="5">
+                                <h5 class="text-center text-secondery my-5">
+                                  @include('layout.partiels.load')
+                              </td>
+                            </tr>
+                          </tbody>
+                          </tbody>
+                        </table>
 
-      <div class="row">
-        <div class="col-lg-12" style="margin:auto">
-          <div class="card">
-            <div class="table-responsive">
-              <table class="table table-striped table-sm fs--1 mb-0">
-                <thead>
-                  <tr style="background-color:#82E0AA">
-                    <th style="width:10%">#</th>
-                    <th>Nom affiché</th>
-                    <th>Créé par</th>
-                    <th>Créé le</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="show_all">
-                  <tr>
-                    <td colspan="5">
-                      <h5 class="text-center text-secondery my-5">
-                        @include('layout.partiels.load')
-                    </td>
-                  </tr>
-                </tbody>
-                </tbody>
-              </table>
-
-              <br>
-              <br>
-              <br>
-            </div>
+                      </div>
+                  </div>
+              </div>
           </div>
-        </div>
       </div>
-    </div> <!-- container-fluid -->
   </div>
-  <!-- End Page-content -->
 </div>
-
-
 
 {{-- new banque modal --}}
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="addModalTitle"><i class="fa fa-plus-circle"></i> Nouvelle Banque</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="POST" id="addform">
+            @method('post')
+            @csrf
+          <div class="modal-body">
+              <input class="form-control" id="libelle" name="libelle" type="text" placeholder="Entrer nom" required /> <br>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-danger waves-effect" data-bs-dismiss="modal">Fermer</button>
+              <button type="submit" name="add" id="add"  class="btn btn-primary waves-effect waves-light"><i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
+          </div>
+          </form>
 
-<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModal"" style=" display: none;" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <form method="POST" id="addform">
-        @method('post')
-        @csrf
-        <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle Banque </h5>
-
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <label class="text-1000 fw-bold mb-2">Nom </label>
-          <input class="form-control" id="libelle" name="libelle" type="text" placeholder="Entrer nom" required /> <br>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" name="add" id="add" class="btn btn-primary" type="button"><i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-{{-- Fin profile --}}
-
+      </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 
 {{-- Edit banque modal --}}
-
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModal" style="display: none;" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <form method="POST" id="editform">
-        @method('post')
-        @csrf
-        <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Modification banque </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><svg class="svg-inline--fa fa-xmark fs--1" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="xmark" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" data-fa-i2svg="">
-              <path fill="currentColor" d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"></path>
-            </svg></button>
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModal" style="display: none;" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <form method="POST" id="editform">
+            @method('post')
+            @csrf
+            <div class="modal-header">
+              <h5 class="modal-title" id="verticallyCenteredModalLabel"><i class="fa fa-edit"></i> Modification banque </h5>
+              
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </button>
+            </div>
+            <div class="modal-body">
+              <label class="text-1000 fw-bold mb-2">Libellé </label>
+              <input type="hidden" name="bid" id="bid">
+              <input class="form-control" name="blibelle" id="blibelle" type="text" placeholder="Entrer function" name="blibelle" required />
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger waves-effect" data-bs-dismiss="modal">Fermer</button>
+              <button type="submit" id="editbtn" class="btn btn-primary" type="button"><i class="fa fa-cloud-upload-alt"></i> Modifier</button>
+            </div>
+          </form>
         </div>
-        <div class="modal-body">
-          <label class="text-1000 fw-bold mb-2">Libellé </label>
-          <input type="hidden" name="bid" id="bid">
-          <input class="form-control" name="blibelle" id="blibelle" type="text" placeholder="Entrer function" name="blibelle" required />
-        </div>
-        <div class="modal-footer">
-          <button type="submit" id="editbtn" class="btn btn-primary" type="button">Modifier</button>
-        </div>
-      </form>
+      </div>
     </div>
-  </div>
-</div>
 
 
 <script>
@@ -251,7 +239,7 @@
 
               if (response.status == 200) {
                 toastr.success("Banque supprimer avec succès !", "Suppression");
-                fetchAllbanque();
+                   fetchAllbanque();
               }
 
               if (response.status == 205) {
@@ -282,5 +270,7 @@
     }
   });
 </script>
+
+
 
 @endsection

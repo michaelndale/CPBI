@@ -2,20 +2,27 @@
 @section('page-content')
     <div class="main-content">
         <div class="page-content">
-            <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card"
-                style=" margin:auto">
-                <div class="card-header p-4 border-bottom border-300 bg-soft">
-                    <div class="row g-3 justify-content-between align-items-end">
-                        <div class="col-12 col-md">
-                            <h5 class="text-900 mb-0" data-anchor="data-anchor"><i
-                                    class="mdi mdi-book-open-page-variant-outline"></i> DEMANDE ET JUSTIFICATION D'AVANCE
-                                (DJA) </h5>
-                        </div>
-                        <div class="col col-md-auto">
-                            <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>
-                        </div>
-                    </div>
+            <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card">
+
+                <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0"><i class="mdi mdi-book-open-page-variant-outline"></i> DEMANDE ET JUSTIFICATION D'AVANCE
+                    (DJA)</h4>
+
+                    <div class="page-title-right">
+                        <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>
+                     </a>
+
+                   
+                
+                  </div>
                 </div>
+
+                
+
+                
+
+
+
                 <div class="card-body p-0">
                     <div id="tableExample2">
                         <div class="table-responsive">

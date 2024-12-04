@@ -11,23 +11,23 @@
 <div class="main-content">
   <div class="page-content">
     <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
-      <div class="card-header p-4 border-bottom border-300 bg-soft">
-        <div class="row g-3 justify-content-between align-items-end">
-          <div class="col-12 col-md">
-            <h4 class="card-title mb-0"> <i class="mdi mdi-book-open-page-variant-outline"></i> Fiche d'Expression des Besoins "FEB"  </h4>
-          </div>
-          <div class="col col-md-auto">
-            <a href="#" id="fetchDataLink" class="btn btn-sm btn-primary">
-              <i class="fas fa-sync-alt"></i> Actualiser
+      
+      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+        <h4 class="mb-sm-0"><i class="mdi mdi-book-open-page-variant-outline"></i> Fiche d'Expression des Besoins "FEB"</h4>
+        <div class="page-title-right">
+          <a href="#" id="fetchDataLink" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" title=" Actualiser">
+            <i class="fas fa-sync-alt"></i>
           </a>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="{{ route('nouveau.feb') }}" class="btn btn-sm btn-success">
-              <span class="fa fa-plus-circle"></span> Nouvel fiche FEB
+      
+          <a href="{{ route('nouveau.feb') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" >
+              <span class="fa fa-plus-circle"></span> Créer  
           </a>
-          
-          </div>
+         
         </div>
+    
       </div>
+      
+     
       <div class="card-body p-0">
 
         <div id="tableExample2">

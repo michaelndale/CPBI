@@ -215,7 +215,7 @@ if(session()->has('id')){
           <!-- LOGO -->
           <div class="navbar-brand-box">
             <button type="button" class="btn btn-sm px-3 font-size-20  header-item" data-bs-toggle="collapse" data-bs-target="#topnav-menu-content">
-              <B><i class="ri-menu-2-line align-middle"></i> Your</B>
+              <B><i class="ri-menu-2-line align-middle"></i> CEPBU</B>
             </button>
           </div>
 

@@ -44,6 +44,7 @@ class ApreviationController extends Controller
                        <i class="mdi mdi-dots-vertical ms-2"></i>
                   </a>
                   <div class="dropdown-menu">
+                  <a class="dropdown-item text-primary mx-1 editIcon " id="'. $rs->id.'"  data-bs-toggle="modal" data-bs-target="#editModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
                   
                       <a class="dropdown-item text-danger mx-1 deleteIcon"  id="'. $rs->id .'"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
                   </div>
@@ -111,20 +112,11 @@ class ApreviationController extends Controller
     {
         try {
 
-            $title = $request->babreviation;
-            $check = Apreviation::where('abreviation', $title)->first();
-            if ($check) {
-                return response()->json([
-                    'status' => 201,
-                ]);
-            } else {
-
-                $emp = Apreviation::find($request->bid);
+                $emp = Apreviation::find($request->a_id);
 
                 if ($emp->userid == Auth::id()) {
-
-                    $emp->abreviation = $request->babreviation;
-                    $emp->libelle = $request->blibelle;
+                    $emp->abreviation = $request->a_abreviation;
+                    $emp->libelle = $request->a_libelle;
                     $emp->update();
                     return response()->json([
                         'status' => 200,
@@ -134,7 +126,7 @@ class ApreviationController extends Controller
                         'status' => 205,
                     ]);
                 }
-            }
+            
         } catch (Exception $e) {
             return response()->json([
                 'status' => 202,
@@ -165,5 +157,6 @@ class ApreviationController extends Controller
             ]);
         }
     }
+    
 }
 

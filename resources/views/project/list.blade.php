@@ -12,8 +12,10 @@
                         <div class="page-title-right">
                             <div class="col-xl-12">
                                 <div class="text-sm-end">
-                                    <a class="btn btn-success" href="{{ route('new_project') }}"><i class="fa fa-plus-circle"></i> Créer un nouveau projet </a>
+                                    <a class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" href="{{ route('new_project') }}" >
+                                        <i class="fa fa-plus-circle"></i> Créer un nouveau projet </a>
                                 </div>
+                              
                             </div>
                         </div>
                     </div>
@@ -24,19 +26,15 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table id="datatable"
-                                class="table table-bordered dt-responsive nowrap   fs--1 mb-0" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable" class="table table-bordered dt-responsive nowrap   fs--1 mb-0" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
-                                    <th>Projets  ( {{ $data->count() }} )</th>
-                                    <th>Responsable du projet</th>
-                                    <th><center>Accès</center></th>
-                                    <th><center>Statut</center></th>
-                                    <th>Date début</th>
-                                    <th>Date fin</th>
-                                    <!-- <th>Action</th> -->
-                                    </thth>
+                                    <th><b>Projets  ( {{ $data->count() }} )</b> </th>
+                                    <th><b>Responsable du projet</b></th>
+                                    <th><center><b>Accès</b </center></th>
+                                    <th><center><b>Statut</b></center></th>
+                                    <th><b>Date début</b></th>
+                                    <th><b>Date fin</b></th>
                                 </thead>
-
 
                                 <tbody>
                                     @foreach ($data as $datas)

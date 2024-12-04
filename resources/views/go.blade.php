@@ -63,7 +63,7 @@
 </head>
     <body>
         <div class="box">
-            <p class="logo-text ms-2 d-none d-sm-block"> <i class="far fa-chart-bar"></i> GoProject</p>
+            <p class="logo-text ms-2 d-none d-sm-block"> <i class="far fa-chart-bar"></i> CEPBU</p>
             <div class="y-back">
                 <div class="y-inner"></div>
             </div>

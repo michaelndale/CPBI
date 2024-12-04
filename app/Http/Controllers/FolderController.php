@@ -27,6 +27,8 @@ class FolderController extends Controller
         $output .= '<tr>
               <td class="align-middle ps-3 name">' . $nombre . '</td>
               <td>' . ucfirst($rs->title) . '</td>
+             
+              <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
               <td>
               <center>
                

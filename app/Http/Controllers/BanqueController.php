@@ -32,12 +32,10 @@ class BanqueController extends Controller
                 $output .= '<tr>
               <td class="align-middle ps-3 name">' . $nombre . '</td>
               <td>' . ucfirst($rs->libelle) . '</td>
-          
               <td>' . ucfirst($rs->user_prenom) . '</td>
               <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
               <td>
-           
-               
+        
                 <div class="btn-group me-2 mb-2 mb-sm-0">
                   <a  data-bs-toggle="dropdown" aria-expanded="false">
                        <i class="mdi mdi-dots-vertical ms-2"></i>

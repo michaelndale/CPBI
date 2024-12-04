@@ -26,6 +26,7 @@ class TypeprojetController extends Controller
           $output .= '<tr>
                 <td class="align-middle ps-3 name">' . $nombre . '</td>
                 <td>' . ucfirst($rs->titre) . '</td>
+                <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
                 <td>
                 <center>
                   <div class="btn-group me-2 mb-2 mb-sm-0">

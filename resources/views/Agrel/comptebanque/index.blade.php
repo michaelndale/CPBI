@@ -5,17 +5,16 @@
             <div class="row">
                 <div class="col-xl-7" style="margin:auto">
                     <div class="card">
-                        <div class="card-header">
-                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                        <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
                                 <h4 class="mb-sm-0"><i class="fa fa-university"></i> Listes des Comptes</h4>
                                 <div class="page-title-right">
-                                    <a href="javascript:;" class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#addModal"
+                                    <a href="javascript:;" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#addModal"
                                     aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-plus-circle"></i> Nouveau comptes
+                                    <i class="fa fa-plus-circle"></i> Créer
                                  </a>
                                  
                                 </div>
-                            </div>
+                            
                         </div>
                         <div class="card-body pt-0 pb-3">
                             <div id="overview-chart" data-colors='["#1f58c7"]' class="apex-charts" dir="ltr"></div>

@@ -276,7 +276,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [PaysController::class, 'index'])->name('pays');
         Route::get('/liste', [PaysController::class, 'liste'])->name('liste.pays');
         Route::post('/store', [PaysController::class, 'store'])->name('store.pays');
-        Route::delete('/delete', [PaysController::class, 'destroy'])->name('delete.pays');
+        Route::delete('/delete', [PaysController::class, 'delete'])->name('delete.pays');
         Route::get('/edit', [PaysController::class, 'edit'])->name('edit.pays');
         Route::post('/update', [PaysController::class, 'update'])->name('update.pays');
     });
@@ -359,6 +359,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/getactivite', [FebController::class, 'getactivite'])->name('getactivite');
     Route::get('/fetctnotifiaction', [FebController::class, 'notificationdoc'])->name('allnotification');
+    Route::get('/fetctnotifiactiondap', [FebController::class, 'notificationdap'])->name('allnotificationdap');
 
 
     Route::get('/condictionsearch', [RallongebudgetController::class, 'condictionsearch'])->name('condictionsearch');
@@ -697,16 +698,12 @@ Route::middleware('auth')->group(function () {
 
 
 
-    Route::prefix('compte_banque')->group(function () {
-        Route::get('/service', [CompteBanqueController::class, 'index'])->name('compte.banque');
+    Route::prefix('compte/banque')->group(function () {
+        Route::get('', [CompteBanqueController::class, 'index'])->name('compte.banque');
         Route::post('/store', [CompteBanqueController::class, 'store'])->name('store.compte.banque');
        
     });
 
 
-
-
     /// ROUTE DE AUTRE APPLICATION
-
-
 });

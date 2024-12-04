@@ -59,7 +59,7 @@
                     <div class="p-3">
                       <div class="text-center mt-1">
                         <h4 class="font-size-18">
-                          <font size="6px"> <b><i class="far fa-chart-bar"></i> Your</b></font>
+                          <font size="6px"> <b><i class="far fa-chart-bar"></i> CEPBU</b></font>
                         </h4>
                         <div class="divider-content-center">Accédez à votre compte GoProject</div>
                       </div>

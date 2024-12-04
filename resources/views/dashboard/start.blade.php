@@ -34,7 +34,7 @@ $personnelData = DB::table('personnels')
                     <div>
                         <div class="text-center mb-4">
                             <font size="6px" color="green">
-                                <strong><i class="ri-menu-2-line align-middle"></i> Your</strong>
+                                <strong><i class="ri-menu-2-line align-middle"></i> CEPBU</strong>
 
                             </font>
 

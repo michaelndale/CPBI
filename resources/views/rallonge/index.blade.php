@@ -24,28 +24,30 @@
 <div class="main-content">
   <div class="page-content">
     <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style="margin:auto">
-      <div class="card-header p-4 border-bottom border-300 bg-soft">
-        <div class="row g-3 justify-content-between align-items-end">
-          <div class="col-12 col-md">
-            <h4 class="card-title mb-0">
-              <i class="mdi mdi-book-open-page-variant-outline"></i> Budgétisation
-            </h4>
-          </div>
-          <div class="col col-md-auto">
-          <a href="#" id="telecharger-pdf">Télécharger le rapport en format PDF</a> &nbsp; &nbsp; 
+      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+        <h4 class="mb-sm-0"><i class="fa fa-list"></i> Budgétisation </h4>
+        <div class="page-title-right">
+          <a href="#" id="telecharger-pdf" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"><i class="fa fa-file" ></i> Rapport en format PDF</a> &nbsp; &nbsp; 
 
 
-            <a href="javascript::;" id="fetchDataLink">
-              <span class="fa fa-sync-alt"></span> Actualiser &nbsp; &nbsp;
-            </a>
-            @if($projetdatat->autorisation == 1)
-            <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addDealModal">
-              <span class="fa fa-plus-circle"></span> Ajouter le budget
-            </a>
-            @endif
-          </div>
+          <a href="javascript::;" id="fetchDataLink" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm">
+            <span class="fa fa-sync-alt"></span> Actualiser
+          </a>
+          @if($projetdatat->autorisation == 1)
+          <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addDealModal" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm">
+            <span class="fa fa-plus-circle"></span>  Créer  
+          </a>
+          @endif
         </div>
+  
       </div>
+     
+    
+    
+    
+
+
+
       <div class="card-body p-0" id="table-container" style="overflow-y: auto;">
         <div class="card">
          

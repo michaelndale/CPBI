@@ -24,8 +24,8 @@
                 $IDPJ= Session::get('id');
                 $cryptedId = Crypt::encrypt($IDPJ);
                 @endphp
-                <a href="{{ route('key.viewProject', $cryptedId ) }}" class="btn btn-primary btn-sm " type="button" title="Actualiser"><i class="fas fa-redo-alt"></i>  </a>
-                <button class="btn btn-primary btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a href="{{ route('key.viewProject', $cryptedId ) }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" title="Actualiser"><i class="fas fa-redo-alt"></i>  </a>
+                <button class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="fa fa-random"></i> Actions <i class="mdi mdi-dots-vertical align-middle "></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -220,7 +220,15 @@
          
           <div class="card">
             <div class="card-header">
-                <h5 class="card-title mb-0"><i class="fa fa-users"></i> Les intervenants du projet</h5>
+              <div class="row">
+                <div class="col-9">
+                <h5 class="card-title mb-0"><i class="fa fa-users"></i> Les intervenants du projet
+              </h5>
+              </div>
+              <div class="col-3">
+                <a href="{{ route('affectation') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"><i class="fa fa-plus-circle"></i> Ajouter</a> 
+              </div>
+              </div>
             </div>
             <div class="card-body pt-2">
                 <div class="table-responsive">
@@ -276,7 +284,7 @@
                             @endforelse
                         </tbody>
                     </table>
-                    <a href="{{ route('affectation') }}"><i class="fa fa-plus-circle"></i> Ajouter</a>
+                    
                 </div>
             </div>
         </div>

@@ -16,7 +16,7 @@ $imagePath = public_path($avatar);
                 <div class="d-flex">
                     <button type="button" class="btn btn-sm px-3 font-size-20 header-item waves-effect"
                         id="vertical-menu-btn">
-                        <b><i class="ri-menu-2-line align-middle"></i> Your</b>
+                        <b><i class="ri-menu-2-line align-middle"></i> CEPBU</b>
                     </button>
 
                     <!-- Projet session et recherche-->
@@ -72,12 +72,12 @@ $imagePath = public_path($avatar);
                         <button type="button" class="btn header-item ">
                             @if (session()->has('id'))
                                 <a href="{{ route('closeproject') }}"
-                                    class="btn btn-outline-danger rounded-pill me-1 mb-1" type="button"
+                                    class="btn btn-outline-danger rounded-pill me-1 mb-1 btn-sm" type="button"
                                     data-bs-toggle="modal" data-bs-target="#verticallyCentered"><i
                                         class="fas fa-sign-out-alt"></i> Quitter le projet</a>
                             @else
                                 <a href="{{ route('new_project') }}"
-                                    class="btn btn-outline-primary rounded-pill me-1 mb-1" type="button"><i
+                                    class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button"><i
                                         class="fa fa-plus-circle"></i> Nouveau projet</a>
                             @endif
                         </button>

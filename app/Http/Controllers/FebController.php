@@ -458,6 +458,101 @@ class FebController extends Controller
     return $output;
   }
 
+
+  public function notificationdap()
+  {
+
+    $dap_notifications = DB::table('daps')
+    ->join('projects', 'daps.projetiddap', '=', 'projects.id') // Jointure avec la table projects
+    ->join('users', 'daps.userid', '=', 'users.id')
+    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+    ->select(
+        'daps.*',
+        'daps.id', // ID de la table DAP
+        'projects.id AS projet_id', // ID du projet
+        'projects.title AS projet_title', // Titre du projet
+        'projects.numeroprojet AS projet_numero', // Numéro du projet
+        'personnels.nom AS user_nom', // Nom de l'utilisateur
+        'personnels.prenom AS user_prenom', // Prénom de l'utilisateur
+        'daps.demandeetablie', // État de demande établie
+        'daps.demandeetablie_signe', // État de signature pour demande établie
+        'daps.verifierpar', // Vérifié par
+        'daps.verifierpar_signe', // État de signature pour vérification
+        'daps.approuverpar', // Approuvé par
+        'daps.approuverpar_signe', // État de signature pour approbation
+        'daps.responsable', // Responsable
+        'daps.responsable_signe', // État de signature pour responsable
+        'daps.secretaire', // Secrétaire
+        'daps.secretaure_general_signe', // État de signature pour secrétaire général
+        'daps.chefprogramme', // Chef de programme
+        'daps.chefprogramme_signe' // État de signature pour chef de programme
+    )
+    ->where(function ($query) {
+        $query->where(function ($subQuery) {
+            $subQuery->where('daps.demandeetablie', Auth::id())
+                     ->where('daps.demandeetablie_signe', 0);
+        })
+        ->orWhere(function ($subQuery) {
+            $subQuery->where('daps.verifierpar', Auth::id())
+                     ->where('daps.verifierpar_signe', 0);
+        })
+        ->orWhere(function ($subQuery) {
+            $subQuery->where('daps.approuverpar', Auth::id())
+                     ->where('daps.approuverpar_signe', 0);
+        })
+        ->orWhere(function ($subQuery) {
+            $subQuery->where('daps.responsable', Auth::id())
+                     ->where('daps.responsable_signe', 0);
+        })
+        ->orWhere(function ($subQuery) {
+            $subQuery->where('daps.secretaire', Auth::id())
+                     ->where('daps.secretaure_general_signe', 0);
+        })
+        ->orWhere(function ($subQuery) {
+            $subQuery->where('daps.chefprogramme', Auth::id())
+                     ->where('daps.chefprogramme_signe', 0);
+        });
+    })
+    ->get();
+
+    if($dap_notifications){ 
+
+      $nombre = 1;
+      $output ='';
+
+      foreach ($dap_notifications as $daps => $dap) {
+          $output .= '<tr style="background-color:#addfad"><td colspan="8"><b>' . ucfirst($dap->projet_title) . '</b></td></tr>';
+   
+          $cryptedIDoc = Crypt::encrypt($dap->id);
+       
+          $output .= '
+                <tr>
+                    <td></td>
+                    <td>'.$dap->numerodp.' </td>
+                    <td>'.$dap->numerodp.' </td>
+                    <td>'. date('d-m-Y', strtotime($dap->dateautorisation)) .'</td>
+                    <td>'.date('d-m-Y', strtotime($dap->created_at)).'</td>
+                    <td>'.date('d-m-Y', strtotime($dap->updated_at)).'</td>
+                      <td>'.ucfirst($dap->user_nom).' ' .$dap->user_prenom.'</td>
+                </tr>';
+
+          $nombre++;
+        
+      }
+      
+    } else {
+      $output = '<tr>
+            <td colspan="9" style="background-color:rgba(255,0,0,0)">
+            <center>
+                <h6 style="color:red">Aucun document trouvé</h6>
+            </center>
+            </td>
+        </tr>';
+    }
+
+    return $output;
+  }
+
   public function Sommefeb()
   {
     $devise = session()->get('devise');
