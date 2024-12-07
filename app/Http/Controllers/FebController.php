@@ -90,15 +90,29 @@ class FebController extends Controller
     $budget = session()->get('budget');
     $projectId = session()->get('id');
 
+    $searchTerm = request()->get('search_numerofeb', null);
+
     // Query to fetch data from 'febs' and related tables
-    $data = DB::table('febs')
+    $query = DB::table('febs')
       ->orderBy('numerofeb', 'asc')
       ->join('comptes', 'febs.sous_ligne_bugdetaire', 'comptes.id')
       ->join('users', 'febs.userid', '=', 'users.id')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('febs.*', 'personnels.prenom as user_prenom', 'comptes.numero as code')
-      ->where('febs.projetid', $projectId)
-      ->get();
+      ->where('febs.projetid', $projectId);
+
+
+    if ($searchTerm) {
+      $query->where(function($query) use ($searchTerm) {
+        $query->where('febs.numerofeb', '=', $searchTerm)  // Recherche exacte dans numerofeb
+              ->orWhere('febs.total', '=', $searchTerm);    // Recherche exacte dans total
+    });
+    }
+
+    
+
+    // Exécution de la requête
+    $data = $query->get();
 
     $output = '';
 
@@ -109,6 +123,7 @@ class FebController extends Controller
         $sommefeb = DB::table('elementfebs')
           ->where('febid', $datas->id)
           ->sum('montant');
+          
 
         // Fetch attached documents
         $getDocument = attache_feb::join('apreviations', 'attache_febs.annexid', 'apreviations.id')
@@ -132,6 +147,15 @@ class FebController extends Controller
 
         // Limit the description length
         $description = Str::limit($datas->descriptionf, 50, '...');
+
+        if ($datas->statut !== 1) {
+          $statut = "<span class='badge rounded-pill bg-subtle-primary text-primary font-size-11'>
+                        <i class='fa fa-check'></i> Disponible
+                    </span>
+                    ";
+        } else {
+          $statut = "<span class='badge rounded-pill bg-danger-subtle text-danger font-size-11'>  <i class='fa fa-times'></i> Terminer</span>";
+        }
 
         // Display loading spinner if signaled
         $message = $datas->signale == 1 ? '<div class="spinner-grow text-danger" role="status" style="width: 0.5rem; height: 0.5rem;"><span class="sr-only">Loading...</span></div>' : '';
@@ -194,7 +218,16 @@ class FebController extends Controller
                             ' . (strlen($description) > 30 ? substr($description, 0, 30) . '...' : $description) . '
                         </label>
                     </td>
-                    <td>' . $checkedString . '</td>
+                    <td>
+                      <div class="text-center">
+                      ' . $checkedString . '
+                      </div>
+                    </td>
+                    <td>
+                        <div class="text-center">
+                           ' . $statut . '
+                        </div>
+                    </td>
                     <td align="center">' . date('d-m-Y', strtotime($datas->datefeb)) . '</td>
                     <td align="center">' . date('d-m-Y', strtotime($datas->created_at)) . '</td>
                     <td align="left">' . ucfirst($datas->user_prenom) . '</td>
@@ -205,14 +238,14 @@ class FebController extends Controller
       // Output when no data is found
       $output .= '
             <tr>
-                <td colspan="15">
+                <td colspan="12">
                     <center>
                         <h6 style="margin-top:1%; color:#c0c0c0">
                             <font size="50px">
                                 <i class="fas fa-info-circle"></i>
                             </font>
                             <br><br>
-                            Ceci est vide !
+                              Aucun résultat trouvé.
                         </h6>
                     </center>
                 </td>
@@ -458,15 +491,14 @@ class FebController extends Controller
     return $output;
   }
 
-
   public function notificationdap()
   {
 
     $dap_notifications = DB::table('daps')
-    ->join('projects', 'daps.projetiddap', '=', 'projects.id') // Jointure avec la table projects
-    ->join('users', 'daps.userid', '=', 'users.id')
-    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-    ->select(
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id') // Jointure avec la table projects
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select(
         'daps.*',
         'daps.id', // ID de la table DAP
         'projects.id AS projet_id', // ID du projet
@@ -486,60 +518,58 @@ class FebController extends Controller
         'daps.secretaure_general_signe', // État de signature pour secrétaire général
         'daps.chefprogramme', // Chef de programme
         'daps.chefprogramme_signe' // État de signature pour chef de programme
-    )
-    ->where(function ($query) {
+      )
+      ->where(function ($query) {
         $query->where(function ($subQuery) {
-            $subQuery->where('daps.demandeetablie', Auth::id())
-                     ->where('daps.demandeetablie_signe', 0);
+          $subQuery->where('daps.demandeetablie', Auth::id())
+            ->where('daps.demandeetablie_signe', 0);
         })
-        ->orWhere(function ($subQuery) {
+          ->orWhere(function ($subQuery) {
             $subQuery->where('daps.verifierpar', Auth::id())
-                     ->where('daps.verifierpar_signe', 0);
-        })
-        ->orWhere(function ($subQuery) {
+              ->where('daps.verifierpar_signe', 0);
+          })
+          ->orWhere(function ($subQuery) {
             $subQuery->where('daps.approuverpar', Auth::id())
-                     ->where('daps.approuverpar_signe', 0);
-        })
-        ->orWhere(function ($subQuery) {
+              ->where('daps.approuverpar_signe', 0);
+          })
+          ->orWhere(function ($subQuery) {
             $subQuery->where('daps.responsable', Auth::id())
-                     ->where('daps.responsable_signe', 0);
-        })
-        ->orWhere(function ($subQuery) {
+              ->where('daps.responsable_signe', 0);
+          })
+          ->orWhere(function ($subQuery) {
             $subQuery->where('daps.secretaire', Auth::id())
-                     ->where('daps.secretaure_general_signe', 0);
-        })
-        ->orWhere(function ($subQuery) {
+              ->where('daps.secretaure_general_signe', 0);
+          })
+          ->orWhere(function ($subQuery) {
             $subQuery->where('daps.chefprogramme', Auth::id())
-                     ->where('daps.chefprogramme_signe', 0);
-        });
-    })
-    ->get();
+              ->where('daps.chefprogramme_signe', 0);
+          });
+      })
+      ->get();
 
-    if($dap_notifications){ 
+    if ($dap_notifications) {
 
       $nombre = 1;
-      $output ='';
+      $output = '';
 
       foreach ($dap_notifications as $daps => $dap) {
-          $output .= '<tr style="background-color:#addfad"><td colspan="8"><b>' . ucfirst($dap->projet_title) . '</b></td></tr>';
-   
-          $cryptedIDoc = Crypt::encrypt($dap->id);
-       
-          $output .= '
+        $output .= '<tr style="background-color:#addfad"><td colspan="8"><b>' . ucfirst($dap->projet_title) . '</b></td></tr>';
+
+        $cryptedIDoc = Crypt::encrypt($dap->id);
+
+        $output .= '
                 <tr>
                     <td></td>
-                    <td>'.$dap->numerodp.' </td>
-                    <td>'.$dap->numerodp.' </td>
-                    <td>'. date('d-m-Y', strtotime($dap->dateautorisation)) .'</td>
-                    <td>'.date('d-m-Y', strtotime($dap->created_at)).'</td>
-                    <td>'.date('d-m-Y', strtotime($dap->updated_at)).'</td>
-                      <td>'.ucfirst($dap->user_nom).' ' .$dap->user_prenom.'</td>
+                    <td>' . $dap->numerodp . ' </td>
+                    <td>' . $dap->numerodp . ' </td>
+                    <td>' . date('d-m-Y', strtotime($dap->dateautorisation)) . '</td>
+                    <td>' . date('d-m-Y', strtotime($dap->created_at)) . '</td>
+                    <td>' . date('d-m-Y', strtotime($dap->updated_at)) . '</td>
+                      <td>' . ucfirst($dap->user_nom) . ' ' . $dap->user_prenom . '</td>
                 </tr>';
 
-          $nombre++;
-        
+        $nombre++;
       }
-      
     } else {
       $output = '<tr>
             <td colspan="9" style="background-color:rgba(255,0,0,0)">

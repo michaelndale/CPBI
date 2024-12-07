@@ -1,18 +1,30 @@
 @extends('layout/app')
 @section('page-content')
-<div class="main-content">
-    <div class="page-content">
-      <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
-        <div class="card-header p-4 border-bottom border-300 bg-soft">
-          <div class="row g-3 justify-content-between align-items-end">
-            <div class="col-12 col-md">
-                <h2 class="card-title mb-1"> <i class="mdi mdi-plus-circle"></i> Nouvel Fiche d'Expression des Besoins "FEB"  </h2>
-            </div>
-            <div class="col col-md-auto">
-                <a href="{{ route('listfeb') }}" id="fetchDataLink"> <span class="fa fa-list"></span> Listee FEB</a>
-            </div>
-          </div>
-        </div>
+
+        <div class="main-content">
+          <div class="page-content">
+            <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
+              
+              <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+                <h4 class="mb-sm-0"><i class="mdi mdi-plus-circle"></i> Nouvel Fiche d'Expression des Besoins "FEB" </h4>
+                <div class="page-title-right">
+                  
+
+                  <a href="{{ route('nouveau.feb') }}" id="fetchDataLink" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" title=" Actualiser">
+                    <i class="fas fa-sync-alt"></i>
+                  </a>
+              
+                  <a href="{{ route('listfeb') }}" id="fetchDataLink" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"> <span class="fa fa-list"></span> Liste</a>
+                 
+                </div>
+            
+              </div>
+              
+             
+              <div class="card-body p-0">
+
+
+
         <form method="POST" id="addfebForm">
             @method('post')
                     @csrf

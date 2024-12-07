@@ -222,7 +222,7 @@ $imagePath = public_path($avatar);
 
                         <li>
                             <a href="{{ route('list_project') }}">
-                                <i class="ri-list-unordered"></i>
+                                <i class="mdi mdi-widgets-outline"></i>
                                 <span>Tous les Projets</span>
                             </a>
                         </li>
@@ -327,7 +327,7 @@ $imagePath = public_path($avatar);
                         @else
                             <li>
                                 <a href="{{ route('new_project') }}">
-                                    <i class="fas fa-plus-circle"></i>
+                                    <i class="mdi mdi-plus-circle-multiple"></i>
                                     <span>Nouveau Projet</span>
                                 </a>
                             </li>

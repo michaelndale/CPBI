@@ -5,8 +5,10 @@
     <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
 
       <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+        
         <h4 class="mb-sm-0"><i class="fa fa-list"></i> Ligne budgétaire  </h4>
         <div class="page-title-right">
+          <a href="{{ route('gestioncompte') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" title="Actualiser"><i class="fas fa-redo-alt"></i>  </a>
             <a href="javascript:voide();" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"
                 data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true"
                 aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Créer</a>

@@ -156,14 +156,14 @@ class ProjectController extends Controller
   
   public function list()
   {
-    $title = "Liste des projects";
+    $title = "Liste des projets";
     $data = DB::table('projects')
     ->join('users', 'projects.lead', '=', 'users.id')
     ->join('personnels', 'users.personnelid', '=', 'personnels.id')
     ->select('projects.*', 'projects.id as idpr', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
     ->get();
 
-    $active = 'Project';
+    $active = 'Projet';
     return view(
       'project.list',
       [

@@ -214,7 +214,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('parc', [AppCOntroller::class, 'parc'])->name('parc');
 
-    Route::prefix('lignebudgetaire')->group(function () {
+    Route::prefix('projet/lignebudgetaire')->group(function () {
         Route::get('/', [CompteController::class, 'index'])->name('gestioncompte');
         Route::get('/fetchAllGc', [CompteController::class, 'fetchAll'])->name('fetchAllGc');
         Route::get('/Selectcompte', [CompteController::class, 'selectcompte'])->name('Selectcompte');
@@ -232,7 +232,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/updateGrandcompte', [CompteController::class, 'updateGrandcompte'])->name('updateGrandcompte');
     });
 
-    Route::prefix('budgetisation')->group(function () {
+    Route::prefix('projet/budgetisation')->group(function () {
         Route::get('/', [RallongebudgetController::class, 'index'])->name('rallongebudget');
         Route::post('/storerallonge', [RallongebudgetController::class, 'store'])->name('storerallonge');
         Route::get('/fetchRallonge', [RallongebudgetController::class, 'fetchAll'])->name('fetchRallonge');
@@ -313,18 +313,22 @@ Route::middleware('auth')->group(function () {
 
     });
 
-    Route::prefix('intervenant')->group(function () {
+    Route::prefix('projet/intervenant')->group(function () {
         Route::get('/', [AffectationController::class, 'index'])->name('affectation');
         Route::post('/storeAffectation', [AffectationController::class, 'storeAffectation'])->name('storeAffectation');
     });
 
-    Route::prefix('feb')->group(function () {
+    Route::prefix('projet/feb')->group(function () {
         Route::get('/', [FebController::class, 'list'])->name('listfeb');
         Route::get('nouvel', [FebController::class, 'create'])->name('nouveau.feb');
         Route::post('/storefeb', [FebController::class, 'store'])->name('storefeb');
 
         Route::get('/fetchAllfeb', [FebController::class, 'fetchAll'])->name('fetchAllfeb');
         Route::get('/Sommefeb', [FebController::class, 'Sommefeb'])->name('Sommefeb');
+        Route::get('/search-feb', [FebController::class, 'searchFeb'])->name('searchFeb');
+
+
+
         Route::get('/findligne', [FebController::class, 'findligne'])->name('findligne');
         Route::post('/updatefeb', [FebController::class, 'update'])->name('updatefeb');
         Route::delete('/deletefeb', [FebController::class, 'delete'])->name('deletefeb');
@@ -374,6 +378,8 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('dap')->group(function () {
         Route::get('/', [DapController::class, 'list'])->name('listdap');
+
+        Route::get('/nouveau', [DapController::class, 'creer'])->name('nouveau.dap');
         Route::get('/fetchdap', [DapController::class, 'fetchAll'])->name('fetchdap');
       
         Route::post('/storedap', [DapController::class, 'store'])->name('storedap');
@@ -623,7 +629,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/fetchalletiquette', [EtiquetteController::class, 'fetchAll'])->name('fetchalletiquette');
     });
 
-    Route::prefix('activites')->group(function () {
+    Route::prefix('projet/activites')->group(function () {
         Route::get('/', [ActivityController::class, 'index'])->name('activity');
         Route::get('/new', [ActivityController::class, 'new'])->name('newactivity');
         Route::post('/storeact', [ActivityController::class, 'store'])->name('storeact');
@@ -665,7 +671,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/updatsignature', [PersonnelController::class, 'updatsignature'])->name('updatsignature');
     });
 
-    Route::prefix('plandeconnecte')->group(function () {
+    Route::prefix('projet/plandeconnecte')->group(function () {
         Route::get('/', [PlanoperationnelController::class, 'index'])->name('planoperationnel');
         Route::get('/fetchAllplan', [PlanoperationnelController::class, 'fetchAll'])->name('fetchAllplan');
         Route::post('/storeplan', [PlanoperationnelController::class, 'save'])->name('storeplan');

@@ -31,7 +31,7 @@
 
 
           <a href="javascript::;" id="fetchDataLink" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm">
-            <span class="fa fa-sync-alt"></span> Actualiser
+            <span class="fa fa-sync-alt"></span> 
           </a>
           @if($projetdatat->autorisation == 1)
           <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addDealModal" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm">

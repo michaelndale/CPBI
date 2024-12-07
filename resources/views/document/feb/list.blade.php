@@ -7,23 +7,41 @@
     max-height: 50px;
     /* Réglez la hauteur maximale du popup selon vos besoins */
   }
+  
 </style>
 <div class="main-content">
   <div class="page-content">
-    <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
+    <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style="margin: 0; margin:auto">
       
-      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
-        <h4 class="mb-sm-0"><i class="mdi mdi-book-open-page-variant-outline"></i> Fiche d'Expression des Besoins "FEB"</h4>
-        <div class="page-title-right">
-          <a href="#" id="fetchDataLink" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" title=" Actualiser">
+      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between"  style="padding: 0.10rem 3rem;" >
+        <h4 class="mb-sm-0"><i class="mdi mdi-book-open-page-variant"></i> Fiche d'Expression des Besoins "FEB"</h4>
+        
+        <div class="page-title-right d-flex align-items-center justify-content-between gap-2" style="margin: 0;" >
+
+
+         
+          <!-- Formulaire de recherche -->
+          <form id="searchForm" class="app-search d-none d-lg-block" method="GET">
+            <div class="position-relative">
+              <input type="text" id="searchInput" name="search_numerofeb" class="form-control" placeholder="Recherche ...">
+              <span class="ri-search-line"></span>
+            </div>
+          </form>
+        
+          <!-- Bouton Actualiser -->
+          <!-- Bouton Actualiser -->
+          <a href="javascript:void(0)" id="fetchDataLink" class="btn btn-outline-primary rounded-pill btn-sm" title="Actualiser">
             <i class="fas fa-sync-alt"></i>
           </a>
-      
-          <a href="{{ route('nouveau.feb') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" >
-              <span class="fa fa-plus-circle"></span> Créer  
+
+        
+          <!-- Bouton Créer -->
+          <a href="{{ route('nouveau.feb') }}" class="btn btn-outline-primary rounded-pill btn-sm">
+            <span class="fa fa-plus-circle"></span> Créer
           </a>
-         
+        
         </div>
+        
     
       </div>
       
@@ -50,41 +68,19 @@
         <div class="table-responsive" id="table-container" style="overflow-y: auto;">
         <table class="table table-bordered table-striped table-sm fs--1 mb-0">
             <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
-                <tr>
-                  <th class="sort border-top ">
-                    <center> <b> Actions </b></center>
-                  </th>
-                  <th class="sort border-top" data-sort="febnum">
-                    <center><b>N<sup>o</sup> FEB </b></center>
-                  </th>
-                  <th class="sort border-top" data-sort="om"> <b>
-                      <center>Montant total </center>
-                    </b></th>
-                  <th class="sort border-top" data-sort="periode">
-                    <center><b>Période</b></center>
-                  </th>
-                  <th class="sort border-top" data-sort="code">
-                    <center><b>Code</b></center>
-                  </th>
-                  <th class="sort border-top" data-sort="Description">
-                   <b>Description</b>
-                  </th>
-                  <th class="sort border-top ps-3" data-sort="facture">
-                   <b>Pièce jointe</b>
-                  </th>
-                  
-                
-                  <th class="sort border-top" data-sort="date">
-                    <center><b>Date FEB</b></center>
-                  </th>
-                  <th class="sort border-top" data-sort="date">
-                    <center><b>Créé le</b></center>
-                  </th>
-                  <th class="sort border-top" data-sort="date"><b>Créé par</b></th>
-                  <th class="sort border-top" data-sort="%">
-                    <center> <b>%</b></center>
-                  </th>
-
+              <tr>
+                  <th class="sort border-top"><center><b>Actions</b></center></th>
+                  <th class="sort border-top"><center><b>N<sup>o</sup> FEB</b></center></th>
+                  <th class="sort border-top"><center><b>Montant total</b></center></th>
+                  <th class="sort border-top"><center><b>Période</b></center></th>
+                  <th class="sort border-top"><center><b>Code</b></center></th>
+                  <th class="sort border-top"><b>Description</b></th>
+                  <th class="sort border-top ps-3"><center><b>Pièce</b></center></th>
+                  <th class="sort border-top ps-3"><center><b>Statut</b></center></th>
+                  <th class="sort border-top"><center><b>Date FEB</b></center></th>
+                  <th class="sort border-top"><center><b>Créé le</b></center></th>
+                  <th class="sort border-top"><b>Créé par</b></th>
+                  <th class="sort border-top"><center><b>%</b></center></th>
                 </tr>
               </thead>
 
@@ -100,6 +96,12 @@
 
             </table>
 
+            <div id="pagination-container">
+              <!-- La pagination sera ajoutée ici par JavaScript -->
+          </div>
+
+
+            
             <br><br><br><br>
             <br><br><br><br>
             <br>
@@ -112,6 +114,8 @@
     </div>
   </div>
 </div>
+
+@include('document.feb.modale')
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
@@ -274,9 +278,13 @@
         method: 'get',
         success: function(reponse) {
           $("#show_all").html(reponse);
+       
+          
         }
       });
     }
+
+
     Sommefeb();
     function Sommefeb() {
       $.ajax({
@@ -287,12 +295,45 @@
         }
       });
     }
+
+   
   });
 </script>
-<style>
-  .swal-custom-content .swal-text {
-    font-size: 14px;
-    /* Ajustez la taille selon vos besoins */
-  }
-</style>
+
+
+<script>
+ document.addEventListener("DOMContentLoaded", function () {
+    const searchForm = document.getElementById('searchForm');
+    const searchInput = document.getElementById('searchInput');
+    let timer;
+
+    // Récupérer les données au chargement de la page
+    fetchData();
+
+    // Fonction pour récupérer les données
+    function fetchData(searchTerm = '') {
+        const fetchUrl = `{{ route('fetchAllfeb') }}?search_numerofeb=${searchTerm}`;
+        fetch(fetchUrl)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('show_all').innerHTML = data;
+            });
+    }
+
+    // Écoute l'événement de saisie pour la recherche en temps réel
+    searchInput.addEventListener('input', function () {
+        clearTimeout(timer);  // Annule l'exécution précédente si l'utilisateur tape à nouveau
+        timer = setTimeout(function () {
+            const searchTerm = searchInput.value.trim();
+
+            // Si la recherche a 3 caractères ou plus, on effectue la recherche
+            fetchData(searchTerm);
+        }, 300);  // 300 ms de délai après que l'utilisateur ait cessé de taper
+    });
+});
+
+</script>
+
+
+
 @endsection

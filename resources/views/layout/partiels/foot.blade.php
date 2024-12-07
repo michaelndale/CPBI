@@ -801,32 +801,42 @@
 
   // Fonction pour vérifier l'état de la connexion
   function checkConnection() {
-    // Ici, vous devrez implémenter votre logique pour vérifier l'état de la connexion
-    // Par exemple, vous pouvez utiliser AJAX pour envoyer une requête à un serveur et vérifier la réponse.
-    // Pour cet exemple, nous supposerons que la connexion est rétablie aléatoirement.
-    isConnected = Math.random() < 0.5; // 50% de chance de connexion réussie
-
-    if (isConnected) {
-      // Si la connexion est rétablie, masquer le message
-      offlineMessage.style.display = "none";
-      connectionAttempts = 0; // Réinitialiser le compteur de tentatives
-    } else {
-      // Si la connexion n'est pas rétablie, afficher le message
-      offlineMessage.style.display = "block";
-      connectionAttempts++;
-      if (connectionAttempts >= maxConnectionAttempts) {
-        // Si le nombre maximal de tentatives est atteint, arrêter la vérification de la connexion
-        clearInterval(connectionCheckInterval);
-      }
-    }
+    // Exemple de vérification de la connexion via une requête AJAX
+    fetch('/check-connection') // Remplacez ceci par l'URL de votre endpoint de vérification
+      .then(response => {
+        if (response.ok) {
+          isConnected = true; // Connexion réussie
+        } else {
+          isConnected = false; // Si le serveur retourne une erreur
+        }
+      })
+      .catch(() => {
+        isConnected = false; // Si une erreur se produit lors de la requête
+      })
+      .finally(() => {
+        if (isConnected) {
+          // Si la connexion est rétablie, masquer le message
+          offlineMessage.style.display = "none";
+          connectionAttempts = 0; // Réinitialiser le compteur de tentatives
+        } else {
+          // Si la connexion n'est pas rétablie, afficher le message
+          offlineMessage.style.display = "block";
+          connectionAttempts++;
+          if (connectionAttempts >= maxConnectionAttempts) {
+            // Si le nombre maximal de tentatives est atteint, arrêter la vérification de la connexion
+            clearInterval(connectionCheckInterval);
+          }
+        }
+      });
   }
 
   // Vérifier périodiquement l'état de la connexion
   var connectionCheckInterval = setInterval(checkConnection, 5000); // Vérifier toutes les 5 secondes
 </script>
 
-
-<div id="message" class="offline"><i class="fa fa-info-circle"></i> Vous êtes hors ligne ! </div>
+<div id="message" class="offline" style="display:none;">
+  <i class="fa fa-info-circle"></i> Vous êtes hors ligne !
+</div>
 
 
 </body>

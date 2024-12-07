@@ -41,6 +41,69 @@ class DapController extends Controller
     return response()->json($fuelTypes);
   }
 
+  public function creer()
+  {
+    $ID = session()->get('id');
+    $budget = session()->get('budget');
+    $devise = session()->get('devise');
+
+    // Vérifier si l'une des variables de session n'est pas définie
+    if (!$ID || !$budget || !$devise) {
+      // Rediriger vers la route nommée 'dashboard'
+      return redirect()->route('dashboard');
+    }
+
+    // Si les variables de session sont définies, continuer avec le reste de la fonction
+    $title = "DAP";
+
+    $service = Service::all();
+    $compte = Compte::where('compteid', '=', NULL)->get();
+    $banque = Banque::orderBy('libelle', 'ASC')->get();
+
+    // utilisateur
+    $personnel = DB::table('users')
+      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+      ->orderBy('nom', 'ASC')
+      ->get();
+
+    // Activite
+    $activite = DB::table('activities')
+      ->orderBy('id', 'DESC')
+      ->where('projectid', $ID)
+      ->get();
+
+    // RECUPERETION FEB NUMERO
+    $feb = DB::table('febs')
+      ->orderBy('numerofeb', 'ASC')
+      ->where('projetid', $ID)
+      ->where('statut', 0)
+      ->get();
+
+    $somfeb = DB::table('elementfebs')
+      ->orderBy('id', 'DESC')
+      ->where('projetids', $ID)
+      ->sum('montant');
+    $somfeb = $budget - $somfeb;
+
+    $somfeb = number_format($somfeb, 0, ',', ' ') . ' ' . $devise;
+
+    return view(
+      'document.dap.nouveau',
+      [
+        'title'     => $title,
+        'activite'  => $activite,
+        'personnel' => $personnel,
+        'service'   => $service,
+        'feb'       => $feb,
+        'compte'    => $compte,
+        'somfeb'    => $somfeb,
+        'banque'    => $banque
+      ]
+    );
+  }
+
+
   public function fetchAll()
   {
     $ID = session()->get('id');
@@ -282,7 +345,6 @@ class DapController extends Controller
       }
   }
   
-
   // insert a new employee ajax request
   public function updatestore(Request $request)
   {

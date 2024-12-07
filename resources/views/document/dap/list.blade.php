@@ -25,36 +25,26 @@
             <i class="fa fa-print"></i>
            </a>
         
-          <a href="javascript:void()" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"  data-bs-toggle="modal" data-bs-target="#dapModale">
-            
-              <i class="fa fa-plus-circle"></i> Créer 
+           <a href="{{ route('listdap') }}" id="fetchDataLink" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" title=" Actualiser">
+            <i class="fas fa-sync-alt"></i>
           </a>
-
-       
     
+          <a href="{{ route('nouveau.dap') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" >
+            <i class="fa fa-plus-circle"></i> Créer 
+        </a>
       </div>
     </div>
 
 
-    
-
       <div class="card-body p-0">
-
         <div id="tableExample2">
           <div class="table-responsive">
             <table class="table table-striped table-sm fs--1 mb-0" style="background-color:#c0c0c0">
-
               <tbody id="showSommefeb">
-
               </tbody>
-
             </table>
-
           </div>
-
         </div>
-
-
 
         <div id="tableExample2">
           <div class="table-responsive" id="table-container" style="overflow-y: auto;">
@@ -83,8 +73,6 @@
                   <th class="sort border-top "> <b> Créé par </b></th>
                 </tr>
               </thead>
-
-
               <tbody class="show_all" id="show_all">
                 <tr>
                   <td colspan="13">
@@ -108,219 +96,12 @@
   </div>
 </div>
 
-@include('document.dap.modale')
-
-<BR><BR>
-
-
-
-
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-
-
 <script>
-  function adjustTableHeight() {
-    var windowHeight = window.innerHeight;
-    var tableContainer = document.getElementById('table-container');
-
-    // Ajustez la hauteur du conteneur du tableau en fonction de la hauteur de l'écran, moins une marge (par exemple, 200px)
-    tableContainer.style.height = (windowHeight - 200) + 'px';
-  }
-
-  // Appelez la fonction lorsque la page est chargée
-  window.onload = adjustTableHeight;
-
-  // Appelez la fonction lorsque la fenêtre est redimensionnée
-  window.onresize = adjustTableHeight;
-</script>
-
-
-<script>
-  $('#numerodap').blur(function() {
-    var numerodap = $(this).val();
-
-    // Vérification si le champ est vide
-    if (numerodap.trim() === '') {
-      $('#numerodap_error').text('Veuillez renseigner le champ numéro DAP.');
-      $('#numerodap').removeClass('has-success has-error'); // Supprime toutes les classes de succès ou d'erreur
-      $('#numerodap_info').text('');
-      return; // Sortir de la fonction si le champ est vide
-    }
-
-    // Envoi de la requête AJAX au serveur
-    $.ajax({
-      url: '{{ route("check.dap") }}',
-      method: 'POST',
-      data: {
-        _token: '{{ csrf_token() }}', // CSRF token pour Laravel
-        numerodap: numerodap
-      },
-      success: function(response) {
-        if (response.exists) {
-          $("#numerodap_error").html('<i class="fa fa-times-circle"></i> Numéro DAP existe déjà');
-          $('#numerodap').removeClass('has-success') // Supprime la classe de succès
-          $('#numerodap').addClass('has-error');
-          $('#numerodap_info').text('');
-        } else {
-
-          $("#numerodap_info").html('<i class="fa fa-check-circle"></i> Numéro Disponible');
-          $('#numerodap').removeClass('has-error') // Supprime la classe de succès
-          $('#numerodap').addClass('has-success');
-          $('#numerodap_error').text('');
-        }
-      },
-      error: function(xhr, status, error) {
-        console.error(error);
-      }
-    });
-  });
-  
-  document.addEventListener('DOMContentLoaded', function() {
-  var justifierCheckbox = document.getElementById('justifier');
-  var nonjustifierCheckbox = document.getElementById('nonjustifier');
-  var factureColumn = document.getElementById('facture-column');
-  var showRetourDiv = document.getElementById('Showretour');
-
-  // La table `factureColumn` est affichée par défaut dans tous les cas
-  factureColumn.style.display = 'table';
-
-  function updateDisplay() {
-    if (justifierCheckbox.checked) {
-      showRetourDiv.style.display = 'block';
-      nonjustifierCheckbox.checked = false;
-    } else {
-      showRetourDiv.style.display = 'block';
-      nonjustifierCheckbox.checked = false;
-    }
-  }
-
-  justifierCheckbox.addEventListener('change', function() {
-    updateDisplay();
-  });
-
-  nonjustifierCheckbox.addEventListener('change', function() {
-    if (nonjustifierCheckbox.checked) {
-      justifierCheckbox.checked = false;
-      showRetourDiv.style.display = 'block';
-
-    }
-  });
-
-  // Initialisation de l'affichage
-  updateDisplay();
-});
-
-
-  function toggleInputs() {
-    var checkboxes = document.querySelectorAll('.seleckbox');
-    var inputs = document.querySelectorAll('.dapref');
-    for (var i = 0; i < inputs.length; i++) {
-      inputs[i].readOnly = !checkboxes[0].checked;
-    }
-  }
-
-
-  $(document).ready(function() {
-    $(document).on('change', '.febid', function() {
-      var febrefs = $(this).val(); // Utilisez val() pour obtenir toutes les valeurs sélectionnées
-      var div = $(this).parent();
-      var op = " ";
-      $.ajax({
-        type: 'get',
-        url: "{{ route ('getfeb') }}",
-        data: {
-          'ids': febrefs // Utilisez 'ids' au lieu de 'id' pour envoyer toutes les valeurs sélectionnées
-        },
-        success: function(reponse) {
-          $("#Showpoll").html(reponse);
-        },
-        error: function() {
-          alert("Attention! \n Erreur de connexion à la base de données, \n veuillez vérifier votre connexion");
-        }
-      });
-    });
-  });
-
-
-  $(document).ready(function() {
-    $(document).on('change', '.febid', function() {
-      var febrefs = $(this).val(); // Utilisez val() pour obtenir toutes les valeurs sélectionnées
-      var div = $(this).parent();
-      var op = " ";
-      $.ajax({
-        type: 'get',
-        url: "{{ route ('getfebretour') }}",
-        data: {
-          'ids': febrefs // Utilisez 'ids' au lieu de 'id' pour envoyer toutes les valeurs sélectionnées
-        },
-        success: function(reponse) {
-          $("#Showretour").html(reponse);
-        },
-        error: function() {
-          alert("Attention! \n Erreur de connexion à la base de données, \n veuillez vérifier votre connexion");
-        }
-      });
-    });
-  });
-
-
-
 
   $(function() {
 
-    $("#adddapForm").submit(function(e) {
-      e.preventDefault();
-      const fd = new FormData(this);
-      $("#adddapbtn").html('<i class="fas fa-spinner fa-spin"></i>');
-      document.getElementById("adddapbtn").disabled = true; // Désactiver le bouton
-      $("#loadingModal").modal('show'); // Affiche le popup de chargement
-
-      $.ajax({
-        url: "{{ route('storedap') }}",
-        method: 'post',
-        data: fd,
-        cache: false,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-          $("#loadingModal").modal('hide'); // Cacher le popup de chargement
-
-          if (response.status == 200) {
-            $("#adddapForm")[0].reset();
-            $("#dapModale").modal('hide');
-            toastr.success("DAP ajouté avec succès !", "Succès");
-            window.location.href = "{{ route('listdap') }}";
-          } else if (response.status == 201) {
-            toastr.error("Attention: DAP fonction existe déjà !", "Info");
-            $("#dapModale").modal('show');
-          } else if (response.status == 202) {
-            toastr.error("Erreur d'exécution, vérifiez votre connexion Internet", "Erreur");
-            $("#dapModale").modal('show');
-          } else if (response.status == 203) {
-            toastr.error("Erreur d'exécution: " + response.error, "Erreur");
-            $("#dapModale").modal('show');
-          }
-
-          $("#adddapbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-          document.getElementById("adddapbtn").disabled = false; // Réactiver le bouton
-        },
-        error: function(xhr, status, error) {
-          $("#loadingModal").modal('hide'); // Cacher le popup de chargement
-          toastr.error("Erreur d'exécution: " + error, "Erreur");
-          $("#dapModale").modal('show');
-          $("#adddapbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-          document.getElementById("adddapbtn").disabled = false; // Réactiver le bouton
-        }
-      });
-    });
-
-
     // Delete feb ajax request
-
-
     $(document).on('click', '.deleteIcon', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
@@ -392,9 +173,6 @@
       });
     });
 
-
-
-
     $(document).on('click', '.desactiversignale', function(e) {
       e.preventDefault();
       let id = $(this).attr('id');
@@ -439,11 +217,6 @@
       })
     });
 
-
-   
-
-
-
     fetchAlldap();
 
     function fetchAlldap() {
@@ -458,18 +231,6 @@
 
   });
 </script>
-
-<script>
-  document.getElementById('beneficiaire').addEventListener('change', function () {
-      const nomPrenomContainer = document.getElementById('nomPrenomContainer');
-      if (this.value === 'autres') {
-          nomPrenomContainer.style.display = 'block';  // Affiche le conteneur avec le texte et l'input
-      } else {
-          nomPrenomContainer.style.display = 'none';  // Cache le conteneur pour toutes les autres options
-      }
-  });
-</script>
-
 
 <style>
   .swal-custom-content .swal-text {

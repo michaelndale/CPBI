@@ -28,69 +28,63 @@
                         <div class="card-body">
                             <table id="datatable" class="table table-bordered dt-responsive nowrap   fs--1 mb-0" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
-                                    <th><b>Projets  ( {{ $data->count() }} )</b> </th>
-                                    <th><b>Responsable du projet</b></th>
-                                    <th><center><b>Accès</b </center></th>
-                                    <th><center><b>Statut</b></center></th>
-                                    <th><b>Date début</b></th>
-                                    <th><b>Date fin</b></th>
-                                </thead>
+                                    <th> <b>Projets  ( {{ $data->count() }} )</b> </th>
+                                    <th> <b>Responsable du projet</b></th>
+                                    <th> <center> <b>Accès</b </center></th>
+                                    <th> <center> <b>Statut</b> </center></th>
+                                    <th> <b>Date Début</b> </th>
+                                    <th> <b>Date Fin</b> </th>
+                                </thead> 
 
                                 <tbody>
                                     @foreach ($data as $datas)
-                                    <tr>
-                                        <td style="width: 100px;">
-                                            @php
-                                                $cryptedId = Crypt::encrypt($datas->idpr);
-                                            @endphp
-                                            <a href="{{ route('key.viewProject', $cryptedId) }}" class="text-dark">{{ $datas->title }}</a>
-                                        </td>
-                                        <td>
-                                            {{ ucfirst($datas->nom) }} {{ ucfirst($datas->prenom) }}
-                                        </td>
+                                        @php
+                                            $accessCount = 
+                                                DB::table('affectations')
+                                                ->where('memberid', Auth::id())
+                                                ->where('projectid', $datas->idpr)
+                                                ->count();
 
-
-                                        <td align="center">
-                                           
-                                            @php
-                                            $accessCount = DB::table('affectations')
-                                                            ->where('memberid', Auth::id())
-                                                            ->where('projectid', $datas->idpr)
-                                                            ->count();
+                                            $cryptedId = Crypt::encrypt($datas->idpr);
                                         @endphp
 
-                                       
+                                    <tr>
+                                        <td style="width: 100px;">
+                                          
+                                            @if($accessCount == 1)
+                                                <a href="{{ route('key.viewProject', $cryptedId) }}" class="text-dark">{{ $datas->title }}</a>
+                                            @else
+                                                <a href="javascript:void(0)" class="text-dark" onclick="showAccessDeniedAlert()">{{ $datas->title }}</a>
+                                            @endif
                                         
-                                        @if($accessCount == 1)
-                                            <font size="2px" color="green">
-                                                <i class="mdi mdi-check-decagram"></i>
-                                            </font>
-                                        @else
-                                            <font size="2px" color="red">
-                                                <i class="mdi mdi-close-circle"></i>
-                                            </font>
-                                        @endif
+                                        </td>
                                         
+                                        <td> <i class="ri-user-3-fill "></i> {{ ucfirst($datas->nom) }} {{ ucfirst($datas->prenom) }}  </td>
+
+
+                                        <td align="center">
+                                           
+                                          
+                                            @if($accessCount == 1)
+                                                <font size="2px" color="green">
+                                                    <i class="mdi mdi-check-decagram"></i>
+                                                </font>
+                                            @else
+                                                <font size="2px" color="red">
+                                                    <i class="mdi mdi-close-circle"></i>
+                                                </font>
+                                            @endif
                                         
                                         </td>
 
 
                                         <td align="center">
-                                         
-
-                                                @if($datas->autorisation==1)
-                                                <span class="badge rounded-pill bg-primary"> &nbsp;&nbsp; Ouvert &nbsp;&nbsp; </span>
-                                        @else
+                                            @if($accessCount ==1)
+                                                <span class="badge rounded-pill bg-primary"> Ouvert </span>
+                                            @else
                                                 <span class="badge rounded-pill bg-danger"> Fermer </span>
-                                        @endif
-                                        </small>
-                                           
-                                           
+                                            @endif
                                         </td>
-
-
-
-
 
                                         <td>
                                             {{ date('d-m-Y', strtotime($datas->start_date))  }}
@@ -122,20 +116,16 @@
                     </div>
                 </div> <!-- end col -->
             </div> <!-- end row -->
-
-
         </div> <!-- container-fluid -->
     </div>
-
-
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-@if(session('modal_message'))
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function showAccessDeniedAlert() {
         Swal.fire({
             title: 'Accès refusé',
-            text: "Vous n'avez pas l'accréditation nécessaire. Contactez le chef du projet pour être affecté.",
+            text: "Vous n'avez pas les droits nécessaires pour accéder à ce projet. Veuillez contacter le responsable du projet.",
             icon: 'error',
             confirmButtonColor: '#28a745', // Couleur verte pour le bouton
             confirmButtonText: 'OK',
@@ -146,8 +136,11 @@
                 content: 'swal2-content-small' // Classe CSS pour le contenu
             }
         });
-    });
+    }
 </script>
+
+
+
 <style>
     /* Dans votre fichier CSS */
     .swal2-small {
@@ -165,12 +158,6 @@
         /* Taille de police du contenu */
     }
 </style>
-@endif
-
-
-
-</script>
-
 
 
 @endsection
