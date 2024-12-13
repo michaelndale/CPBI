@@ -1,4 +1,4 @@
-<!-- VERIFIER CONNECTION   -->
+<!-- VERIFIER CONNECTION   
 
 <div class="container">
   		
@@ -9,18 +9,18 @@
 <div class="toast" style="position: absolute; top: 25px; right: 25px;">
   <div class="toast-header">
       <i class="bi bi-wifi"></i>&nbsp;&nbsp;&nbsp;
-      <strong class="mr-auto"><span class="text-success"> <!--You're online now --> Vous êtes en ligne maintenant</span></strong>
+      <strong class="mr-auto"><span class="text-success">  Vous êtes en ligne maintenant</span></strong>
       <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
           <span aria-hidden="true">&times;</span>
       </button>
   </div>
   <div class="toast-body">
-      <!-- Hurray! Internet is connected. --> <?= $_SESSION["prenom"] ?>! Internet est connecté.
+       Hurray! Internet is connected.  <?= $_SESSION["prenom"] ?>! Internet est connecté.
   </div>
 </div>
 
 <script>
-
+/*
 var status = 'online';
 var current_status = 'online';
 
@@ -69,6 +69,8 @@ setInterval(function(){
 }, 300);
 
 </script>
+
+-->
 
 <!--  FIN  -->
 

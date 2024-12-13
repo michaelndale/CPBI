@@ -129,7 +129,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <table style="width:50%">
+                                <table style="width:80%">
                                     <tbody>
                                         <tr>
                                             

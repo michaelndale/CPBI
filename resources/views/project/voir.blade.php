@@ -5,6 +5,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
+          
           <div class="page-title-box d-sm-flex align-items-center justify-content-between">
             <h4 class="mb-sm-0">{{ $dataProject->title }}
               <br>
@@ -18,6 +19,8 @@
                 @endif
               </small>
             </h4>
+
+
             <div class="page-title-right">
               <div class="dropdown">
                 @php
@@ -31,16 +34,23 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li>
                     <a class="dropdown-item" href="{{ route('key.editProject',  $cryptedId ) }}"><i class="mdi mdi-file-document-edit-outline font-size-20 align-middle me-2 text-muted"></i>
-                      Modifier le projet</a>
+                      Modification du projet</a>
                   </li>
+                  <li>
+                    <a class="dropdown-item" href="{{ route('liste.revision', $cryptedId) }}"><i class="fa  fa-list font-size-16 align-middle me-2 text-muted"></i>
+                      Historique de la revision Budgétaire</a>
+                  </li>
+
                   <li>
                     <a class="dropdown-item" href="{{ route('gestioncompte') }}"><i class="fa fa-chart-line font-size-16 align-middle me-2 text-muted"></i>
                       Ligne budgétaire</a>
                   </li>
                   <li>
                     <a class="dropdown-item" href="{{ route('rallongebudget') }}"><i class="fa  fa-chart-bar font-size-16 align-middle me-2 text-muted"></i>
-                      Budgét</a>
+                      Budgétisation</a>
                   </li>
+
+                  
                   <li>
                     <a class="dropdown-item" href="{{ route('activity') }}"><i class="fa fa-running font-size-16 align-middle me-2 text-muted"></i>
                       Activitées</a>
@@ -64,6 +74,12 @@
                   <li>
                     <a class="dropdown-item" href="{{ route('affectation') }}"><i class="fa fa-users font-size-16 align-middle me-2"></i> Intervenants</a>
                   </li>
+
+                  <li>
+                    <a class="dropdown-item" href="{{ route('bailleursDeFonds') }}"><i class="fa fa-users font-size-16 align-middle me-2"></i> Bailleurs des fonds</a>
+                  </li>
+
+                
                   <li>
                     <a class="dropdown-item" href="{{ route('rapportcumule') }}"><i class="fa fa-chart-pie font-size-16 align-middle me-2 text-muted"></i>
                       Rapport cummulatif</a>
@@ -88,9 +104,10 @@
       <!-- end page title -->
 
       <div class="row" >
+        
         <div class="col-xl-7" >
           <div class="card">
-            <div class="card-header">
+            <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">
               <h5 class="card-title mb-0"> <i class="fa fa-info-circle"></i> Information du projet </h5>
             </div>
             <div class="card-body">
@@ -196,7 +213,7 @@
             </div>
           </div>
           <div class="card">
-            <div class="card-header">
+            <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">
               <h5 class="card-title mb-0"><i class="fa fa-info-circle"></i> Description du projet </h5>
             </div>
             <div class="card-body pt-0 pb-3">
@@ -204,11 +221,62 @@
               <p class="text-800 mb-4">{{ $dataProject->description }} </p>
             </div>
           </div>
+
+          
+
+          <div class="card">
+            <div class="card-header">
+              <div class="row">
+                <div class="col-9">
+                <h5 class="card-title mb-0"><i class="fa fa-users"></i> Bailleurs des fonds
+              </h5>
+              </div>
+              <div class="col-3">
+                <a href="{{ route('bailleursDeFonds') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"><i class="fa fa-plus-circle"></i> Ajouter</a> 
+              </div>
+              </div>
+            </div>
+            <div class="card-body pt-2">
+                <div class="table-responsive">
+                  <table class="table align-middle table-nowrap mb-1">
+                    <thead>
+                        <tr>
+                            <th>Nom Organisation</th>
+                            <th>Responsable</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($bailleurs as $bailleur)
+                            <tr>
+                                <td>{{ $bailleur->nom }}</td>
+                                <td>{{ $bailleur->contact_nom }}</td>
+                                <td>{{ $bailleur->contact_email }}</td>
+                                <td>{{ $bailleur->contact_telephone }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">
+                                    Aucun bailleur trouvé pour ce projet.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                
+                
+                    
+                </div>
+            </div>
+          </div>
+
+
         </div>
        
         <div class="col-xl-5">
           <div class="card">
-            <div class="card-header">
+            <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">
               <h5 class="card-title mb-0"><i class="fa fa-info-circle"></i> Progression d'exécution du projet</h5>
             </div>
             <div class="card-body pt-0 pb-3">
@@ -216,6 +284,8 @@
               <div id="container" style="height: 400px"></div>
             </div>
           </div>
+
+
 
          
           <div class="card">
@@ -232,62 +302,57 @@
             </div>
             <div class="card-body pt-2">
                 <div class="table-responsive">
-                    <table class="table align-middle table-nowrap mb-1">
-                        <tbody>
-                            @forelse ($intervennant as $intervennant)
-                                <tr>
-                                    <td>
-                                        <div class="avatar-xs">
-                                            @php
+                  <table class="table align-middle table-nowrap mb-1">
+                    <tbody>
+                        @forelse ($intervennant as $intervennant)
+                            <tr>
+                                <td>
+                                    <div class="avatar-xs">
+                                        @php
                                             $avatar = $intervennant->avatar;
                                             $defaultAvatar = '../../element/profile/default.png'; // Chemin vers votre image par défaut
                                             $imagePath = public_path($avatar);
-                                            @endphp
-        
-                                            @if(file_exists($imagePath))
-                                            <span class="avatar-title rounded-circle bg-primary text-white font-size-14">
-                                                {{ ucfirst(substr($intervennant->nom, 0, 1)) }}
-                                            </span>
-                                            @else
-                                            <img id="output_image" src="{{ $defaultAvatar }}" alt="{{ ucfirst(Auth::user()->identifiant) }}" style="width:100%; border-radius:100%">
-                                            @endif
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <h5 class="font-size-14 m-0">
-                                            <a href="javascript: void(0);" class="text-dark">{{ ucfirst($intervennant->nom) }} {{ ucfirst($intervennant->prenom) }}</a>
-                                        </h5>
-                                    </td>
-                                    <td>
-                                        @if($intervennant->is_connected)
-                                            <!-- Utilisateur connecté : icône verte -->
-                                            <i class="mdi mdi-circle-medium font-size-18 text-success align-middle me-1"></i> Online
+                                        @endphp
+                
+                                        @if(file_exists($imagePath) && $avatar)
+                                            <img id="output_image" src="{{ asset($avatar) }}" alt="{{ ucfirst($intervennant->nom) }}'s avatar" style="width:100%; border-radius:100%">
                                         @else
-                                            <!-- Utilisateur déconnecté : icône rouge -->
-                                            <i class="mdi mdi-circle-medium font-size-18 text-danger align-middle me-1"></i>  Ofline
+                                            <img id="output_image" src="{{ asset($defaultAvatar) }}" alt="{{ ucfirst($intervennant->nom) }}'s avatar" style="width:100%; border-radius:100%">
                                         @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3">
-                                        <center>
-                                            <h6 style="margin-top:1%; color:#c0c0c0">
-                                                <center>
-                                                    <font size="20px"><i class="fa fa-info-circle"></i></font><br>
-                                                    Ceci est vide !
-                                                </center>
-                                            </h6>
-                                        </center>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h5 class="font-size-14 m-0">
+                                        <a href="javascript: void(0);" class="text-dark">{{ ucfirst($intervennant->nom) }} {{ ucfirst($intervennant->prenom) }}</a>
+                                    </h5>
+                                </td>
+                                <td>
+                                    @if($intervennant->is_connected)
+                                        <i class="mdi mdi-circle-medium font-size-18 text-success align-middle me-1"></i> Online
+                                    @else
+                                        <i class="mdi mdi-circle-medium font-size-18 text-danger align-middle me-1"></i> Offline
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3">
+                                    <center>
+                                        <h6 style="margin-top:1%; color:#c0c0c0">
+                                            <font size="20px"><i class="fa fa-info-circle"></i></font><br>
+                                            Ceci est vide !
+                                        </h6>
+                                    </center>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                
                     
                 </div>
             </div>
-        </div>
+          </div>
         
 
         

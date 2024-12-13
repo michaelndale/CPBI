@@ -4,8 +4,10 @@
         <div class="main-content">
           <div class="page-content">
             <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
+              <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between"
+              style="padding: 0.3rem 3rem;">
               
-              <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+           
                 <h4 class="mb-sm-0"><i class="mdi mdi-plus-circle"></i> Nouvel Fiche d'Expression des Besoins "FEB" </h4>
                 <div class="page-title-right">
                   
@@ -113,7 +115,7 @@
                                 </tbody>
                             </table>
 
-                            <table style="width:50%">
+                            <table style="width:80%">
                               <tbody> 
                                     <tr>
                                        
@@ -288,14 +290,14 @@
                 
             </div>
 
-            <div class="card-header p-4 border-bottom border-300 bg-soft">
-                <div class="row g-3 justify-content-between align-items-end">
-                <div class="col-12 col-md">
-                    
-                </div>
-                <div class="col col-md-auto">
-                    <button type="submit" class="btn btn-primary" id="addfebbtn" name="addfebbtn"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
-                </div>
+            <div class="card-header p-4 border-bottom border-300 bg-soft"   >
+                <div class="row g-3 justify-content-between align-items-end"  >
+                  <div class="col-12 col-md"  style="padding: 0.3rem 3rem;">
+                      
+                  </div>
+                  <div class="col col-md-auto" >
+                      <button type="submit" class="btn btn-primary" id="addfebbtn" name="addfebbtn"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
+                  </div>
                 </div>
             </div>
         </form>

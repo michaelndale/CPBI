@@ -272,10 +272,12 @@ class CompteController extends Controller
       $ID = session()->get('id');
       $title = $request->libelle;
       $code = $request->code;
+      
       $check = Compte::where('libelle', $title)
         ->where('numero', $code)
         ->where('projetid', $ID)
         ->first();
+
       if ($check) {
         return response()->json([
           'status' => 201,

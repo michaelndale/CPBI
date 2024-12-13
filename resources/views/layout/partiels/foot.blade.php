@@ -160,7 +160,7 @@
             <font size="7" color="#c0c0c0"> <i class="fas fa-info-circle "></i></font>
             <br>
             <font size="4"> Vous voulez-vous vraiment quitter <br> le projet encours ? </font> <br> <br>
-            <a href="{{ route('closeproject') }}" tabindex="-1" aria-labelledby="deconnecterModalLabel" aria-hidden="true" class="btn btn-primary" type="button"><i class="fas fa-check-circle"></i> Oui </a> &nbsp; <button class="btn btn-outline-danger" type="button" data-bs-dismiss="modal"><i class="fas fa-times-circle"></i> Non</button>
+            <a href="{{ route('closeproject') }}" tabindex="-1"  aria-hidden="true" class="btn btn-primary" type="button"><i class="fas fa-check-circle"></i> Oui </a> &nbsp; <button class="btn btn-outline-danger" type="button" data-bs-dismiss="modal"><i class="fas fa-times-circle"></i> Non</button>
           </center>
         </p>
       </div>
@@ -473,6 +473,8 @@
 <script>
 
   // VERIFICATION DE LA CONNECTION INTERNET
+
+  /*
   window.addEventListener('load', function() {
     var messageDiv = document.getElementById('message');
 
@@ -491,7 +493,7 @@
     // Vérifie la connexion Internet à chaque changement de statut de la connexion
     window.addEventListener('online', checkInternetConnection);
     window.addEventListener('offline', checkInternetConnection);
-  });
+  }); */
 
 
 // VISUALISER L'IMAGE
@@ -793,46 +795,6 @@
 @endif
 
 
-<script>
-  var offlineMessage = document.getElementById("message");
-  var isConnected = false;
-  var connectionAttempts = 0;
-  var maxConnectionAttempts = 5; // Maximum de tentatives de connexion
-
-  // Fonction pour vérifier l'état de la connexion
-  function checkConnection() {
-    // Exemple de vérification de la connexion via une requête AJAX
-    fetch('/check-connection') // Remplacez ceci par l'URL de votre endpoint de vérification
-      .then(response => {
-        if (response.ok) {
-          isConnected = true; // Connexion réussie
-        } else {
-          isConnected = false; // Si le serveur retourne une erreur
-        }
-      })
-      .catch(() => {
-        isConnected = false; // Si une erreur se produit lors de la requête
-      })
-      .finally(() => {
-        if (isConnected) {
-          // Si la connexion est rétablie, masquer le message
-          offlineMessage.style.display = "none";
-          connectionAttempts = 0; // Réinitialiser le compteur de tentatives
-        } else {
-          // Si la connexion n'est pas rétablie, afficher le message
-          offlineMessage.style.display = "block";
-          connectionAttempts++;
-          if (connectionAttempts >= maxConnectionAttempts) {
-            // Si le nombre maximal de tentatives est atteint, arrêter la vérification de la connexion
-            clearInterval(connectionCheckInterval);
-          }
-        }
-      });
-  }
-
-  // Vérifier périodiquement l'état de la connexion
-  var connectionCheckInterval = setInterval(checkConnection, 5000); // Vérifier toutes les 5 secondes
-</script>
 
 <div id="message" class="offline" style="display:none;">
   <i class="fa fa-info-circle"></i> Vous êtes hors ligne !

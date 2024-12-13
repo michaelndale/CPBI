@@ -24,7 +24,8 @@
 <div class="main-content">
   <div class="page-content">
     <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style="margin:auto">
-      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between"
+            style="psaveBailleurBtning: 0.20rem 3rem;">
         <h4 class="mb-sm-0"><i class="fa fa-list"></i> Budgétisation </h4>
         <div class="page-title-right">
           <a href="#" id="telecharger-pdf" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"><i class="fa fa-file" ></i> Rapport en format PDF</a> &nbsp; &nbsp; 

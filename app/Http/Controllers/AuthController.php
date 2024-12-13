@@ -22,6 +22,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+
 
 class AuthController extends Controller
 {
@@ -214,7 +217,7 @@ class AuthController extends Controller
     if (Auth::id()) {
       return redirect()->route('start');
     } else {
-      return view('auth.login');
+      return redirect()->route('login');
     }
   }
 
@@ -479,7 +482,7 @@ class AuthController extends Controller
   }
 
   public function updateThme(Request $request)
-    {
+  {
         
         // Récupère l'utilisateur authentifié
         $user = User::find($request->useridtheme);
@@ -490,13 +493,193 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Préférence de menu mise à jour avec succès!'
         ]);
-    }
+  }
 
 
   public function logout()
   {
     session()->forget('id');
     Auth::logout();
-    return redirect('/out');
+    return redirect()->route('out')->with('success', 'Vous etes deconnecter avec succès.');
   }
+
+
+  public function forgot()
+  {
+    $title = "Mot de passe oubier";
+   
+    return view('auth.forgot', [
+      'title' => $title
+    ]);
+  }
+
+  public function code()
+  {
+    $title = "Nouveau code";
+
+      // Récupérer l'email depuis la session
+      $email = session('reset_email');
+
+   
+    return view('auth.newcode', [
+      'title' => $title,
+      'email' => $email
+    ]);
+  }
+
+ 
+
+  public function handforgot(Request $request)
+  {
+      try {
+          $user = User::where('email', $request->email)->first();
+  
+          if ($user) {
+             session(['reset_email' => $request->email]);
+
+            
+  
+              // Générer un code de vérification aléatoire
+              $verificationCode = rand(100000, 999999);
+  
+              // Sauvegarder le code
+              $user->verification_code = $verificationCode;
+              $user->save();
+  
+              // Envoyer l'email
+              Mail::send('emails.verification_code', ['code' => $verificationCode, 'user' => $user] , function ($message) use ($user) {
+                  $message->to($user->email)
+                          ->subject('GoProject Vérification Code');
+              });
+  
+              // Ajouter 'exists' => true
+              return response()->json([
+                  'success' => true, 
+                  'exists' => true,  // Ajout de cette ligne
+                  'message' => 'Code de vérification envoyé à votre adresse email.'
+              ]);
+          } else {
+              // Ajouter 'exists' => false
+              return response()->json([
+                  'success' => true,  // Gardez true car la requête est réussie
+                  'exists' => false,  // Ajout de cette ligne
+                  'message' => "Cet email n'existe pas dans notre système."
+              ]);
+          }
+      } catch (\Exception $e) {
+          return response()->json([
+              'success' => false, 
+              'exists' => false,
+              'message' => 'Une erreur est survenue lors de l\'envoi de l\'email.'
+          ], 500);
+      }
+  }
+
+  public function verifyCode(Request $request)
+{
+    try {
+        $email = $request->email;
+        $code = $request->code;
+
+        // Trouver l'utilisateur avec l'email et le code
+        $user = User::where('email', $email)
+                    ->where('verification_code', $code)
+                    ->first();
+
+        if ($user) {
+            // Code correct
+            // Stocker l'email en session pour la prochaine étape
+            session(['reset_password_email' => $email]);
+
+            // Optionnel : invalider le code après utilisation
+            $user->verification_code = null;
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Code vérifié avec succès'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Code de vérification incorrect'
+            ]);
+        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Une erreur est survenue'
+        ], 500);
+    }
+}
+
+
+
+    public function resetPassword()
+    {
+        $email = session('reset_password_email');
+        
+        if (!$email) {
+            return redirect()->route('mot_pass_oublie')
+                ->with('error', 'Votre session a expiré. Veuillez recommencer.');
+        }
+
+        return view('auth.reset-password', compact('email'));
+    }
+
+    public function updatePassword(Request $request)
+    {
+        // Validation des données
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:8|confirmed',
+        ], [
+            'email.exists' => 'Aucun compte associé à cet email.',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+        ]);
+    
+        // Si la validation échoue
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+    
+        try {
+            // Récupérer l'utilisateur
+            $user = User::where('email', $request->email)->first();
+    
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Utilisateur non trouvé.'
+                ], 404);
+            }
+    
+            // Mettre à jour le mot de passe
+            $user->password = Hash::make($request->password);
+            $user->save();
+    
+            // Nettoyer la session
+            session()->forget('reset_password_email');
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Mot de passe réinitialisé avec succès.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue lors de la réinitialisation du mot de passe.'
+            ], 500);
+        }
+    }
+
+
+
+
+
+
 }

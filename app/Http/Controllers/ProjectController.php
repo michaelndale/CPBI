@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Activity;
 use App\Models\Affectation;
+use App\Models\BailleursDeFonds;
 use App\Models\Bonpetitcaisse;
 use App\Models\Compte;
 use App\Models\dap;
@@ -24,6 +25,7 @@ use App\Models\Planoperationnel;
 use App\Models\Project;
 use App\Models\Rallongebudget;
 use App\Models\User;
+use App\Models\Revision; 
 use Exception;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
@@ -153,7 +155,48 @@ class ProjectController extends Controller
           ]);
       }
   }
-  
+
+  public function store_revision(Request $request)
+  {
+      // Validation des données
+      $validated = $request->validate([
+          'projet_id' => 'required|exists:projects,id',  // Assurez-vous que le projet existe
+          'ancien_montant' => 'required|numeric|min:0',  // Validation de l'ancien montant
+          'nouveau_montant' => 'required|numeric|min:0', // Validation du nouveau montant
+          'description' => 'required|string|max:255',    // Validation de la description
+      ]);
+
+      // Démarrer une transaction pour garantir l'intégrité des données
+      DB::beginTransaction();
+
+      try {
+          // Création de la révision budgétaire
+          $revision = new Revision();
+          $revision->projet_id = $validated['projet_id'];
+          $revision->ancien_montant = $validated['ancien_montant'];
+          $revision->nouveau_montant = $validated['nouveau_montant'];
+          $revision->description = $validated['description'];
+          $revision->save(); // Sauvegarde dans la base de données
+
+          // Mise à jour du budget dans la table `projects`
+          $project = Project::find($validated['projet_id']);
+          $project->budget = $validated['nouveau_montant']; // Mettre à jour le budget
+          $project->save(); // Sauvegarder les changements dans la table projects
+
+          // Si tout est bon, on commit la transaction
+          DB::commit();
+
+          // Retourner un message de succès avec redirection
+          return redirect()->back()->with('success', 'Révision budgétaire enregistrée et budget mis à jour avec succès.');
+      } catch (\Exception $e) {
+          // En cas d'erreur, on annule (rollback) la transaction
+          DB::rollBack();
+
+          // Retourner un message d'erreur avec redirection
+          return redirect()->back()->with('error', 'Une erreur est survenue, veuillez réessayer.');
+      }
+  }
+
   public function list()
   {
     $title = "Liste des projets";
@@ -178,6 +221,18 @@ class ProjectController extends Controller
   {
     // Décryptage de la clé de projet
     $key = Crypt::decrypt($key);
+      // Recherche du projet correspondant
+      $check = Project::where('projects.id', $key)
+      ->join('users', 'projects.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select('projects.*', 'projects.id as idpr', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
+      ->first();
+
+    // Si le projet n'existe pas, redirection avec un message d'erreur
+    if (!$check) {
+
+      return redirect()->back()->with('modal_message', "Projet non trouvé.");
+    }
 
     // Vérifier si l'utilisateur est affecté à ce projet
     $isAuthorized = DB::table('affectations')
@@ -191,18 +246,6 @@ class ProjectController extends Controller
       return redirect()->back()->with('modal_message', "Vous n'avez pas l'accréditation pour accéder à ce projet. Veuillez contacter le chef du projet pour être affecté aux intervenants .");
     }
 
-    // Recherche du projet correspondant
-    $check = Project::where('projects.id', $key)
-      ->join('users', 'projects.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('projects.*', 'projects.id as idpr', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
-      ->first();
-
-    // Si le projet n'existe pas, redirection avec un message d'erreur
-    if (!$check) {
-
-      return redirect()->back()->with('modal_message', "Projet non trouvé.");
-    }
 
     // Mise à jour de la session avec les informations du projet
     session()->put([
@@ -237,6 +280,18 @@ class ProjectController extends Controller
     ->get();
     $title = $check->title;
 
+
+    $bailleurs = BailleursDeFonds::select(
+      'bailleurs_de_fonds.nom',
+      'bailleurs_de_fonds.contact_nom',
+      'bailleurs_de_fonds.contact_email',
+      'bailleurs_de_fonds.contact_telephone'
+  )
+  ->join('projet_acces_bailleurs', 'bailleurs_de_fonds.id', '=', 'projet_acces_bailleurs.bailleurs_id')
+  ->where('projet_acces_bailleurs.projet_id', $key)
+  ->get();
+  
+
     // Retourne la vue avec les données du projet
     return view('project.voir', [
       'title' => $title,
@@ -244,7 +299,31 @@ class ProjectController extends Controller
       'dataProject' => $check,
       'responsable' => $user,
       'sommerepartie' => $sommerepartie,
-      'intervennant' => $intervennant
+      'intervennant' => $intervennant,
+      'bailleurs'    => $bailleurs
+    ]);
+  }
+
+  public function showrevision($key)
+  {
+    $title = "Revision Budgetaire";
+    // Décryptage de la clé de projet
+    $key = Crypt::decrypt($key);
+
+    // Recherche du projet correspondant
+    $check = Revision::where('projet_id', $key)
+            ->join('projects', 'revisions.projet_id', 'projects.id')
+            ->join('users', 'revisions.user_id', '=', 'users.id')
+            ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('projects.id as id', 'revisions.*', 'projects.title as titre', 'personnels.nom', 'personnels.prenom')
+            ->get();
+    // Retourne la vue avec les données du projet
+
+
+    return view('project.revision', [
+      'title' => $title,
+      'active' => 'Project',
+      'revisions' => $check
     ]);
   }
 
@@ -304,8 +383,6 @@ class ProjectController extends Controller
     );
   }
 
-
-
   public function updateprojet(Request $request)
   {
     $project = Project::find($request->pid);
@@ -347,7 +424,6 @@ class ProjectController extends Controller
       return back()->with('failed', 'Echec ! le categorie n\'est pas creer ');
     }
   }
-
 
   public function revisionbudget()
   {
@@ -427,4 +503,6 @@ class ProjectController extends Controller
       ]);
     }
   }
+
+
 }

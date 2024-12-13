@@ -5,7 +5,7 @@
             <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card"
                 style=" margin:auto">
 
-                <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+                <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.30rem 3rem;">
                     <h4 class="mb-sm-0"><i class="fa fa-plus-circle"></i> Nouvel Fiche Demande
                         d'Autorisation de Paiement (DAP)</h4>
                     <div class="page-title-right">
@@ -22,10 +22,11 @@
 
                 </div>
 
-                <form method="POST" id="addfebForm" action="">
-                    @method('post')
-                    @csrf
-                    <div class="card-body p-0">
+                <form class="row g-3 mb-6" method="POST" id="adddapForm" style="padding: 0.8%">
+                  @method('post')
+                  @csrf
+
+                    <div class="card-body p-0" >
                         <div id="tableExample2">
                             <div class="table-responsive">
                                 <div id="tableExample2">
@@ -51,16 +52,21 @@
                                                     </td>
             
             
-                                                    <td class="align-middle" style="width:20% ;  background: rgba(76, 175, 80, 0.3)" rowspan="2">
+                                                    <td class="align-middle" style="width:20% ;  background: rgba(76, 175, 80, 0.3)" rowspan="3">
                                                         <b>Numéro F.E.B: <small>(Disponible)</small> </b> <br>
-                                                        <select type="text" class="form-control form-control-sm febid" style="width: 100%" required multiple>
-                                                            <option disabled="true" selected="true">--Aucun--</option>
-                                                            @forelse ($feb as $febs)
-                                                            <option value="{{ $febs->id }}"> {{ $febs->numerofeb }}</option>
-                                                            @empty
-                                                            <option  disabled="true" selected="true">--Aucun numéro FEB trouvé--</option>
-                                                            @endforelse
-                                                        </select>
+                                                        <select class="form-control form-control-sm febid" style="width: 100%; height: 150px;" required multiple>
+                                                          <!-- Option par défaut -->
+                                                          <option disabled selected>--Aucun--</option>
+                                                          
+                                                          <!-- Boucle pour afficher les options dynamiques -->
+                                                          @forelse ($feb as $febs)
+                                                              <option value="{{ $febs->id }}">{{ $febs->numerofeb }}</option>
+                                                          @empty
+                                                              <!-- Option affichée en cas de liste vide -->
+                                                              <option disabled>--Aucun numéro FEB trouvé--</option>
+                                                          @endforelse
+                                                      </select>
+                                                      
                                                     </td>
             
                                      
@@ -72,17 +78,33 @@
                                                     <smal id="numerodap_info" class="text text-primary"> </smal>
                                                 </td>
             
-                                                <td> Lieu
+                                                <td colspan="2"> Lieu
                                                     <input type="text" name="lieu" id="lieu" style="width: 100%" class="form-control form-control-sm" required />
+                                                </td>
+
+
+                                                <td> Solde comptable dd(Sc):
+                                                  <input type="text" min="0" class="form-control form-control-sm" name="soldecompte" value="{{ $somfeb }}" style="background-color:#c0c0c0" disabled>
+                                              </td>
+
+                                            </tr>
+                                            <tr>
+
+                                              <td> Banque :
+                                                <select type="text" class="form-control form-control-sm" name="banque" id="banque">
+                                                    <option disabled="true" selected="true" value="">-- Sélectionner --</option>
+                                                    @foreach ($banque as $banques)
+                                                        <option value="{{ $banques->libelle }}">{{ ucfirst($banques->libelle) }}</option>
+                                                    @endforeach
+                                                </select>
+            
                                                 </td>
             
                                                 <td> Compte bancaire (BQ):
                                                     <input type="text" class="form-control form-control-sm" name="comptebanque" id="comptebanque" style="width: 100%" required>
                                                 </td>
             
-                                                <td> Solde comptable dd(Sc):
-                                                    <input type="text" min="0" class="form-control form-control-sm" name="soldecompte" value="{{ $somfeb }}" style="background-color:#c0c0c0" disabled>
-                                                </td>
+                                                
             
                                                 <td> OV/Numéro cheque :
                                                     <input type="text" name="ch" id="ch" class="form-control form-control-sm">
@@ -93,53 +115,57 @@
                                                     <input type="text" name="paretablie" id="paretablie" class="form-control form-control-sm">
                                                 </td>
             
-                                                <td> Banque :
-                                                <select type="text" class="form-control form-control-sm" name="banque" id="banque">
-                                                    <option disabled="true" selected="true" value="">-- Sélectionner --</option>
-                                                    @foreach ($banque as $banques)
-                                                        <option value="{{ $banques->libelle }}">{{ ucfirst($banques->libelle) }}</option>
-                                                    @endforeach
-                                                </select>
-            
-                                                </td>
+                                              
             
             
                                             </tr>
             
                                         </table>
-            
+
+                                      
+            <hr>
                                    
             
                                         <div id="Showpoll" class="Showpoll">
+                                        
                                             <h6 style="margin-top:1% ;color:#c0c0c0">
                                                 <center>
-                                                    <font size="5px"><i class="fa fa-search"></i> </font><br>
+                                                    <font size="5px"><i class="fa fa-info-circle"></i> </font><br>
                                                     En attente ... <br> Veuillez Sélectionner le NUMERO FEB:
                                                 </center>
                                             </h6>
                                         </div>
             
                                         <hr>
+                                        
+
+
+
                                         <table class="table table-striped table-sm fs--1 mb-0 table-bordered">
-            
-                                            <tr>
-                                                <td colspan="5">Ce montant est-il une avance ? &nbsp; &nbsp; &nbsp; Oui <input type="checkbox" class="form-check-input" name="justifier" id="justifier"> &nbsp; &nbsp; &nbsp; Non <input type="checkbox" class="form-check-input" name="nonjustifier" id="nonjustifier"></td>
-            
-                                            </tr>
-                                        </table>
-                                        <table class="table table-striped table-sm fs--1 mb-0 table-bordered" id="facture-column" style="display: none; width:100%">
-                                             <tr> 
-                                              
-                                            </tr> 
-                                        </table>
-            
-                                        <div id="Showretour" style="display: none;">
-            
-                                        </div>
-            
-                                        <div id="Shownonretour" style="display: none;">
-                                            <input type="text" class="form-control form-control-sm" name="">
-                                        </div>
+                                          <tr>
+                                              <td colspan="5">
+                                                  Ce montant est-il une avance ? &nbsp; &nbsp; &nbsp;
+                                                  Oui <input type="checkbox" class="form-check-input" name="justifier" id="justifier" onchange="toggleVisibility()">
+                                                  &nbsp; &nbsp; &nbsp;
+                                                  Non <input type="checkbox" class="form-check-input" name="nonjustifier" id="nonjustifier" onchange="toggleVisibility()" checked>
+                                              </td>
+                                          </tr>
+                                      </table>
+                                  
+                                      <table class="table table-striped table-sm fs--1 mb-0 table-bordered" id="facture-column" style="display: none; width: 100%;">
+                                          <tr>
+                                            
+                                          </tr>
+                                      </table>
+                                  
+                                      <div id="Showretour" style="display: none;">
+                                          
+                                      </div>
+                                  
+                                      <div id="Shownonretour" style="display: none;">
+                                          
+                                      </div>
+                                  
             
             
             
@@ -256,15 +282,17 @@
                         <div class="row g-3 justify-content-between align-items-end">
                             <div class="col-12 col-md"></div>
                             <div class="col col-md-auto">
-                                <button type="submit" class="btn btn-primary" id="addfebbtn" name="addfebbtn"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
+                              <button type="submit" class="btn btn-primary" id="adddapbtn" name="adddapbtn"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
                             </div>
                         </div>
                     </div>
+
                 </form>
 
             </div>
         </div>
     </div>
+
 
 
 
@@ -328,41 +356,40 @@
       }
     });
   });
+
+  window.onload = function () {
+    toggleVisibility();
+};
+
   
-  document.addEventListener('DOMContentLoaded', function() {
-  var justifierCheckbox = document.getElementById('justifier');
-  var nonjustifierCheckbox = document.getElementById('nonjustifier');
-  var factureColumn = document.getElementById('facture-column');
-  var showRetourDiv = document.getElementById('Showretour');
+  function toggleVisibility() {
+            // Récupérer les cases à cocher
+            const yesCheckbox = document.getElementById('justifier');
+            const noCheckbox = document.getElementById('nonjustifier');
 
-  // La table `factureColumn` est affichée par défaut dans tous les cas
-  factureColumn.style.display = 'table';
+            // Récupérer les éléments à afficher/masquer
+            const factureTable = document.getElementById('facture-column');
+            const showRetour = document.getElementById('Showretour');
+            const showNonRetour = document.getElementById('Shownonretour');
 
-  function updateDisplay() {
-    if (justifierCheckbox.checked) {
-      showRetourDiv.style.display = 'block';
-      nonjustifierCheckbox.checked = false;
-    } else {
-      showRetourDiv.style.display = 'block';
-      nonjustifierCheckbox.checked = false;
-    }
-  }
-
-  justifierCheckbox.addEventListener('change', function() {
-    updateDisplay();
-  });
-
-  nonjustifierCheckbox.addEventListener('change', function() {
-    if (nonjustifierCheckbox.checked) {
-      justifierCheckbox.checked = false;
-      showRetourDiv.style.display = 'block';
-
-    }
-  });
-
-  // Initialisation de l'affichage
-  updateDisplay();
-});
+            // Gérer les affichages selon le choix
+            if (yesCheckbox.checked) {
+                factureTable.style.display = 'table'; // Afficher la table
+                showRetour.style.display = 'block'; // Afficher le contenu lié à "Oui"
+                showNonRetour.style.display = 'none'; // Masquer le contenu lié à "Non"
+                noCheckbox.checked = false; // Désactiver l'autre case
+            } else if (noCheckbox.checked) {
+                factureTable.style.display = 'none'; // Masquer la table
+                showRetour.style.display = 'none'; // Masquer le contenu lié à "Oui"
+                showNonRetour.style.display = 'block'; // Afficher le contenu lié à "Non"
+                yesCheckbox.checked = false; // Désactiver l'autre case
+            } else {
+                // Par défaut, tout reste masqué
+                factureTable.style.display = 'none';
+                showRetour.style.display = 'none';
+                showNonRetour.style.display = 'none';
+            }
+        }
 
 
   function toggleInputs() {

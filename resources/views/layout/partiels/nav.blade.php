@@ -210,19 +210,28 @@ $documentNombre = $dap_nombre + $fab_nombre ;
 
               <a href="#" class="btn header-item" aria-haspopup="true" aria-expanded="false">
 
-              @php
-              $defaultAvatar = '../../element/profile/default.png'; // Chemin vers votre image par défaut
-                  $imagePath = public_path($avatar);
-              @endphp
-
-              @if(file_exists($imagePath))
-                  <img class="rounded-circle header-profile-user" src="../../{{ $avatar }}" alt="{{ ucfirst(Auth::user()->identifiant) }}"  style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
-                  <br> <small> {{ ucfirst($personnelData->prenom ) }} </small>
-                  @else
-                  <img class="rounded-circle header-profile-user" src="{{ $defaultAvatar }}" alt="{{ ucfirst(Auth::user()->identifiant) }}"  style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
-                  <br> <small> {{ ucfirst($personnelData->prenom ) }}  </small>
-                  @endif
-
+                @php
+                // Définir l'avatar par défaut
+                $defaultAvatar = asset('element/profile/default.png'); // Chemin vers votre image par défaut
+                $imagePath = public_path($avatar); // Chemin absolu pour vérifier l'existence de l'image
+            @endphp
+            
+            @if(file_exists($imagePath))
+                <img class="rounded-circle header-profile-user" 
+                     src="{{ asset($avatar) }}" 
+                     alt="{{ ucfirst(Auth::user()->identifiant) }}"  
+                     style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
+                <br>
+                <small>{{ ucfirst($personnelData->prenom) }}</small>
+            @else
+                <img class="rounded-circle header-profile-user" 
+                     src="{{ $defaultAvatar }}" 
+                     alt="{{ ucfirst(Auth::user()->identifiant) }}"  
+                     style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
+                <br>
+                <small>{{ ucfirst($personnelData->prenom) }}</small>
+            @endif
+            
 
 
               </a>

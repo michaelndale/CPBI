@@ -8,6 +8,8 @@ use App\Models\Apreviation;
 use App\Models\attache_feb;
 use App\Models\Beneficaire;
 use App\Models\Compte;
+use App\Models\dap;
+use App\Models\Dja;
 use App\Models\Elementdap;
 use App\Models\Elementdjas;
 use App\Models\Elementfeb;
@@ -85,176 +87,140 @@ class FebController extends Controller
 
   public function fetchAll()
   {
-    // Retrieve session variables
     $devise = session()->get('devise');
     $budget = session()->get('budget');
     $projectId = session()->get('id');
 
     $searchTerm = request()->get('search_numerofeb', null);
 
-    // Query to fetch data from 'febs' and related tables
+    // Pagination: Définir le nombre d'éléments par page
+    $perPage = 25;
+
     $query = DB::table('febs')
       ->orderBy('numerofeb', 'asc')
-      ->join('comptes', 'febs.sous_ligne_bugdetaire', 'comptes.id')
+      ->join('comptes', 'febs.sous_ligne_bugdetaire', '=', 'comptes.id')
       ->join('users', 'febs.userid', '=', 'users.id')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('febs.*', 'personnels.prenom as user_prenom', 'comptes.numero as code')
       ->where('febs.projetid', $projectId);
 
-
     if ($searchTerm) {
-      $query->where(function($query) use ($searchTerm) {
-        $query->where('febs.numerofeb', '=', $searchTerm)  // Recherche exacte dans numerofeb
-              ->orWhere('febs.total', '=', $searchTerm);    // Recherche exacte dans total
-    });
+      $query->where(function ($query) use ($searchTerm) {
+        $query->where('febs.numerofeb', '=', $searchTerm)
+          ->orWhere('febs.total', '=', $searchTerm);
+      });
     }
 
-    
-
-    // Exécution de la requête
-    $data = $query->get();
+    // Utilisation de paginate
+    $data = $query->paginate($perPage);
 
     $output = '';
 
-    // Check if data is not empty
     if ($data->isNotEmpty()) {
       foreach ($data as $datas) {
-        // Calculate the total amount for the current FEB
-        $sommefeb = DB::table('elementfebs')
-          ->where('febid', $datas->id)
-          ->sum('montant');
-          
+        $sommefeb = DB::table('elementfebs')->where('febid', $datas->id)->sum('montant');
 
-        // Fetch attached documents
         $getDocument = attache_feb::join('apreviations', 'attache_febs.annexid', 'apreviations.id')
           ->select('apreviations.abreviation', 'apreviations.libelle')
           ->where('attache_febs.febid', $datas->id)
           ->get();
 
-        // Calculate the percentage of the budget
         $pourcentage = round(($sommefeb * 100) / $budget, 2);
         $sommefebFormatted = number_format($sommefeb, 0, ',', ' ');
 
-        // Generate checked string for attached documents
-        if ($getDocument->isNotEmpty()) {
-          $checkedString = implode(', ', $getDocument->map(function ($doc) {
-            return '<i class="fa fa-check-circle" style="color: green;" title="' . $doc->libelle . '"></i> ' . $doc->abreviation . '';
-          })->toArray());
-          $checkedString = strtoupper($checkedString);
-        } else {
-          $checkedString = '<i class="fa fa-times-circle" style="color: red;" title="Aucun fichier attache disponible"></i>';
-        }
+        $checkedString = $getDocument->isNotEmpty()
+          ? implode(', ', $getDocument->map(fn($doc) => '<i class="fa fa-check-circle" style="color: green;" title="' . $doc->libelle . '"></i> ' . $doc->abreviation)->toArray())
+          : '<i class="fa fa-times-circle" style="color: red;" title="Aucun fichier attaché disponible"></i>';
 
-        // Limit the description length
         $description = Str::limit($datas->descriptionf, 50, '...');
 
-        if ($datas->statut !== 1) {
-          $statut = "<span class='badge rounded-pill bg-subtle-primary text-primary font-size-11'>
-                        <i class='fa fa-check'></i> Disponible
-                    </span>
-                    ";
-        } else {
-          $statut = "<span class='badge rounded-pill bg-danger-subtle text-danger font-size-11'>  <i class='fa fa-times'></i> Terminer</span>";
-        }
+        $statut = $datas->statut !== 1
+          ? "<span class='badge rounded-pill bg-subtle-primary text-primary font-size-11'> <i class='fa fa-check'></i> Disponible </span>"
+          : "<span class='badge rounded-pill bg-danger-subtle text-danger font-size-11'> <i class='fa fa-times'></i> Terminé </span>";
 
-        // Display loading spinner if signaled
-        $message = $datas->signale == 1 ? '<div class="spinner-grow text-danger" role="status" style="width: 0.5rem; height: 0.5rem;"><span class="sr-only">Loading...</span></div>' : '';
-
-        // Encrypt the ID for secure URL generation
         $cryptedId = Crypt::encrypt($datas->id);
 
-        // Build the output row
-        $output .= '
-                <tr>
-                    <td>
-                        <center>' . $message . '
-                            <div class="btn-group me-2 mb-2 mb-sm-0">
-                                <a data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="mdi mdi-dots-vertical ms-2"></i> Options
-                                </a>
-                                <div class="dropdown-menu">
-                                    <a href="feb/' . $cryptedId . '/view" class="dropdown-item mx-1" id="' . $datas->id . '">
-                                        <i class="fas fa-eye"></i> Voir
-                                    </a>';
+        $message = $datas->signale == 1 ? ' 
+            <div class="spinner-grow text-danger" role="status" style="width: 0.5rem; height: 0.5rem;"> <span class="sr-only"> Loading...</span> </div>' : '';
+
+
+
+        $output .= "
+            <tr>
+                <td align='center'>
+                    <center>
+
+                    {$message}
+
+
+                        <div class='btn-group me-2 mb-2 mb-sm-0'>
+                            <a data-bs-toggle='dropdown' aria-expanded='false'>
+                                <i class='mdi mdi-dots-vertical ms-2'></i> Options
+                            </a>
+                            <div class='dropdown-menu'>
+                                <a href='feb/{$cryptedId}/view' class='dropdown-item mx-1' id='{$datas->id}'>
+                                    <i class='fas fa-eye'></i> Voir
+                                </a>";
         if ($getDocument->isNotEmpty()) {
-          $output .=
-            '
-                                                <a href="feb/' . $cryptedId . '/showannex" class="dropdown-item mx-1" id="' . $datas->id . '">
-                                                    <i class="fas fa-paperclip"></i> Attachez les annex
-                                                </a>
-                                    ';
+          $output .= "
+                                <a href='feb/{$cryptedId}/showannex' class='dropdown-item mx-1' id='{$datas->id}'>
+                                    <i class='fas fa-paperclip'></i> Attachez les annex
+                                </a>";
         }
-        $output .=
-          ' <a href="feb/' . $cryptedId . '/edit" class="dropdown-item mx-1" id="' . $datas->id . '" title="Modifier">
-                                        <i class="far fa-edit"></i> Modifier
-                                    </a>
-                                    <a href="feb/' . $datas->id . '/generate-pdf-feb" class="dropdown-item mx-1">
-                                        <i class="fa fa-print"></i> Générer PDF
-                                    </a>
-                                    ';
+        $output .= "
+                                <a href='feb/{$cryptedId}/edit' class='dropdown-item mx-1' id='{$datas->id}' title='Modifier'>
+                                    <i class='far fa-edit'></i> Modifier
+                                </a>
+                                <a href='feb/{$datas->id}/generate-pdf-feb' class='dropdown-item mx-1'>
+                                    <i class='fa fa-print'></i> Générer PDF
+                                </a>";
         if ($datas->signale == 1) {
-          $output .=
-            '
-                                    <a class="dropdown-item desactiversignale" id="' . $datas->id . '" href="#">
-                                        <i class="fas fa-random"></i> Désactiver le signal ?
-                                    </a>
-                                     ';
+          $output .= "
+                                <a class='dropdown-item desactiversignale' id='{$datas->id}' href='#'>
+                                    <i class='fas fa-random'></i> Désactiver le signal ?
+                                </a>";
         }
-        $output .=
-          '
-                                    <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datas->id . '" data-numero="' . $datas->numerofeb . '" href="#" style="background-color:red">
-                                        <i class="far fa-trash-alt"></i> Supprimer
-                                    </a>
-                                </div>
+        $output .= "
+                                <a class='dropdown-item text-white mx-1 deleteIcon' id='{$datas->id}' data-numero='{$datas->numerofeb}' href='#' style='background-color:red'>
+                                    <i class='far fa-trash-alt'></i> Supprimer
+                                </a>
                             </div>
-                        </center>
-                    </td>
-                    <td align="center"><a href="feb/' . $cryptedId . '/view" class="dropdown-item mx-1" id="' . $datas->id . '"><b>' . $datas->numerofeb . '</b></a></td>
-                    <td align="right"><b>' . $sommefebFormatted . '</b></td>
-                    <td align="center">' . $datas->periode . '</td>
-                    <td align="center">' . $datas->code . '</td>
-                   <td>
-                        <label title="' . $datas->descriptionf . '">
-                            ' . (strlen($description) > 30 ? substr($description, 0, 30) . '...' : $description) . '
-                        </label>
-                    </td>
-                    <td>
-                      <div class="text-center">
-                      ' . $checkedString . '
-                      </div>
-                    </td>
-                    <td>
-                        <div class="text-center">
-                           ' . $statut . '
                         </div>
-                    </td>
-                    <td align="center">' . date('d-m-Y', strtotime($datas->datefeb)) . '</td>
-                    <td align="center">' . date('d-m-Y', strtotime($datas->created_at)) . '</td>
-                    <td align="left">' . ucfirst($datas->user_prenom) . '</td>
-                    <td align="center">' . $pourcentage . '%</td>
-                </tr>';
+                    </center>
+                </td>
+                <td align='center'><b>{$datas->numerofeb}</b></td>
+                    <td align='right'><b>{$sommefebFormatted}</b></td>
+                    <td align='center'>{$datas->periode}</td>
+                    <td align='center'>{$datas->code}</td>
+                    <td>{$description}</td>
+                    <td align='center'>{$checkedString}</td>
+                    <td align='center'>{$statut}</td>
+                    <td align='center'>" . date('d-m-Y', strtotime($datas->datefeb)) . "</td>
+                    <td align='center'>" . date('d-m-Y', strtotime($datas->created_at)) . "</td>
+                    <td align='left'>" . ucfirst($datas->user_prenom) . "</td>
+                    <td align='center'>{$pourcentage}%</td>
+                </tr>";
       }
     } else {
-      // Output when no data is found
       $output .= '
             <tr>
                 <td colspan="12">
                     <center>
                         <h6 style="margin-top:1%; color:#c0c0c0">
-                            <font size="50px">
-                                <i class="fas fa-info-circle"></i>
-                            </font>
-                            <br><br>
-                              Aucun résultat trouvé.
+                            <font size="50px"><i class="fas fa-info-circle"></i></font>
+                            <br><br>Aucun résultat trouvé.
                         </h6>
                     </center>
                 </td>
             </tr>';
     }
 
-    // Output the generated HTML
-    echo $output;
+    // Ajouter la pagination dans le rendu HTML
+    $pagination = $data->links('pagination::bootstrap-4')->toHtml();
+
+    return response()->json(['table' => $output, 'pagination' => $pagination]);
   }
+
 
   public function notificationdoc()
   {
@@ -1761,45 +1727,107 @@ class FebController extends Controller
     return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
   }
 
+
+
   public function delete(Request $request)
   {
-    DB::beginTransaction();
 
     try {
+      DB::transaction(function () use ($request) {
+        // Récupère l'id FEB depuis la requête
+        $idFeb = $request->id;
 
-      $id = $request->id;
-      $emp = Feb::find($request->id);
+        // Vérifie que l'id FEB est valide
+        if (!$idFeb) {
 
-      if ($emp && $emp->userid == Auth::id()) {
-        $id = $request->id;
+          return response()->json(
+            [
+              'status' => 400,
+              'message' => 'ID FEB manquant dans la requête'
+            ],
+            400
+          );
+        }
 
-        Feb::destroy($id);
-        Elementfeb::where('febid', '=', $id)->get();
-        Elementdap::where('referencefeb', $id)->delete();
-        Elementdjas::where('febid', $id)->delete();
+        // Récupère le FEB correspondant
+        $feb = Feb::find($idFeb);
 
-        DB::commit();
+        // Vérifie si le FEB existe et appartient à l'utilisateur connecté
+        if ($feb && $feb->userid == Auth::id()) {
 
-        return response()->json([
+          // Suppressions logiques ici...
+
+          // Récupération des éléments DAP associés
+          $elementDap = Elementdap::where('referencefeb', '=', $idFeb)->get();
+
+          // Suppression des éléments DAP et des données associées
+          if ($elementDap->isNotEmpty()) {
+            foreach ($elementDap as $dapElement) {
+              // Supprime le DJA associé au DAP si existant
+              Dja::where('dapid', '=', $dapElement->dapid)->delete();
+
+              // Supprime le DAP lui-même si existant
+              Dap::where('id', '=', $dapElement->dapid)->delete();
+            }
+
+            // Supprime les éléments DAP eux-mêmes
+            Elementdap::where('referencefeb', '=', $idFeb)->delete();
+          }
+
+          // Récupération des éléments FEB associés
+          $elementFeb = Elementfeb::where('febid', '=', $idFeb)->get();
+
+          // Suppression des éléments FEB associés s'ils existent
+          if ($elementFeb->isNotEmpty()) {
+            Elementfeb::where('febid', '=', $idFeb)->delete();
+          }
+
+          // Supprime le FEB lui-même
+          $feb->delete();
+        } else {
+
+          return response()->json(
+            // Si l'utilisateur connecté n'est pas le créateur, retourne une erreur
+            [
+              'status' => 205,
+              'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le FEB. Veuillez contacter le créateur pour procéder à la suppression.'
+            ],
+            205
+          );
+        }
+      });
+
+      // Retourne une réponse en cas de succès
+      return response()->json(
+        [
           'status' => 200,
-        ]);
-      } else {
-        DB::rollBack();
-        return response()->json([
-          'status' => 205,
-          'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le FEB. Veuillez contacter le créateur  pour procéder à la suppression.'
-        ]);
-      }
+          'message' => 'Suppression effectuée avec succès'
+        ],
+        200
+      );
     } catch (\Exception $e) {
-      DB::rollBack();
-      return response()->json([
-        'status' => 500,
-        'message' => 'Erreur lors de la suppression du FEB.',
-        'error' => $e->getMessage(), // Message d'erreur de l'exception
-        'exception' => (string) $e // Détails de l'exception convertis en chaîne
-      ]);
+      // Log de l'erreur
+      // Log::error('Erreur lors de la suppression : ' . $e->getMessage());
+
+      // Gestion de l'exception pour une réponse adaptée
+      $errorMessage = $e->getMessage();
+      if (strpos($errorMessage, '{') !== false) {
+        // Si le message contient un JSON encodé, on le retourne directement
+        $errorData = json_decode($errorMessage, true);
+        return response()->json($errorData, $errorData['status']);
+      }
+
+      // Si l'erreur est standard, retourne un message générique
+      return response()->json(
+        [
+          'status' => 500,
+          'message' => 'Erreur lors de la suppression : ' . $errorMessage
+        ],
+        500
+      );
     }
   }
+
 
   public function desacctiveSignale(Request $request)
   {

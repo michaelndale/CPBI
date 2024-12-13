@@ -4,18 +4,27 @@
   <div class="page-content">
     <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
 
-      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
-        
-        <h4 class="mb-sm-0"><i class="fa fa-list"></i> Ligne budgétaire  </h4>
-        <div class="page-title-right">
-          <a href="{{ route('gestioncompte') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" title="Actualiser"><i class="fas fa-redo-alt"></i>  </a>
-            <a href="javascript:voide();" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"
+      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between"
+            style="psaveBailleurBtning: 0.20rem 1rem;">
+
+            <h4 class="mb-sm-0"><i class="fa fa-list"></i> Ligne budgétaire  </h4>
+            </h4>
+
+            <div class="page-title-right d-flex align-items-center justify-content-between gap-2" style="margin: 0;">
+               
+                <!-- Bouton Créer -->
+                <a href="{{ route('gestioncompte') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" title="Actualiser"><i class="fas fa-redo-alt"></i>  </a>
+                
+                <a href="javascript:voide();" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"
                 data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true"
                 aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Créer</a>
+
+
+            </div>
         </div>
-  
-      </div>
-     
+
+
+    
      
 
 
@@ -57,10 +66,6 @@
 {{-- new compte modal --}}
 
 
-
-
-
-
 <div class="modal fade" id="modifierLigneModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modifierLigneModal" aria-hidden="true">
   <div class="modal-dialog modal-lg  modal-dialog-centered">
     <div class="modal-content">
@@ -68,7 +73,7 @@
         @method('post')
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Modification de la ligne budgétaire</h5>
+          <h5 class="modal-title" id="verticallyCenteredModalLabel"> <i class="fa fa-edit"></i> Modification de la ligne budgétaire</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -112,6 +117,7 @@
           </div>
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fermer</button>
           <button type="submit" name="sendGrand" id="sendGrand" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
         </div>
       </form>
@@ -126,7 +132,7 @@
         @method('post')
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle ligne budgétaire </h5>
+          <h5 class="modal-title" id="verticallyCenteredModalLabel"><i class="fa fa-plus-circle"></i> Nouvelle ligne budgétaire </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -172,6 +178,7 @@
           </div>
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fermer</button>
           <button type="submit" name="sendCompte" id="sendCompte" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
         </div>
       </form>
@@ -188,7 +195,7 @@
         @method('post')
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="verticallyCenteredModalLabel">Nouvelle sous ligne budgétaire </h5>
+          <h5 class="modal-title" id="verticallyCenteredModalLabel"> <i class="fa fa-plus-circle" ></i> Nouvelle sous ligne budgétaire </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -224,9 +231,12 @@
               <textarea class="form-control" id="libelle" name="libelle" type="text" placeholder="Entrer la description" style="height:100px" required></textarea>
             </div>
 
+           
+
           </div>
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fermer</button>
           <button type="submit" name="sendsousCompte" id="sendsousCompte" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
         </div>
       </form>
@@ -276,6 +286,7 @@
           </div>
         </div>
         <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fermer</button>
           <button type="submit" name="editlignebtn" id="editlignebtn" class="btn btn-primary" type="button"> <i class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
         </div>
       </form>
@@ -319,6 +330,7 @@
 
           </div>
           <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fermer</button>
             <button type="submit" name="sendsoussousCompte" id="sendsoussousCompte" class="btn btn-primary" type="button">Sauvegarder</button>
           </div>
       </form>
@@ -356,7 +368,7 @@
           </div>
         </div>
         <div class="modal-footer border-0 pt-6 px-0 pb-0">
-          <button type="button" class="btn btn-danger px-3 my-0" data-bs-dismiss="modal" aria-label="Close"> Cancel </button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fermer</button>
           <button type="submit" id="editcomptebtn" class="btn btn-primary my-0"> Update compte</button>
         </div>
       </form>

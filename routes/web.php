@@ -8,6 +8,7 @@ use App\Http\Controllers\AppCOntroller;
 use App\Http\Controllers\ApreviationController;
 use App\Http\Controllers\ArchivageController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BailleursDeFondsController;
 use App\Http\Controllers\BanqueController;
 use App\Http\Controllers\BeneficaireController;
 use App\Http\Controllers\BonpetitcaisseController;
@@ -66,18 +67,32 @@ use App\Models\Febpetitcaisse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
-Route::get('/', function () {
-    return view('go');
-});
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/login', [AuthController::class, 'login'])->name('login');
+Route::get('/', function () { return view('go'); })->name('go');
+
+Route::get('service/auth', function () { return view('auth.login'); })->name('login');
 Route::post('/login', [AuthController::class, 'handlelogin'])->name('handlelogin');
-Route::get('/out', function () {
-    return view('auth.out');
-});
-Route::get('/maintenance', function () {
-    return view('auth.maintenance');
-});
+
+Route::get('service/out', function () { return view('auth.out'); })->name('out');
+Route::get('service/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('service/oublier', [AuthController::class, 'forgot'])->name('mot_pass_oublie');
+
+Route::post('service/forgot/verification', [AuthController::class, 'handforgot'])->name('verification.email.user');
+
+Route::post('service/verify-code', [AuthController::class, 'verifyCode'])->name('verify.code');
+
+Route::get('service/reset-password', [AuthController::class, 'resetPassword'])->name('reset.password');
+
+Route::post('service/update-password', [AuthController::class, 'updatePassword'])->name('update.password');
+
+
+
+Route::get('service/nouveaucode', [AuthController::class, 'code'])->name('new.code');
+
+Route::get('service/maintenance', function () {  return view('auth.maintenance'); });
+
+
+
 
 Route::middleware('auth')->group(function () {
 
@@ -85,7 +100,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [AppCOntroller::class, 'start'])->name('start');
         Route::get('/page-de-paiement', [AppCOntroller::class, 'start'])->name('page-de-paiement');
     });
-
 
     Route::prefix('dashboard')->group(function () {
         Route::get('/', [AppCOntroller::class, 'index'])->name('dashboard');
@@ -95,7 +109,6 @@ Route::middleware('auth')->group(function () {
         
     });
     Route::get('/fetch-feb-details', [AppCOntroller::class, 'fetchFebDetails'])->name('fetch-signalisation-details');
-
 
     Route::get('/rh', [AppCOntroller::class, 'rh'])->name('rh');
     Route::get('/archivages', [AppCOntroller::class, 'archivage'])->name('archivages');
@@ -244,7 +257,6 @@ Route::middleware('auth')->group(function () {
     });
     Route::get('/telecharger-rapport-budget', [RallongebudgetController::class, 'telecharger_rapport_budget'])->name('telecharger-rapport-budget');
 
-
     Route::prefix('dossier')->group(function () {
         Route::get('/', [FolderController::class, 'index'])->name('folder');
         Route::get('/fetchAllfl', [FolderController::class, 'fetchAll'])->name('fetchAllfl');
@@ -311,11 +323,22 @@ Route::middleware('auth')->group(function () {
         Route::delete('/deleteprojet', [ProjectController::class, 'deleteprojet'])->name('projetdelete');
         Route::post('/check_project_access', [ProjectController::class, 'checkProjectAccess'])->name('check_project_access');
 
+        Route::post('/store_revision_Project', [ProjectController::class, 'store_revision'])->name('revision.store');
+        Route::get('/revision/{projet}/', [ProjectController::class, 'showrevision'])->name('liste.revision');
+
+
     });
 
     Route::prefix('projet/intervenant')->group(function () {
         Route::get('/', [AffectationController::class, 'index'])->name('affectation');
         Route::post('/storeAffectation', [AffectationController::class, 'storeAffectation'])->name('storeAffectation');
+    });
+
+    Route::prefix('projet/bailleur-fonds')->group(function () {
+        Route::get('/', [BailleursDeFondsController::class, 'index'])->name('bailleursDeFonds');
+        Route::post('/store', [BailleursDeFondsController::class, 'store'])->name('bailleurs.store');
+        Route::post('/storeacces', [BailleursDeFondsController::class, 'storeAcces'])->name('acces.bailleurs.store');
+        Route::get('/liste', [BailleursDeFondsController::class, 'liste'])->name('liste.bailleursDeFonds');
     });
 
     Route::prefix('projet/feb')->group(function () {
@@ -326,8 +349,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/fetchAllfeb', [FebController::class, 'fetchAll'])->name('fetchAllfeb');
         Route::get('/Sommefeb', [FebController::class, 'Sommefeb'])->name('Sommefeb');
         Route::get('/search-feb', [FebController::class, 'searchFeb'])->name('searchFeb');
-
-
 
         Route::get('/findligne', [FebController::class, 'findligne'])->name('findligne');
         Route::post('/updatefeb', [FebController::class, 'update'])->name('updatefeb');
@@ -351,6 +372,8 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/storeAnnexe', [FebController::class, 'updatannex'])->name('storeAnnexe');
         Route::delete('/supprimerlesignalefeb', [SignalefebController::class, 'deleteSignale'])->name('supprimerlesignalefeb');
+
+ 
     });
 
     Route::get('/getfeb', [FebController::class, 'findfebelement'])->name('getfeb');
@@ -359,7 +382,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/getdjasto', [DjaController::class, 'getdjasto'])->name('getdjasto');
 
     Route::get('/findfebpc', [DapbpcController::class, 'findfebpc'])->name('findfebpc');
-
 
     Route::get('/getactivite', [FebController::class, 'getactivite'])->name('getactivite');
     Route::get('/fetctnotifiaction', [FebController::class, 'notificationdoc'])->name('allnotification');
@@ -571,8 +593,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/rapportcarnetbord', [CarnetbordController::class, 'rapportcarnet'])->name('rapport_carnet_bord');
     });
 
-
-
     Route::prefix('outilspa')->group(function () {
         Route::get('/', [OutilsController::class, 'index'])->name('outilspa');
         Route::get('/alltype', [OutilsController::class, 'alltype'])->name('alltype');
@@ -690,10 +710,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/deleteftemps', [FeuilletempsController::class, 'deleteftemps'])->name('deleteftemps');
     });
 
-
     Route::get('/active-users', [AuthController::class, 'activeUsers'])->name('active-users');
 
-   
     //FIN RH
 
     // web.php (routes file)
@@ -702,14 +720,10 @@ Route::middleware('auth')->group(function () {
     })->name('errorPage');
 
 
-
-
     Route::prefix('compte/banque')->group(function () {
         Route::get('', [CompteBanqueController::class, 'index'])->name('compte.banque');
         Route::post('/store', [CompteBanqueController::class, 'store'])->name('store.compte.banque');
        
     });
-
-
     /// ROUTE DE AUTRE APPLICATION
 });

@@ -226,7 +226,7 @@
                                                         <td style="width:15%">
                                                             {{ ucfirst($datElements->libelle_description) }}
                                                         </td>
-                                                        <td style="width:10%" align="center">{{ $datElements->unite }}
+                                                        <td style="width:10%">{{ $datElements->unite }}
                                                         </td>
                                                         <td style="width:10%" align="center">{{ $datElements->quantite }}
                                                         </td>

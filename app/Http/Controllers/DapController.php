@@ -104,114 +104,94 @@ class DapController extends Controller
   }
 
 
-  public function fetchAll()
-  {
-    $ID = session()->get('id');
+  public function fetchAll(Request $request)
+{
+    $ID = session()->get('id'); // Récupérer l'ID de session
+    $search = $request->input('search_dap'); // Recherche
+    $pageSize = 25; // Nombre d'éléments par page
 
-    $datadap = DB::table('daps')
-      ->leftJoin('users', 'daps.userid', '=', 'users.id')
-      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->leftJoin('djas', 'daps.id', 'djas.dapid')
-      ->select('daps.*', 'personnels.prenom as user_prenom', 'djas.montant_avance as avance')
-      ->where('daps.projetiddap', $ID)
-      ->orderBy('daps.numerodp', 'asc')
-      ->get();
+    // Construire la requête principale
+    $query = DB::table('daps')
+        ->leftJoin('users', 'daps.userid', '=', 'users.id')
+        ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->leftJoin('djas', 'daps.id', '=', 'djas.dapid')
+        ->select('daps.*', 'personnels.prenom as user_prenom', 'djas.montant_avance_un as avance')
+        ->where('daps.projetiddap', $ID);
 
+    // Appliquer la recherche
+    if (!empty($search)) {
+        $query->where(function ($q) use ($search) {
+            $q->where('daps.numerodp', '=', $search);
+           
+        });
+    }
+
+    // Paginer les résultats
+    $datadap = $query->orderBy('daps.numerodp', 'asc')->paginate($pageSize);
+
+    // Créer le tableau de rendu HTML
     $output = '';
-
-    if ($datadap->count() > 0) {
-      $nombre = 1;
-      foreach ($datadap as $datadaps) {
-        $ov = $datadaps->ov == 1 ? "checked" : "";
-
-        $justifier = $datadaps->justifier == 1 ? "checked" : "";
-        $nonjustifier = $datadaps->justifier == 0 ? "checked" : "";
-
-        if ($datadaps->signaledap == 1) {
-          $message = ' <div class="spinner-grow text-danger " role="status" style=" 
-                  width: 0.5rem; /* Définissez la largeur */
-                  height: 0.5rem; /* Définissez la hauteur */">
-                  <span class="sr-only">Loading...</span>
-                </div>';
-        } else {
-          $message = ' ';
-        }
+    foreach ($datadap->items() as $datadaps) {
+        $message = $datadaps->signaledap == 1
+            ? '<div class="spinner-grow text-danger" role="status" style="width: 0.5rem; height: 0.5rem;"></div>'
+            : ' ';
 
         $numerofeb = DB::table('febs')
-          ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
-          ->where('elementdaps.dapid', $datadaps->id)
-          ->get();
+            ->leftJoin('elementdaps', 'febs.id', '=', 'elementdaps.referencefeb')
+            ->where('elementdaps.dapid', $datadaps->id)
+            ->pluck('numerofeb')
+            ->toArray();
 
         $cryptedId = Crypt::encrypt($datadaps->id);
-        $totalMontant = $this->getTotalDap($datadaps->id); // Récupérer le montant total pour chaque DAP
+        $totalMontant = $this->getTotalDap($datadaps->id); // Calcul du montant total pour chaque DAP
 
-        $output .= '
-                  <tr>
-                      <td>
-                          <center>' . $message . '
-                              <div class="btn-group me-2 mb-2 mb-sm-0">
-                                  <a data-bs-toggle="dropdown" aria-expanded="false">
-                                      <i class="mdi mdi-dots-vertical ms-2"></i> Options
-                                  </a>
-                                  <div class="dropdown-menu">
-                                      <a href="dap/' . $cryptedId . '/view" class="dropdown-item mx-1 voirIcon"><i class="far fa-eye"></i> Voir</a>
-                                      <a href="dap/' . $cryptedId . '/edit" class="dropdown-item mx-1 editIcon" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
-                                      <a href="dap/' . $cryptedId . '/generate-pdf-dap" class="dropdown-item mx-1"><i class="fa fa-print"> </i> Générer PDF</a>
-                                     ';
-                                      if ($datadaps->signaledap == 1) {
-                                        $output .=
-                                          '
-                                          <a class="dropdown-item desactiversignale" id="' . $datadaps->id . '" href="#"><i class="fas fa-random"></i> Désactiver le signal ?</a>
-                                        ';
-                                      }
-                                      $output .=
-                                        '
-                                      <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datadaps->id . '" data-numero="' . $datadaps->numerodp . '" href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
-                                  </div>
-                              </div>
-                          </center>
-                      </td>
-                      <td align="center">' . $datadaps->numerodp . '</td>
-                      <td align="center">';
-
-        foreach ($numerofeb as $key => $numerofebs) {
-          $output .= '[' . $numerofebs->numerofeb . ']';
-          if ($key < count($numerofeb) - 1) {
-            $output .= ',';
-          }
-        }
-
-        $output .= '
-                    </td>
-                    <td align="right"><b>' . number_format($totalMontant, 0, ',', ' ') . '</b></td>
-                    <td>' . (strlen($datadaps->lieu) > 15 ? substr($datadaps->lieu, 0, 15) . '...' : $datadaps->lieu) . '</td>
-                    <td><span title="' . $datadaps->cho . '">' . (strlen($datadaps->cho) > 8 ? substr($datadaps->cho, 0, 8) . '...' : $datadaps->cho) . '</span></td>
-                    <td align="right">' . $datadaps->comptabiliteb . '</td>
-                    <td align="left">' . $datadaps->banque . '</td>
-                    <td><span title="' . $datadaps->paretablie . '">' . (strlen($datadaps->paretablie) > 15 ? substr($datadaps->paretablie, 0, 8) . '...' : $datadaps->paretablie) . '</span></td>
-                    <td align="right"><b>' . number_format(isset($datadaps->avance) ? $datadaps->avance : 0, 0, ',', ' ') . '</b></td>
-                    <td align="center"><input type="checkbox" ' . $justifier . ' class="form-check-input" disabled /></td>
-                    <td align="center">' . date('d-m-Y', strtotime($datadaps->created_at)) . '</td>
-                    <td align="left">' . ucfirst($datadaps->user_prenom) . '</td>
-                </tr>
-                ';
-        $nombre++;
-      }
-      echo $output;
-    } else {
-      echo '<tr>
-              <td colspan="13">
-                  <center>
-                      <h6 style="margin-top:1% ;color:#c0c0c0">
-                          <center><font size="10px"><i class="fa fa-info-circle"></i></font><br><br>
-                          Ceci est vide!
-                          </center>
-                      </h6>
-                  </center>
-              </td>
-          </tr>';
+        $output .= '<tr>';
+        $output .= '<td><center>' . $message . '</center></td>';
+        $output .= '<td><center>';
+        $output .= '<div class="btn-group me-2 mb-2 mb-sm-0">
+                        <a data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="mdi mdi-dots-vertical ms-2"></i> Options
+                        </a>
+                        <div class="dropdown-menu">
+                            <a href="dap/' . $cryptedId . '/view" class="dropdown-item mx-1 voirIcon"><i class="far fa-eye"></i> Voir</a>
+                            <a href="dap/' . $cryptedId . '/edit" class="dropdown-item mx-1 editIcon"><i class="far fa-edit"></i> Modifier</a>
+                            <a href="dap/' . $cryptedId . '/generate-pdf-dap" class="dropdown-item mx-1"><i class="fa fa-print"></i> Générer PDF</a>'
+                            . ($datadaps->signaledap == 1
+                                ? '<a class="dropdown-item desactiversignale" id="' . $datadaps->id . '" href="#"><i class="fas fa-random"></i> Désactiver le signal</a>'
+                                : '') . '
+                            <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datadaps->id . '" data-numero="' . $datadaps->numerodp . '" href="#" style="background-color:red"><i class="far fa-trash-alt"></i> Supprimer</a>
+                        </div>
+                    </div>';
+        $output .= '</center></td>';
+        
+        $output .= '<td>' . $datadaps->numerodp . '</td>';
+        $output .= '<td>' . implode(', ', $numerofeb) . '</td>';
+        $output .= '<td align="right"><b>' . number_format($totalMontant, 0, ',', ' ') . '</b></td>';
+        $output .= '<td>' . (strlen($datadaps->lieu) > 15 ? substr($datadaps->lieu, 0, 15) . '...' : $datadaps->lieu) . '</td>';
+        $output .= '<td>' . (strlen($datadaps->cho) > 8 ? substr($datadaps->cho, 0, 8) . '...' : $datadaps->cho) . '</td>';
+        $output .= '<td>' . $datadaps->comptabiliteb . '</td>';
+        $output .= '<td>' . $datadaps->banque . '</td>';
+        $output .= '<td>' . (strlen($datadaps->paretablie) > 15 ? substr($datadaps->paretablie, 0, 15) . '...' : $datadaps->paretablie) . '</td>';
+        $output .= '<td align="right"><b>' . number_format($datadaps->avance ?? 0, 0, ',', ' ') . '</b></td>';
+        $output .= '<td align="center">' . ($datadaps->justifier == 1 ? 
+                    '<input class="form-check-input" type="checkbox" checked disabled />' : '<input id="radioDanger" class="form-check-input" type="checkbox" disabled />') . '</td>';
+        $output .= '<td>' . date('d-m-Y', strtotime($datadaps->created_at)) . '</td>';
+        $output .= '<td>' . ucfirst($datadaps->user_prenom) . '</td>';
+        
+        $output .= '</tr>';
     }
-  }
+
+    // Ajouter la pagination
+    $pagination = $datadap->links('pagination::bootstrap-4')->toHtml();
+
+    // Retourner la réponse JSON avec le tableau HTML et la pagination
+    return response()->json([
+        'table' => $output,
+        'pagination' => $pagination
+    ]);
+}
+
+
 
   // Fonction pour récupérer le montant total des DAP en fonction de plusieurs FEB
   public function getTotalDap($dapId)
@@ -735,54 +715,64 @@ class DapController extends Controller
   }
 
   public function delete(Request $request)
-  {
+{
     DB::beginTransaction();
 
     try {
+        $id = $request->id;
+        $dap = Dap::find($id);
 
-      $id = $request->id;
-      $emp =   dap::find($id);
+        // Vérification de l'existence du DAP et des autorisations utilisateur
+        if ($dap && $dap->userid == Auth::id()) {
+            // 1. Mise à jour des FEB associés (si des éléments DAP existent)
+            $elements = Elementdap::where('dapid', $id)->get();
 
+            if ($elements->isNotEmpty()) {
+                $febIds = $elements->pluck('referencefeb')->toArray();
+                Feb::whereIn('id', $febIds)->update(['statut' => 0]);
+            }
 
-      if ($emp && $emp->userid == Auth::id()) {
+            // 2. Suppression des DJA associés (si présents)
+            $djas = Dja::where('dapid', $id);
+            if ($djas->exists()) {
+                $djas->delete();
+            }
 
+            // 3. Suppression des Elementdap associés (si présents)
+            $elementDaps = Elementdap::where('dapid', $id);
+            if ($elementDaps->exists()) {
+                $elementDaps->delete();
+            }
 
-        // Trouver tous les enregistrements Elementdap associés au dap
-        $elements = Elementdap::where('dapid', $id)->get();
-        // Collecter les ids des Feb à mettre à jour
-        $febIds = $elements->pluck('referencefeb')->toArray();
-        // Mettre à jour les enregistrements Feb en une seule fois
-        Feb::whereIn('id', $febIds)->update(['statut' => 0]);
+            // 5. Suppression du DAP lui-même
+            $dap->delete();
 
-        dap::destroy($id);
-        // Trouver tous les enregistrements Elementdap associés au dap
-        Elementdap::where('dapid', $id)->delete();
-        Elementdjas::where('idddap', $id)->delete();
+            // Validation de la transaction
+            DB::commit();
 
-        Dja::where('numerodap', $id)->delete();
-
-        DB::commit();
-
-        return response()->json([
-          'status' => 200,
-        ]);
-      } else {
+            return response()->json([
+                'status' => 200,
+                'message' => 'DAP et DJA supprimés avec succès, et les FEB associés ont été mis à jour pour la réutilisation.'
+            ]);
+        } else {
+            // Annulation de la transaction en cas de problème
+            DB::rollBack();
+            return response()->json([
+                'status' => 205,
+                'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le DAP. Veuillez contacter le créateur pour procéder à la suppression.'
+            ]);
+        }
+    } catch (\Exception $e) {
+        // Gestion de l'erreur et annulation de la transaction
         DB::rollBack();
         return response()->json([
-          'status' => 205,
-          'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le DAP. Veuillez contacter le créateur  pour procéder à la suppression.'
+            'status' => 500,
+            'message' => 'Erreur lors de la suppression du DAP.',
+            'error' => $e->getMessage()
         ]);
-      }
-    } catch (\Exception $e) {
-      DB::rollBack();
-      return response()->json([
-        'status' => 500,
-        'message' => 'Erreur lors de la suppression du DAP.',
-        'error' => $e->getMessage(), // Message d'erreur de l'exception
-        'exception' => (string) $e // Détails de l'exception convertis en chaîne
-      ]);
     }
-  }
+}
+
 
   public function show($idd)
   {

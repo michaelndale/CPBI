@@ -9,6 +9,7 @@ $avatar = Auth::user()->avatar ;
 $defaultAvatar = '../../element/profile/default.png'; // Chemin vers votre image par défaut
 $imagePath = public_path($avatar);
 @endphp
+<sty
     <div id="layout-wrapper">
         <div class="pace-progress"></div>
         <header id="page-topbar">
@@ -68,8 +69,24 @@ $imagePath = public_path($avatar);
                         </div>
                     </div>
 
+
+
                     <div class="dropdown d-none d-sm-inline-block">
+
+                        
                         <button type="button" class="btn header-item ">
+
+                        @php
+                            $currentDate = now(); // Date actuelle
+                            $showTree = $currentDate->month === 12 && $currentDate->day >= 10 && $currentDate->day <= 30;
+                        @endphp
+
+                        @if($showTree)
+                        <a class="btn no-border" href="javascript:void(0)">
+                            @include('layout.partiels.arbrenoel')
+                        </a>
+                        @endif
+
                             @if (session()->has('id'))
                                 <a href="{{ route('closeproject') }}"
                                     class="btn btn-outline-danger rounded-pill me-1 mb-1 btn-sm" type="button"
@@ -98,17 +115,29 @@ $imagePath = public_path($avatar);
 
                             <a href="#" class="btn header-item" aria-haspopup="true" aria-expanded="false">
 
-                                @if (file_exists($imagePath))
-                                    <img class="rounded-circle header-profile-user" src="../../{{ $avatar }}"
-                                        alt="{{ ucfirst($personnelData->prenom) }}"
-                                        style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
-                                    <br> <small> {{ ucfirst($personnelData->prenom) }} </small>
-                                @else
-                                    <img class="rounded-circle header-profile-user" src="{{ $defaultAvatar }}"
-                                        alt="{{ ucfirst($personnelData->prenom) }}"
-                                        style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
-                                    <br> <small> {{ ucfirst($personnelData->prenom) }} </small>
-                                @endif
+                              
+                @php
+                // Définir l'avatar par défaut
+                $defaultAvatar = asset('element/profile/default.png'); // Chemin vers votre image par défaut
+                $imagePath = public_path($avatar); // Chemin absolu pour vérifier l'existence de l'image
+            @endphp
+            
+            @if(file_exists($imagePath))
+                <img class="rounded-circle header-profile-user" 
+                     src="{{ asset($avatar) }}" 
+                     alt="{{ ucfirst(Auth::user()->identifiant) }}"  
+                     style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
+                <br>
+                <small>{{ ucfirst($personnelData->prenom) }}</small>
+            @else
+                <img class="rounded-circle header-profile-user" 
+                     src="{{ $defaultAvatar }}" 
+                     alt="{{ ucfirst(Auth::user()->identifiant) }}"  
+                     style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
+                <br>
+                <small>{{ ucfirst($personnelData->prenom) }}</small>
+            @endif
+            
 
 
 
@@ -250,7 +279,7 @@ $imagePath = public_path($avatar);
                                     <li><a href="{{ route('activity') }}"><i class="fa fa-running"></i> Activités</a> </li>
                                     <li><a href="{{ route('planoperationnel') }}"><i class="fa fa-tasks"></i> Plan d'action</a></li>
                                     <li><a href="{{ route('affectation') }}"><i class="fa fa-users"></i> Intervenants</a></li>
-                                    <li><a href="{{ route('affectation') }}"><i class="fa fa-users"></i> Bailleurs</a></li>
+                                    <li><a href="{{ route('bailleursDeFonds') }}"><i class="fa fa-users"></i> Bailleurs</a></li>
 
                                 </ul>
                             </li>

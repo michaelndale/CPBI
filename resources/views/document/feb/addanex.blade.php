@@ -23,7 +23,10 @@
                     <!-- Card Container -->
                     <div class="card shadow-none border border-300 mb-3" style="margin: auto">
                         <!-- Card Header -->
-                        <div class="card-header p-4 border-bottom border-300 bg-soft">
+
+                        <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between"
+              style="padding: 0.3rem 3rem;">
+                        
                             <div class="row g-3 justify-content-between align-items-end">
                                 <div class="col-12 col-md">
                                     <h2 class="card-title mb-1">
@@ -32,17 +35,15 @@
                                 </div>
                                 <div class="col col-md-auto">
                                    
-                                    <a href=" {{ route('key.viewFeb', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect">
+                                    <a href=" {{ route('key.viewFeb', $cryptedId ) }}" class="btn btn-outline-primary rounded-pill btn-sm">
                                         <i class="fa fa-eye"></i>
                                     </a>
 
-                                    <a href="{{ route('generate-pdf-feb', $dataFeb->id) }}" class="btn btn-primary waves-light waves-effect">
-                                        <i class="fa fa-print"></i>
-                                    </a>
-                                    <a href="{{ route('showfeb', $cryptedId) }}" class="btn btn-primary waves-light waves-effect">
+                                    
+                                    <a href="{{ route('showfeb', $cryptedId) }}" class="btn btn-outline-primary rounded-pill btn-sm">
                                         <i class="fa fa-edit"></i>
                                     </a>
-                                    <a href="{{ route('listfeb') }}" class="btn btn-primary waves-light waves-effect">
+                                    <a href="{{ route('listfeb') }}" class="btn btn-outline-primary rounded-pill btn-sm">
                                         <i class="fa fa-list"></i>
                                     </a>
                                 </div>

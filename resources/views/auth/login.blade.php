@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Connexion à GoProjects</title>
+  <title>Se connecter CEPBU | GoProjects</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta content="Application des gestions des projets" name="GoProject" />
   <meta content="GoProject" name="Michael Ndale" />
@@ -77,13 +77,28 @@
                           <small id="errorpassword" style="color:red"></small>
                         </div>
 
-                        <div class="form-check">
-                          <input type="checkbox" name="remember" id="remember" class="form-check-input" checked>
-                          <label for="remember" class="form-check-label" for="auth-remember-check">Se souvenir de moi</label>
+                        <br>
+
+                        <div class="row">
+                          
+                          <div class="col-sm-6 col-md-6">
+                            <div class="form-check">
+                              <input type="checkbox" name="remember" id="remember" class="form-check-input" checked>
+                              <label for="remember" class="form-check-label" for="auth-remember-check">Se souvenir de moi</label>
+                            </div>
+                          </div>
+
+              
+                          <div class="col-sm-6 col-md-6">
+                             <a href="{{ route('mot_pass_oublie') }}"> <i class="fa fa-info-circle"></i> Mot de passe oublier !</a> 
+                          </div>
+
+                        
+              
                         </div>
 
+                      
                         <div class="mt-4">
-                          
                           <button class="savebtn btn btn-primary w-100" type="button" id="connectBtn">
                             Se connecter
                           </button>
