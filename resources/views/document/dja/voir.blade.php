@@ -5,39 +5,34 @@
         <div class="col-12" style="margin:auto">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> Modification du DEMANDE ET JUSTIFICATION D'AVANCE (DJA)</h4>
+
+                @if (session()->has('id'))
                 <div class="page-title-right">
                     <div class="btn-toolbar float-end" role="toolbar">
 
-                   
                             <div class="btn-group me-2 mb-2 mb-sm-0">
                                
-
                                 <a href="{{ route('generate-pdf-dja', $data->iddjas) }}"
                                     class="btn btn-warning waves-light waves-effect" title="Imprimer le document DJA"><i
                                         class="fa fa-print"></i> </a>
 
-
-                                <a href="{{ route('voir', $data->iddjas) }}"
+                                <a href="{{ route('voirDja', $data->iddjas) }}"
                                     class="btn btn-primary waves-light waves-effect" title="Voir le DJA"><i class="fa fa-eye"></i></a>
 
                                 <a href="{{ route('nouveau', $data->iddjas) }}"
                                         class="btn btn-primary waves-light waves-effect" title="Demande / Approbation"><i
                                             class="fa fa-edit"></i> </a>
 
-
                                 <a href="{{ route('nouveau.utilisation', $data->iddjas) }}"
                                     class="btn btn-primary waves-light waves-effect" title="Utilisation de l'avance"><i
                                         class="fas fa-edit"></i> </a>
 
-                              
                                 <a href="{{ route('listdja') }}" class="btn btn-primary waves-light waves-effect"
                                     title="Liste de DJA"><i class="fa fa-list"></i></a>
                             </div>
-                       
-
-
                     </div>
                 </div>
+                @endif
             </div>
         </div>
 

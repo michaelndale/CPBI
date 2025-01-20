@@ -69,8 +69,9 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () { return view('go'); })->name('go');
 
-Route::get('service/auth', function () { return view('auth.login'); })->name('login');
-Route::post('/login', [AuthController::class, 'handlelogin'])->name('handlelogin');
+Route::get('service/auth', [AuthController::class, 'form'])->name('login');
+
+Route::post('/service/login', [AuthController::class, 'handlelogin'])->name('handlelogin');
 
 Route::get('service/out', function () { return view('auth.out'); })->name('out');
 Route::get('service/logout', [AuthController::class, 'logout'])->name('logout');
@@ -85,13 +86,9 @@ Route::get('service/reset-password', [AuthController::class, 'resetPassword'])->
 
 Route::post('service/update-password', [AuthController::class, 'updatePassword'])->name('update.password');
 
-
-
 Route::get('service/nouveaucode', [AuthController::class, 'code'])->name('new.code');
 
 Route::get('service/maintenance', function () {  return view('auth.maintenance'); });
-
-
 
 
 Route::middleware('auth')->group(function () {
@@ -243,6 +240,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/updateGc', [CompteController::class, 'update'])->name('updateGc');
         Route::post('/updatecompte', [CompteController::class, 'updatecompte'])->name('updatecompte');
         Route::post('/updateGrandcompte', [CompteController::class, 'updateGrandcompte'])->name('updateGrandcompte');
+
+        
     });
 
     Route::prefix('projet/budgetisation')->group(function () {
@@ -252,6 +251,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/findSousCompte', [RallongebudgetController::class, 'findSousCompte'])->name('findSousCompte');
 
         Route::get('/showrallonge', [RallongebudgetController::class, 'showrallonge'])->name('showrallonge');
+        Route::get('/historiquelist', [RallongebudgetController::class, 'showhistorique'])->name('historiqueliste');
+
+
+
         Route::post('/updaterallonge', [RallongebudgetController::class, 'updatlignebudget'])->name('updaterallonge');
         Route::delete('/deleteligne', [RallongebudgetController::class, 'deleteall'])->name('deleteligne');
     });
@@ -317,7 +320,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ProjectController::class, 'list'])->name('list_project');
         Route::post('/storeProject', [ProjectController::class, 'store'])->name('storeProject');
         Route::get('/closeproject', [ProjectController::class, 'closeproject'])->name('closeproject');
-        Route::get('/{key}/view/', [ProjectController::class, 'show'])->name('key.viewProject');
+        Route::get('{project}/exercice/{exercice}', [ProjectController::class, 'show'])->name('key.viewProject');
         Route::get('/{key}/edit/', [ProjectController::class, 'editshow'])->name('key.editProject');
         Route::put('/updatprojet/{cle}', [ProjectController::class, 'updateprojet'])->name('updatprojet');
         Route::delete('/deleteprojet', [ProjectController::class, 'deleteprojet'])->name('projetdelete');
@@ -326,6 +329,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/store_revision_Project', [ProjectController::class, 'store_revision'])->name('revision.store');
         Route::get('/revision/{projet}/', [ProjectController::class, 'showrevision'])->name('liste.revision');
 
+        Route::get('/exercice/{id}', [ProjectController::class, 'showexercice'])->name('exercice.show');
+        Route::get('/{key}/newexercice/', [ProjectController::class, 'newexercice'])->name('new.exercice');  
+          Route::post('/store.exe', [ProjectController::class, 'storeexe'])->name('store.exe');
+        
 
     });
 
@@ -384,9 +391,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/findfebpc', [DapbpcController::class, 'findfebpc'])->name('findfebpc');
 
     Route::get('/getactivite', [FebController::class, 'getactivite'])->name('getactivite');
-    Route::get('/fetctnotifiaction', [FebController::class, 'notificationdoc'])->name('allnotification');
+    Route::get('/fetctnotifiaction', [FebController::class, 'notificationFeb'])->name('allnotification');
     Route::get('/fetctnotifiactiondap', [FebController::class, 'notificationdap'])->name('allnotificationdap');
-
+    Route::get('/fetctnotifiactiondja', [FebController::class, 'notificationDja'])->name('allnotificationdja');
+    Route::get('/fetctnotifiactionbpc', [FebController::class, 'notificationBpc'])->name('allnotificationbpc');
+    Route::get('/fetctnotifiactionfac', [FebController::class, 'notificationfac'])->name('allnotificationfac');
+    Route::get('/fetctnotifiactiondac', [FebController::class, 'notificationdac'])->name('allnotificationdac');
+    Route::get('/fetctnotifiactionrac', [FebController::class, 'notificationrac'])->name('allnotificationrac');
 
     Route::get('/condictionsearch', [RallongebudgetController::class, 'condictionsearch'])->name('condictionsearch');
 
@@ -430,7 +441,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/nouveau/', [DjaController::class, 'nouveau'])->name('nouveau');
         Route::get('/{id}/nouveauutilisation/', [DjaController::class, 'nouveauutilisation'])->name('nouveau.utilisation');
         
-        Route::get('/{id}/voir', [DjaController::class, 'voir'])->name('voir');
+        Route::get('/{id}/voir', [DjaController::class, 'voir'])->name('voirDja');
 
         Route::get('/{id}/misesajour/', [DjaController::class, 'misesajour'])->name('misesajour');
         Route::post('/storejustification', [DjaController::class, 'saveDjas'])->name('storejustification');
@@ -459,6 +470,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/liste_bpc', [BonpetitcaisseController::class, 'list'])->name('liste_bpc');
         Route::post('/storebpc', [BonpetitcaisseController::class, 'store'])->name('storebpc');
         Route::get('/{key}/viewbpc/', [BonpetitcaisseController::class, 'show'])->name('viewbpc');
+        Route::get('/{key}/voir/', [BonpetitcaisseController::class, 'voir'])->name('voir.bpc');
         Route::post('/update_signature_bpc', [BonpetitcaisseController::class, 'updateSignature'])->name('update_signature_bpc');
     });
 

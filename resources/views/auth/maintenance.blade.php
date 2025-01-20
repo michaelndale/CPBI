@@ -1,3 +1,7 @@
+
+<script>
+    setTimeout("location.href = '{{ route('login')}}';", 0);
+</script>
 <!doctype html>
 <html lang="en">
 <head>
@@ -56,11 +60,7 @@
         <script src="{{ asset('element/assets/libs/metismenu/metisMenu.min.js') }}"></script>
         <script src="{{ asset('element/assets/libs/simplebar/simplebar.min.js') }}"></script>
         <script src="{{ asset('element/assets/libs/node-waves/waves.min.js') }}"></script>
-
-        <!-- apexcharts -->
         <script src="{{ asset('element/assets/libs/apexcharts/apexcharts.min.js') }}"></script>
-
         <script src="{{ asset('element/assets/js/app.js') }}"></script>
-
     </body>
 </html>

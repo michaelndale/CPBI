@@ -1,6 +1,5 @@
 <!doctype html>
 <html>
-
 <head>
   <meta charset="utf-8" />
   <title>Se connecter CEPBU | GoProjects</title>
@@ -61,7 +60,7 @@
                         <h4 class="font-size-18">
                           <font size="6px"> <b><i class="far fa-chart-bar"></i> CEPBU</b></font>
                         </h4>
-                        <div class="divider-content-center">Accédez à votre compte GoProject</div>
+                        <div class="divider-content-center">Accédez à votre compte GoProject <br><br></div>
                       </div>
                       <form class="auth-input" name="frm_login" id="frm_login" autocomplete="off">
                         @csrf
@@ -83,6 +82,7 @@
                           
                           <div class="col-sm-6 col-md-6">
                             <div class="form-check">
+                              
                               <input type="checkbox" name="remember" id="remember" class="form-check-input" checked>
                               <label for="remember" class="form-check-label" for="auth-remember-check">Se souvenir de moi</label>
                             </div>
@@ -90,7 +90,7 @@
 
               
                           <div class="col-sm-6 col-md-6">
-                             <a href="{{ route('mot_pass_oublie') }}"> <i class="fa fa-info-circle"></i> Mot de passe oublier !</a> 
+                             <small><a href="{{ route('mot_pass_oublie') }}"> <i class="fa fa-info-circle"></i> Mot de passe oublier !</a> </small> 
                           </div>
 
                         

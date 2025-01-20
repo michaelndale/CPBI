@@ -69,7 +69,7 @@ $personnelData = DB::table('personnels')
 
                             </div>
 
-                            <div class="col-md-3"> <br>
+                            <div class="col-md-3" > <br>
                                 <a href="{{ route('rh') }}">
                                     <div class="card maintenance-box">
                                         <div class="card-body p-4">
@@ -177,6 +177,8 @@ $personnelData = DB::table('personnels')
                         </div>
 
 
+                        <<!--
+
                         @php
                         $currentDate = date('Y-m-d');
                         $limitDate = '2025-01-10';
@@ -214,7 +216,7 @@ $personnelData = DB::table('personnels')
                         </div>
                     </div> 
 
-                    @endif
+                    @endif  -->
 
                    
                    

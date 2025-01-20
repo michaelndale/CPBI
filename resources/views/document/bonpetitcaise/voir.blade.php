@@ -1,11 +1,6 @@
 @extends('layout/app')
 @section('page-content')
 
-@foreach ($dateinfo as $dateinfo)
-@endforeach
-@php
-$cryptedId = Crypt::encrypt($dataFeb->id);
-@endphp
 <div class="main-content">
     <div class="page-content">
         <div class="container-fluid">
@@ -21,17 +16,7 @@ $cryptedId = Crypt::encrypt($dataFeb->id);
                                 <span class="sr-only">Loading...</span>
                             </div> &nbsp; &nbsp;
                             @endif
-                            <button type="button" class="btn btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#composemodal" data-febid="{{ $dataFeb->id ? $dataFeb->id : '' }}">
-                                <i class="fab fa-telegram-plane ms-1"></i> Signalé FEB
-                            </button>
-                            @include('document.feb.message')
-                            <div class="btn-toolbar float-end" role="toolbar">
-                                <div class="btn-group me-2 mb-2 mb-sm-0">
-                                    <a href="{{ route('generate-pdf-feb', $dataFeb->id) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-print"></i> </a>
-                                    <a href="{{ route('showfeb', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-edit"></i> </a>
-                                    <a href="{{ route('listfeb') }}" class="btn btn-primary waves-light waves-effect"><i class="fa fa-list"></i></a>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>

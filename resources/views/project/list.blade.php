@@ -26,92 +26,98 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <table id="datatable" class="table table-bordered dt-responsive nowrap   fs--1 mb-0" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            
+                            <!-- Champ de recherche -->
+                            <div class="mb-3 row align-items-center">
+                                <div class="col-md-10">
+                                    <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un projet..." onkeyup="searchProjects()">
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="dropdown">
+                                        <button 
+                                        class="btn btn-outline-primary rounded-pill   w-100 d-flex justify-content-between align-items-center"
+                                       
+                                          type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span>
+                                                <i class="fa fa-list"></i> Filtre
+                                            </span>
+                                            <i class="fa fa-chevron-down"></i> <!-- Icône de flèche vers le bas -->
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                                            <li><a class="dropdown-item" href="#" onclick="filterProjects('all')">Tout</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="filterProjects('En attente')">En attente</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="filterProjects('Activé')">Activé</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="filterProjects('Bloqué')">Bloqué</a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="filterProjects('Archive')">Archivé</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+            
+                            <table class="table table-bordered fs--1 mb-0"  style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
-                                    <th> <b>Projets  ( {{ $data->count() }} )</b> </th>
-                                    <th> <b>Responsable du projet</b></th>
-                                    <th> <center> <b>Accès</b </center></th>
-                                    <th> <center> <b>Statut</b> </center></th>
-                                    <th> <b>Date Début</b> </th>
-                                    <th> <b>Date Fin</b> </th>
+                                    <tr>
+                                        <th><b>Projets ({{ $data->count() }})</b></th>
+                                        <th><b>Responsable du projet</b></th>
+                                        <th><center><b>Accès</b></center></th>
+                                        <th><center><b>Statut</b></center></th>
+                                        <th><b>Date Début</b></th>
+                                        <th><b>Date Fin</b></th>
+                                    </tr>
                                 </thead> 
-
+            
                                 <tbody>
                                     @foreach ($data as $datas)
                                         @php
-                                            $accessCount = 
-                                                DB::table('affectations')
+                                            $accessCount = DB::table('affectations')
                                                 ->where('memberid', Auth::id())
                                                 ->where('projectid', $datas->idpr)
                                                 ->count();
-
                                             $cryptedId = Crypt::encrypt($datas->idpr);
+                                  
                                         @endphp
-
-                                    <tr>
-                                        <td style="width: 100px;">
-                                          
-                                            @if($accessCount == 1)
-                                                <a href="{{ route('key.viewProject', $cryptedId) }}" class="text-dark">{{ $datas->title }}</a>
-                                            @else
-                                                <a href="javascript:void(0)" class="text-dark" onclick="showAccessDeniedAlert()">{{ $datas->title }}</a>
-                                            @endif
-                                        
-                                        </td>
-                                        
-                                        <td> <i class="ri-user-3-fill "></i> {{ ucfirst($datas->nom) }} {{ ucfirst($datas->prenom) }}  </td>
-
-
-                                        <td align="center">
-                                           
-                                          
-                                            @if($accessCount == 1)
-                                                <font size="2px" color="green">
-                                                    <i class="mdi mdi-check-decagram"></i>
-                                                </font>
-                                            @else
-                                                <font size="2px" color="red">
-                                                    <i class="mdi mdi-close-circle"></i>
-                                                </font>
-                                            @endif
-                                        
-                                        </td>
-
-
-                                        <td align="center">
-                                            @if($accessCount ==1)
-                                                <span class="badge rounded-pill bg-primary"> Ouvert </span>
-                                            @else
-                                                <span class="badge rounded-pill bg-danger"> Fermer </span>
-                                            @endif
-                                        </td>
-
-                                        <td>
-                                            {{ date('d-m-Y', strtotime($datas->start_date))  }}
-                                        </td>
-
-                                        <td>
-                                            {{ date('d-m-Y', strtotime($datas->deadline))  }}
-                                        </td>
-
-                                        <!--  <td>
-                                                <div class="dropdown">
-                                                    <a href="#" class="dropdown-toggle card-drop" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <i class="mdi mdi-dots-horizontal font-size-18"></i>
-                                                    </a>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <a class="dropdown-item" href="{{ route('key.viewProject', $cryptedId) }}"><i class="fa fa-eye"></i> Voir</a>
-                                                    </div>
-                                                </div>
-                                            </td> 
-                                        -->
-
-                                    </tr>
+            
+                                        <tr>
+                                            <td>
+                                                @if($accessCount == 1)
+                                                <a href="{{ route('exercice.show', $datas->idpr) }}" 
+                                                    id="{{ $datas->idpr }}" 
+                                                    class="text-dark show-exercice" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#ProjetModalScrollable">
+                                                     {{ $datas->title }}
+                                                 </a>
+                                                 
+                                                @else
+                                                    <a href="javascript:void(0)" class="text-dark" onclick="showAccessDeniedAlert()">{{ $datas->title }}</a>
+                                                @endif
+                                            </td>
+                                            <td><i class="ri-user-3-fill"></i> {{ ucfirst($datas->nom) }} {{ ucfirst($datas->prenom) }}</td>
+                                            <td align="center">
+                                                @if($accessCount == 1)
+                                                    <font size="2px" color="green"><i class="mdi mdi-check-decagram"></i></font>
+                                                @else
+                                                    <font size="2px" color="red"><i class="mdi mdi-close-circle"></i></font>
+                                                @endif
+                                            </td>
+                                            <td align="center">
+                                                @if($accessCount == 1)
+                                                    <span class="badge rounded-pill bg-primary">Ouvert</span>
+                                                @else
+                                                    <span class="badge rounded-pill bg-danger">Fermer</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ date('d-m-Y', strtotime($datas->start_date)) }}</td>
+                                            <td>{{ date('d-m-Y', strtotime($datas->deadline)) }}</td>
+                                        </tr>
                                     @endforeach
-
                                 </tbody>
                             </table>
-
+            
+                            <!-- Pagination Links -->
+                            <div class="d-flex justify-content-center mt-4">
+                                {{ $data->links('vendor.pagination.bootstrap-4') }}
+                            </div>
                         </div>
                     </div>
                 </div> <!-- end col -->
@@ -121,6 +127,35 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+    function searchProjects() {
+        var query = $('#searchInput').val();
+        var filter = $('#filterDropdown').text().trim().split(' ')[1]; // Obtenir la partie pertinente du texte
+
+        $.ajax({
+            url: '{{ route("list_project") }}', // Remplacez par la route appropriée
+            method: 'GET',
+            data: { search: query, filter: filter },
+            success: function(data) {
+                $('#projectTableBody').html(data.table);
+                $('.pagination').html(data.pagination);
+            },
+            error: function(xhr, status, error) {
+                console.error("Une erreur s'est produite : " + error);
+            }
+        });
+    }
+
+    function filterProjects(status) {
+        $('#filterDropdown').html('<span><i class="fa fa-list"></i> ' + status + '</span><i class="fa fa-chevron-down"></i>'); // Mettre à jour le texte du dropdown
+        searchProjects(); // Appeler la fonction de recherche avec le filtre
+    }
+</script>
+
 <script>
     function showAccessDeniedAlert() {
         Swal.fire({
@@ -159,5 +194,5 @@
     }
 </style>
 
-
+@include('project.exerciceListe')
 @endsection

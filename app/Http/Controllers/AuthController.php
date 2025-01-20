@@ -35,7 +35,7 @@ class AuthController extends Controller
     $users = Personnel::orderBy('nom', 'ASC')->get();
     $user = DB::table('users')
       ->join('personnels', 'personnels.id', 'users.personnelid')
-      ->select('users.*', 'users.id as idu' , 'personnels.nom', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
+      ->select('users.*', 'users.id as idu', 'personnels.nom', 'personnels.id', 'personnels.email', 'personnels.sexe', 'personnels.phone', 'personnels.fonction', 'personnels.prenom')
       ->where('personnels.fonction', '!=', 'Administrateur système.')
       ->orderBy('personnels.nom', 'ASC')
       ->get();
@@ -55,6 +55,11 @@ class AuthController extends Controller
         'users'      => $users
       ]
     );
+  }
+
+  public function form()
+  {
+    return view('auth.login');
   }
 
   public function conducteur()
@@ -93,7 +98,7 @@ class AuthController extends Controller
                     <h6 class="mb-0 ms-3 fw-semi-bold">' . ucfirst($rs->nom) . ' ' . ucfirst($rs->prenom) . '</h6>
                   </a>
               </td>
-              <td> ' .$nombre . '</td>
+              <td> ' . $nombre . '</td>
               <td> ' . $rs->identifiant . '</td>
               <td>' . $rs->role . '  </td>
               <td>' . $rs->statut . '  </td>
@@ -104,7 +109,7 @@ class AuthController extends Controller
                 <a href="#" id="' . $rs->idu . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
             </td>
             </tr>';
-            $nombre++;
+        $nombre++;
       }
       echo $output;
     } else {
@@ -117,7 +122,6 @@ class AuthController extends Controller
     }
   }
 
-
   public function fetchAllcond()
   {
     $User =    DB::table('users')
@@ -127,90 +131,90 @@ class AuthController extends Controller
       ->orderBy('nom', 'ASC')
       ->get();
     $output = '';
-    
+
     if ($User->count() > 0) {
 
       foreach ($User as $rs) {
         $output .= '<tr>
-  <td>' . ucfirst($rs->name) . ' ' . ucfirst($rs->prenom) . '</h6></td>
-  <td> ' . $rs->email . '   </td>
-  <td>' . $rs->phone . '  </td>
-  <td>' . $rs->role . '  </td>
-  <td>' . $rs->fonction . '  </td>
-  <td>' . $rs->statut . '  </td>
+        <td>' . ucfirst($rs->name) . ' ' . ucfirst($rs->prenom) . '</h6></td>
+        <td> ' . $rs->email . '   </td>
+        <td>' . $rs->phone . '  </td>
+        <td>' . $rs->role . '  </td>
+        <td>' . $rs->fonction . '  </td>
+        <td>' . $rs->statut . '  </td>
 
-</tr>';
-      }
-      echo $output;
-    } else {
-      echo '
-      <tr>
-        <td  colspan="7">
-        <center>
-        <h6 style="margin-top:1% ;color:#c0c0c0"> 
-        <center><font size="50px"><i class="fa fa-info-circle"  ></i> </font><br><br>
-            Ceci est vide  !</center> </h6>
-      </center>
-        </td>
-      </tr>';
+          </tr>';
+            }
+            echo $output;
+          } else {
+            echo '
+            <tr>
+              <td  colspan="7">
+              <center>
+              <h6 style="margin-top:1% ;color:#c0c0c0"> 
+              <center><font size="50px"><i class="fa fa-info-circle"  ></i> </font><br><br>
+                  Ceci est vide  !</center> </h6>
+            </center>
+              </td>
+            </tr>';
     }
   }
 
   // insert a new ajax request
   public function store(Request $request)
   {
-      DB::beginTransaction(); // Démarre la transaction
-  
-      try {
-          $username = $request->identifiant;
-          $userid = $request->personnelid;
-  
-          $chek = User::where('personnelid', $userid)->first();
-          if ($chek) {
-              return response()->json([
-                  'status' => 202,
-              ]);
-          }
-  
-          $checkidentifiant = User::where('identifiant', $username)->first();
-          if ($checkidentifiant) {
-              return response()->json([
-                  'status' => 201,
-              ]);
-          }
-  
-          $user = new User;
-          $user->personnelid = $request->personnelid;
-          $user->identifiant = $request->identifiant;
-          $user->role = $request->profileid;
-          $user->password = Hash::make($request->password);
-          $user->userid = Auth::id();
-          $user->save();
-  
-          DB::commit(); // Valide la transaction
-  
-          return response()->json([
-              'status' => 200,
-          ]);
-      } catch (Exception $e) {
-          DB::rollBack(); // Annule la transaction en cas d'erreur
-  
-          return response()->json([
-              'status' => 500
-          ]);
+    DB::beginTransaction(); // Démarre la transaction
+
+    try {
+      $username = $request->identifiant;
+      $userid = $request->personnelid;
+
+      $chek = User::where('personnelid', $userid)->first();
+      if ($chek) {
+        return response()->json([
+          'status' => 202,
+        ]);
       }
+
+      $checkidentifiant = User::where('identifiant', $username)->first();
+      if ($checkidentifiant) {
+        return response()->json([
+          'status' => 201,
+        ]);
+      }
+
+      $user = new User;
+      $user->personnelid = $request->personnelid;
+      $user->identifiant = $request->identifiant;
+      $user->role = $request->profileid;
+      $user->password = Hash::make($request->password);
+      $user->userid = Auth::id();
+      $user->save();
+
+      DB::commit(); // Valide la transaction
+
+      return response()->json([
+        'status' => 200,
+      ]);
+    } catch (Exception $e) {
+      DB::rollBack(); // Annule la transaction en cas d'erreur
+
+      return response()->json([
+        'status' => 500
+      ]);
+    }
   }
 
   public function verifierIdentifiant(Request $request)
-{
+  {
     $identifiant = $request->identifiant;
 
     // Vérifier si l'identifiant existe déjà dans la base de données
     $user = User::where('identifiant', $identifiant)->exists();
 
     return response()->json(['exists' => $user]);
-}
-  
+  }
+
 
   public function login()
   {
@@ -223,33 +227,34 @@ class AuthController extends Controller
 
   public function handlelogin(AuthRequest $request)
   {
-      try {
-          $username = $request->email;
-          $password = $request->password;
-  
-          if (Auth::attempt(['identifiant' => $username, 'password' => $password], $request->filled('remember')) || 
-              Auth::attempt(['email' => $username, 'password' => $password], $request->filled('remember')) 
-            ) {
-              $user = Auth::user();
-  
-              switch ($user->statut) {
-                  case 'Activé':
-                      return response()->json([1]);
-                  case 'Bloqué':
-                      return response()->json([2]);
-                  case 'Desactivé':
-                      return response()->json([3]);
-                  default:
-                      return response()->json([4]); // In case the statut is something unexpected
-              }
-          } else {
-              return response()->json([4]);
-          }
-      } catch (Exception $e) {
-          return response()->json([5]);
+    try {
+      $username = $request->email;
+      $password = $request->password;
+
+      if (
+        Auth::attempt(['identifiant' => $username, 'password' => $password], $request->filled('remember')) ||
+        Auth::attempt(['email' => $username, 'password' => $password], $request->filled('remember'))
+      ) {
+        $user = Auth::user();
+
+        switch ($user->statut) {
+          case 'Activé':
+            return response()->json([1]);
+          case 'Bloqué':
+            return response()->json([2]);
+          case 'Desactivé':
+            return response()->json([3]);
+          default:
+            return response()->json([4]); // In case the statut is something unexpected
+        }
+      } else {
+        return response()->json([4]);
       }
+    } catch (Exception $e) {
+      return response()->json([5]);
+    }
   }
-  
+
 
   public function create()
   {
@@ -475,24 +480,24 @@ class AuthController extends Controller
 
   public function activeUsers()
   {
-      // Récupérer les utilisateurs actifs dans les 10 dernières minutes
-      $title= "ACTIFS";
-      $activeUsers = User::where('last_activity', '>=', Carbon::now()->subMinutes(10))->get();
-      return view('active-users.active-users', compact('activeUsers','title'));
+    // Récupérer les utilisateurs actifs dans les 10 dernières minutes
+    $title = "ACTIFS";
+    $activeUsers = User::where('last_activity', '>=', Carbon::now()->subMinutes(10))->get();
+    return view('active-users.active-users', compact('activeUsers', 'title'));
   }
 
   public function updateThme(Request $request)
   {
-        
-        // Récupère l'utilisateur authentifié
-        $user = User::find($request->useridtheme);
-        $user->menu = $request->menuoption;
-        $user->update();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Préférence de menu mise à jour avec succès!'
-        ]);
+    // Récupère l'utilisateur authentifié
+    $user = User::find($request->useridtheme);
+    $user->menu = $request->menuoption;
+    $user->update();
+
+    return response()->json([
+      'success' => true,
+      'message' => 'Préférence de menu mise à jour avec succès!'
+    ]);
   }
 
 
@@ -507,7 +512,7 @@ class AuthController extends Controller
   public function forgot()
   {
     $title = "Mot de passe oubier";
-   
+
     return view('auth.forgot', [
       'title' => $title
     ]);
@@ -517,169 +522,163 @@ class AuthController extends Controller
   {
     $title = "Nouveau code";
 
-      // Récupérer l'email depuis la session
-      $email = session('reset_email');
+    // Récupérer l'email depuis la session
+    $email = session('reset_email');
 
-   
+
     return view('auth.newcode', [
       'title' => $title,
       'email' => $email
     ]);
   }
 
- 
+
 
   public function handforgot(Request $request)
   {
-      try {
-          $user = User::where('email', $request->email)->first();
-  
-          if ($user) {
-             session(['reset_email' => $request->email]);
+    try {
+      $user = User::where('email', $request->email)->first();
 
-            
-  
-              // Générer un code de vérification aléatoire
-              $verificationCode = rand(100000, 999999);
-  
-              // Sauvegarder le code
-              $user->verification_code = $verificationCode;
-              $user->save();
-  
-              // Envoyer l'email
-              Mail::send('emails.verification_code', ['code' => $verificationCode, 'user' => $user] , function ($message) use ($user) {
-                  $message->to($user->email)
-                          ->subject('GoProject Vérification Code');
-              });
-  
-              // Ajouter 'exists' => true
-              return response()->json([
-                  'success' => true, 
-                  'exists' => true,  // Ajout de cette ligne
-                  'message' => 'Code de vérification envoyé à votre adresse email.'
-              ]);
-          } else {
-              // Ajouter 'exists' => false
-              return response()->json([
-                  'success' => true,  // Gardez true car la requête est réussie
-                  'exists' => false,  // Ajout de cette ligne
-                  'message' => "Cet email n'existe pas dans notre système."
-              ]);
-          }
-      } catch (\Exception $e) {
-          return response()->json([
-              'success' => false, 
-              'exists' => false,
-              'message' => 'Une erreur est survenue lors de l\'envoi de l\'email.'
-          ], 500);
+      if ($user) {
+        session(['reset_email' => $request->email]);
+
+
+
+        // Générer un code de vérification aléatoire
+        $verificationCode = rand(100000, 999999);
+
+        // Sauvegarder le code
+        $user->verification_code = $verificationCode;
+        $user->save();
+
+        // Envoyer l'email
+        Mail::send('emails.verification_code', ['code' => $verificationCode, 'user' => $user], function ($message) use ($user) {
+          $message->to($user->email)
+            ->subject('GoProject Vérification Code');
+        });
+
+        // Ajouter 'exists' => true
+        return response()->json([
+          'success' => true,
+          'exists' => true,  // Ajout de cette ligne
+          'message' => 'Code de vérification envoyé à votre adresse email.'
+        ]);
+      } else {
+        // Ajouter 'exists' => false
+        return response()->json([
+          'success' => true,  // Gardez true car la requête est réussie
+          'exists' => false,  // Ajout de cette ligne
+          'message' => "Cet email n'existe pas dans notre système."
+        ]);
       }
+    } catch (\Exception $e) {
+      return response()->json([
+        'success' => false,
+        'exists' => false,
+        'message' => 'Une erreur est survenue lors de l\'envoi de l\'email.'
+      ], 500);
+    }
   }
 
   public function verifyCode(Request $request)
-{
+  {
     try {
-        $email = $request->email;
-        $code = $request->code;
+      $email = $request->email;
+      $code = $request->code;
 
-        // Trouver l'utilisateur avec l'email et le code
-        $user = User::where('email', $email)
-                    ->where('verification_code', $code)
-                    ->first();
+      // Trouver l'utilisateur avec l'email et le code
+      $user = User::where('email', $email)
+        ->where('verification_code', $code)
+        ->first();
 
-        if ($user) {
-            // Code correct
-            // Stocker l'email en session pour la prochaine étape
-            session(['reset_password_email' => $email]);
+      if ($user) {
+        // Code correct
+        // Stocker l'email en session pour la prochaine étape
+        session(['reset_password_email' => $email]);
 
-            // Optionnel : invalider le code après utilisation
-            $user->verification_code = null;
-            $user->save();
+        // Optionnel : invalider le code après utilisation
+        $user->verification_code = null;
+        $user->save();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Code vérifié avec succès'
-            ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Code de vérification incorrect'
-            ]);
-        }
-    } catch (\Exception $e) {
         return response()->json([
-            'success' => false,
-            'message' => 'Une erreur est survenue'
-        ], 500);
-    }
-}
-
-
-
-    public function resetPassword()
-    {
-        $email = session('reset_password_email');
-        
-        if (!$email) {
-            return redirect()->route('mot_pass_oublie')
-                ->with('error', 'Votre session a expiré. Veuillez recommencer.');
-        }
-
-        return view('auth.reset-password', compact('email'));
-    }
-
-    public function updatePassword(Request $request)
-    {
-        // Validation des données
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|min:8|confirmed',
-        ], [
-            'email.exists' => 'Aucun compte associé à cet email.',
-            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
-            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+          'success' => true,
+          'message' => 'Code vérifié avec succès'
         ]);
-    
-        // Si la validation échoue
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
-        }
-    
-        try {
-            // Récupérer l'utilisateur
-            $user = User::where('email', $request->email)->first();
-    
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Utilisateur non trouvé.'
-                ], 404);
-            }
-    
-            // Mettre à jour le mot de passe
-            $user->password = Hash::make($request->password);
-            $user->save();
-    
-            // Nettoyer la session
-            session()->forget('reset_password_email');
-    
-            return response()->json([
-                'success' => true,
-                'message' => 'Mot de passe réinitialisé avec succès.'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur est survenue lors de la réinitialisation du mot de passe.'
-            ], 500);
-        }
+      } else {
+        return response()->json([
+          'success' => false,
+          'message' => 'Code de vérification incorrect'
+        ]);
+      }
+    } catch (\Exception $e) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Une erreur est survenue'
+      ], 500);
+    }
+  }
+
+
+
+  public function resetPassword()
+  {
+    $email = session('reset_password_email');
+
+    if (!$email) {
+      return redirect()->route('mot_pass_oublie')
+        ->with('error', 'Votre session a expiré. Veuillez recommencer.');
     }
 
+    return view('auth.reset-password', compact('email'));
+  }
 
+  public function updatePassword(Request $request)
+  {
+    // Validation des données
+    $validator = Validator::make($request->all(), [
+      'email' => 'required|email|exists:users,email',
+      'password' => 'required|min:8|confirmed',
+    ], [
+      'email.exists' => 'Aucun compte associé à cet email.',
+      'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+      'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+    ]);
 
+    // Si la validation échoue
+    if ($validator->fails()) {
+      return response()->json([
+        'success' => false,
+        'errors' => $validator->errors()
+      ], 422);
+    }
 
+    try {
+      // Récupérer l'utilisateur
+      $user = User::where('email', $request->email)->first();
 
+      if (!$user) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Utilisateur non trouvé.'
+        ], 404);
+      }
 
+      // Mettre à jour le mot de passe
+      $user->password = Hash::make($request->password);
+      $user->save();
+
+      // Nettoyer la session
+      session()->forget('reset_password_email');
+
+      return response()->json([
+        'success' => true,
+        'message' => 'Mot de passe réinitialisé avec succès.'
+      ]);
+    } catch (\Exception $e) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Une erreur est survenue lors de la réinitialisation du mot de passe.'
+      ], 500);
+    }
+  }
 }

@@ -11,18 +11,11 @@
                     <div class="page-title-right">
                         <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>
                      </a>
-
-                   
                 
                   </div>
                 </div>
 
-                
-
-                
-
-
-
+        
                 <div class="card-body p-0">
                     <div id="tableExample2">
                         <div class="table-responsive">
@@ -51,9 +44,7 @@
                                         <th>
                                             <center><b>N<sup>o</sup> FEB</b></center>
                                         </th>
-                                        <th>
-                                            <center><b>Montant</b></center>
-                                        </th>
+                                       
                                         <th>
                                             <center><b>Avance</b></center>
                                         </th>

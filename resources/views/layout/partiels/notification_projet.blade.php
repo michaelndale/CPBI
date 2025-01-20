@@ -1,113 +1,188 @@
+@php
 
-    @php
+$avatar = Auth::user()->avatar;
 
-    // DOCUMENT GENERALE
-    $feb_counts = DB::table('febs')
-        ->selectRaw(
-            "
-            SUM(CASE WHEN acce = ? AND acce_signe = 0 THEN 1 ELSE 0 END) AS acce_count,
-            SUM(CASE WHEN comptable = ? AND comptable_signe = 0 THEN 1 ELSE 0 END) AS comptable_count,
-            SUM(CASE WHEN chefcomposante = ? AND chef_signe = 0 THEN 1 ELSE 0 END) AS chefcomposante_count
-        ",
-            [Auth::id(), Auth::id(), Auth::id()],
-        )
-        ->first();
+$personnelData = DB::table('personnels')
+    ->where('id', Auth::user()->personnelid)
+    ->first();
+
+$febNombre = DB::table('febs')
+    ->where(function ($query) {
+        $query
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('acce', Auth::id())
+                    ->where('acce_signe', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('comptable', Auth::id())
+                    ->where('comptable_signe', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('chefcomposante', Auth::id())
+                    ->where('chef_signe', 0);
+            });
+    })
+    ->select('febs.id')
+    ->get()
+    ->count();
+
+   $dapNombre = DB::table('daps')
+    ->selectRaw('COUNT(*) as count')
+    ->where(function ($query) {
+        $query
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('demandeetablie', Auth::id())
+                    ->where('demandeetablie_signe', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('verifierpar', Auth::id())
+                    ->where('verifierpar_signe', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('approuverpar', Auth::id())
+                    ->where('approuverpar_signe', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('responsable', Auth::id())
+                    ->where('responsable_signe', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('secretaire', Auth::id())
+                    ->where('secretaure_general_signe', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('chefprogramme', Auth::id())
+                    ->where('chefprogramme_signe', 0);
+            });
+    })
+    ->first();
+
+ $dapNombre = $dapNombre->count;
+    $djNombre = DB::table('djas')
+   
+    ->select(
+       
+        'djas.id as iddjas',
+       
+    )
+    ->where(function ($query) {
+        $query
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('djas.fonds_demande_par', Auth::id())
+                    ->where('djas.signe_fonds_demande_par', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('djas.avance_approuver_par', Auth::id())
+                    ->where('djas.signe_avance_approuver_par', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('djas.avance_approuver_par_deux', Auth::id())
+                    ->where('djas.signe_avance_approuver_par_deux', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('djas.avance_approuver_par_trois', Auth::id())
+                    ->where('djas.signe_avance_approuver_par_trois', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('djas.fond_debourser_par', Auth::id())
+                    ->where('djas.signe_fond_debourser_par', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('djas.fond_recu_par', Auth::id())
+                    ->where('djas.signe_fond_recu_par', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('djas.pfond_paye', Auth::id())
+                    ->where('djas.signature_pfond_paye', 0);
+            })
+            ->orWhere(function ($subQuery) {
+                $subQuery
+                    ->where('djas.fonds_retournes_caisse_par', Auth::id())
+                    ->where('djas.signe_reception_pieces_justificatives', 0);
+            });
+    })
+    ->get()
+    ->count();
+
+$bpcNombre = DB::table('bonpetitcaisses')
+         
+          ->select(
+              'bonpetitcaisses.id',
+          )
+          ->where(function ($query) {
+              $query->where('bonpetitcaisses.etabli_par', Auth::id())->where('bonpetitcaisses.etabli_par_signature', 0)
+                  ->orWhere('bonpetitcaisses.verifie_par', Auth::id())->where('bonpetitcaisses.verifie_par_signature', 0)
+                  ->orWhere('bonpetitcaisses.approuve_par', Auth::id())->where('bonpetitcaisses.approuve_par_signature', 0);
+          })
+          ->get()
+          ->count();
+
+    $facNombre = DB::table('febpetitcaisses')
+         
+          ->select(
+              'febpetitcaisses.id',
+          )
+          ->where(function ($query) {
+              $query->where('febpetitcaisses.etabli_par', Auth::id())->where('febpetitcaisses.etabli_par_signature', 0)
+                  ->orWhere('febpetitcaisses.verifie_par', Auth::id())->where('febpetitcaisses.verifie_par_signature', 0)
+                  ->orWhere('febpetitcaisses.approuve_par', Auth::id())->where('febpetitcaisses.approuve_par_signature', 0);
+          })
+          
+          ->get()
+          ->count();
     
-    // Calcul du total
-    $feb = $feb_counts->acce_count + $feb_counts->comptable_count + $feb_counts->chefcomposante_count;
+    $dacNombre = DB::table('dapbpcs')
+         
+         ->select(
+             'dapbpcs.id',
+         )
+         ->where(function ($query) {
+             $query->where('dapbpcs.demande_etablie', Auth::id())->where('dapbpcs.demande_etablie_signe', 0)
+                 ->orWhere('dapbpcs.verifier', Auth::id())->where('dapbpcs.verifier_signe', 0)
+                 ->orWhere('dapbpcs.approuver', Auth::id())->where('dapbpcs.approuver_signe', 0)
+                 ->orWhere('dapbpcs.autoriser', Auth::id())->where('dapbpcs.autoriser_signe', 0)
+                 ->orWhere('dapbpcs.secretaire', Auth::id())->where('dapbpcs.chefprogramme_signe', 0)
+                 ->orWhere('dapbpcs.chefprogramme', Auth::id())->where('dapbpcs.secretaire_signe', 0);
+         })
+         
+         ->get()
+         ->count();
+
+    $caisseNombre = DB::table('rappotages')
+        ->where(function ($query) {
+            $query
+                ->orWhere(function ($subQuery) {
+                    $subQuery->where('verifier_par', Auth::id())->where('verifier_signature', 0);
+                })
+             
+                ->orWhere(function ($subQuery) {
+                    $subQuery->where('approver_par', Auth::id())->where('approver_signature', 0);
+                });
+        })
+        ->get()
+        ->count();
+  
+
     
-    $dap_counts = DB::table('daps')
-        ->selectRaw(
-            "
-            SUM(CASE WHEN demandeetablie = ? AND demandeetablie_signe = 0 THEN 1 ELSE 0 END) AS demandeetablie_count,
-            SUM(CASE WHEN verifierpar = ? AND verifierpar_signe = 0 THEN 1 ELSE 0 END) AS verifierpar_count,
-            SUM(CASE WHEN approuverpar = ? AND approuverpar_signe = 0 THEN 1 ELSE 0 END) AS approuverpar_count,
-            SUM(CASE WHEN responsable = ? AND responsable_signe = 0 THEN 1 ELSE 0 END) AS responsable_count,
-            SUM(CASE WHEN secretaire = ? AND secretaure_general_signe = 0 THEN 1 ELSE 0 END) AS secretaire_count,
-            SUM(CASE WHEN chefprogramme = ? AND chefprogramme_signe = 0 THEN 1 ELSE 0 END) AS chefprogramme_count
-        ",
-            [Auth::id(), Auth::id(), Auth::id(), Auth::id(), Auth::id(), Auth::id()],
-        )
-        ->first();
-    
-    // Calcul total
-    $dap =
-        $dap_counts->demandeetablie_count +
-        $dap_counts->verifierpar_count +
-        $dap_counts->approuverpar_count +
-        $dap_counts->responsable_count +
-        $dap_counts->secretaire_count +
-        $dap_counts->chefprogramme_count;
-    
-    $FEB_PTC_counts = DB::table('febpetitcaisses')
-        ->selectRaw(
-            "
-            SUM(CASE WHEN etabli_par = ? AND etabli_par_signature = 0 THEN 1 ELSE 0 END) AS etabli_count,
-            SUM(CASE WHEN verifie_par = ? AND verifie_par_signature = 0 THEN 1 ELSE 0 END) AS verifie_count,
-            SUM(CASE WHEN approuve_par = ? AND approuve_par_signature = 0 THEN 1 ELSE 0 END) AS approuve_count
-        ",
-            [Auth::id(), Auth::id(), Auth::id()],
-        )
-        ->first();
-    
-    // Calcul total
-    $FEB_PTC = $FEB_PTC_counts->etabli_count + $FEB_PTC_counts->verifie_count + $FEB_PTC_counts->approuve_count;
-    
-    $DAP_PTC_counts = DB::table('dapbpcs')
-        ->selectRaw(
-            "
-            SUM(CASE WHEN demande_etablie = ? AND demande_etablie_signe = 0 THEN 1 ELSE 0 END) AS demande_etablie_count,
-            SUM(CASE WHEN verifier = ? AND verifier_signe = 0 THEN 1 ELSE 0 END) AS verifier_count,
-            SUM(CASE WHEN approuver = ? AND approuver_signe = 0 THEN 1 ELSE 0 END) AS approuver_count,
-            SUM(CASE WHEN autoriser = ? AND autoriser_signe = 0 THEN 1 ELSE 0 END) AS autoriser_count,
-            SUM(CASE WHEN secretaire = ? AND secretaire_signe = 0 THEN 1 ELSE 0 END) AS secretaire_count,
-            SUM(CASE WHEN chefprogramme = ? AND chefprogramme_signe = 0 THEN 1 ELSE 0 END) AS chefprogramme_count
-        ",
-            [Auth::id(), Auth::id(), Auth::id(), Auth::id(), Auth::id(), Auth::id()],
-        )
-        ->first();
-    
-    // Calcul total
-    $DAP_PTC =
-        $DAP_PTC_counts->demande_etablie_count +
-        $DAP_PTC_counts->verifier_count +
-        $DAP_PTC_counts->approuver_count +
-        $DAP_PTC_counts->autoriser_count +
-        $DAP_PTC_counts->secretaire_count +
-        $DAP_PTC_counts->chefprogramme_count;
-    
-    $BON_PTC_counts = DB::table('bonpetitcaisses')
-        ->selectRaw(
-            "
-            SUM(CASE WHEN etabli_par = ? AND etabli_par_signature = 0 THEN 1 ELSE 0 END) AS etabli_par_count,
-            SUM(CASE WHEN verifie_par = ? AND verifie_par_signature = 0 THEN 1 ELSE 0 END) AS verifie_par_count,
-            SUM(CASE WHEN approuve_par = ? AND approuve_par_signature = 0 THEN 1 ELSE 0 END) AS approuve_par_count
-        ",
-            [Auth::id(), Auth::id(), Auth::id()],
-        )
-        ->first();
-    
-    // Calcul total
-    $BON_PTC =
-        $BON_PTC_counts->etabli_par_count +
-        $BON_PTC_counts->verifie_par_count +
-        $BON_PTC_counts->approuve_par_count;
-    
-    $CAISSE_PTC_counts = DB::table('rappotages')
-        ->selectRaw(
-            "
-            SUM(CASE WHEN verifier_par = ? AND verifier_signature = 0 THEN 1 ELSE 0 END) AS verifier_count,
-            SUM(CASE WHEN approver_par = ? AND approver_signature = 0 THEN 1 ELSE 0 END) AS approver_count
-        ",
-            [Auth::id(), Auth::id()],
-        )
-        ->first();
-    
-    // Calcul total
-    $CAISSE_PTC = $CAISSE_PTC_counts->verifier_count + $CAISSE_PTC_counts->approver_count;
-    
-    $documentNombre = $feb + $dap + $FEB_PTC + $DAP_PTC + $BON_PTC + $CAISSE_PTC;
-    
+    $documentNombre = $dapNombre + $febNombre +$djNombre + $bpcNombre + $facNombre + $dacNombre + $caisseNombre; 
+
+
     if (session()->has('id')) {
         $ProjetIdEncours = Session::get('id');
         $classement = DB::table('rappotages')->where('cloture', 0)->where('projetid', $ProjetIdEncours)->first();
@@ -132,30 +207,24 @@
         @endphp
 
 @if ($documentNombre != 0)
-<audio autoplay>
-    <source src="{{ asset('notification/son.mp3') }}" type="audio/mpeg">
-    Votre navigateur ne supporte pas l'élément audio.
-</audio>
-<li class="nav-item">
-    <a href="#" class="waves-effect"
-        class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal"
-        data-bs-target=".bs-example-modal-lg">
-        <i class="ri-file-edit-fill "></i><span
-            class="badge rounded-pill bg-danger float-end">{{ $documentNombre }}</span>
-        <span>Documents</span>
-    </a>
-</li>
+    <audio autoplay>
+        <source src="{{ asset('notification/son.mp3') }}" type="audio/mpeg">
+        Votre navigateur ne supporte pas l'élément audio.
+    </audio>
+    <li class="nav-item">
+        <a href="#" class="waves-effect"  class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
+            <i class="ri-file-edit-fill"></i><span class="badge rounded-pill bg-danger float-end">{{ $documentNombre }}</span>
+            <span>Docs à signer</span>
+        </a>
+    </li>
 @endif
 
 
 @if ($total_signalisation != 0)
-<li class="nav-item">
-    <a href="#" class="waves-effect"
-        class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal"
-        data-bs-target=".bs-signalisation">
-        <i class="ri-chat-voice-line"></i><span
-            class="badge rounded-pill bg-danger float-end">{{ $total_signalisation }}</span>
-        <span>Signalisation</span>
-    </a>
-</li>
+    <li class="nav-item">
+        <a href="#" class="waves-effect" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-signalisation">
+            <i class="ri-chat-voice-line"></i><span class="badge rounded-pill bg-danger float-end">{{ $total_signalisation }}</span>
+            <span>Signalisation</span>
+        </a>
+    </li>
 @endif

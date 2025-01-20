@@ -92,25 +92,37 @@
                                     <br> <br>
 
 
-                                    Motif :
-                                        @if($element_petite_caisse)
-                                        
+                                 
 
-                                        @foreach ($element_petite_caisse as $key => $element_petite_caisses)
-                                            {{ $element_petite_caisses->motifs }}
-
-                                            @if ($loop->remaining > 1)
-                                                , 
-                                            @elseif ($loop->remaining == 1)
-                                                ,  
-                                            @else
-                                                .  
-                                            @endif
+                                    <table  class="table table-bordered table-striped table-sm fs--1 mb-0">
+                                        <tr>
+                                            <td> # </td>
+                                            <td> Motif</td>
+                                            <td align="center"> Montant</td>
+                                          
+                                        </tr>
+                                        @php
+                                            $num =1;
+                                            $total = 0;
+                                        @endphp
+                                        @foreach ($element_petite_caisse as $element_petite_caisses)
+                                        <tr>
+                                            <td> {{ $num }} </td>
+                                            <td> {{ $element_petite_caisses->motifs }} </td>
+                                            <td align="right"> {{  number_format($element_petite_caisses->montant, 0, ',', ' ')  }} </td>
+                                          
+                                        </tr>
+                                        @php
+                                            $num++;
+                                            $total += $element_petite_caisses->montant
+                                        @endphp
+                                            
                                         @endforeach
-
-
-
-                                        @endif
+                                        <tr> 
+                                            <td colspan="2" align="center"> Total </td>
+                                            <td align="right">  {{  number_format($total, 0, ',', ' ')  }}</td></tr>
+                                       
+                                    </table>
 
                                     <br>
 

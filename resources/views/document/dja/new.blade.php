@@ -19,7 +19,7 @@
                                                 class="fa fa-print"></i> </a>
 
 
-                                        <a href="{{ route('voir', $data->iddjas) }}"
+                                        <a href="{{ route('voirDja', $data->iddjas) }}"
                                             class="btn btn-primary waves-light waves-effect" title="Voir le DJA"><i class="fa fa-eye"></i></a>
 
                                         <a href="{{ route('nouveau', $data->iddjas) }}"
@@ -251,7 +251,7 @@
 
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        <h5><i class="fa fa-info-circle"></i> Demande/Approbation</h5>
+                                                        <h5><i class="fa fa-info-circle"></i> Approbation</h5>
                                                         <hr>
                                                     </div>
                                                     <div class="col-md-4">

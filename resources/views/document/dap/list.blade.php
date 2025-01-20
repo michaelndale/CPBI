@@ -15,7 +15,7 @@
   <div class="page-content">
     <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style="margin:auto">
 
-      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.30rem 3rem;">
+      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.30rem 1rem;">
         <h4 class="mb-sm-0"><i class="mdi mdi-book-open-page-variant-outline"></i> Demande d'Autorisation de Paiement "DAP" </h4>
 
         <div class="page-title-right d-flex align-items-center justify-content-between gap-2" style="margin: 0;">
@@ -46,19 +46,19 @@
                 <table class="table table-bordered table-striped table-sm fs--1 mb-0">
                     <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
                         <tr>
-                          <th class="sort border-top"><center><b></b></center></th>
+                          <th class="sort border-top"><center><i class="mdi mdi-comment-outline align-middle font-size-16 me-1"></i></center></th>
                             <th class="sort border-top"><center><b>Actions</b></center></th>
                             <th class="sort border-top"><center><b>N<sup>o</sup> DAP</b></center></th>
                             <th class="sort border-top"><center><b>N<sup>o</sup> FEB</b></center></th>
                             <th class="sort border-top"><center><b>Montant</b></center></th>
-                            <th class="sort border-top"><center><b>Lieu</b></center></th>
+                            <th class="sort border-top"><b>Lieu</b></th>
                             <th class="sort border-top"><b>OV/Chèque</b></th>
                             <th class="sort border-top"><b>Compte bancaire</b></th>
                             <th class="sort border-top"><b>Banque</b></th>
                             <th class="sort border-top"><b>Etabli au nom</b></th>
                             <th class="sort border-top"><b>Avance</b></th>
                             <th class="sort border-top"><center><b>Justifiée ?</b></center></th>
-                            <th class="sort border-top"><center><b>Créé le</b></center></th>
+                            <th class="sort border-top"><b>Créé le</b></th>
                             <th class="sort border-top"><b>Créé par</b></th>
                         </tr>
                     </thead>

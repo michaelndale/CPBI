@@ -27,7 +27,7 @@ class ActivityController extends Controller
       $projectId = session()->get('id');
   
       // Récupérer tous les projets
-      $projects = Project::all();
+    //  $projects = Project::all();
   
       // Vérifier si l'ID du projet est valide
       if (!$projectId) {
@@ -50,7 +50,7 @@ class ActivityController extends Controller
       // Retourner la vue avec les données nécessaires
       return view('activite.index', [
           'title' => $title,
-          'projects' => $projects,
+        //  'projects' => $projects,
           'compte' => $comptes,
       ]);
   }
@@ -64,14 +64,18 @@ class ActivityController extends Controller
     try {
         $ID = session()->get('id');
         $devise = session()->get('devise');
+        $exerciceId = session()->get('exercice_id');
+
         $service = DB::table('comptes')
             ->where('comptes.projetid', $ID)
+
             ->where('comptes.compteid', '=', 0)
             ->distinct()
             ->get();
 
         $SommeAllActivite = DB::table('activities')
             ->where('projectid', $ID)
+            ->where('activities.execiceid', $exerciceId)
             ->sum('montantbudget');
 
         $output = '';
@@ -98,6 +102,7 @@ class ActivityController extends Controller
                     ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
                     ->where('rallongebudgets.projetid', $ID)
                     ->where('rallongebudgets.compteid', $id)
+                    ->where('rallongebudgets.execiceid', $exerciceId)
                     ->sum('rallongebudgets.budgetactuel');
 
                 $output .= '
@@ -129,11 +134,13 @@ class ActivityController extends Controller
                         $act = DB::table('activities')
                             ->where('projectid', $ID)
                             ->where('compteidr', $ids)
+                            ->where('activities.execiceid', $exerciceId)
                             ->get();
 
                         $actsome = DB::table('activities')
                             ->where('projectid', $ID)
                             ->where('compteidr', $ids)
+                            ->where('activities.execiceid', $exerciceId)
                             ->sum('montantbudget');
 
                         $nombre = 1;
@@ -237,6 +244,7 @@ class ActivityController extends Controller
     $IDP = session()->get('id');
     $comp = $request->compteid;
     $compp = explode("-", $comp);
+    $exerciceId = session()->get('exercice_id');
 
     $grandcompte = $compp[0];
     $souscompte  = $compp[1];
@@ -248,6 +256,7 @@ class ActivityController extends Controller
       $somme_budget_ligne = DB::table('rallongebudgets')
         ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
         ->where('rallongebudgets.projetid', $IDP)
+        ->where('rallongebudgets.execiceid', $exerciceId)
         ->where('rallongebudgets.compteid', $grandcompte)
         ->where('rallongebudgets.souscompte', $souscompte)
         ->sum('rallongebudgets.budgetactuel');
@@ -256,6 +265,7 @@ class ActivityController extends Controller
         ->where('projectid', $IDP)
         ->where('grandcompte', $grandcompte)
         ->where('compteidr', $souscompte)
+        ->where('activities.execiceid', $exerciceId)
         ->sum('montantbudget');
 
       $montant_somme = $request->montant + $somme_activite_ligne;
@@ -269,6 +279,7 @@ class ActivityController extends Controller
         $activity->titre = $request->titre;
         $activity->montantbudget = $request->montant;
         $activity->etat_activite = $request->etat;
+        $activity->execiceid = $exerciceId ;
         $activity->userid = Auth::id();
 
         $activity->save();

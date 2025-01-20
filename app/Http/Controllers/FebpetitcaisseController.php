@@ -131,12 +131,7 @@ class FebpetitcaisseController extends Controller
   {
     $title = 'FEB Petit Caisse';
     // Récupérer l'ID de la session
-    $IDP = session()->get('id');
-
-    if (!$IDP) {
-      return redirect()->route('dashboard');
-    }
-
+   
     // Décrypter l'ID
     $ids = Crypt::decrypt($id);
 

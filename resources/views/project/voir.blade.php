@@ -24,20 +24,32 @@
             <div class="page-title-right">
               <div class="dropdown">
                 @php
-                $IDPJ= Session::get('id');
-                $cryptedId = Crypt::encrypt($IDPJ);
-                @endphp
-                <a href="{{ route('key.viewProject', $cryptedId ) }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" title="Actualiser"><i class="fas fa-redo-alt"></i>  </a>
+                $IDPJ = Session::get('id');
+                $exercice_id = Session::get('exercice_id');
+                $cryptedProjectId = Crypt::encrypt($IDPJ);
+                $cryptedExerciceId = Crypt::encrypt($exercice_id)
+               @endphp
+
+               
+                <a href="{{ route('key.viewProject',  ['project' => $cryptedProjectId, 'exercice' => $cryptedExerciceId]) }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" title="Actualiser"><i class="fas fa-redo-alt"></i>  </a>
+
+                <a href="{{ route('new.exercice',  $cryptedProjectId) }}"
+                class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button"><i
+                    class="fa fa-plus-circle"></i> Nouvelle exercice</a>
+                    
+                <a href="{{ route('rallongebudget') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" ><i class="fa fa-list"></i> Budgétisation  </a>
+
+                <a href="{{ route('key.editProject',  $cryptedProjectId ) }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" ><i class="fa fa-edit"></i>  Modification du projet  </a>
+                
+                <a href="{{ route('affectation') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" ><i class="fa fa-users"></i>  Intervenants </a>
+                
                 <button class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="fa fa-random"></i> Actions <i class="mdi mdi-dots-vertical align-middle "></i>
+                  <i class="fa fa-plus-circle"></i> Actions options <i class="mdi mdi-dots-vertical align-middle "></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
+                 
                   <li>
-                    <a class="dropdown-item" href="{{ route('key.editProject',  $cryptedId ) }}"><i class="mdi mdi-file-document-edit-outline font-size-20 align-middle me-2 text-muted"></i>
-                      Modification du projet</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="{{ route('liste.revision', $cryptedId) }}"><i class="fa  fa-list font-size-16 align-middle me-2 text-muted"></i>
+                    <a class="dropdown-item" href="{{ route('liste.revision', $cryptedProjectId) }}"><i class="fa  fa-list font-size-16 align-middle me-2 text-muted"></i>
                       Historique de la revision Budgétaire</a>
                   </li>
 
@@ -45,10 +57,7 @@
                     <a class="dropdown-item" href="{{ route('gestioncompte') }}"><i class="fa fa-chart-line font-size-16 align-middle me-2 text-muted"></i>
                       Ligne budgétaire</a>
                   </li>
-                  <li>
-                    <a class="dropdown-item" href="{{ route('rallongebudget') }}"><i class="fa  fa-chart-bar font-size-16 align-middle me-2 text-muted"></i>
-                      Budgétisation</a>
-                  </li>
+                 
 
                   
                   <li>
@@ -71,10 +80,7 @@
                     <a class="dropdown-item" href="{{ route('bpc') }}"><i class="mdi mdi-file-document-outline font-size-20  align-middle me-2 text-muted"></i>
                       Bon de petite caisse</a>
                   </li>
-                  <li>
-                    <a class="dropdown-item" href="{{ route('affectation') }}"><i class="fa fa-users font-size-16 align-middle me-2"></i> Intervenants</a>
-                  </li>
-
+                 
                   <li>
                     <a class="dropdown-item" href="{{ route('bailleursDeFonds') }}"><i class="fa fa-users font-size-16 align-middle me-2"></i> Bailleurs des fonds</a>
                   </li>
@@ -121,13 +127,31 @@
                             <td class="align-top py-1 text-900 text-nowrap fw-bold">Numéro projet </td>
                             <td class="text-600 fw-semi-bold ps-3"> : {{ $dataProject->numeroprojet }}</td>
                           </tr>
+
+                          <tr>
+                            <td class="align-top py-1 text-900 text-nowrap fw-bold">Numéro exercice</td>
+                            <td class="text-600 fw-semi-bold ps-3"> : {{ $dataProject->numero_e }}</td>
+                          </tr>
+
+                          <tr>
+                            <td class="align-top py-1 text-900 text-nowrap fw-bold">Statut de l'exercice</td>
+                            <td class="text-600 fw-semi-bold ps-3"> : 
+                              @if($dataProject->status === 'actif')
+                              <span class="badge rounded-pill bg-subtle-primary text-primary font-size-11">Active</span>
+                              @else
+                              <span class="badge rounded-pill bg-subtle-danger text-danger font-size-11">Archiver</span>
+                              @endif
+
+                            </td>
+                          </tr>
+
                           <tr>
                             <td class="align-top py-1 text-900 text-nowrap fw-bold">Titre du projet </td>
                             <td class="text-600 fw-semi-bold ps-3"> : {{ $dataProject->title }}</td>
                           </tr>
                           <tr>
                             <td class="align-top py-1 text-900 text-nowrap fw-bold">Budget </td>
-                            <td class="text-600 fw-semi-bold ps-3"> : {{ number_format($dataProject->budget,0, ',', ' ') }} {{ $dataProject->devise }} </td>
+                            <td class="text-600 fw-semi-bold ps-3"> : {{ number_format($dataProject->budgets,0, ',', ' ') }} {{ $dataProject->devise }} </td>
                           </tr>
 
                           <tr>
@@ -137,16 +161,16 @@
 
                           <tr>
                             <td class="align-top py-1 text-900 text-nowrap fw-bold">Début de l'exécution du projet </td>
-                            <td class="text-600 fw-semi-bold ps-3">: {{ date('d.m.Y', strtotime($dataProject->start_date))  }}</td>
+                            <td class="text-600 fw-semi-bold ps-3">: {{ date('d.m.Y', strtotime($dataProject->estart_date))  }}</td>
                           </tr>
                           <tr>
                             <td class="align-top py-1 text-900 text-nowrap fw-bold">Fin de l'exécution du projet </td>
-                            <td class="text-600 fw-semi-bold ps-3"> : {{ date('d.m.Y', strtotime($dataProject->deadline))  }}</td>
+                            <td class="text-600 fw-semi-bold ps-3"> : {{ date('d.m.Y', strtotime($dataProject->edeadline))  }}</td>
                           </tr>
                           <tr>
                             <td class="align-top py-1 text-900 text-nowrap fw-bold">Progression du projet </td>
                             @php
-                            $pourcentage = round(($sommerepartie * 100) / $dataProject->budget, 2);
+                            $pourcentage = round(($sommerepartie * 100) / $dataProject->budgets, 2);
                             $restant = 100 - $pourcentage;
                             if($pourcentage < 50){ $color='primary' ; }elseif($pourcentage>=50 AND $pourcentage < 80){ $color='success' ; }elseif($pourcentage <=80 AND $pourcentage>= 100){
                                 $color= 'danger';
@@ -170,7 +194,7 @@
 
                           <tr>
                             <td class="align-top py-1 text-900 text-nowrap fw-bold">Notre en période </td>
-                            <td class="text-600 fw-semi-bold ps-3">: {{ $dataProject->periode }} (T)</td>
+                            <td class="text-600 fw-semi-bold ps-3">: {{ $dataProject->eperiode }} (T)</td>
                           </tr>
 
                           <tr>
@@ -179,8 +203,8 @@
 
                               @php
                               // Date de début et de fin de l'intervalle
-                              $dateDebut = \Carbon\Carbon::parse($dataProject->start_date);
-                              $dateFin = \Carbon\Carbon::parse($dataProject->deadline);
+                              $dateDebut = \Carbon\Carbon::parse($dataProject->estart_date);
+                              $dateFin = \Carbon\Carbon::parse($dataProject->edeadline);
 
                               // Calculer le nombre de jours entre les deux dates
                               $nombreJours = $dateFin->diffInDays($dateDebut);

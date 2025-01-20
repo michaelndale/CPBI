@@ -5,8 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Feb extends Model
+class ExerciceProjet extends Model
 {
     use HasFactory;
-    protected $fillable = ['numerofeb','activityid','periode','datefeb','execiceid'];
 }

@@ -10,15 +10,17 @@ $cryptedId = Crypt::encrypt($data->id);
                 <div class="col-12" style="margin:auto">
                     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                         <h4 class="mb-sm-0"><i class="fa fa-folder-plus"></i> Le details de la DAP (N° {{ $data->numerodap  }} ) </h4>
-                        <div class="page-title-right">
-                            &nbsp; &nbsp;
-                            <div class="btn-toolbar float-end" role="toolbar">
-                                <div class="btn-group me-2 mb-2 mb-sm-0">
-                                    <a href="{{ route('showdappc', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect" title="Modifier le DAP"><i class="fa fa-edit"></i> </a>
-                                    <a href="{{ route('dappc') }}" class="btn btn-primary waves-light waves-effect" title="Liste de DAP "><i class="fa fa-list"></i></a>
+                        @if (session()->has('id'))
+                            <div class="page-title-right">
+                                &nbsp; &nbsp;
+                                <div class="btn-toolbar float-end" role="toolbar">
+                                    <div class="btn-group me-2 mb-2 mb-sm-0">
+                                        <a href="{{ route('showdappc', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect" title="Modifier le DAP"><i class="fa fa-edit"></i> </a>
+                                        <a href="{{ route('dappc') }}" class="btn btn-primary waves-light waves-effect" title="Liste de DAP "><i class="fa fa-list"></i></a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -21,7 +21,7 @@
             <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card"
                 style="margin: 0; margin:auto">
                 <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between"
-                    style="padding: 0.10rem 3rem;">
+                    style="padding: 0.10rem 1rem;">
 
                     <h4 class="mb-sm-0"><i class="mdi mdi-book-open-page-variant"></i> Fiche d'Expression des Besoins "FEB"
                     </h4>
@@ -74,6 +74,7 @@
                             <table class="table table-bordered table-striped table-sm fs--1 mb-0">
                                 <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
                                     <tr>
+                                        <th style="width:20px"> <center><i class="mdi mdi-comment-outline align-middle font-size-16 me-1"></i> </center> </th>
                                         <th class="sort border-top">
                                             <center><b>Actions</b></center>
                                         </th>

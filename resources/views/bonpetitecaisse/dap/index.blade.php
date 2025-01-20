@@ -47,6 +47,7 @@
             <table class="table table-bordered table-striped table-sm fs--1 mb-0">
               <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
                 <tr>
+                    <th>#</th>
                   <th class="sort border-top ">
                     <center><b>Actions</b></center>
                   </th>

@@ -28,6 +28,7 @@ class DjaController extends Controller
   public function fetchAll()
   {
     $ID = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
     $data =  DB::table('djas')
       ->join('users', 'djas.userid', '=', 'users.id')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -45,6 +46,8 @@ class DjaController extends Controller
         'personnel_fond_recu_par.prenom as fond_recu_prenom',
       )
       ->where('djas.projetiddja', $ID)
+      ->where('djas.exerciceids', $exerciceId)
+      ->where('djas.justifie', 1)
       ->orderBy('daps.numerodp', 'asc')
       ->get();
 
@@ -52,16 +55,15 @@ class DjaController extends Controller
     if ($data->count() > 0) {
       $nombre = 1;
       foreach ($data as $datas) {
-        $cryptedId = Crypt::encrypt($datas->id);
+     
 
         $numerofeb = DB::table('febs')
           ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
           ->where('elementdaps.dapid', $datas->iddap)
           ->get();
 
-        $cryptedId = Crypt::encrypt($datas->iddap);
-        $totalMontant = $this->getTotalDap($datas->iddap); // Récupérer le montant total pour chaque DAP
-
+        $cryptedId = Crypt::encrypt($datas->iddjas);
+      
         if ($datas->justifie == 1) {
           $jus = "checked";
         } else {
@@ -78,7 +80,7 @@ class DjaController extends Controller
             </a>
             <div class="dropdown-menu">
               
-               <a href="dja/' . $datas->iddjas . '/nouveau" class="dropdown-item mx-1"><i class="fa fa-plus-circle"></i> Demande/Approbation  </a>
+               <a href="dja/' . $datas->iddjas . '/nouveau" class="dropdown-item mx-1"><i class="fa fa-plus-circle"></i> Approbation  </a>
                 <a href="dja/' . $datas->iddjas . '/nouveauutilisation" class="dropdown-item mx-1"><i class="fa fa-plus-circle"></i> Rapport d\'utilisation de l\'avance  </a>
                <a href="dja/' . $datas->iddjas . '/voir" class="dropdown-item mx-1"><i class="fa fa-eye"></i> Voir  DJA  </a>
                <a href="dja/' . $datas->iddjas . '/generate-pdf-dja" class="dropdown-item mx-1"><i class="fa fa-print"></i> Imprimer DJA  </a> 
@@ -100,7 +102,7 @@ class DjaController extends Controller
 
         $output .= '
             </td>
-              <td align="right"><b>' . number_format($totalMontant, 0, ',', ' ') . '</b> </td> 
+            
                 <td align="right"><b>' . number_format($datas->montant_avance, 0, ',', ' ') . '</b> </td> 
 
            <td> ' . ($datas->fond_recu_par == 0 ? $datas->autres_nom_prenom_fond_recu : $datas->fond_recu_nom . ' ' . $datas->fond_recu_prenom) . ' </td>
@@ -370,16 +372,11 @@ class DjaController extends Controller
   public function generatePDFdja($id)
   {
 
-    $IDP = session()->get('id');
+  
     $devise = session()->get('devise');
     $title = "Nouveau DJA";
 
-    // Vérifier si l'une des variables de session n'est pas définie
-    if (!$IDP) {
-      // Rediriger vers la route nommée 'dashboard'
-      return redirect()->route('dashboard');
-    }
-
+   
     $data = DB::table('djas')
       ->orderBy('daps.numerodp', 'asc')
       ->join('users', 'djas.userid', '=', 'users.id')
@@ -470,12 +467,11 @@ class DjaController extends Controller
         'user_pfond_paye.signature as pfond_paye_signature',
 
       )
-      ->where('djas.projetiddja', $IDP)
+
       ->where('djas.id', $id)
       ->first();
 
-
-    $numerofeb = DB::table('febs')
+      $numerofeb = DB::table('febs')
       ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
       ->leftJoin('comptes', 'febs.sous_ligne_bugdetaire', 'comptes.id')
       ->leftjoin('beneficaires', 'febs.beneficiaire', 'beneficaires.id')
@@ -485,15 +481,10 @@ class DjaController extends Controller
       ->where('elementdaps.dapid', $data->iddap)
       ->get();
 
-    $personnel = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-      ->orderBy('nom', 'ASC')
-      ->get();
+   
 
-
-
-    $vehicules = Vehicule::all();
+      $title = "Impression DJA Num:".$data->numerodjas;
+   
 
     $infoglo = DB::table('identifications')->first();
 
@@ -505,11 +496,9 @@ class DjaController extends Controller
       [
         'title'     => $title,
         'data'      => $data,
-        'numerofeb' => $numerofeb,
         'devise'    => $devise,
-        'personnel' => $personnel,
-        'vehicule'  => $vehicules,
-        'dateinfo'   => $infoglo
+        'dateinfo'   => $infoglo,
+        'numerofeb'  => $numerofeb
 
 
       ]
@@ -1270,16 +1259,11 @@ class DjaController extends Controller
   public function voir($id)
   {
 
-    $IDP = session()->get('id');
+ 
     $devise = session()->get('devise');
-    $title = "Nouveau DJA";
+   
 
-    // Vérifier si l'une des variables de session n'est pas définie
-    if (!$IDP) {
-      // Rediriger vers la route nommée 'dashboard'
-      return redirect()->route('dashboard');
-    }
-
+  
     $data = DB::table('djas')
       ->orderBy('daps.numerodp', 'asc')
       ->join('users', 'djas.userid', '=', 'users.id')
@@ -1358,7 +1342,7 @@ class DjaController extends Controller
         'personnel_pfond_paye.prenom as pfond_paye_prenom',
 
       )
-      ->where('djas.projetiddja', $IDP)
+     
       ->where('djas.id', $id)
       ->first();
 
@@ -1383,7 +1367,7 @@ class DjaController extends Controller
 
     $vehicules = Vehicule::all();
 
-
+    $title = "DJA Num:".$data->numerodjas;
 
     return view(
       'document.dja.voir',

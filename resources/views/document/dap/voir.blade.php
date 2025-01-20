@@ -28,8 +28,11 @@ $cryptedId = Crypt::encrypt($datadap->id);
                             <div class="btn-toolbar float-end" role="toolbar">
                                 <div class="btn-group me-2 mb-2 mb-sm-0">
                                     <a href="{{ route('generate-pdf-dap',$cryptedId  ) }}" class="btn btn-primary waves-light waves-effect" title="Générer PDF "><i class="fa fa-print"></i> </a>
-                                    <a href="{{ route('showdap', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect" title="Modifier le DAP"><i class="fa fa-edit"></i> </a>
-                                    <a href="{{ route('listdap') }}" class="btn btn-primary waves-light waves-effect" title="Liste de DAP "><i class="fa fa-list"></i></a>
+                                    
+                                    @if (session()->has('id'))
+                                        <a href="{{ route('showdap', $cryptedId ) }}" class="btn btn-primary waves-light waves-effect" title="Modifier le DAP"><i class="fa fa-edit"></i> </a>
+                                        <a href="{{ route('listdap') }}" class="btn btn-primary waves-light waves-effect" title="Liste de DAP "><i class="fa fa-list"></i></a>
+                                    @endif
                                 </div>
                             </div>
                         </div>

@@ -8,6 +8,14 @@ $personnelData = DB::table('personnels')
 $avatar = Auth::user()->avatar ;
 $defaultAvatar = '../../element/profile/default.png'; // Chemin vers votre image par défaut
 $imagePath = public_path($avatar);
+
+
+$IDPJ = Session::get('id');
+                                $exercice_id = Session::get('exercice_id');
+                                $cryptedProjectId = Crypt::encrypt($IDPJ);
+                                $cryptedExerciceId = Crypt::encrypt($exercice_id)
+
+
 @endphp
 <sty
     <div id="layout-wrapper">
@@ -76,22 +84,23 @@ $imagePath = public_path($avatar);
                         
                         <button type="button" class="btn header-item ">
 
-                        @php
-                            $currentDate = now(); // Date actuelle
-                            $showTree = $currentDate->month === 12 && $currentDate->day >= 10 && $currentDate->day <= 30;
-                        @endphp
+                       
 
-                        @if($showTree)
-                        <a class="btn no-border" href="javascript:void(0)">
-                            @include('layout.partiels.arbrenoel')
-                        </a>
-                        @endif
+                       
 
                             @if (session()->has('id'))
+
+                            <a href="{{ route('new.exercice',  $cryptedProjectId) }}"
+                            class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button"><i
+                                class="fa fa-plus-circle"></i> Nouvelle exercice</a>
+
+
                                 <a href="{{ route('closeproject') }}"
                                     class="btn btn-outline-danger rounded-pill me-1 mb-1 btn-sm" type="button"
                                     data-bs-toggle="modal" data-bs-target="#verticallyCentered"><i
                                         class="fas fa-sign-out-alt"></i> Quitter le projet</a>
+
+                                       
                             @else
                                 <a href="{{ route('new_project') }}"
                                     class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button"><i
@@ -259,11 +268,7 @@ $imagePath = public_path($avatar);
 
                         @if (session()->has('id'))
 
-                            @php
-                                $IDPJ = Session::get('id');
-                                $cryptedId = Crypt::encrypt($IDPJ);
-
-                            @endphp
+                          
                             <li class="menu-title">Projet</li>
 
                             <li>
@@ -273,7 +278,7 @@ $imagePath = public_path($avatar);
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
 
-                                    <li><a href="{{ route('key.viewProject', $cryptedId) }}"><i class="fa fa-eye"></i> Voir le projet</a></li>
+                                    <li><a href="{{ route('key.viewProject', ['project' => $cryptedProjectId, 'exercice' => $cryptedExerciceId]) }}"><i class="fa fa-eye"></i> Voir le projet</a></li>
                                     <li><a href="{{ route('gestioncompte') }}"><i class="fa fa-chart-line"></i> Ligne budgét</a></li>
                                     <li><a href="{{ route('rallongebudget') }}"><i class="fa fa-chart-bar"></i> Budget</a></li>
                                     <li><a href="{{ route('activity') }}"><i class="fa fa-running"></i> Activités</a> </li>

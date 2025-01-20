@@ -18,7 +18,7 @@
 
   .scrollable-content {
     overflow-y: auto;
-    max-height: 400px;
+    max-height: 600px;
   }
 </style>
 <div class="main-content">
@@ -43,16 +43,10 @@
   
       </div>
      
-    
-    
-    
-
-
 
       <div class="card-body p-0" id="table-container" style="overflow-y: auto;">
         <div class="card">
-         
-           
+        
               <div class="float-end d-none d-md-inline-block" style="background-color: white;">
                 <div class="">
                   <div id="show_all_rallonge" class=" scrollable-content scrollme">
@@ -72,14 +66,15 @@
           
         </div>
       </div>
-    </div>
-  </div>
-</div>
+
 <br><br><br><br>
 
 @include('rallonge.modale')
+@include('rallonge.historique')
 
+    </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
 
 <script>
   function adjustTableHeight() {
@@ -214,6 +209,33 @@
         } else {
           toastr.error('Aucune donnée trouvée pour cet ID.');
         }
+      },
+      error: function(xhr) {
+        toastr.error('Erreur lors de la récupération des données.');
+        console.error('Erreur:', xhr);
+      },
+      statusCode: {
+        404: function() {
+          toastr.error('Ressource non trouvée (404).');
+        },
+        500: function() {
+          toastr.error('Erreur interne du serveur (500).');
+        }
+      }
+    });
+  });
+
+
+  $(document).on('click', '.showeHistorique', function(e) {
+    e.preventDefault();
+    let id = $(this).attr('id');
+    
+    $.ajax({
+      url: "{{ route('historiqueliste') }}",
+      method: 'get',
+      data: { id: id, _token: '{{ csrf_token() }}' },
+      success: function(response) {
+        
       },
       error: function(xhr) {
         toastr.error('Erreur lors de la récupération des données.');

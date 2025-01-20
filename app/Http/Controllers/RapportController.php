@@ -55,13 +55,7 @@ class RapportController extends Controller
     public function cloturecaisse()
     {
         $title = 'Rapport de caisse';
-        $ID = session()->get('id');
-        // Vérifier si l'ID de la session n'est pas défini
-        if (!$ID) {
-            // Rediriger vers la route nommée 'dashboard'
-            return redirect()->route('dashboard');
-        }
-
+        
 
         $historiqueCompte = Rappotagecaisse::orderBy('caisse_id', 'ASC')
             ->where('rappotages.cloture', 0)
@@ -81,7 +75,6 @@ class RapportController extends Controller
             ->get();
 
         $classement = Rappotage::where('cloture', 0)
-            ->where('projetid', $ID)
             ->first();
 
         $verifie_par = DB::table('users')

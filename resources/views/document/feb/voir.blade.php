@@ -34,14 +34,17 @@
                                         <a href="{{ route('generate-pdf-feb', $dataFeb->id) }}"
                                             class="btn btn-primary waves-light waves-effect" title="Générer PDF"><i
                                                 class="fa fa-print"></i> </a>
+                                        
                                         <a href="{{ route('showannex', $cryptedId) }}"
                                             class="btn btn-primary waves-light waves-effect" title="Attacher le document"><i
                                                 class="fas fa-paperclip"></i> </a>
-                                        <a href="{{ route('showfeb', $cryptedId) }}"
-                                            class="btn btn-primary waves-light waves-effect" title="Modifier le FEB"><i
-                                                class="fa fa-edit"></i> </a>
-                                        <a href="{{ route('listfeb') }}" class="btn btn-primary waves-light waves-effect"
-                                            title="Liste de FEB"><i class="fa fa-list"></i></a>
+                                        @if (session()->has('id'))
+                                            <a href="{{ route('showfeb', $cryptedId) }}"
+                                                class="btn btn-primary waves-light waves-effect" title="Modifier le FEB"><i
+                                                    class="fa fa-edit"></i> </a>
+                                            <a href="{{ route('listfeb') }}" class="btn btn-primary waves-light waves-effect"
+                                                title="Liste de FEB"><i class="fa fa-list"></i></a>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

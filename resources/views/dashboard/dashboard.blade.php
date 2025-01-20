@@ -667,8 +667,9 @@
                                                     </tbody>
                                                 </table>
                                                 <br>
-                                                <a class="fw-bold fs--1 mt-4" href="{{ route('new_project') }}"><span
-                                                        class="fas fa-plus-circle"></span> Ajouter nouveau projet </a>
+                                                <a href="{{ route('new_project') }}"
+                                                class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button"><i
+                                                    class=" mdi mdi-plus-circle-multiple"></i> Créer un projet </a>
                                             </div>
 
                                         </div>
@@ -690,17 +691,20 @@
         </div>
         <!-- End Page-content -->
         @if ($documentNombre != 0)
-            <div class="modal fade" id="monNotification" tabindex="-1" role="dialog"
+            <div tabindex="-1" role="dialog"
                 aria-labelledby="monNotificationLabel" aria-hidden="true">
+               
+            <input type="hidden" name="recherche" id="recherche" class="form-control"
+                placeholder="Recherche par numéro(F.E.B, D.A.P), date , Initiateur">
                 <div class="modal-dialog modal-lg modal-dialog-scrollable">
                     <div class="modal-content">
-                        <div class="modal-header">
+                        <!--<div class="modal-header">
                             <h5 class="modal-title" id="myLargeModalLabel"><i class="fa fa-list"></i> Tâches à faire en
                                 attente</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                                aria-label="Close"></button> !-->
                         </div>
-                        <div class="modal-body">
+                       <!--  <div class="modal-body">
 
                             <div id="tableExample2">
                                 <div class="table-responsive">
@@ -745,8 +749,8 @@
                             </div>
 
                         </div>
-                    </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
+                    </div>
+                </div> /.modal-dialog -->
             </div>
         @endif
     </div>

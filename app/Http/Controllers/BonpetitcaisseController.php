@@ -185,6 +185,9 @@ class BonpetitcaisseController extends Controller
                       <a href="bonpetitcaisse/' . $cryptedId . '/viewbpc" class="dropdown-item mx-1" id="' . $rs->idb . '">
                           <i class="fas fa-eye"></i> Voir 
                       </a>
+                       <a href="bonpetitcaisse/' . $cryptedId . '/voir" class="dropdown-item mx-1" id="' . $rs->idb . '">
+                          <i class="fas fa-edit"></i> Modifier
+                      </a>
                     
                   </div>
               </div>
@@ -219,6 +222,62 @@ class BonpetitcaisseController extends Controller
     }
 
     public function  show($key)
+    {
+
+        $title = 'Bon petite caisse';
+        
+      
+
+        $keys= Crypt::decrypt($key);
+
+        $dateinfo = Identification::all()->first();
+      
+        $dataPetiteCaisse = Bonpetitcaisse::orderBy('numero', 'ASC') // Trie les résultats par numéro en ordre croissant
+        ->join('comptepetitecaisses', 'bonpetitcaisses.compteid', '=', 'comptepetitecaisses.id')
+        ->join('users', 'bonpetitcaisses.userid', '=', 'users.id') // Joint la table 'users' en utilisant 'userid' de 'bonpetitcaisses'
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id') // Joint la table 'personnels' en utilisant 'personnelid' de 'users'
+        ->select('bonpetitcaisses.*', 'comptepetitecaisses.code as code','personnels.prenom as user_prenom') // Sélectionne toutes les colonnes de 'bonpetitcaisses' et le prénom de 'personnels'
+        ->where('bonpetitcaisses.id', $keys) // Filtre les résultats pour obtenir l'enregistrement correspondant à l'ID donné
+        ->first(); // Récupère le premier (et seul) enregistrement correspondant
+
+        $etablienom = DB::table('users')
+            ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as userid')
+            ->where('users.id', $dataPetiteCaisse->etabli_par)
+            ->first();
+            
+            $verifie_par = DB::table('users')
+            ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+            ->where('users.id', $dataPetiteCaisse->verifie_par)
+            ->first();
+
+        $approuver_par = DB::table('users')
+            ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+            ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
+            ->where('users.id',  $dataPetiteCaisse->approuve_par)
+            ->first();
+        
+            $element_petite_caisse = Elementboncaisse::where('boncaisse_id',$dataPetiteCaisse->id)->get();
+
+          
+
+        return view(
+            'bonpetitecaisse.bonpc.voir',
+            [
+                'title'            => $title,
+                'dataPetiteCaisse' => $dataPetiteCaisse,
+                'dateinfo'         => $dateinfo ,
+                'etablienom'       => $etablienom,
+                'verifie_par'      => $verifie_par,
+                'approuver_par'    => $approuver_par,
+                'element_petite_caisse' => $element_petite_caisse
+            ]
+        );
+
+    }
+
+    public function  voir($key)
     {
 
         $title = 'Bon petite caisse';
@@ -262,8 +321,28 @@ class BonpetitcaisseController extends Controller
         
             $element_petite_caisse = Elementboncaisse::where('boncaisse_id',$dataPetiteCaisse->id)->get();
 
+            $compte_bpc =  Comptepetitecaisse::where('projetid', $ID)
+                ->join('users', 'comptepetitecaisses.userid', '=', 'users.id')
+                ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+                ->select('comptepetitecaisses.*', 'personnels.prenom as personnel_prenom')
+                ->get();
+    
+            $comptes = Compte::where('projetid', $ID)
+                ->where('compteid', 0)
+                ->distinct()
+                ->get();
+    
+           
+            $personnel = DB::table('users')
+                ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+                ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+                ->orderBy('nom', 'ASC')
+                ->get();
+
+          
+
         return view(
-            'bonpetitecaisse.bonpc.voir',
+            'bonpetitecaisse.bonpc.edit',
             [
                 'title'            => $title,
                 'dataPetiteCaisse' => $dataPetiteCaisse,
@@ -271,9 +350,10 @@ class BonpetitcaisseController extends Controller
                 'etablienom'       => $etablienom,
                 'verifie_par'      => $verifie_par,
                 'approuver_par'    => $approuver_par,
-                'element_petite_caisse' => $element_petite_caisse 
-               
-               
+                'element_petite_caisse' => $element_petite_caisse,
+                'compte_bpc' => $compte_bpc,
+                'compte'  => $comptes,
+                'personnel' => $personnel
             ]
         );
 

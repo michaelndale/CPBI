@@ -1,7 +1,6 @@
 <script>
     setTimeout("location.href = '{{ route('login')}}';", 2500);
 </script>
-
 <style>
     /* Absolute Center Spinner */
     body {

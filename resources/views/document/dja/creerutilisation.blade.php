@@ -17,7 +17,7 @@
                                         class="fa fa-print"></i> </a>
 
 
-                                <a href="{{ route('voir', $data->iddjas) }}"
+                                <a href="{{ route('voirDja', $data->iddjas) }}"
                                     class="btn btn-primary waves-light waves-effect" title="Voir le DJA"><i class="fa fa-eye"></i></a>
 
                                 <a href="{{ route('nouveau', $data->iddjas) }}"
@@ -59,7 +59,7 @@
                                                             aria-controls="collapseOne">
                                                 <div class="card-header" id="headingOne">
                                                     <h6 class="m-0">
-                                                        <i class="fa fa-info-circle"></i> Demande d'une avance #1
+                                                        <i class="fa fa-info-circle"></i> Approbation #1
                                                         <i class="mdi mdi-minus float-end accor-plus-icon"></i>
                                                     </h6>
                                                 </div>
@@ -148,7 +148,7 @@
                                                             aria-controls="collapseTwo">
                                                 <div class="card-header" id="headingTwo">
                                                     <h6 class="m-0">
-                                                        <i class="fa fa-info-circle"></i> Demande/Approbation #2
+                                                        <i class="fa fa-info-circle"></i> Approbation #2
                                                         <i class="mdi mdi-minus float-end accor-plus-icon"></i>
                                                     </h6>
                                                 </div>

@@ -172,14 +172,6 @@ class DapbpcController extends Controller
   {
     $title = 'Voir DAP Petit Caisse';
 
-    // Récupérer l'ID de la session
-    $ID = session()->get('id');
-
-    // Vérifier si l'ID de la session n'est pas défini et rediriger si nécessaire
-    if (!$ID) {
-      return redirect()->route('dashboard');
-    }
-
     $idd = Crypt::decrypt($idd);
 
     // Récupérer les données de la DAP avec les jointures nécessaires
