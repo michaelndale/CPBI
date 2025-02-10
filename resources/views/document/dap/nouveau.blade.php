@@ -1,5 +1,29 @@
 @extends('layout/app')
 @section('page-content')
+<style>
+  .swal-custom-content .swal-text {
+      font-size: 14px;
+      /* Ajustez la taille selon vos besoins */
+  }
+
+  .has-error {
+      border: 1px solid red;
+      /* Bordure rouge pour indiquer une erreur */
+      background-color: #ffe6e6;
+      /* Fond rouge clair */
+      color: red;
+      /* Texte rouge */
+  }
+
+  .has-success {
+      border: 1px solid green;
+      /* Bordure verte pour indiquer le succès */
+      background-color: #e6ffe6;
+      /* Fond vert clair */
+      color: green;
+      /* Texte vert */
+  }
+</style>
     <div class="main-content">
         <div class="page-content">
             <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card"
@@ -73,7 +97,7 @@
                                             <tr>
             
                                                 <td> Numéro du DAP
-                                                    <input type="text" name="numerodap" id="numerodap" style="width: 100%" class="form-control form-control-sm" required />
+                                                    <input type="text" value="{{  $newNumero }}" name="numerodap" id="numerodap" style="width: 100%" class="form-control form-control-sm" required />
                                                     <smal id="numerodap_error" name="numerodap_error" class="text text-danger"> </smal>
                                                     <smal id="numerodap_info" class="text text-primary"> </smal>
                                                 </td>
@@ -316,47 +340,60 @@
   window.onresize = adjustTableHeight;
 </script>
 
-
 <script>
-  $('#numerodap').blur(function() {
-    var numerodap = $(this).val();
+  $(document).ready(function () {
+    function verifierNumeroDAP() {
+        var numerodap = $('#numerodap').val();
 
-    // Vérification si le champ est vide
-    if (numerodap.trim() === '') {
-      $('#numerodap_error').text('Veuillez renseigner le champ numéro DAP.');
-      $('#numerodap').removeClass('has-success has-error'); // Supprime toutes les classes de succès ou d'erreur
-      $('#numerodap_info').text('');
-      return; // Sortir de la fonction si le champ est vide
+        // Vérification si le champ est vide
+        if (numerodap.trim() === '') {
+            $('#numerodap_error').text('Veuillez renseigner le champ numéro DAP.');
+            $('#numerodap').removeClass('has-success has-error'); // Supprime toutes les classes de succès ou d'erreur
+            $('#numerodap_info').text('');
+            return; // Sortir de la fonction si le champ est vide
+        }
+
+        // Envoi de la requête AJAX au serveur
+        $.ajax({
+            url: '{{ route("check.dap") }}',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}', // CSRF token pour Laravel
+                numerodap: numerodap
+            },
+            success: function (response) {
+                if (response.exists) {
+                    $("#numerodap_error").html('<i class="fa fa-times-circle"></i> Numéro DAP existe déjà');
+                    $('#numerodap').removeClass('has-success'); // Supprime la classe de succès
+                    $('#numerodap').addClass('has-error');
+                    $('#numerodap_info').text('');
+                } else {
+                    $("#numerodap_info").html('<i class="fa fa-check-circle"></i> Numéro Disponible');
+                    $('#numerodap').removeClass('has-error'); // Supprime la classe d'erreur
+                    $('#numerodap').addClass('has-success');
+                    $('#numerodap_error').text('');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
     }
 
-    // Envoi de la requête AJAX au serveur
-    $.ajax({
-      url: '{{ route("check.dap") }}',
-      method: 'POST',
-      data: {
-        _token: '{{ csrf_token() }}', // CSRF token pour Laravel
-        numerodap: numerodap
-      },
-      success: function(response) {
-        if (response.exists) {
-          $("#numerodap_error").html('<i class="fa fa-times-circle"></i> Numéro DAP existe déjà');
-          $('#numerodap').removeClass('has-success') // Supprime la classe de succès
-          $('#numerodap').addClass('has-error');
-          $('#numerodap_info').text('');
-        } else {
+    // Vérification au chargement de la page
+    verifierNumeroDAP();
 
-          $("#numerodap_info").html('<i class="fa fa-check-circle"></i> Numéro Disponible');
-          $('#numerodap').removeClass('has-error') // Supprime la classe de succès
-          $('#numerodap').addClass('has-success');
-          $('#numerodap_error').text('');
-        }
-      },
-      error: function(xhr, status, error) {
-        console.error(error);
-      }
+    // Vérification lorsque le champ perd le focus
+    $('#numerodap').blur(function () {
+        verifierNumeroDAP();
     });
-  });
+});
 
+</script>
+
+
+<script>
+ 
   window.onload = function () {
     toggleVisibility();
 };
@@ -471,7 +508,8 @@
             $("#adddapForm")[0].reset();
             $("#dapModale").modal('hide');
             toastr.success("DAP ajouté avec succès !", "Succès");
-            window.location.href = "{{ route('listdap') }}";
+           // window.location.href = "{{ route('listdap') }}";
+             window.location.href = response.redirect;
           } else if (response.status == 201) {
             toastr.error("Attention: DAP fonction existe déjà !", "Info");
             $("#dapModale").modal('show');
@@ -500,140 +538,8 @@
     // Delete feb ajax request
 
 
-    $(document).on('click', '.deleteIcon', function(e) {
-      e.preventDefault();
-      let id = $(this).attr('id');
-      let numero = $(this).data('numero');
-      let csrf = '{{ csrf_token() }}';
+ 
 
-      Swal.fire({
-        title: 'Supprimer le DAP ?',
-        html: "<p class='swal-text'>Cette action entraînera la suppression du  <b> DAP Numéro: " + numero + "</b>  </p><p class='swal-text'><i class='fa fa-info-circle' style='color: red;'></i> Cette action entraînera également la suppression des DJA associés aux DAP, et réinitialisera le numéro FEB pour sa réutilisation. </p>",
-        showCancelButton: true,
-        confirmButtonColor: 'green',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Oui, Supprimer !',
-        cancelButtonText: 'Annuler',
-        allowOutsideClick: false,
-        customClass: {
-          content: 'swal-custom-content'
-        },
-        preConfirm: () => {
-          return new Promise((resolve) => {
-            $.ajax({
-              url: "{{ route('deletedap') }}",
-              method: 'delete',
-              data: {
-                id: id,
-                _token: csrf
-              },
-              success: function(response) {
-                if (response.status == 200) {
-                  toastr.info("Suppression en cours...", "Suppression");
-                  // Attendre un court délai pour que l'utilisateur voie le message
-                  setTimeout(() => {
-                    resolve(response); // Résoudre la promesse avec la réponse de la requête AJAX
-                  }, 1500); // Temps en millisecondes avant de résoudre la promesse
-                } else {
-                  let errorMessage = response.message || "Erreur lors de la suppression du DAP.";
-                  toastr.error(errorMessage, "Erreur");
-                  if (response.error) {
-                    toastr.error("Erreur: " + response.error, "Erreur");
-                  }
-                  if (response.exception) {
-                    toastr.error("Exception: " + response.exception, "Erreur");
-                  }
-                  resolve(response); // Résoudre même en cas d'erreur pour débloquer la modal
-                }
-              },
-              error: function(xhr, status, error) {
-                let errorMsg = xhr.responseJSON ? xhr.responseJSON.message : "Erreur de réseau. Veuillez réessayer.";
-                toastr.error(errorMsg, "Erreur");
-                if (xhr.responseJSON && xhr.responseJSON.exception) {
-                  toastr.error("Exception: " + xhr.responseJSON.exception, "Erreur");
-                }
-                resolve({
-                  status: 500,
-                  message: errorMsg,
-                  error: error,
-                  exception: xhr.responseJSON ? xhr.responseJSON.exception : "Aucune exception détaillée disponible"
-                }); // Résoudre en cas d'erreur réseau pour débloquer la modal
-              }
-            });
-          });
-        }
-      }).then((result) => {
-        if (result.isConfirmed && result.value && result.value.status == 200) {
-          toastr.success("DAP supprimé avec succès !", "Suppression");
-          var ur = "{{ route('listdap') }}";
-          window.location.href = ur;
-        }
-      });
-    });
-
-
-
-
-    $(document).on('click', '.desactiversignale', function(e) {
-      e.preventDefault();
-      let id = $(this).attr('id');
-      let csrf = '{{ csrf_token() }}';
-      Swal.fire({
-        title: 'Êtes-vous sûr ?',
-        text: "Vous êtes sur le point de désactiver le signal ",
-
-        showCancelButton: true,
-        confirmButtonColor: 'green',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Oui, desactiver !',
-        cancelButtonText: 'Annuller'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          $.ajax({
-            url: "{{ route('desactiverlesignaledap') }}",
-            method: 'delete',
-            data: {
-              id: id,
-              _token: csrf
-            },
-            success: function(response) {
-
-              if (response.status == 200) {
-                toastr.success("Signale desactive succès !", "Desactivation");
-                fetchAlldap();
-              }
-
-              if (response.status == 205) {
-                toastr.error("Vous n'avez pas l'accreditation de desactive le signale du DAP!", "Erreur");
-              }
-
-              if (response.status == 202) {
-                toastr.error("Erreur d'execution !", "Erreur");
-              }
-              fetchAlldap();
-
-            }
-          });
-        }
-      })
-    });
-
-
-   
-
-
-
-    fetchAlldap();
-
-    function fetchAlldap() {
-      $.ajax({
-        url: "{{ route('fetchdap') }}",
-        method: 'get',
-        success: function(reponse) {
-          $("#show_all").html(reponse);
-        }
-      });
-    }
 
   });
 </script>
@@ -650,10 +556,4 @@
 </script>
 
 
-<style>
-  .swal-custom-content .swal-text {
-    font-size: 14px;
-    /* Ajustez la taille selon vos besoins */
-  }
-</style>
 @endsection

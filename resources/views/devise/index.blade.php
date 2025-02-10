@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-xl-7" style="margin:auto">
                     <div class="card">
-                      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+                      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">
                                 <h4 class="mb-sm-0"><i class="fa fa-folder"></i> Listes des Devises </h4>
                                 <div class="page-title-right">
                                     <a href="javascript:voide();" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> 

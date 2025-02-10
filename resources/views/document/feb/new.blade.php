@@ -1,5 +1,29 @@
 @extends('layout/app')
 @section('page-content')
+<style>
+    .swal-custom-content .swal-text {
+        font-size: 14px;
+        /* Ajustez la taille selon vos besoins */
+    }
+
+    .has-error {
+        border: 1px solid red;
+        /* Bordure rouge pour indiquer une erreur */
+        background-color: #ffe6e6;
+        /* Fond rouge clair */
+        color: red;
+        /* Texte rouge */
+    }
+
+    .has-success {
+        border: 1px solid green;
+        /* Bordure verte pour indiquer le succès */
+        background-color: #e6ffe6;
+        /* Fond vert clair */
+        color: green;
+        /* Texte vert */
+    }
+</style>
     <div class="main-content">
         <div class="page-content">
             <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card"
@@ -90,7 +114,7 @@
                                             </tr>
 
                                             <tr>
-                                                <td colspan="2" class="align-middle ps-3 name">Activités <span
+                                                <td colspan="3" class="align-middle ps-3 name">Activités <span
                                                         class="text-danger">*</span>
 
                                                     <input type="text" class="form-control form-control-sm"
@@ -131,8 +155,9 @@
 
                                                 <td class="align-middle ps-3 name" colspan="0">
                                                     Numéro du fiche FEB<span class="text-danger">*</span> <br>
-                                                    <input type="number" name="numerofeb" id="numerofeb"
-                                                        class="form-control form-control-sm" style="width: 100% ;">
+                                                    <input type="number" name="numerofeb" value="{{ $newNumero }}"
+                                                        id="numerofeb" class="form-control form-control-sm"
+                                                        style="width: 100% ;">
                                                     <smal id="numerofeb_error" name="numerofeb_error"
                                                         class="text text-danger">
                                                     </smal>
@@ -151,16 +176,19 @@
                                                             </option>
                                                         @endfor
                                                     </select>
+                                                    <br>
                                                 </td>
                                                 <td class="align-middle ps-3 name"> Date du dossier FEB:<span
                                                         class="text-danger">*</span><br>
                                                     <input type="date" class="form-control form-control-sm"
                                                         name="datefeb" id="datefeb" style="width: 100%" required>
+                                                        <br>
                                                 </td>
                                                 <td class="align-middle ps-3 name"> Date limite:<span
                                                         class="text-danger">*</span><br>
                                                     <input type="date" class="form-control form-control-sm"
                                                         name="datelimite" id="datelimite" style="width: 100%">
+                                                        <br>
                                                 </td>
 
 
@@ -193,7 +221,7 @@
                                                     <th style="width:150px;  color:white"><b>P.T<span
                                                                 class="text-danger">*</span></b></th>
 
-                                                    <th> <a href="javascript:void(0)" class="text-default font-18"
+                                                    <th style="width:30px"> <a href="javascript:void(0)" class="text-default font-18"
                                                             title="Ajouter la ligne" id="addBtn" style="color:white;">
                                                             <i class="fa fa-plus-circle fa-1x"></i>
                                                         </a>
@@ -203,8 +231,8 @@
                                             <tbody>
                                                 <tr>
                                                     <td><input style="width:100%; background-color:#c0c0c0 ; Padding:0px"
-                                                            type="number" id="numerodetail" name="numerodetail[]"
-                                                            class="form-control form-control-sm" value="1"></td>
+                                                            type="text" id="numerodetail" name="numerodetail[]"
+                                                            class="form-control form-control-sm" value="1" readonly></td>
                                                     <td style="width:450px;">
                                                         <div id="Showpoll" class="Showpoll">
                                                             <select style="width:100%" type="text"
@@ -219,11 +247,11 @@
                                                     <td><input style="width:100%" type="text" id="unit_cost"
                                                             name="unit_cost[]"
                                                             class="form-control form-control-sm unit_price" required></td>
-                                                    <td><input style="width:100%" type="text" id="qty"
+                                                    <td><input style="width:100%" type="text" id="qty" value="1"
                                                             name="qty[]" class="form-control form-control-sm qty"
                                                             required>
                                                     </td>
-                                                    <td><input style="width:100%" type="number" id="frenquency"
+                                                    <td><input style="width:100%" type="number" id="frenquency" value="1"
                                                             min="1" name="frenquency[]"
                                                             class="form-control form-control-sm frenquency" required></td>
                                                     <td><input style="width:100%" type="number" id="pu"
@@ -318,7 +346,7 @@
 
                                 </div>
                                 <div class="col col-md-auto">
-                                    <button type="submit" class="btn btn-primary" id="addfebbtn" name="addfebbtn"> <i
+                                    <button type="submit" class="btn btn-primary" id="addfebbtn" name="addfebbtn" > <i
                                             class="fa fa-cloud-upload-alt"></i> Sauvegarder</button>
                                 </div>
                             </div>
@@ -404,52 +432,64 @@
         </script>
 
         <script type="text/javascript">
-            $('#numerofeb').blur(function() {
-                var numerofeb = $(this).val();
-                // Vérification si le champ est vide
+        $(document).ready(function () {
+            // Fonction pour vérifier le numéro FEB
+            function verifierNumeroFEB(numerofeb) {
+                // Vérifier si le champ est vide
                 if (numerofeb.trim() === '') {
                     $('#numerofeb_error').text('Renseigner le champ numéro F.E.B');
-                    $('#numerofeb').removeClass(
-                        'has-success has-error'); // Supprime toutes les classes de succès ou d'erreur
+                    $('#numerofeb').removeClass('has-success has-error'); // Supprime toutes les classes
                     $('#numerofeb_info').text('');
-                    return; // Sortir de la fonction si le champ est vide
+                    document.getElementById("addfebbtn").disabled = true; // Désactive le bouton
+                    return; // Ne pas envoyer la requête
                 }
 
-                // Envoi de la requête AJAX au serveur
+                // Envoi de la requête AJAX
                 $.ajax({
-                    url: '{{ route('check.feb') }}',
+                    url: '{{ route('check.feb') }}', // Votre route Laravel
                     method: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}', // CSRF token pour Laravel
                         numerofeb: numerofeb
                     },
-                    success: function(response) {
+                    success: function (response) {
                         if (response.exists) {
-
                             $("#numerofeb_error").html(
-                                '<i class="fa fa-times-circle"></i> Numéro FEB existe déjà');
-                            $('#numerofeb').removeClass('has-success') // Supprime la classe de succès
-                            $('#numerofeb').addClass('has-error');
+                                '<i class="fa fa-times-circle"></i> Numéro FEB existe déjà'
+                            );
+                            $('#numerofeb').removeClass('has-success'); // Supprime la classe de succès
+                            $('#numerofeb').addClass('has-error'); // Ajoute la classe d'erreur
                             $('#numerofeb_info').text('');
-                            document.getElementById("addfebbtn").disabled = true;
+                            document.getElementById("addfebbtn").disabled = true; // Désactive le bouton
                         } else {
-
                             $("#numerofeb_info").html(
-                                '<i class="fa fa-check-circle"></i> Numéro Disponible');
-                            $('#numerofeb').removeClass('has-error') // Supprime la classe de succès
-                            $('#numerofeb').addClass('has-success');
+                                '<i class="fa fa-check-circle"></i> Numéro Disponible'
+                            );
+                            $('#numerofeb').removeClass('has-error'); // Supprime la classe d'erreur
+                            $('#numerofeb').addClass('has-success'); // Ajoute la classe de succès
                             $('#numerofeb_error').text('');
-                            document.getElementById("addfebbtn").disabled = false;
+                            document.getElementById("addfebbtn").disabled = false; // Active le bouton
                         }
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error(error);
                     }
                 });
+            }
+
+            // Vérification automatique à l'ouverture de la page
+            let numerofebInitial = $('#numerofeb').val(); // Récupère la valeur initiale
+            verifierNumeroFEB(numerofebInitial);
+
+            // Vérification lors du blur (quand l'utilisateur quitte le champ)
+            $('#numerofeb').blur(function () {
+                let numerofeb = $(this).val();
+                verifierNumeroFEB(numerofeb);
             });
+        });
 
 
-            $(document).ready(function() {
+        $(document).ready(function() {
 
                 $(document).on('change', '.ligneid', function() {
                     var cat_id = $(this).val();
@@ -489,11 +529,11 @@
                         error: function() {
                             alert(
                                 "Attention! \n Erreur de connexion a la base de donnee ,\n verifier votre connection"
-                                );
+                            );
                         }
                     });
                 });
-            });
+        });
         </script>
 
         <script>
@@ -517,18 +557,18 @@
             $("#addBtn").on("click", function() {
                 // Ajouter une nouvelle ligne au tableau
                 $("#tableEstimate tbody").append(`
-        <tr id="R${rowIdx}">
-            <td><input style="width:100%; background-color:#c0c0c0; Padding:0px" type="number" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="${rowIdx}" ></td>
-            <td><div id="Showpoll${rowIdx}" class="Showpoll"> </div> </td>
-            <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required></td>
-            <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm" required></td>
-            <td><input style="width:100%" type="text" id="qty" name="qty[]" class="form-control form-control-sm qty" required ></td>
-            <td><input style="width:100%" type="number" min="1" id="frenquency" name="frenquency[]" class="form-control form-control-sm frenquency" required ></td>
-            <td><input style="width:100%" type="number" min="0" id="pu" name="pu[]" class="form-control form-control-sm pu" required></td>
-            <td><input style="width:100%; background-color:#c0c0c0" type="text" min="0" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
-            <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
-        </tr>
-    `);
+                        <tr id="R${rowIdx}">
+                            <td><input style="width:100%; background-color:#c0c0c0; Padding:0px" type="text" id="numerodetail" name="numerodetail[]" class="form-control form-control-sm" value="${rowIdx}"  readonly></td>
+                            <td><div id="Showpoll${rowIdx}" class="Showpoll"> </div> </td>
+                            <td><input style="width:100%" type="text" id="libelle_description" name="libelle_description[]" class="form-control form-control-sm" required></td>
+                            <td><input style="width:100%" type="text" id="unit_cost" name="unit_cost[]" class="form-control form-control-sm" required></td>
+                            <td><input style="width:100%" type="text" id="qty" name="qty[]" value="1" class="form-control form-control-sm qty" required ></td>
+                            <td><input style="width:100%" type="number" min="1" id="frenquency" value="1" name="frenquency[]" class="form-control form-control-sm frenquency" required ></td>
+                            <td><input style="width:100%" type="number" min="0" id="pu" name="pu[]" class="form-control form-control-sm pu" required></td>
+                            <td><input style="width:100%; background-color:#c0c0c0" type="text" min="0" id="amount" name="amount[]" class="form-control form-control-sm total" value="0" readonly></td>
+                            <td><a href="javascript:void(0)" class="text-danger font-18 remove" title="Enlever"><i class="far fa-trash-alt"></i></a></td>
+                        </tr>
+                `);
 
                 // Cloner le contenu de l'élément Showpoll dans la nouvelle ligne
                 var $originalShowpoll = $('#Showpoll');
@@ -590,9 +630,6 @@
                 $(".subtotal").text(formattedSum);
                 $(".total-global").text(formattedSum);
             }
-
-
-
 
 
             $(function() {
@@ -659,18 +696,26 @@
                         processData: false,
                         dataType: 'json',
                         success: function(response) {
-                            if (response.status == 200) {
-                                $("#addfebbtn").html(
-                                    '<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                            if (response.status === 200 && response.redirect) {
+
+                               
+
+
+                                $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+
                                 $("#numerofeb_error").text("");
-                                $('#numerofeb').removeClass(
-                                'has-error has-success'); // Supprime les classes de validation
+                                $('#numerofeb').removeClass('has-error has-success'); // Supprime les classes de validation
                                 $("#numerofeb_info").text(''); // Réinitialise le texte d'info
+
                                 document.getElementById("addfebbtn").disabled = false;
                                 toastr.success("Feb ajouté avec succès !", "Enregistrement");
+                               
 
                                 // Redirection vers la route listfeb
-                                window.location.href = "{{ route('listfeb') }}";
+                             ///   window.location.href = "{{ route('listfeb') }}";
+
+                             window.location.href = response.redirect;
+                             
 
                             } else if (response.status == 201) {
                                 toastr.error("Attention: FEB numéro existe déjà !", "Attention");
@@ -688,7 +733,7 @@
                                 // Affiche la modale d'erreur avec le message d'avertissement
                                 $('#errorMessage').text(
                                     "Tu ne peux pas exécuter cette opération car tu as dépassé le montant autorisé."
-                                    );
+                                );
                                 $('#erreurMessage').modal('show'); // Affiche la modale
 
                                 document.getElementById("addfebbtn").disabled = false;
@@ -723,10 +768,5 @@
         </script>
 
 
-        <style>
-            .swal-custom-content .swal-text {
-                font-size: 14px;
-                /* Ajustez la taille selon vos besoins */
-            }
-        </style>
+     
     @endsection

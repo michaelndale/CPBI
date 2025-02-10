@@ -35,27 +35,49 @@
 
                 <a href="{{ route('new.exercice',  $cryptedProjectId) }}"
                 class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button"><i
-                    class="fa fa-plus-circle"></i> Nouvelle exercice</a>
+                    class="fa fa-plus-circle"></i> Nouvel exercice</a>
                     
                 <a href="{{ route('rallongebudget') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" ><i class="fa fa-list"></i> Budgétisation  </a>
 
-                <a href="{{ route('key.editProject',  $cryptedProjectId ) }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" ><i class="fa fa-edit"></i>  Modification du projet  </a>
-                
-                <a href="{{ route('affectation') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button" ><i class="fa fa-users"></i>  Intervenants </a>
-                
+                 
+                 
                 <button class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm btn-sm dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <i class="fa fa-plus-circle"></i> Actions options <i class="mdi mdi-dots-vertical align-middle "></i>
+                  <i class="fa fa-list"></i> Actions options <i class="mdi mdi-dots-vertical align-middle "></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                  
-                  <li>
+                 <!-- <li>
                     <a class="dropdown-item" href="{{ route('liste.revision', $cryptedProjectId) }}"><i class="fa  fa-list font-size-16 align-middle me-2 text-muted"></i>
                       Historique de la revision Budgétaire</a>
-                  </li>
+                  </li> -->
+
+
 
                   <li>
                     <a class="dropdown-item" href="{{ route('gestioncompte') }}"><i class="fa fa-chart-line font-size-16 align-middle me-2 text-muted"></i>
                       Ligne budgétaire</a>
+                  </li>
+
+
+                  <li>
+                    <a class="dropdown-item" href="{{ route('key.editProject',  $cryptedProjectId ) }}"><i class="fa fa-edit font-size-16 align-middle me-2 text-muted"></i>
+                      Modification du projet </a>
+                  </li>
+
+                  <li>
+                    <a class="dropdown-item" href="{{ route('exercices.show',$cryptedExerciceId) }}"><i class="fa fa-edit font-size-16 align-middle me-2 text-muted"></i>
+                      Modification l'exercice encours </a>
+                  </li>
+
+
+                  <li>
+                    <a class="dropdown-item" href="{{ route('affectation' ) }}"><i class="fa fa-users font-size-16 align-middle me-2 text-muted"></i>
+                     Intervenenant </a>
+                  </li>
+
+                  <li>
+                    <a class="dropdown-item" href="{{ route('exercices.index') }}"><i class="fa  fa-list font-size-16 align-middle me-2 text-muted"></i>
+                      Exercice Annuel Classement</a>
                   </li>
                  
 
@@ -90,10 +112,13 @@
                     <a class="dropdown-item" href="{{ route('rapportcumule') }}"><i class="fa fa-chart-pie font-size-16 align-middle me-2 text-muted"></i>
                       Rapport cummulatif</a>
                   </li>
+                 
+
                   <li>
                     <a class="dropdown-item" href="{{ route('planoperationnel') }}"><i class="fa fa-tasks font-size-16 align-middle me-2 text-muted"></i>
                       Plan d'action</a>
                   </li>
+                  
                   <li>
                     <a class="dropdown-item deleteIcon" id="{{ $dataProject->id }}" data-title="{{ $dataProject->title }}">
                       <font color="red"> <i class="fas fa-trash-alt font-size-16 align-middle me-2 "></i>
@@ -127,6 +152,7 @@
                             <td class="align-top py-1 text-900 text-nowrap fw-bold">Numéro projet </td>
                             <td class="text-600 fw-semi-bold ps-3"> : {{ $dataProject->numeroprojet }}</td>
                           </tr>
+                          
 
                           <tr>
                             <td class="align-top py-1 text-900 text-nowrap fw-bold">Numéro exercice</td>
@@ -134,9 +160,14 @@
                           </tr>
 
                           <tr>
+                            <td class="align-top py-1 text-900 text-nowrap fw-bold">Titre exercice</td>
+                            <td class="text-600 fw-semi-bold ps-3"> : {{ $dataProject->pexercice }}</td>
+                          </tr>
+
+                          <tr>
                             <td class="align-top py-1 text-900 text-nowrap fw-bold">Statut de l'exercice</td>
                             <td class="text-600 fw-semi-bold ps-3"> : 
-                              @if($dataProject->status === 'actif')
+                              @if($dataProject->status === 'Actif')
                               <span class="badge rounded-pill bg-subtle-primary text-primary font-size-11">Active</span>
                               @else
                               <span class="badge rounded-pill bg-subtle-danger text-danger font-size-11">Archiver</span>
@@ -230,6 +261,7 @@
 
                         </tbody>
                       </table>
+                      <br>
                     </div>
                   </div>
                 </div>
@@ -249,17 +281,16 @@
           
 
           <div class="card">
-            <div class="card-header">
-              <div class="row">
-                <div class="col-9">
-                <h5 class="card-title mb-0"><i class="fa fa-users"></i> Bailleurs des fonds
-              </h5>
-              </div>
-              <div class="col-3">
-                <a href="{{ route('bailleursDeFonds') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"><i class="fa fa-plus-circle"></i> Ajouter</a> 
-              </div>
-              </div>
+
+            <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">
+                            
+                <h4 class="mb-sm-0"><i class="fa fa-users"></i> Bailleurs des fonds </h4>
+                    <div class="page-title-right">
+                      <a href="{{ route('bailleursDeFonds') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"><i class="fa fa-plus-circle"></i> Ajouter</a> 
+                </div>
             </div>
+
+          
             <div class="card-body pt-2">
                 <div class="table-responsive">
                   <table class="table align-middle table-nowrap mb-1">
@@ -305,25 +336,116 @@
             </div>
             <div class="card-body pt-0 pb-3">
               <div id="overview-chart" data-colors='["#1f58c7"]' class="apex-charts" dir="ltr"></div>
-              <div id="container" style="height: 400px"></div>
+              <div id="container" style="height: 410px"></div>
             </div>
           </div>
 
 
+          <div class="card">
+
+            <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">
+                            
+                <h4 class="mb-sm-0"><i class="fa fa-list"></i> Exercice annuel pour le classement du projet </h4>
+                    <div class="page-title-right">
+                      <a href="{{ route('new.exercice',  $cryptedProjectId) }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"><i class="fa fa-plus-circle"></i> Ajouter</a> 
+                </div>
+            </div>
+
+          
+            <div class="card-body pt-2">
+                <div class="table-responsive">
+                  <table class="table align-middle table-nowrap mb-1">
+                    <thead>
+                        <tr>
+                            <th>Numéro</th>
+                            <th>Budget</th>
+                            <th>Statut</th>
+                            <th>Date Début</th>
+                            <th>Date Fin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($exercices as $exercice)
+                        
+                       
+                            <tr>
+                                <td>
+                                  <a href="#" 
+                                  class="open-modal" 
+                                  data-link="{{ route('key.viewProject', ['project' => Crypt::encrypt($exercice->project_id), 'exercice' => Crypt::encrypt($exercice->id)]) }}" 
+                                  data-numero="{{ $exercice->numero_e }}" 
+                                  data-budget="{{ number_format($exercice->budget, 0, ',', ' ') }}"
+                                  data-year="{{  date('Y', strtotime($exercice->created_at)) }}"
+                                   >
+                                   <b>{{ $exercice->numero_e }}/{{ date('Y', strtotime($exercice->created_at)) }}</b>
+                               </a>
+                                </td>
+                                <td align="right">{{ number_format($exercice->budget, 0, ',', ' ') }}</td>
+                                <td>
+                                    @if ($exercice->status === 'Actif')
+                                        <span class="badge rounded-pill bg-subtle-primary text-primary font-size-11">Active</span>
+                                    @else
+                                        <span class="badge rounded-pill bg-subtle-danger text-danger font-size-11">Archiver</span>
+                                    @endif
+                                </td>
+                                <td>{{ date('d-m-Y', strtotime($exercice->estart_date)) }}</td>
+                                <td>{{ date('d-m-Y', strtotime($exercice->edeadline)) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">
+                                    Aucun exercice trouvé pour ce projet.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+                
+                <!-- Modal -->
+               
+              <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <p class="text-700 lh-lg mb-0">
+                        <center>
+                         
+                          <font size="10" color="#c0c0c0"> <i class="fas fa-info-circle "></i></font>
+                          <h5 class="modal-title" id="confirmationModalLabel">Confirmer l'action ?</h5>
+                          
+                          <font size="4">  Voulez-vous aller sur l'exercice <br> numéro <b><span id="modalNumero"></span>/<span id="modalYear"></span></b> 
+                            du budget <b><span id="modalBudget"></span></b> 
+                          </font> <br> <br>
+                          <button type="button" class="btn btn-danger" data-bs-dismiss="modal"><i class="fa fa-times-circle"></i> Non</button>
+                          <a id="confirmLink" href="#" class="btn btn-primary"><i class="fa fa-check-circle"></i> Oui</a>
+                        </center>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+                
+                
+                
+                    
+                </div>
+            </div>
+          </div>
 
          
           <div class="card">
-            <div class="card-header">
-              <div class="row">
-                <div class="col-9">
-                <h5 class="card-title mb-0"><i class="fa fa-users"></i> Les intervenants du projet
-              </h5>
+            <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">
+                           
+              <h4 class="mb-sm-0"><i class="fa fa-users"></i> Les intervenants du projet</h4>
+                  <div class="page-title-right">
+                    <a href="{{ route('affectation') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"><i class="fa fa-plus-circle"></i> Ajouter</a> 
               </div>
-              <div class="col-3">
-                <a href="{{ route('affectation') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"><i class="fa fa-plus-circle"></i> Ajouter</a> 
-              </div>
-              </div>
-            </div>
+          </div>
+
+
+           
+
+
             <div class="card-body pt-2">
                 <div class="table-responsive">
                   <table class="table align-middle table-nowrap mb-1">
@@ -531,6 +653,39 @@
 
 
   });
+</script>
+
+<script>
+ document.addEventListener('DOMContentLoaded', function () {
+    // Sélectionner tous les liens avec la classe "open-modal"
+    const modalLinks = document.querySelectorAll('.open-modal');
+
+    // Ajouter un écouteur d'événement pour chaque lien
+    modalLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault(); // Empêche le comportement par défaut du lien
+
+            // Récupérer les données depuis les attributs data-*
+            const numero = this.getAttribute('data-numero');
+            const budget = this.getAttribute('data-budget');
+            const linkHref = this.getAttribute('data-link');
+            const year = this.getAttribute('data-year');
+
+            // Mettre à jour les informations dans le modal
+            document.getElementById('modalNumero').textContent = numero;
+            document.getElementById('modalBudget').textContent = budget;
+            document.getElementById('modalYear').textContent = year;
+
+            // Mettre à jour le lien du bouton "Oui"
+            document.getElementById('confirmLink').setAttribute('href', linkHref);
+
+            // Ouvrir le modal
+            const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+            modal.show();
+        });
+    });
+});
+
 </script>
 
 <style>

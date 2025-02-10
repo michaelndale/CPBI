@@ -12,11 +12,11 @@ tr a:hover {
 }
 
 </style>
-<div class="modal fade" id="ProjetModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+<div class="modal fade" id="ProjetModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" style="width:800px">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalScrollableTitle"><i class="mdi mdi-content-duplicate"></i> Exercice annuel du projet</h5>
+                <h5 class="modal-title" id="exampleModalScrollableTitle"><i class="mdi mdi-content-duplicate"></i> Exercice annuel pour le classement du projet</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -28,10 +28,14 @@ tr a:hover {
                             </tr>
                             <tr>
                                 <th>#</th>
+                                <th>Titre</th>
                                 <th>Numéro</th>
                                 <th><center> Budget</center></th>
+                              
+                                <th>Date Début</th>
+                                <th>Date Fin</th>
                                 <th>Statut</th>
-                                <th>Date</th>
+                                <th>Créé le</th>
                             </tr>
                         </thead>
                         <tbody id="exercice-table-body">
@@ -43,6 +47,16 @@ tr a:hover {
         </div>
     </div>
 </div>
+
+<script>
+    var modalElement = new bootstrap.Modal(document.getElementById('ProjetModalScrollable'), {
+    backdrop: 'static',
+    keyboard: false
+});
+
+modalElement.show(); // Pour afficher le modal
+
+</script>
 
 <script>
 

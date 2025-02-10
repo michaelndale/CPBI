@@ -562,7 +562,7 @@
                             <div class="col-lg-6">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h4 class="card-title mb-4">Graphique des FEBs par moi</h4>
+                                        <h4 class="card-title mb-4">Graphique des FEBs par mois de l'année en cours</h4>
 
                                         <div id="column_chart" class="apex-charts" dir="ltr">
                                             <div style="width: 95%; margin: auto;">
@@ -580,7 +580,7 @@
                             <div class="col-lg-6">
                                 <div class="card">
                                     <div class="card-body">
-                                        <h4 class="card-title mb-4">Graphique des Bon Petite Caisses par moi</h4>
+                                        <h4 class="card-title mb-4">Graphique des Bons de Petite Caisse par mois de l'année en cours</h4>
                                         <div id="column_chart_datalabel" class="apex-charts" dir="ltr">
                                             <div style="width: 95%; margin: auto;">
                                                 <canvas id="febChart"></canvas>
@@ -595,6 +595,7 @@
                         <!-- end row -->
 
                         @if (!session()->has('id'))
+<!--
                             <div class="row">
                                 <div class="col-xl-3">
                                     <div class="card">
@@ -675,7 +676,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         @endif
                         <!-- end row -->
 

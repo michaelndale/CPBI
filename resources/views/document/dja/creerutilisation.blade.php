@@ -59,7 +59,7 @@
                                                             aria-controls="collapseOne">
                                                 <div class="card-header" id="headingOne">
                                                     <h6 class="m-0">
-                                                        <i class="fa fa-info-circle"></i> Approbation #1
+                                                        <i class="fa fa-info-circle"></i> Demande #1
                                                         <i class="mdi mdi-minus float-end accor-plus-icon"></i>
                                                     </h6>
                                                 </div>
@@ -282,8 +282,41 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            
-                                        
+
+                                                                <div class="col-md-2">
+                                                                    <!-- Champ pour le nom complet, affiché seulement si "Autres" est sélectionné ou si pfond_paye est 0 -->
+                                                                   <br>
+                                                                @php
+                                                                    $affiches = []; // Tableau pour stocker les IDs déjà affichés
+                                                                @endphp
+                                                               
+                                                               @foreach ($numerofeb as $feb)
+                                                                   @if (!in_array($feb->id, $affiches)) <!-- Vérifie si l'ID est déjà affiché -->
+                                                                       <a href="#" 
+                                                                          data-bs-toggle="modal" 
+                                                                          data-bs-target="#febinfo" 
+                                                                          data-id="{{ $feb->id }}" 
+                                                                          class="infofeb">
+                                                                          <i class="fa fa-link"></i> FEB NUM: {{ $feb->numerofeb }}
+                                                                       </a><br>
+                                                                       @php
+                                                                           $affiches[] = $feb->id; // Ajoute l'ID au tableau
+                                                                       @endphp
+                                                                   @endif
+                                                               @endforeach
+                                                               
+
+
+                                                                
+
+                                                                </div>
+
+                                                                <div class="col-md-2">
+                                                                    <!-- Champ pour le nom complet, affiché seulement si "Autres" est sélectionné ou si pfond_paye est 0 -->
+                                                                  <br><br> <a href=""><i class="fa fa-info-circle "></i> Details sur le Montant a utiliser ! </a>
+                                                                </div>
+
+                                                               
                                                             
                                         
                                                                 <div class="col-md-8">
@@ -321,7 +354,7 @@
                                                                 <div class="col-md-3">
                                                                     <div class="mb-2">
                                                                         <label class="form-label">Montant utilisé*</label>
-                                                                        <input name="montantUtilise" value="{{ $data->montant_utiliser }}" type="number" min="0"  class="form-control form-control-sm" />
+                                                                        <input name="montantUtilise"  type="number" min="0" value="{{ $data->montant_utiliser }}" class="form-control form-control-sm" />
                                         
                                                                     </div>
                                                                 </div>
@@ -329,7 +362,7 @@
                                                                 <div class="col-md-2">
                                                                     <div class="mb-2">
                                                                         <label class="form-label">Surplus/Manque*</label>
-                                                                        <input name="surplusManque"  value="{{ $data->montant_surplus }}" type="number"  min="0" class="form-control form-control-sm" />
+                                                                        <input name="surplusManque"  type="number"  min="0" class="form-control form-control-sm" readonly />
                                         
                                                                     </div>
                                                                 </div>
@@ -340,7 +373,7 @@
                                                                         <label class="form-label">Montant retourné
                                                                             à la caisse ou au compte(Si Surplus)
                                                                         </label>
-                                                                        <input name="montantRetourne"  value="{{ $data->montant_retourne }}" type="number" min="0"  class="form-control form-control-sm" />
+                                                                        <input name="montantRetourne"   type="number" min="0"  class="form-control form-control-sm" readonly />
                                         
                                                                     </div>
                                                                 </div>
@@ -438,6 +471,8 @@
     </div>
 </div>
 
+@include('document.dja.elementsfebs')
+
 <script>
     // JavaScript pour afficher/masquer le champ "Nom et Prénom" selon la sélection
     document.getElementById('fondPayeaSelect').addEventListener('change', function() {
@@ -472,31 +507,89 @@
     }
 </script>
 
+
 <script>
-    // Script pour gérer la saisie de montant utilisé et le surplus/manque
-    $(document).on('input', 'input[name="montant_utiliser[]"]', function() {
-        var montantAvance = $(this).closest('tr').find('input[name="montantavance[]"]').val();
-        var montantUtilise = $(this).val();
-        var surplusManque = parseFloat(montantAvance) - parseFloat(montantUtilise);
-        $(this).closest('tr').find('input[name="surplus[]"]').val(surplusManque);
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Sélectionner les éléments du formulaire
+        const montantAvance = document.querySelector('input[name="montantAvancedeux"]');
+        const montantUtilise = document.querySelector('input[name="montantUtilise"]');
+        const surplusManque = document.querySelector('input[name="surplusManque"]');
+        const montantRetourne = document.querySelector('input[name="montantRetourne"]');
 
-    $(document).on('input', 'input[name="montant_retourne[]"]', function() {
-        var surplusManque = parseFloat($(this).closest('tr').find('input[name="surplus[]"]').val());
-        var montantRetourne = parseFloat($(this).val());
-        var errorMessage = $(this).closest('tr').find('.error-message');
-        var addjustifierbtn = $('#addjustifierbtn');
+        // Ajouter un écouteur d'événement sur les champs Montant de l'Avance et Montant utilisé
+        montantAvance.addEventListener('input', calculer);
+        montantUtilise.addEventListener('input', calculer);
 
-        if (montantRetourne !== surplusManque) {
-            errorMessage.text("Le Montant Retourné doit être égal au Surplus/Manque.");
-            $(this).addClass('is-invalid');
-            addjustifierbtn.prop('disabled', true);
-        } else {
-            errorMessage.text("");
-            $(this).removeClass('is-invalid');
-            addjustifierbtn.prop('disabled', false);
+        // Fonction pour effectuer les calculs
+        function calculer() {
+            // Récupérer les valeurs des champs
+            const avance = parseFloat(montantAvance.value) || 0;
+            let utilise = parseFloat(montantUtilise.value) || 0;
+
+            // Vérifier si le Montant utilisé dépasse le Montant de l'Avance
+            if (utilise > avance) {
+                // Réinitialiser le Montant utilisé à la valeur du Montant de l'Avance
+                montantUtilise.value = avance;
+                utilise = avance; // Mettre à jour la variable utilise avec la nouvelle valeur
+                showModal("Attention !", "Le montant utilisé ne peut pas dépasser le montant de l'avance.");
+            }
+
+            // Calculer le Surplus/Manque
+            const result = Math.round(avance - utilise);
+
+            // Mettre à jour le champ Surplus/Manque
+            surplusManque.value = result;
+
+            // Si le résultat est positif, mettre à jour le Montant retourné
+            if (result > 0) {
+                montantRetourne.value = result;
+            } else {
+                montantRetourne.value = '0'; // Aucun montant retourné si pas de surplus
+            }
         }
+
+        // Fonction pour afficher une modale personnalisée
+        function showModal(title, message) {
+            // Créer un conteneur pour la modale
+            const modalContainer = document.createElement('div');
+            modalContainer.style.position = 'fixed';
+            modalContainer.style.top = '50%';
+            modalContainer.style.left = '50%';
+            modalContainer.style.transform = 'translate(-50%, -50%)';
+            modalContainer.style.backgroundColor = '#fff';
+            modalContainer.style.padding = '20px';
+            modalContainer.style.borderRadius = '8px';
+            modalContainer.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.2)';
+            modalContainer.style.zIndex = '1000';
+
+            // Générer un ID unique pour le bouton Fermer
+            const uniqueId = `closeModal_${new Date().getTime()}`;
+
+            // Contenu de la modale
+            modalContainer.innerHTML = `
+                <h4 style="margin-bottom: 10px;">${title}</h4>
+                <p style="margin-bottom: 15px;">${message}</p>
+                <button id="${uniqueId}" style="padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="fa fa-times-circle"></i> OK
+                </button>
+            `;
+
+            // Ajouter la modale au body
+            document.body.appendChild(modalContainer);
+
+            // Attacher un écouteur d'événement directement au bouton créé
+            document.getElementById(uniqueId).addEventListener('click', function () {
+                document.body.removeChild(modalContainer); // Supprimer la modale
+            });
+        }
+
+        // Appeler la fonction de calcul au chargement de la page
+        calculer();
     });
+</script>
+
+<script>
+   
 
    
 
@@ -533,5 +626,10 @@
             });
         });
     });
+
+    
 </script>
+
+
+
 @endsection

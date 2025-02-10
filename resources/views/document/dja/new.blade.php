@@ -251,7 +251,7 @@
 
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        <h5><i class="fa fa-info-circle"></i> Approbation</h5>
+                                                        <h5><i class="fa fa-info-circle"></i> Demande</h5>
                                                         <hr>
                                                     </div>
                                                     <div class="col-md-4">

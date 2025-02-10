@@ -1,6 +1,24 @@
 @extends('layout/app')
 @section('page-content')
 
+<style>
+    /* Dans votre fichier CSS */
+    .swal2-small {
+        font-size: 14px;
+        /* Taille de police générale */
+    }
+
+    .swal2-title-small {
+        font-size: 18px;
+        /* Taille de police du titre */
+    }
+
+    .swal2-content-small {
+        font-size: 16px;
+        /* Taille de police du contenu */
+    }
+</style>
+
 <div class="main-content">
     <div class="page-content">
         <div class="container-fluid">
@@ -29,9 +47,11 @@
             
                             <!-- Champ de recherche -->
                             <div class="mb-3 row align-items-center">
-                                <div class="col-md-10">
+                                <div class="col-md-12">
                                     <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un projet..." onkeyup="searchProjects()">
                                 </div>
+
+                                <!--
                                 <div class="col-md-2">
                                     <div class="dropdown">
                                         <button 
@@ -41,7 +61,7 @@
                                             <span>
                                                 <i class="fa fa-list"></i> Filtre
                                             </span>
-                                            <i class="fa fa-chevron-down"></i> <!-- Icône de flèche vers le bas -->
+                                            <i class="fa fa-chevron-down"></i> 
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="filterDropdown">
                                             <li><a class="dropdown-item" href="#" onclick="filterProjects('all')">Tout</a></li>
@@ -51,7 +71,7 @@
                                             <li><a class="dropdown-item" href="#" onclick="filterProjects('Archive')">Archivé</a></li>
                                         </ul>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
             
                             <table class="table table-bordered fs--1 mb-0"  style="border-collapse: collapse; border-spacing: 0; width: 100%;">
@@ -133,22 +153,34 @@
 
 <script>
     function searchProjects() {
-        var query = $('#searchInput').val();
-        var filter = $('#filterDropdown').text().trim().split(' ')[1]; // Obtenir la partie pertinente du texte
+    var query = $('#searchInput').val();
+    var filter = $('#filterDropdown').text().trim().split(' ')[1]; 
 
-        $.ajax({
-            url: '{{ route("list_project") }}', // Remplacez par la route appropriée
-            method: 'GET',
-            data: { search: query, filter: filter },
-            success: function(data) {
+    $.ajax({
+        url: '{{ route("list_project") }}', // Assurez-vous que cette route est correcte
+        method: 'GET',
+        data: { search: query, filter: filter },
+        success: function(data) {
+            if (data.table && data.pagination) {
                 $('#projectTableBody').html(data.table);
                 $('.pagination').html(data.pagination);
-            },
-            error: function(xhr, status, error) {
-                console.error("Une erreur s'est produite : " + error);
+            } else {
+                console.error('Réponse inattendue du serveur.');
             }
-        });
-    }
+        },
+        error: function(xhr, status, error) {
+            console.error('Erreur AJAX : ', xhr.responseText || error);
+        }
+    });
+}
+
+$(document).ready(function() {
+    $('#searchInput').on('keyup', function() {
+        searchProjects();
+    });
+});
+
+
 
     function filterProjects(status) {
         $('#filterDropdown').html('<span><i class="fa fa-list"></i> ' + status + '</span><i class="fa fa-chevron-down"></i>'); // Mettre à jour le texte du dropdown
@@ -174,25 +206,6 @@
     }
 </script>
 
-
-
-<style>
-    /* Dans votre fichier CSS */
-    .swal2-small {
-        font-size: 14px;
-        /* Taille de police générale */
-    }
-
-    .swal2-title-small {
-        font-size: 18px;
-        /* Taille de police du titre */
-    }
-
-    .swal2-content-small {
-        font-size: 16px;
-        /* Taille de police du contenu */
-    }
-</style>
 
 @include('project.exerciceListe')
 @endsection

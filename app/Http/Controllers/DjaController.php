@@ -29,6 +29,7 @@ class DjaController extends Controller
   {
     $ID = session()->get('id');
     $exerciceId = session()->get('exercice_id');
+
     $data =  DB::table('djas')
       ->join('users', 'djas.userid', '=', 'users.id')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -80,7 +81,7 @@ class DjaController extends Controller
             </a>
             <div class="dropdown-menu">
               
-               <a href="dja/' . $datas->iddjas . '/nouveau" class="dropdown-item mx-1"><i class="fa fa-plus-circle"></i> Approbation  </a>
+               <a href="dja/' . $datas->iddjas . '/nouveau" class="dropdown-item mx-1"><i class="fa fa-plus-circle"></i> Demande  </a>
                 <a href="dja/' . $datas->iddjas . '/nouveauutilisation" class="dropdown-item mx-1"><i class="fa fa-plus-circle"></i> Rapport d\'utilisation de l\'avance  </a>
                <a href="dja/' . $datas->iddjas . '/voir" class="dropdown-item mx-1"><i class="fa fa-eye"></i> Voir  DJA  </a>
                <a href="dja/' . $datas->iddjas . '/generate-pdf-dja" class="dropdown-item mx-1"><i class="fa fa-print"></i> Imprimer DJA  </a> 
@@ -140,40 +141,28 @@ class DjaController extends Controller
       ->whereIn('febid', $febIds)
       ->sum('montant');
   }
-  // insert a new employee ajax request
+
   public function list()
   {
     // Get the session ID
-    $ID = session()->get('id');
-
-    // Check if the session ID is not set
-    if (!$ID) {
-      // Redirect to the dashboard if the session ID is not set
-      return redirect()->route('dashboard');
+    $projectId = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
+    // Vérifie si l'ID de projet existe dans la session
+    if (!$projectId && !$exerciceId) {
+      // Gérer le cas où l'ID du projet et exercice est invalide
+      return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
     }
 
     // Continue with the rest of the method if session ID is set
     $title = "DJA";
     $data = Dja::all();
-    $total = Dja::all()->count();
-    $active = 'Project';
-    $compte = Compte::where('compteid', '=', NULL)->get();
-    $personnel = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction')
-      ->orWhere('fonction', '!=', 'Chauffeur')
-      ->orderBy('nom', 'ASC')
-      ->get();
-
+    
     return view(
       'document.dja.list',
       [
         'title' => $title,
         'data' => $data,
-        'total' => $total,
-        'active' => $active,
-        'personnel' => $personnel,
-        'compte' => $compte
+       
       ]
     );
   }
@@ -181,47 +170,50 @@ class DjaController extends Controller
   public function show($idd)
   {
 
-    $ID = session()->get('id');
-    $budget = session()->get('budget');
-    $devise = session()->get('devise');
-    $title = "Voir DJA";
-    $ID = session()->get('id');
-    $dateinfo = Identification::all()->first();
-
     $idd = Crypt::decrypt($idd);
+    $title = "Voir DJA";
+    $dateinfo = Identification::all()->first();
 
     $datadap = DB::table('djas')
       ->join('daps', 'djas.numerodap', 'daps.numerodp')
       ->join('services', 'daps.serviceid', 'services.id')
       ->select('djas.*', 'djas.id as idjas', 'daps.*', 'daps.id as iddap', 'services.title as titres')
-      ->Where('djas.projetiddja', $ID)
       ->Where('djas.id', $idd)
       ->first();
 
+    $ID = $datadap->projetiddja;
+    $exerciceId = $datadap->exerciceids;
     $datadapid = $datadap->iddap;
+
     $liste_justification = DB::table('elementdaps')
-      ->Where('projetidda', $ID)
       ->Where('dapid', $datadapid)
       ->get();
 
-    //dd($datadap);
-    //dd($idd);
+    $projetData =  DB::table('projects')
+    ->join('exercice_projets', 'projects.id', '=', 'exercice_projets.project_id')
+    ->where('projects.id', $ID)
+    ->where('exercice_projets.id', $exerciceId)
+    ->select(
+        'projects.*',
+        'exercice_projets.budget as budgets',
+    )
+    ->first();
 
+    $budget = $projetData->budgets;
 
-    $ID_DAP = $datadap->iddap;
-
-
-    //dd($ID_DAP);
+  
 
     $elementfeb = DB::table('febs')
       ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
       ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf')
-      ->where('elementdaps.dapid', $ID_DAP)
+      ->where('elementdaps.dapid', $datadapid)
       ->get();
 
     $somme_gloable = DB::table('elementfebs')
       ->Where('projetids', $ID)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->SUM('montant');
+
     $pourcetage_globale = round(($somme_gloable * 100) / $budget, 2);
 
     $solde_comptable = $budget - $somme_gloable;
@@ -233,7 +225,7 @@ class DjaController extends Controller
     $elementfebencours = DB::table('febs')
       ->join('elementdaps', 'febs.id', 'elementdaps.referencefeb')
       ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf')
-      ->where('elementdaps.numerodap', $ID_DAP)
+      ->where('elementdaps.dapid', $datadapid)
       ->get();
 
     $somme_element_encours = 0;
@@ -254,7 +246,9 @@ class DjaController extends Controller
 
     $allmontant = DB::table('elementfebs')
       ->Where('projetids', $ID)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->SUM('montant');
+
     $solder_dap = $budget - $allmontant;
 
     $pourcentage_global_b = round(($allmontant * 100) / $budget, 2);
@@ -504,7 +498,6 @@ class DjaController extends Controller
       ]
     );
   }
-
 
   public function delete(Request $request)
   {
@@ -846,6 +839,7 @@ class DjaController extends Controller
     $IDP = session()->get('id');
     $devise = session()->get('devise');
     $title = "Nouveau DJA";
+    $exerciceId = session()->get('exercice_id');
 
     // Vérifier si l'une des variables de session n'est pas définie
     if (!$IDP) {
@@ -932,19 +926,31 @@ class DjaController extends Controller
 
       )
       ->where('djas.projetiddja', $IDP)
+      ->where('djas.exerciceids', $exerciceId)
       ->where('djas.id', $id)
       ->first();
 
-
-    $numerofeb = DB::table('febs')
-      ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
-      ->leftJoin('comptes', 'febs.sous_ligne_bugdetaire', 'comptes.id')
-      ->leftjoin('beneficaires', 'febs.beneficiaire', 'beneficaires.id')
-      ->join('daps', 'elementdaps.dapid', 'daps.id')
-      ->join('djas', 'daps.id', 'djas.dapid')
-      ->select('febs.*', 'comptes.libelle as libelle_compte', 'beneficaires.libelle as beneficiaireNom', 'beneficaires.telephoneone', 'beneficaires.adresse', 'beneficaires.telephonedeux', 'beneficaires.description')
+      $numerofeb = DB::table('febs')
+      ->leftJoin('elementdaps', 'febs.id', '=', 'elementdaps.referencefeb')
+      ->leftJoin('comptes', 'febs.sous_ligne_bugdetaire', '=', 'comptes.id')
+      ->leftJoin('beneficaires', 'febs.beneficiaire', '=', 'beneficaires.id')
+      ->join('daps', 'elementdaps.dapid', '=', 'daps.id')
+      ->join('djas', 'daps.id', '=', 'djas.dapid')
+      ->select(
+          'febs.*',
+          'comptes.libelle as libelle_compte',
+          'beneficaires.libelle as beneficiaireNom',
+          'beneficaires.telephoneone',
+          'beneficaires.adresse',
+          'beneficaires.telephonedeux',
+          'beneficaires.description'
+      )
       ->where('elementdaps.dapid', $data->iddap)
+      ->where('febs.execiceid', $exerciceId)
+      ->where('febs.projetid', $IDP)
+      ->distinct() // Évite les doublons
       ->get();
+  
 
     $personnel = DB::table('users')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -952,11 +958,7 @@ class DjaController extends Controller
       ->orderBy('nom', 'ASC')
       ->get();
 
-
-
     $vehicules = Vehicule::all();
-
-
 
     return view(
       'document.dja.new',
@@ -980,6 +982,7 @@ class DjaController extends Controller
     $IDP = session()->get('id');
     $devise = session()->get('devise');
     $title = "Nouveau DJA";
+    $exerciceId = session()->get('exercice_id');
 
     // Vérifier si l'une des variables de session n'est pas définie
     if (!$IDP) {
@@ -1566,6 +1569,7 @@ class DjaController extends Controller
     try {
         $userId = $request->input('user_id');
         $projectId = session()->get('id'); // Get the project ID from the session
+        $exerciceId = session()->get('exercice_id');
 
         // Vérifier que l'ID utilisateur et l'ID projet sont valides
         if (!$userId || !$projectId) {
@@ -1579,6 +1583,7 @@ class DjaController extends Controller
         $unverifiedFunds = DB::table('djas')
           ->where('fonds_demande_par', $userId)
           ->where('projetiddja', $projectId)
+          ->where('exerciceids', $exerciceId)
           ->where(function ($query) {
               $query->where('montant_utiliser', 0)  // montant_utiliser doit être égal à 0
                     ->orWhereNull('montant_utiliser');  // ou NULL

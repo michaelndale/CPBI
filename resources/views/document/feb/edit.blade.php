@@ -47,7 +47,7 @@
                                             <td rowspan="2" style="width:40%">
                                                 Référence des documents à attacher
                                                 
-                                                <select class="form-control form-control-sm" id="annex" name="annex[]" multiple>
+                                                <select class="form-control form-control-sm" id="annex" name="annex[]" multiple style="height: 110px">
                                                     <option disabled selected value="">-- Sélectionner les documents attachés --</option>
                                                     @foreach ($attache as $attaches)
                                                         <option value="{{ $attaches->id }}" 
@@ -99,11 +99,11 @@
                                         </tr>
 
                                         <tr>
-                                            <td colspan="0" class="align-middle ps-3 name">Activités
+                                            <td colspan="2" class="align-middle ps-3 name">Activités
                                                 <input type="text" class="form-control form-control-sm" name="descriptionf" id="descriptionf" value="{{ $dataFe->descriptionf}}" required>
                                             </td>
                                             <!-- Dans la vue Blade -->
-                                                <td class="align-middle ps-3 name" colo>
+                                                <td class="align-middle ps-3 name" >
                                                     Bénéficiaire
                                                     <select class="form-control form-control-sm" id="beneficiaire" name="beneficiaire" >
                                                         @if (isset($onebeneficaire->libelle) && !empty($onebeneficaire->libelle))
@@ -187,9 +187,14 @@
                                         <tbody>
                                             @php
                                             $ndale=1;
+                                            $toto = 0;
                                             @endphp
 
+
                                             @foreach ($datElement as $datElements)
+                                            @php
+                                                $toto += $datElements->montant;
+                                            @endphp
                                             <tr>
                                                 <td>
                                                     <input style="width:100%" type="hidden" id="idelements" name="idelements[]" class="form-control form-control-sm" value="{{ $datElements->idef }}">
@@ -226,7 +231,7 @@
                                         <tfoot style="background-color:#8FBC8F">
                                             <tr>
                                                 <td colspan="7"><b>Total global :</b></td>
-                                                <td align="right"><span class="total-global"><b>{{ $sommefeb }} {{ Session::get('devise') }}</b> </span></td>
+                                                <td align="right"><span class="total-global"><b>  {{ number_format($toto,0, ',', ' ') }}  {{ Session::get('devise') }}</b> </span></td>
                                                 <td></td>
                                             </tr>
                                         </tfoot>
@@ -387,7 +392,7 @@
         var qty = parseFloat($(this).closest("tr").find(".qty").val()) || 0;
         var frenquency = parseFloat($(this).closest("tr").find(".frenquency").val()) || 0;
         var total = pu * qty * frenquency;
-        $(this).closest("tr").find(".total").val(total.toFixed(2));
+        $(this).closest("tr").find(".total").val(total.toFixed(0));
 
         calc_total();
     });
@@ -399,10 +404,10 @@
         $(".total").each(function() {
             sum += parseFloat($(this).val()) || 0;
         });
-        $(".subtotal").text(sum.toFixed(2));
+        $(".subtotal").text(sum.toFixed(0));
 
         // Mettre à jour le total global
-        $(".total-global").text(sum.toFixed(2));
+        $(".total-global").text(sum.toFixed(0));
     }
 </script>
 

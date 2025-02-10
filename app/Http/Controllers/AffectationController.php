@@ -42,17 +42,20 @@ class AffectationController extends Controller
 
   public function index()
   {
-    $title = 'Affectation project';
-    $active = 'Project';
+    $title = 'Affectation';
+
     $idp = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
+
+    if (!$idp && !$exerciceId) {
+      // Gérer le cas où l'ID du projet et exercice est invalide
+      return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
+    }
 
     $member = DB::table('personnels')
       ->join('users', 'personnels.id', '=', 'users.personnelid')
       ->select('personnels.nom', 'personnels.prenom','users.id as userid')
       ->get();
-
-
-
 
     $existe = DB::table('affectations')
       ->join('users', 'affectations.memberid', '=', 'users.id')
@@ -64,7 +67,6 @@ class AffectationController extends Controller
       'affectation.affectation',
       [
         'title'  => $title,
-        'active' => $active,
         'member' => $member,
         'existe' => $existe
       ]

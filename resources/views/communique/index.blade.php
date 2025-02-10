@@ -32,9 +32,10 @@
                                         <th>Titre</th>
                                         <th>Description</th>
                                         <th style="width:100px">Date limite</th>
-                                        <th style="width:150px">Créé le</th>
-                                        <th style="width:100px"><center>Statut <center></th>
                                         <th style="width:150px">Créé par</th>
+                                        <th style="width:100px"><center>Statut <center></th>
+                                     
+                                        <th style="width:150px">Créé le</th>
                                         <th style="width:100px"><center>Actions</center></th>
                                     </tr>
                                 </thead>

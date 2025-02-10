@@ -177,7 +177,7 @@ $personnelData = DB::table('personnels')
                         </div>
 
 
-                        <<!--
+                        <!--
 
                         @php
                         $currentDate = date('Y-m-d');

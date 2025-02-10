@@ -43,14 +43,19 @@ class DapController extends Controller
 
   public function creer()
   {
-    $ID = session()->get('id');
-    $budget = session()->get('budget');
-    $devise = session()->get('devise');
+  
+    $budget     = session()->get('budget');
+    $devise     = session()->get('devise');
+    $exerciceId = session()->get('exercice_id');
 
     // Vérifier si l'une des variables de session n'est pas définie
-    if (!$ID || !$budget || !$devise) {
-      // Rediriger vers la route nommée 'dashboard'
-      return redirect()->route('dashboard');
+    $projectId = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
+    // Vérifie si l'ID de projet existe dans la session
+    if (!$projectId && !$exerciceId) 
+    {
+        // Gérer le cas où l'ID du projet et exercice est invalide
+        return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
     }
 
     // Si les variables de session sont définies, continuer avec le reste de la fonction
@@ -67,38 +72,44 @@ class DapController extends Controller
       ->orderBy('nom', 'ASC')
       ->get();
 
-    // Activite
-    $activite = DB::table('activities')
-      ->orderBy('id', 'DESC')
-      ->where('projectid', $ID)
-      ->get();
-
     // RECUPERETION FEB NUMERO
     $feb = DB::table('febs')
       ->orderBy('numerofeb', 'ASC')
-      ->where('projetid', $ID)
+      ->where('projetid', $projectId)
+      ->where('execiceid', $exerciceId)
       ->where('statut', 0)
       ->get();
 
     $somfeb = DB::table('elementfebs')
       ->orderBy('id', 'DESC')
-      ->where('projetids', $ID)
+      ->where('projetids', $projectId)
+      ->where('exerciceids', $exerciceId)
       ->sum('montant');
+
     $somfeb = $budget - $somfeb;
 
     $somfeb = number_format($somfeb, 0, ',', ' ') . ' ' . $devise;
+
+     // Trouver le dernier numéro existant
+     $lastdap = dap::where('projetiddap', $projectId)
+     ->where('exerciceids', $exerciceId)
+     ->orderBy('numerodp', 'desc') 
+     ->first();
+
+      // Générer un nouveau numéro en ajoutant 1 au dernier trouvé
+      $newNumero = $lastdap ? $lastdap->numerodp + 1 : 1;
 
     return view(
       'document.dap.nouveau',
       [
         'title'     => $title,
-        'activite'  => $activite,
         'personnel' => $personnel,
         'service'   => $service,
         'feb'       => $feb,
         'compte'    => $compte,
         'somfeb'    => $somfeb,
-        'banque'    => $banque
+        'banque'    => $banque,
+        'newNumero' =>  $newNumero
       ]
     );
   }
@@ -106,11 +117,10 @@ class DapController extends Controller
 
   public function fetchAll(Request $request)
   {
+      $exerciceId = session()->get('exercice_id'); // Recuperation de l'exercice
       $ID = session()->get('id'); // Récupérer l'ID de session
       $search = $request->input('search_dap'); // Valeur de recherche
       $pageSize = 25; // Nombre d'éléments par page
-
-      $exerciceId = session()->get('exercice_id');
   
       // Construire la requête principale
       $query = DB::table('daps')
@@ -234,9 +244,11 @@ class DapController extends Controller
   public function checkDap(Request $request)
   {
     $ID = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
     $numero = $request->numerodap;
     $dap = Dap::where('numerodp', $numero)
       ->where('projetiddap', $ID)
+      ->where('exerciceids', $exerciceId)
       ->exists();
     return response()->json(['exists' => $dap]);
   }
@@ -252,6 +264,7 @@ class DapController extends Controller
          
           $justifier = $request->has('justifier') ? 1 : 0;
           $nonjustifier = $request->has('nonjustifier') ? 1 : 0;
+          $exerciceId = session()->get('exercice_id');
   
           // Création d'une nouvelle instance de modèle Dap et attribution des valeurs
           $dap = new Dap();
@@ -269,6 +282,7 @@ class DapController extends Controller
           $dap->chefprogramme = $request->chefprogramme;
           $dap->paretablie = $request->paretablie;
           $dap->banque = $request->banque;
+          $dap->exerciceids = $exerciceId;
   
           if ($justifier == 1) {
               
@@ -286,7 +300,9 @@ class DapController extends Controller
           $dap->userid = Auth::id();
           $dap->save();
           $IDdap = $dap->id;
-  
+
+          $cryptedId = Crypt::encrypt($IDdap);
+
           if ($request->has('febid')) {
               foreach ($request->febid as $key => $febid) {
                   $existingDapE = Elementdap::where('referencefeb', $febid)->first();
@@ -297,6 +313,7 @@ class DapController extends Controller
                       $existingDapE->numerodap = $request->numerodap;
                       $existingDapE->referencefeb = $febid;
                       $existingDapE->projetidda = $request->projetid;
+                      $existingDapE->exerciceid = $exerciceId;
                       $existingDapE->save();
   
                       $element = Feb::where('id', $febid)->first();
@@ -326,6 +343,7 @@ class DapController extends Controller
               $justification->description_avance = $request->descriptionel;
               $justification->justifie = $justifier == 1 ? 1 : 0;
               $justification->userid = Auth::id();
+              $justification->exerciceids = $exerciceId;
               $justification->save();
           }
   
@@ -333,7 +351,8 @@ class DapController extends Controller
   
           return response()->json([
               'status' => 200,
-              'message' => 'Données enregistrées avec succès.'
+              'message' => 'Données enregistrées avec succès.',
+              'redirect' => route('viewdap', $cryptedId),
           ]);
   
       } catch (\Exception $e) {
@@ -360,10 +379,10 @@ class DapController extends Controller
       DB::beginTransaction();
 
       $IDpp = session()->get('id');
+      $exerciceId = session()->get('exercice_id');
       $lead = session()->get('lead');
 
       $dap = Dap::where('id', $request->dapid)->first();
-  
 
       // Vérifier si les enregistrements DAP et DJA existent
       if (!$dap ) {
@@ -378,13 +397,10 @@ class DapController extends Controller
         ->where('daps.id', $request->dapid)
         ->first();
 
-
       $projet_lead = $get_lead->lead;
-
 
       $justifier = $request->has('justifierChoice') ? 1 : 0;
       $nonjustifier = $request->has('nonjustifierChoice') ? 1 : 0;
-
 
       // Mettre à jour les champs du DAP
       $dap->numerodp = $request->numerodap;
@@ -501,6 +517,7 @@ class DapController extends Controller
   {
     // Récupérer les valeurs de la session
     $ID = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
     $budget = session()->get('budget');
     $devise = session()->get('devise');
 
@@ -512,35 +529,22 @@ class DapController extends Controller
 
     // Si les variables de session sont définies, continuer avec le reste de la fonction
     $title = "DAP";
-
-    $service = Service::all();
-    $compte = Compte::where('compteid', '=', NULL)->get();
-    $banque = Banque::orderBy('libelle', 'ASC')->get();
-
     // utilisateur
-    $personnel = DB::table('users')
-      ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-      ->orderBy('nom', 'ASC')
-      ->get();
-
-    // Activite
-    $activite = DB::table('activities')
-      ->orderBy('id', 'DESC')
-      ->where('projectid', $ID)
-      ->get();
-
+  
     // RECUPERETION FEB NUMERO
     $feb = DB::table('febs')
       ->orderBy('numerofeb', 'ASC')
       ->where('projetid', $ID)
+      ->where('execiceid', $exerciceId)
       ->where('statut', 0)
       ->get();
 
     $somfeb = DB::table('elementfebs')
       ->orderBy('id', 'DESC')
       ->where('projetids', $ID)
+      ->where('exerciceids', $exerciceId)
       ->sum('montant');
+
     $somfeb = $budget - $somfeb;
 
     $somfeb = number_format($somfeb, 0, ',', ' ') . ' ' . $devise;
@@ -549,13 +553,9 @@ class DapController extends Controller
       'document.dap.list',
       [
         'title'     => $title,
-        'activite'  => $activite,
-        'personnel' => $personnel,
-        'service'   => $service,
         'feb'       => $feb,
-        'compte'    => $compte,
         'somfeb'    => $somfeb,
-        'banque'    => $banque
+
       ]
     );
   }
@@ -691,63 +691,63 @@ class DapController extends Controller
   }
 
   public function delete(Request $request)
-{
-    DB::beginTransaction();
+  {
+      DB::beginTransaction();
 
-    try {
-        $id = $request->id;
-        $dap = Dap::find($id);
+      try {
+          $id = $request->id;
+          $dap = Dap::find($id);
 
-        // Vérification de l'existence du DAP et des autorisations utilisateur
-        if ($dap && $dap->userid == Auth::id()) {
-            // 1. Mise à jour des FEB associés (si des éléments DAP existent)
-            $elements = Elementdap::where('dapid', $id)->get();
+          // Vérification de l'existence du DAP et des autorisations utilisateur
+          if ($dap && $dap->userid == Auth::id()) {
+              // 1. Mise à jour des FEB associés (si des éléments DAP existent)
+              $elements = Elementdap::where('dapid', $id)->get();
 
-            if ($elements->isNotEmpty()) {
-                $febIds = $elements->pluck('referencefeb')->toArray();
-                Feb::whereIn('id', $febIds)->update(['statut' => 0]);
-            }
+              if ($elements->isNotEmpty()) {
+                  $febIds = $elements->pluck('referencefeb')->toArray();
+                  Feb::whereIn('id', $febIds)->update(['statut' => 0]);
+              }
 
-            // 2. Suppression des DJA associés (si présents)
-            $djas = Dja::where('dapid', $id);
-            if ($djas->exists()) {
-                $djas->delete();
-            }
+              // 2. Suppression des DJA associés (si présents)
+              $djas = Dja::where('dapid', $id);
+              if ($djas->exists()) {
+                  $djas->delete();
+              }
 
-            // 3. Suppression des Elementdap associés (si présents)
-            $elementDaps = Elementdap::where('dapid', $id);
-            if ($elementDaps->exists()) {
-                $elementDaps->delete();
-            }
+              // 3. Suppression des Elementdap associés (si présents)
+              $elementDaps = Elementdap::where('dapid', $id);
+              if ($elementDaps->exists()) {
+                  $elementDaps->delete();
+              }
 
-            // 5. Suppression du DAP lui-même
-            $dap->delete();
+              // 5. Suppression du DAP lui-même
+              $dap->delete();
 
-            // Validation de la transaction
-            DB::commit();
+              // Validation de la transaction
+              DB::commit();
 
-            return response()->json([
-                'status' => 200,
-                'message' => 'DAP et DJA supprimés avec succès, et les FEB associés ont été mis à jour pour la réutilisation.'
-            ]);
-        } else {
-            // Annulation de la transaction en cas de problème
-            DB::rollBack();
-            return response()->json([
-                'status' => 205,
-                'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le DAP. Veuillez contacter le créateur pour procéder à la suppression.'
-            ]);
-        }
-    } catch (\Exception $e) {
-        // Gestion de l'erreur et annulation de la transaction
-        DB::rollBack();
-        return response()->json([
-            'status' => 500,
-            'message' => 'Erreur lors de la suppression du DAP.',
-            'error' => $e->getMessage()
-        ]);
-    }
-}
+              return response()->json([
+                  'status' => 200,
+                  'message' => 'DAP et DJA supprimés avec succès, et les FEB associés ont été mis à jour pour la réutilisation.'
+              ]);
+          } else {
+              // Annulation de la transaction en cas de problème
+              DB::rollBack();
+              return response()->json([
+                  'status' => 205,
+                  'message' => 'Vous n\'avez pas l\'autorisation nécessaire pour supprimer le DAP. Veuillez contacter le créateur pour procéder à la suppression.'
+              ]);
+          }
+      } catch (\Exception $e) {
+          // Gestion de l'erreur et annulation de la transaction
+          DB::rollBack();
+          return response()->json([
+              'status' => 500,
+              'message' => 'Erreur lors de la suppression du DAP.',
+              'error' => $e->getMessage()
+          ]);
+      }
+  }
 
 
   public function show($idd)
@@ -760,24 +760,23 @@ class DapController extends Controller
     $datadap = DB::table('daps')
       ->leftJoin('services', 'daps.serviceid', 'services.id')
       ->leftJoin('projects', 'daps.projetiddap', 'projects.id')
-      ->select('daps.*', 'services.title as titres', 'projects.budget as montantprojet', 'projects.title as projettitle', 'projects.devise as devise')
+      ->leftJoin('exercice_projets', 'daps.exerciceids', 'exercice_projets.id')
+      ->select('daps.*', 'services.title as titres', 'projects.title as projettitle', 'projects.devise as devise','exercice_projets.budget as budgets', 'exercice_projets.id as ides' )
       ->where('daps.id', $idd)
       ->first();
 
     $dajshow = Dja::where('dapid', $idd)->first();
 
-
-    $budget = $datadap->montantprojet;
-    $ID = $datadap->projetiddap;
-    $devise  = $datadap->devise;
+    $budget     = $datadap->budgets;
+    $ID         = $datadap->projetiddap;
+    $devise     = $datadap->devise;
+    $exerciceId = $datadap->ides;
 
     $elementfeb = DB::table('febs')
       ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
       ->select('elementdaps.*', 'febs.id as fid', 'febs.numerofeb', 'febs.descriptionf', 'febs.ligne_bugdetaire',  'febs.acce_signe', 'febs.comptable_signe', 'febs.chef_signe')
       ->where('elementdaps.dapid', $datadap->id)
       ->get();
-
-
 
     $elementfebencours = DB::table('febs')
       ->leftJoin('elementdaps', 'febs.id', 'elementdaps.referencefeb')
@@ -790,6 +789,8 @@ class DapController extends Controller
 
     $somme_ligne_principale = DB::table('rallongebudgets')
       ->where('compteid', $id_gl)
+      ->where('rallongebudgets.projetid', $ID)
+      ->where('rallongebudgets.execiceid', $exerciceId)
       ->sum('budgetactuel');
 
     $sommeGrandLigne = DB::table('elementfebs')
@@ -801,11 +802,13 @@ class DapController extends Controller
     $somme_gloable = DB::table('elementfebs')
       ->where('numero', '<=', $numero_classe_feb)
       ->Where('projetids', $ID)
+      ->where('exerciceids', $exerciceId)
       ->SUM('montant');
 
     $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
       ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
       ->where('elementboncaisses.projetid', $ID)
+      ->where('elementboncaisses.exerciceid', $exerciceId)
       ->where('bonpetitcaisses.approuve_par_signature', 1)
       ->sum('elementboncaisses.montant');
 
@@ -842,8 +845,6 @@ class DapController extends Controller
       ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.signature', 'users.id as usersid')
       ->Where('users.id', $datadap->beneficiaire)
       ->first();
-
-
 
     $Demandeetablie =  DB::table('users')
       ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -910,10 +911,12 @@ class DapController extends Controller
     );
   }
 
+
   public function edit($idd)
   {
 
     $idd = Crypt::decrypt($idd);
+    $exerciceId = session()->get('exercice_id');
 
     $title = "Modification DAP";
     $service = Service::all();
@@ -932,6 +935,8 @@ class DapController extends Controller
     $budget = $datadap->montantprojet;
     $ID = $datadap->projetiddap;
     $devise  = $datadap->devise;
+
+  
 
     $fond_reussi = DB::table('users')
       ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -965,6 +970,7 @@ class DapController extends Controller
     // Activite
     $activite = DB::table('activities')
       ->orderby('id', 'DESC')
+      ->where('activities.execiceid', $exerciceId)
       ->Where('projectid', $ID)
       ->get();
 
@@ -972,6 +978,7 @@ class DapController extends Controller
     $somfeb = DB::table('elementfebs')
       ->orderby('id', 'DESC')
       ->Where('projetids', $ID)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->SUM('montant');
 
     $somfeb =  $budget - $somfeb;
@@ -1074,15 +1081,17 @@ class DapController extends Controller
     $datadap = DB::table('daps')
       ->leftJoin('services', 'daps.serviceid', '=', 'services.id')
       ->leftJoin('projects', 'daps.projetiddap', '=', 'projects.id')
-      ->select('daps.*', 'services.title as titres', 'projects.budget as montantprojet', 'projects.devise as devise', 'daps.userid as iduser', 'projects.title as projettitle', 'projects.devise as devise')
+      ->leftJoin('exercice_projets', 'daps.exerciceids', 'exercice_projets.id')
+      ->select('daps.*', 'services.title as titres', 'projects.budget as montantprojet', 'projects.devise as devise', 'daps.userid as iduser', 'projects.title as projettitle', 'projects.devise as devise','exercice_projets.budget as budgets', 'exercice_projets.id as ides' )
       ->where('daps.id', $id)
       ->first();
 
       $dajshow = Dja::where('dapid', $id)->first();
 
-    $budget = $datadap->montantprojet;
+    $budget = $datadap->budgets;
     $IDb = $datadap->projetiddap;
     $devise = $datadap->devise;
+    $exerciceId = $datadap->ides;
 
 
     $datafebElement = DB::table('febs')
@@ -1105,11 +1114,14 @@ class DapController extends Controller
 
     $somme_ligne_principale = DB::table('rallongebudgets')
       ->where('compteid', $id_gl)
+      ->where('rallongebudgets.execiceid', $exerciceId)
+      ->where('projetid', $IDb)
       ->sum('budgetactuel');
 
     $sommeGrandLigne = DB::table('elementfebs')
       ->where('numero', '<=', $numero_classe_feb)
       ->where('grandligne', $id_gl)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->where('projetids', $IDb)
       ->sum('montant');
 
@@ -1117,12 +1129,14 @@ class DapController extends Controller
     $somme_gloable = DB::table('elementfebs')
       ->where('numero', '<=', $numero_classe_feb)
       ->where('projetids', $IDb)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->sum('montant');
 
 
     $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
       ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
       ->where('elementboncaisses.projetid', $IDb)
+      ->where('elementboncaisses.exerciceid', $exerciceId)
       ->where('bonpetitcaisses.approuve_par_signature', 1)
       ->sum('elementboncaisses.montant');
 
@@ -1243,21 +1257,35 @@ class DapController extends Controller
     
     $id = $request->input('id');
     $dataFeb = $check = Feb::findOrFail($id);
+    $exerciceId = session()->get('exercice_id');
 
     // Récupérer les ID et les détails associés
     $idl = $check->sous_ligne_bugdetaire;
     $id_gl = $check->ligne_bugdetaire;
     $idfeb = $check->id;
     $numero_classe_feb =  $check->numerofeb;
+    $exerciceId = $check->execiceid;
+    $IDB = $check->projetid;
 
     $datElement = Elementfeb::where('febid', $idfeb)->get();
 
-    $IDB = $check->projetid;
-    $project = Project::findOrFail($IDB);
-    $budget = $project->budget;
+  
+    $project =DB::table('projects')
+    ->join('exercice_projets', 'projects.id', '=', 'exercice_projets.project_id')
+    ->where('projects.id', $IDB)
+    ->where('exercice_projets.id', $exerciceId)
+    ->select(
+        'projects.*',
+        'exercice_projets.budget as budgets',
+    )
+    ->first();
+
+    $budget = $project->budgets;
 
     $somme_ligne_principale = DB::table('rallongebudgets')
       ->where('compteid', $id_gl)
+      ->where('rallongebudgets.execiceid', $exerciceId)
+      ->where('projetid', $IDB)
       ->sum('budgetactuel');
 
     $onebeneficaire = Beneficaire::find($check->beneficiaire);
@@ -1265,6 +1293,7 @@ class DapController extends Controller
     $sommeallfeb = DB::table('elementfebs')
       ->where('numero', '<=', $numero_classe_feb)
       ->where('projetids', $IDB)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->sum('montant');
 
     $dataLigne = Compte::find($idl);
@@ -1273,6 +1302,7 @@ class DapController extends Controller
       ->where('grandligne', $id_gl)
       ->where('numero', '<=', $numero_classe_feb)
       ->where('projetids', $IDB)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->sum('montant');
 
     if ($somme_ligne_principale != 0) {
@@ -1284,11 +1314,13 @@ class DapController extends Controller
     $sommefeb = DB::table('elementfebs')
       ->where('febid', $idfeb)
       ->where('projetids', $IDB)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->sum('montant');
 
     $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
       ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
       ->where('elementboncaisses.projetid', $IDB)
+      ->where('elementboncaisses.exerciceid', $exerciceId)
       ->where('bonpetitcaisses.approuve_par_signature', 1)
       ->sum('elementboncaisses.montant');
 
@@ -1515,6 +1547,105 @@ class DapController extends Controller
 
     // Retourne la réponse JSON contenant le code HTML généré
     return response()->json($output);
+  }
+
+
+  public function DjagetFebDetails(Request $request)
+  {
+      $id = $request->input('id');
+      $dataFeb = Feb::findOrFail($id);
+      $exerciceId = session()->get('exercice_id');
+  
+      // Récupérer les ID et détails associés
+      $idl = $dataFeb->sous_ligne_bugdetaire;
+      $id_gl = $dataFeb->ligne_bugdetaire;
+      $IDB = $dataFeb->projetid;
+  
+      // Récupérer les détails du projet
+      $project = DB::table('projects')
+          ->join('exercice_projets', 'projects.id', '=', 'exercice_projets.project_id')
+          ->where('projects.id', $IDB)
+          ->where('exercice_projets.id', $dataFeb->execiceid)
+          ->select('projects.*', 'exercice_projets.budget as budgets')
+          ->first();
+  
+      // Calculer les sommes nécessaires
+      $budget = $project ? $project->budgets : 0;
+      $somme_ligne_principale = DB::table('rallongebudgets')
+          ->where('compteid', $id_gl)
+          ->where('rallongebudgets.execiceid', $dataFeb->execiceid)
+          ->where('projetid', $IDB)
+          ->sum('budgetactuel');
+  
+      $onebeneficaire = Beneficaire::find($dataFeb->beneficiaire);
+  
+      $sommeallfeb = DB::table('elementfebs')
+          ->where('numero', '<=', $dataFeb->numerofeb)
+          ->where('projetids', $IDB)
+          ->where('elementfebs.exerciceids', $dataFeb->execiceid)
+          ->sum('montant');
+  
+      $dataLigne = Compte::find($idl);
+  
+      $sommelign = DB::table('elementfebs')
+          ->where('grandligne', $id_gl)
+          ->where('numero', '<=', $dataFeb->numerofeb)
+          ->where('projetids', $IDB)
+          ->where('elementfebs.exerciceids', $dataFeb->execiceid)
+          ->sum('montant');
+  
+      $sommelignpourcentage = $somme_ligne_principale != 0 ? round(($sommelign * 100) / $somme_ligne_principale, 2) : 0;
+  
+      $sommefeb = DB::table('elementfebs')
+          ->where('febid', $dataFeb->id)
+          ->where('projetids', $IDB)
+          ->sum('montant');
+  
+      $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
+          ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', '=', 'bonpetitcaisses.id')
+          ->where('elementboncaisses.projetid', $IDB)
+          ->where('bonpetitcaisses.approuve_par_signature', 1)
+          ->sum('elementboncaisses.montant');
+  
+      $SOMMES_DEJA_UTILISE = $sommeallfeb + $SOMME_PETITE_CAISSE;
+  
+      $POURCENTAGE_GLOGALE = $budget != 0 ? round(($SOMMES_DEJA_UTILISE * 100) / $budget, 2) : 0;
+  
+      // Informations sur le créateur
+      $createur = DB::table('users')
+          ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->select('personnels.nom', 'personnels.prenom', 'users.id as useridp')
+          ->where('users.id', $dataFeb->userid)
+          ->first();
+  
+      // Documents attachés
+      $documents = attache_feb::join('apreviations', 'attache_febs.annexid', '=', 'apreviations.id')
+          ->select('apreviations.abreviation', 'apreviations.libelle', 'attache_febs.urldoc')
+          ->where('attache_febs.febid', $id)
+          ->get();
+  
+      // Éléments de la FEB
+      $elementsFeb = Elementfeb::where('febid', $id)->get();
+  
+      // Retourner les données à la vue
+      return view('document/dja/feb_details_editable', compact(
+          'dataFeb',
+          'project',
+          'budget',
+          'somme_ligne_principale',
+          'onebeneficaire',
+          'sommeallfeb',
+          'dataLigne',
+          'sommelign',
+          'sommelignpourcentage',
+          'sommefeb',
+          'SOMME_PETITE_CAISSE',
+          'SOMMES_DEJA_UTILISE',
+          'POURCENTAGE_GLOGALE',
+          'createur',
+          'documents',
+          'elementsFeb'
+      ));
   }
 
   public function fetchAllsignaledap($dapid)

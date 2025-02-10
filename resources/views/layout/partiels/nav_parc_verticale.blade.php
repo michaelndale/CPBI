@@ -1,4 +1,12 @@
 <body data-sidebar="colored" id="contenu">
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner">
+                <i class="ri-loader-line spin-icon"></i>
+            </div>
+        </div>
+    </div>
+
     @php
 
     // Récupérer les données du profil de l'utilisateur

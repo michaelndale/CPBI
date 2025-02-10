@@ -25,21 +25,19 @@ class RallongebudgetController extends Controller
     if (!session()->has('id')) {
       return redirect()->route('dashboard');
     }
+
+     // Définition du titre de la page
+     $title = 'Budgétisation';
+
+     
     // Récupération des valeurs de la session
     $IDP = session()->get('id');
-    $devise = session()->get('devise');
-    $budget = session()->get('budget');
+   
     $periode = session()->get('periode');
     $exerciceId = session()->get('exercice_id');
 
-
-    // Définition du titre de la page
-    $title = 'Budgétisation';
-
     // Récupération des comptes associés au projet en cours
-    $compte = Compte::where('projetid', $IDP)
-      ->where('compteid', 0)
-      ->get();
+    $compte = Compte::where('projetid', $IDP)->where('compteid', 0)->get();
 
     // Récupération de tous les types de budget
     $typebudget = TypeProjet::all();
@@ -67,68 +65,66 @@ class RallongebudgetController extends Controller
   public function fetchAll($isForPrinting = false)
   {
     // Récupération des valeurs de la session
-    $IDP = session()->get('id');
-    $devise = session()->get('devise');
-    $budget = session()->get('budget');
-    $periode = session()->get('periode');
+    $IDP        = session()->get('id');
+    $devise     = session()->get('devise');
+    $budget     = session()->get('budget');
+    $periode    = session()->get('periode');
     $exerciceId = session()->get('exercice_id');
 
-
     // Récupération des données de base
-    $data = Compte::where('compteid', 0)
-      ->where('projetid', $IDP)
-      ->get();
+    $data = Compte::where('compteid', 0)->where('projetid', $IDP)->get();
 
     // Récupération des informations du projet
     $showData = DB::table('projects')
-    ->join('exercice_projets', 'projects.id', '=', 'exercice_projets.project_id')
-    ->where('projects.id', $IDP)
-    ->where('exercice_projets.id', $exerciceId)
-    ->select(
-        'projects.*',
-        'exercice_projets.numero_e',
-        'exercice_projets.budget as budgets',
-        
-    )
-    ->first();
+                    ->join('exercice_projets', 'projects.id', '=', 'exercice_projets.project_id')
+                    ->where('projects.id', $IDP)
+                    ->where('exercice_projets.id', $exerciceId)
+                    ->select(
+                        'projects.*',
+                        'exercice_projets.numero_e',
+                        'exercice_projets.budget as budgets',
+                        'exercice_projets.estart_date as estart_date',
+                        'exercice_projets.edeadline as edeadline',
+                    )
+                    ->first();
 
     // Calcul du budget total réparti
     $sommerepartie = DB::table('rallongebudgets')
-      ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
-      ->where('rallongebudgets.projetid', $IDP)
-      ->where('rallongebudgets.execiceid', $exerciceId)
-      ->sum('budgetactuel');
+                        ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+                        ->where('rallongebudgets.projetid', $IDP)
+                        ->where('rallongebudgets.execiceid', $exerciceId)
+                        ->sum('budgetactuel');
 
     // Récupération des informations sur l'utilisateur responsable du projet
 
-
     // Calcul du budget total et du pourcentage FEB
     $datasommefeb = DB::table('elementfebs')
-      ->join('febs', 'elementfebs.febid', 'febs.id')
-      ->where('projetids', $IDP)
-      ->where('exerciceids', $exerciceId)
-      ->where('febs.acce_signe', 1)
-      ->where('febs.comptable_signe', 1)
-      ->where('febs.chef_signe', 1)
-      ->sum('montant');
+                        ->join('febs', 'elementfebs.febid', 'febs.id')
+                        ->where('projetids', $IDP)
+                        ->where('exerciceids', $exerciceId)
+                        ->where('febs.acce_signe', 1)
+                        ->where('febs.comptable_signe', 1)
+                        ->where('febs.chef_signe', 1)
+                        ->sum('montant');
 
     $pourcentagefeb = $budget ? round(($datasommefeb * 100) / $budget, 2) : 0;
+
     $sommefeb = number_format($datasommefeb, 0, ',', ' ');
 
     $messageFEB = $pourcentagefeb == 100
-      ? '<center><span class="badge rounded-pill bg-primary font-size-11">Terminé</span></center>'
-      : '<center><span class="badge rounded-pill bg-success font-size-11">En cours</span></center>';
+        ? '<center><span class="badge rounded-pill bg-primary font-size-11">Terminé</span></center>'
+        : '<center><span class="badge rounded-pill bg-success font-size-11">En cours</span></center>';
 
     // Initialisation du message pour le budget global
     $pglobale = $showData->budgets ? round(($sommerepartie * 100) / $showData->budgets, 2) : 0;
     $message = $sommerepartie == $showData->budgets
-      ? '<center><span class="badge rounded-pill bg-primary font-size-11">Terminé</span></center>'
-      : '<center><span class="badge rounded-pill bg-success font-size-11">En cours</span></center>';
+        ? '<center><span class="badge rounded-pill bg-primary font-size-11">Terminé</span></center>'
+        : '<center><span class="badge rounded-pill bg-success font-size-11">En cours</span></center>';
 
     $poursommerepartie = $showData->budgets ? round(($sommerepartie * 100) / $showData->budgets, 2) : 0;
     $messageR = $poursommerepartie == 100
-      ? '<center><span class="badge rounded-pill bg-primary font-size-11">Terminé</span></center>'
-      : '<center><span class="badge rounded-pill bg-success font-size-11">En cours</span></center>';
+        ? '<center><span class="badge rounded-pill bg-primary font-size-11">Terminé</span></center>'
+        : '<center><span class="badge rounded-pill bg-success font-size-11">En cours</span></center>';
 
     // Construction du tableau de résumé du projet
     $output = '';
@@ -138,29 +134,33 @@ class RallongebudgetController extends Controller
       $output .= '
               <table class="table table-bordered table-sm fs--1 mb-0">
                   <tr style="background-color:#82E0AA">
-                      <td style="padding:5px"><b>Rubrique du projet</b></td>
-                      <td style="padding:5px"><b>Pays / région</b></td>
-                      <td style="padding:5px"><b>N<sup>o</sup> Projet</b></td>
-                      <td style="padding:5px"><b><center>Budget</center></b></td>
-                      <td style="padding:5px"><b><center>%</center></b></td>
-                      <td style="padding:5px"><b><center>Statut</center></b></td>
+                      <td > <b>Rubrique du projet</b></td>
+                      <td > <b>Pays / région</b></td>
+                      <td > <b>Exercice</b></td>
+                      <td > <b>Date début et fin</b></td>
+                      <td > <b>N<sup>o</sup> Projet</b></td>
+                      <td > <b><center>Budget</center></b></td>
+                      <td > <b><center>%</center></b></td>
+                      <td > <b><center>Statut</center></b></td>
                   </tr>
                   <tr>
-                      <td style="padding:5px; width:50%">' . htmlspecialchars($showData->title) . '</td>
+                      <td style="padding:5px; width:40%">' . htmlspecialchars($showData->title) . '</td>
                       <td style="padding:5px">' . htmlspecialchars($showData->region) . '</td>
+                      <td style="padding:3px">' . htmlspecialchars($showData->numero_e) . '</td>
+                      <td style="padding:5px">' . date('d/m/Y', strtotime($showData->estart_date))  . ' - ' . date('d/m/Y', strtotime($showData->edeadline))  . '  </td>
                       <td style="padding:5px">' . htmlspecialchars($showData->numeroprojet) . '</td>
                       <td style="padding:5px" align="right">' . number_format($showData->budgets, 0, ',', ' ') . '</td>
                       <td align="right">100%</td>
                       <td>' . $message . '</td>
                   </tr>
                   <tr>
-                      <td colspan="3">Total Budget Réparti</td>
+                      <td colspan="5">Total Budget Réparti</td>
                       <td style="padding:5px" align="right">' . number_format($sommerepartie, 0, ',', ' ') . '</td>
                       <td align="right">' . $pglobale . '%</td>
                       <td>' . $messageR . '</td>
                   </tr>
                   <tr>
-                      <td colspan="3">Montant en cours de consommation</td>
+                      <td colspan="5">Montant en cours de consommation</td>
                       <td style="padding:5px" align="right">' . $sommefeb . '</td>
                       <td align="right">' . $pourcentagefeb . '%</td>
                       <td>' . $messageFEB . '</td>
@@ -192,7 +192,7 @@ class RallongebudgetController extends Controller
 
         // Afficher le titre du type de budget seulement s'il contient des éléments
         if ($containsElements) {
-          $output .= '<br><h5>&nbsp; &nbsp;&nbsp;<u>' . $cle_id_type_projet . '. ' . $typeBudgets->titre . '</u></h5>';
+          $output .= '<br><h5>&nbsp; &nbsp;&nbsp;<u>' . $cle_id_type_projet . '. '. $typeBudgets->titre . '</u></h5>';
 
           $output .= '
                       <table class="table table-bordered table-sm fs--1 mb-0">
@@ -395,7 +395,9 @@ class RallongebudgetController extends Controller
       // Récupération des valeurs de la session
       $IDP = session()->get('id');
       $budget = session()->get('budget');
-      $exerciceId = session()->get('exercice_id');
+      $exerciceId = session()->get('exercice_id'); 
+
+      $montant_new_budget = trim($request->input('budgetactuel'));
 
       // Récupération des données de la requête
       $compte = $request->input('compteid');
@@ -426,7 +428,7 @@ class RallongebudgetController extends Controller
       $urldocValue = $request->filled('urldoc') ? $request->input('urldoc') : "";
 
       // Calcul du budget global après ajout du nouveau budget
-      $globale = $request->input('budgetactuel') + $somme_budget;
+      $globale = $montant_new_budget + $somme_budget;
 
       // Vérification si le budget global reste dans les limites du budget projet
       if ($budget >= $globale) {
@@ -435,7 +437,7 @@ class RallongebudgetController extends Controller
         $rallonge->projetid = $IDP;
         $rallonge->compteid = $compte;
         $rallonge->souscompte = $scompte;
-        $rallonge->budgetactuel = $request->input('budgetactuel');
+        $rallonge->budgetactuel = $montant_new_budget;
         $rallonge->retruction = $retruction;
         $rallonge->urldoc = $urldocValue;
         $rallonge->userid = auth()->user()->id;
@@ -471,11 +473,14 @@ class RallongebudgetController extends Controller
 
     $IDP = session()->get('id');
     $budget = session()->get('budget');
+    $exerciceId = session()->get('exercice_id');
+    
 
     // Calcul du budget total
     $somme_budget = DB::table('rallongebudgets')
       ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
       ->where('rallongebudgets.projetid', $IDP)
+      ->where('rallongebudgets.execiceid', $exerciceId)
       ->sum('budgetactuel');
 
     $globale = $somme_budget - $request->ancienmontantligne;
@@ -508,6 +513,7 @@ class RallongebudgetController extends Controller
     $validated = $request->validate([
       'id' => 'required|integer' // Supposons que l'ID est un entier
     ]);
+    $exerciceId = session()->get('exercice_id');
 
     try {
       $key = $validated['id'];
@@ -542,6 +548,7 @@ class RallongebudgetController extends Controller
   {
     // Vérifiez que l'ID est fourni
     $key = $request->query('id'); // Utiliser `query` pour GET
+    $exerciceId = session()->get('exercice_id');
 
     if (!$key) {
       return response()->json('<p>Aucun ID fourni.</p>', 400);
@@ -552,6 +559,7 @@ class RallongebudgetController extends Controller
       ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
       ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero', 'rallongebudgets.id as idr', 'comptes.id as idCompte')
       ->where('rallongebudgets.id', $key)
+      ->where('rallongebudgets.execiceid', $exerciceId)
       ->first();
 
     // Vérifiez si les données existent
@@ -703,6 +711,7 @@ class RallongebudgetController extends Controller
       $ID = session()->get('id');
       $comp = $request->id;
       $compp = explode("-", $comp);
+      $exerciceId = session()->get('exercice_id');
 
       $grandcompte = $compp[0];
       $souscompte  = $compp[1];
@@ -712,6 +721,7 @@ class RallongebudgetController extends Controller
         ->select('rallongebudgets.*', 'comptes.libelle', 'comptes.numero')
         ->Where('rallongebudgets.projetid', $ID)
         ->where('rallongebudgets.souscompte', $souscompte)
+        ->where('rallongebudgets.execiceid', $exerciceId)
         ->get();
 
 
@@ -759,7 +769,6 @@ class RallongebudgetController extends Controller
       $emp = Rallongebudget::find($request->id);
 
       if ($emp->userid == Auth::id()) {
-
         $id = $request->id;
         Rallongebudget::where('id', $id)->delete();
         return response()->json([
@@ -775,6 +784,7 @@ class RallongebudgetController extends Controller
         'status' => 202,
       ]);
     }
+
   }
 
   public function personnaliserContenuHtml($html)

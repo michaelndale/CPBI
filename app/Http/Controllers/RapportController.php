@@ -23,6 +23,7 @@ class RapportController extends Controller
     {
         $title = 'Rapport de caisse';
         $ID = session()->get('id');
+        $exerciceId = session()->get('exercice_id');
         // Vérifier si l'ID de la session n'est pas défini
         if (!$ID) {
             // Rediriger vers la route nommée 'dashboard'
@@ -36,6 +37,7 @@ class RapportController extends Controller
             ->get();
 
         $compte_bpc =  Comptepetitecaisse::where('projetid', $ID)
+            ->where('comptepetitecaisses.exercice_id', $exerciceId)
             ->join('users', 'comptepetitecaisses.userid', '=', 'users.id')
             ->join('personnels', 'users.personnelid', '=', 'personnels.id')
             ->select('comptepetitecaisses.*', 'personnels.prenom as personnel_prenom')
@@ -74,7 +76,7 @@ class RapportController extends Controller
             )
             ->get();
 
-        $classement = Rappotage::where('cloture', 0)
+             $classement = Rappotage::where('cloture', 0)
             ->first();
 
         $verifie_par = DB::table('users')
@@ -107,6 +109,7 @@ class RapportController extends Controller
 
         try {
             $IDP = session()->get('id');
+            $exerciceId = session()->get('exercice_id');
 
             $numero = rappotage::where('projetid',  $IDP)->count();
             $numero = $numero + 1;
@@ -119,6 +122,7 @@ class RapportController extends Controller
            
             $cloture->userid = Auth::id();
             $cloture->projetid = $IDP;
+            $cloture->exercice_id = $exerciceId;
             $cloture->compteid = $request->compteId;
             $cloture->moianne = $request->moiAnne;
             $cloture->save();
@@ -293,73 +297,8 @@ class RapportController extends Controller
     }
 
 
-   /* public function generatePrintableFile(Request $request)
+    public function generatePrintableFile(Request $request) 
     {
-        $compteId = $request->compte_bpc;
-        $numeroId = $request->numeroCompte;
-
-        // Vérifiez que les deux sélections sont présentes
-        if (!$compteId || !$numeroId) {
-            return response('<p>Les deux sélections sont obligatoires.</p>', 400);
-        }
-
-        try {
-            // Requête avec jointures pour filtrer les données
-            $data = Rappotage::select('rappotages.*', 'caisses.*')
-                ->join('rappotagecaisses', 'rappotages.id', '=', 'rappotagecaisses.rapportage_id')
-                ->join('caisses', 'rappotagecaisses.caisse_id', '=', 'caisses.id')
-                ->where('rappotages.compteid', $compteId)
-                ->where('rappotages.numero_groupe', $numeroId)
-                ->get();
-
-            $classement = Rappotage::select('rappotages.*', 'comptepetitecaisses.libelle as libelles', 'comptepetitecaisses.code as codes')
-                ->join('comptepetitecaisses', 'rappotages.compteid', '=', 'comptepetitecaisses.id')
-                ->where('rappotages.compteid', $compteId)
-                ->where('rappotages.numero_groupe', $numeroId)
-                ->first();
-
-            if (!$classement) {
-                return response('<p>Aucun classement trouvé pour les critères spécifiés.</p>', 404);
-            }
-
-            $verifie_par = DB::table('users')
-                ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-                ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
-                ->where('users.id', $classement->verifie_par)
-                ->first();
-
-            $approuver_par = DB::table('users')
-                ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
-                ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
-                ->where('users.id', $classement->approver_par)
-                ->first();
-
-            // Vérifiez si des données ont été trouvées
-            if ($data->isEmpty()) {
-                return response('<p>Aucune donnée trouvée pour les critères spécifiés.</p>', 404);
-            }
-
-            // Récupération des informations globales
-            $infoglo = DB::table('identifications')->first();
-
-            // Génération du PDF
-            $pdf = PDF::loadView('bonpetitecaisse.rapport.print', compact('data', 'classement', 'verifie_par', 'approuver_par', 'infoglo'));
-
-            $pdf->setPaper('A4', 'portrait'); // Format A4 en mode portrait
-
-            // Nom du fichier PDF téléchargé avec numéro FEB et date actuelle
-            $fileName = 'RAPPORT_CAISSE.pdf';
-
-            // Télécharge le PDF
-            return $pdf->download($fileName);
-        } catch (\Exception $e) {
-            // Capture des exceptions et retour d'un message d'erreur
-            return response('<p>Une erreur est survenue : ' . $e->getMessage() . '</p>', 500);
-        }
-    }
-  */
-
-    public function generatePrintableFile(Request $request) {
 
 
         $compteId = $request->input('compte_bpc');
@@ -430,6 +369,7 @@ class RapportController extends Controller
     {
         $title = 'Rapport de caisse';
         $ID = session()->get('id');
+        $exerciceId = session()->get('exercice_id');
         // Vérifier si l'ID de la session n'est pas défini
         if (!$ID) {
             // Rediriger vers la route nommée 'dashboard'
@@ -441,6 +381,7 @@ class RapportController extends Controller
                 ->join('personnels', 'users.personnelid', '=', 'personnels.id')
                 ->select('djas.*', 'personnels.prenom as user_prenom','elementdjas.montant_avance as montantAvance','elementdjas.montant_utiliser as montantJustifie','elementdjas.montant_retourne as montantRetourne')
                 ->where('djas.projetiddja', $ID)
+                ->where('djas.exerciceids', $exerciceId)
                 ->get();
 
 
@@ -467,6 +408,7 @@ class RapportController extends Controller
     {
         $title = 'Rapport de caisse';
         $ID = session()->get('id');
+        $exerciceId = session()->get('exercice_id');
         // Vérifier si l'ID de la session n'est pas défini
         if (!$ID) {
             // Rediriger vers la route nommée 'dashboard'
@@ -476,9 +418,10 @@ class RapportController extends Controller
         ->orderBy('daps.numerodp', 'asc')
         ->join('users', 'djas.userid', '=', 'users.id')
         ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-        ->join('daps','djas.numerodap' ,'daps.id')
+        ->join('daps','djas.numerodjas' ,'daps.id')
         ->select('djas.*', 'personnels.prenom as user_prenom', 'daps.numerodp as nume_dap')
         ->where('djas.projetiddja', $ID)
+        ->where('djas.exerciceids', $exerciceId)
         ->get();
 
 
@@ -496,6 +439,7 @@ class RapportController extends Controller
     {
         $title = 'Rapport de caisse';
         $IDp = session()->get('id');
+        $exerciceId = session()->get('exercice_id');
         // Vérifier si l'ID de la session n'est pas défini
         if (!$IDp) {
             // Rediriger vers la route nommée 'dashboard'
@@ -522,6 +466,7 @@ class RapportController extends Controller
             )
             ->where('rapprochements.id', '=', $id)
             ->where('rapprochements.projetid', '=', $IDp)
+            ->where('rapprochements.exerciceid', $exerciceId)
             ->first();
 
             //dd($rapport);
@@ -558,6 +503,7 @@ class RapportController extends Controller
                 'benef_personnel.nom as benef_nom'
             )
             ->where('djas.projetiddja', $IDp)
+            ->where('djas.exerciceids', $exerciceId)
             
             ->where(function ($query) use ($datede, $dateau) {  
                 $query->whereBetween('djas.created_at', [$datede, $dateau])
@@ -586,11 +532,13 @@ class RapportController extends Controller
     public function storeRecherche(Request $request)
     {
         $IDp = session()->get('id'); 
+        $exerciceId = session()->get('exercice_id');
         $nombreEnregistrements = Rapprochement::where('projetid', $IDp)->count(); 
         $num = $nombreEnregistrements + 1;
         $rapprochement = new Rapprochement();
 
         $rapprochement->projetid = $request->projetid;
+        $rapprochement->projetid = $exerciceId;
         $rapprochement->serviceid = $request->serviceid;
         $rapprochement->numero = $num;
         $rapprochement->datede = $request->datede;
@@ -610,33 +558,32 @@ class RapportController extends Controller
 
 
     public function getRapprochement()
-{
-    $IDp = session()->get('id');
-    // Vérifier si l'ID de la session n'est pas défini
-    if (!$IDp) {
-        // Rediriger vers la route nommée 'dashboard'
-        return redirect()->route('dashboard');
+    {
+        $IDp = session()->get('id');
+        // Vérifier si l'ID de la session n'est pas défini
+        if (!$IDp) {
+            // Rediriger vers la route nommée 'dashboard'
+            return redirect()->route('dashboard');
+        }
+
+        $rapports = Rapprochement::join('users as user_creator', 'rapprochements.userid', '=', 'user_creator.id')
+        ->join('personnels as creator_personnel', 'user_creator.personnelid', '=', 'creator_personnel.id')
+        ->join('users as user_established', 'rapprochements.etabliepar', '=', 'user_established.id')
+        ->join('personnels as estab_personnel', 'user_established.personnelid', '=', 'estab_personnel.id')
+        ->join('users as user_verifier', 'rapprochements.verifier', '=', 'user_verifier.id')
+        ->join('personnels as verif_personnel', 'user_verifier.personnelid', '=', 'verif_personnel.id')
+        ->select(
+            'rapprochements.*',
+            'creator_personnel.prenom as creator_prenom', 'creator_personnel.nom as creator_nom', // Prénom de l'utilisateur qui a créé
+            'estab_personnel.prenom as estab_prenom', 'estab_personnel.nom as estab_nom',   // Prénom de l'utilisateur qui a établi
+            'verif_personnel.prenom as verifier_prenom','verif_personnel.nom as verifier_nom'   // Prénom de l'utilisateur qui a vérifié
+        )
+        ->where('rapprochements.projetid', $IDp)
+        ->get();
+
+
+        return view('rapport.rapprochement.liste', compact('rapports')); // Renvoyer la vue avec les rapports
     }
-
-    $rapports = Rapprochement::join('users as user_creator', 'rapprochements.userid', '=', 'user_creator.id')
-    ->join('personnels as creator_personnel', 'user_creator.personnelid', '=', 'creator_personnel.id')
-    ->join('users as user_established', 'rapprochements.etabliepar', '=', 'user_established.id')
-    ->join('personnels as estab_personnel', 'user_established.personnelid', '=', 'estab_personnel.id')
-    ->join('users as user_verifier', 'rapprochements.verifier', '=', 'user_verifier.id')
-    ->join('personnels as verif_personnel', 'user_verifier.personnelid', '=', 'verif_personnel.id')
-    ->select(
-        'rapprochements.*',
-        'creator_personnel.prenom as creator_prenom', 'creator_personnel.nom as creator_nom', // Prénom de l'utilisateur qui a créé
-        'estab_personnel.prenom as estab_prenom', 'estab_personnel.nom as estab_nom',   // Prénom de l'utilisateur qui a établi
-        'verif_personnel.prenom as verifier_prenom','verif_personnel.nom as verifier_nom'   // Prénom de l'utilisateur qui a vérifié
-    )
-    ->where('rapprochements.projetid', $IDp)
-    ->get();
-
-
-    return view('rapport.rapprochement.liste', compact('rapports')); // Renvoyer la vue avec les rapports
-}
-
 
 
   // supresseion
@@ -666,7 +613,6 @@ class RapportController extends Controller
   }
 
 
-    
 
     
 }

@@ -1,6 +1,30 @@
 @extends('layout/app')
 @section('page-content')
 <style>
+  .swal-custom-content .swal-text {
+      font-size: 14px;
+      /* Ajustez la taille selon vos besoins */
+  }
+
+  .has-error {
+      border: 1px solid red;
+      /* Bordure rouge pour indiquer une erreur */
+      background-color: #ffe6e6;
+      /* Fond rouge clair */
+      color: red;
+      /* Texte rouge */
+  }
+
+  .has-success {
+      border: 1px solid green;
+      /* Bordure verte pour indiquer le succès */
+      background-color: #e6ffe6;
+      /* Fond vert clair */
+      color: green;
+      /* Texte vert */
+  }
+</style>
+<style>
   .custom-modal-dialog {
     max-width: 400px;
     /* Réglez la largeur maximale du popup selon vos besoins */
@@ -11,22 +35,18 @@
 <div class="main-content">
   <div class="page-content">
     <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
-      <div class="card-header p-4 border-bottom border-300 bg-soft">
-        <div class="row g-3 justify-content-between align-items-end">
-          <div class="col-12 col-md">
-            <h4 class="card-title mb-0"> <i class="mdi mdi-book-open-page-variant-outline"></i> Petite caisse > Liste  d'Expression des Besoins "FEB" pour la petite caisse</h4>
 
-          </div>
-          <div class="col col-md-auto">
+      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">                 
+        <h4 class="mb-sm-0"><i class="fa fa-list"></i> Petite caisse > Liste  d'Expression des Besoins "FEB" pour la petite caisse</h4>
+            <div class="page-title-right">
+              <a href="#" id="fetchDataLink" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"> <i class="fas fa-sync-alt"></i> Actualiser</a>
+            <a href="javascript::;" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" data-bs-toggle="modal" data-bs-target="#addfebModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle"></span> Nouvel fiche FEB</a>
 
-            <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>
-
-
-            <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addfebModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle"></span> Nouvel fiche FEB</a>
-
-          </div>
         </div>
-      </div>
+    </div>
+
+
+
       <div class="card-body p-0">
 
         <div id="tableExample2">
@@ -136,49 +156,80 @@
   window.onresize = adjustTableHeight;
 </script>
 
+<script>
+    $(document).ready(function () {
+            // Fonction pour vérifier le numéro FEB
+            function verifierNumeroFEB(numerofeb) {
+                // Vérifier si le champ est vide
+                if (numerofeb.trim() === '') {
+                    $('#numerofeb_error').text('Renseigner le champ numéro F.A.C');
+                    $('#numerofeb').removeClass('has-success has-error'); // Supprime toutes les classes
+                    $('#numerofeb_info').text('');
+                    document.getElementById("addfebbtn").disabled = true; // Désactive le bouton
+                    return; // Ne pas envoyer la requête
+                }
+
+                // Envoi de la requête AJAX
+                $.ajax({
+                    url: '{{ route('check.febpc') }}', // Votre route Laravel
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // CSRF token pour Laravel
+                        numerofeb: numerofeb
+                    },
+                    success: function (response) {
+                        if (response.exists) {
+                            $("#numerofeb_error").html(
+                                '<i class="fa fa-times-circle"></i> Numéro FAC existe déjà'
+                            );
+                            $('#numerofeb').removeClass('has-success'); // Supprime la classe de succès
+                            $('#numerofeb').addClass('has-error'); // Ajoute la classe d'erreur
+                            $('#numerofeb_info').text('');
+                            document.getElementById("addfebbtn").disabled = true; // Désactive le bouton
+                        } else {
+                            $("#numerofeb_info").html(
+                                '<i class="fa fa-check-circle"></i> Numéro Disponible'
+                            );
+                            $('#numerofeb').removeClass('has-error'); // Supprime la classe d'erreur
+                            $('#numerofeb').addClass('has-success'); // Ajoute la classe de succès
+                            $('#numerofeb_error').text('');
+                            document.getElementById("addfebbtn").disabled = false; // Active le bouton
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            }
+
+            // Vérification automatique à l'ouverture de la page
+            let numerofebInitial = $('#numerofeb').val(); // Récupère la valeur initiale
+            verifierNumeroFEB(numerofebInitial);
+
+            // Vérification lors du blur (quand l'utilisateur quitte le champ)
+            $('#numerofeb').blur(function () {
+                let numerofeb = $(this).val();
+                verifierNumeroFEB(numerofeb);
+            });
+        });
+
+        document.getElementById('datelimite').addEventListener('change', function() {
+                const dateFeb = new Date(document.getElementById('datefeb').value);
+                const dateLimite = new Date(this.value);
+
+                if (dateFeb && dateLimite && dateLimite < dateFeb) {
+                    toastr.error("La Date limite doit être supérieure ou égale à la Date du dossier FAC.");
+                    this.value = ''; // Réinitialise la date limite pour forcer une nouvelle sélection valide
+                }
+            });
+
+</script>
+
 
 <script type="text/javascript">
-  $('#numerofeb').blur(function() {
-    var numerofeb = $(this).val();
-    // Vérification si le champ est vide
-    if (numerofeb.trim() === '') {
+  
 
-      $("#numerofeb_error").html('<i class="fa fa-info-circle"></i> Renseigner  numéro F.E.B');
-      $('#numerofeb').removeClass('has-success has-error'); // Supprime toutes les classes de succès ou d'erreur
-      $('#numerofeb_info').text('');
-      return; // Sortir de la fonction si le champ est vide
-    }
-
-    // Envoi de la requête AJAX au serveur
-    $.ajax({
-      url: '{{ route("check.febpc") }}',
-      method: 'POST',
-      data: {
-        _token: '{{ csrf_token() }}', // CSRF token pour Laravel
-        numerofeb: numerofeb
-      },
-      success: function(response) {
-        if (response.exists) {
-
-          $("#numerofeb_error").html('<i class="fa fa-times-circle"></i> Numéro FEB existe déjà');
-          $('#numerofeb').removeClass('has-success') // Supprime la classe de succès
-          $('#numerofeb').addClass('has-error');
-          $('#numerofeb_info').text('');
-          document.getElementById("addfebbtn").disabled = true;
-        } else {
-
-          $("#numerofeb_info").html('<i class="fa fa-check-circle"></i> Numéro Disponible');
-          $('#numerofeb').removeClass('has-error') // Supprime la classe de succès
-          $('#numerofeb').addClass('has-success');
-          $('#numerofeb_error').text('');
-          document.getElementById("addfebbtn").disabled = false;
-        }
-      },
-      error: function(xhr, status, error) {
-        console.error(error);
-      }
-    });
-  });
+  
 
   $("#addfebForm").submit(function(e) {
     e.preventDefault();

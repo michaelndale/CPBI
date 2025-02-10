@@ -22,12 +22,13 @@ class CompteController extends Controller
 {
   public function index()
   {
+    $projectId = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
     // Vérifie si l'ID de projet existe dans la session
-    if (!session()->has('id')) {
-      // Redirige vers le tableau de bord si l'ID de projet n'existe pas dans la session
-      return redirect()->route('dashboard')->with('error', 'ID de projet non trouvé dans la session.');
+    if (!$projectId && !$exerciceId) {
+      // Gérer le cas où l'ID du projet et exercice est invalide
+      return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
     }
-
     // Récupère l'ID de projet depuis la session
     $ID = session()->get('id');
 
@@ -57,6 +58,7 @@ class CompteController extends Controller
   public function selectcompte()
   {
     $ID = session()->get('id');
+
     $service = Compte::where('compteid', '=', 0)
       ->where('projetid', $ID)
       ->get();
@@ -111,134 +113,161 @@ class CompteController extends Controller
     }
   }
 
-
   public function fetchAll()
   {
-    $ID = session()->get('id');
-    $services = Compte::where('compteid', 0)
-    ->where('projetid', $ID)
-    ->join('users', 'comptes.userid', '=', 'users.id')
-    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-    ->leftJoin('coutbudgets', 'comptes.cle_cout', '=', 'coutbudgets.id')
-    ->leftJoin('typeprojets', 'comptes.cle_type_projet', '=', 'typeprojets.id')
-    ->select('comptes.*', 'personnels.prenom as personnel_prenom' , 'coutbudgets.titre as titre_cout' , 'typeprojets.titre as titre_type')
-    ->get();
-
-    $output = '';
-    $nombre = 1;
-
-    if ($services->count() > 0) {
-      foreach ($services as $rs) {
-        $output .= '<tr style="background-color:#F5F5F5">
-               
-                  <td><b>' . ucfirst($rs->numero) . '</b></td>
-                  <td><b>' . ucfirst($rs->libelle) . '</b></td>
-                  <td>' . ucfirst($rs->titre_type) . '</td>
-                  <td>' . ucfirst($rs->titre_cout) . '</td>
-                  <td>' . ucfirst($rs->personnel_prenom) . '</td>
-                  <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
-                  <td align="center" style="width:13%">
-                  <div class="btn-group me-2 mb-2 mb-sm-0">
-                      <a  data-bs-toggle="dropdown" aria-expanded="false">
-                          <i class="mdi mdi-dots-vertical ms-2"></i>
-                      </a>
-                      <div class="dropdown-menu">
-                          <a class="dropdown-item  mx-1 savesc" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte" title="Ajouter une sous ligne"><i class="fa fa-plus-circle"></i> Ajouter une sous ligne</a>
-                          <a class="dropdown-item  mx-1 editGrand" id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#modifierLigneModal" title="Modifier le compte"><i class="far fa-edit"></i> Modifier la ligne</a>
-                          <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
-                      </div>
-                  </div>
-                  </td>
-              </tr>';
-
-              $sous_comptes = Compte::where('compteid', $rs->id)
-              ->where('souscompteid', 0)
-              ->where('projetid', $ID)
-              ->join('users', 'comptes.userid', '=', 'users.id')
-              ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-              ->leftJoin('coutbudgets', 'comptes.cle_cout', '=', 'coutbudgets.id')
-              ->leftJoin('typeprojets', 'comptes.cle_type_projet', '=', 'typeprojets.id')
-              ->select('comptes.*', 'personnels.prenom as personnel_prenom' , 'coutbudgets.titre as titre_cout' , 'typeprojets.titre as titre_type')
-              ->get();
-          
-
-        $ndale = 1;
-        foreach ($sous_comptes as $sc) {
-          $output .= '<tr>
-                     
-                      <td>' . ucfirst($sc->numero) . '</td>
-                      <td>' . ucfirst($sc->libelle) . '</td>
-                      <td>' . ucfirst($sc->titre_type) . '</td>
-                      <td>' . ucfirst($sc->titre_cout) . '</td>
-                      <td>' . ucfirst($sc->personnel_prenom) . '</td>
+      $ID = session()->get('id');
+      $services = Compte::where('compteid', 0)
+          ->where('projetid', $ID)
+          ->join('users', 'comptes.userid', '=', 'users.id')
+          ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+          ->leftJoin('coutbudgets', 'comptes.cle_cout', '=', 'coutbudgets.id')
+          ->leftJoin('typeprojets', 'comptes.cle_type_projet', '=', 'typeprojets.id')
+          ->select('comptes.*', 'personnels.prenom as personnel_prenom', 'coutbudgets.titre as titre_cout', 'typeprojets.titre as titre_type')
+          ->get();
+  
+      $output = '';
+      $nombre = 1;
+  
+      if ($services->count() > 0) {
+          foreach ($services as $rs) {
+              $statusBadge = ($rs->statut === 1)
+                  ? '<span class="badge rounded-pill bg-subtle-primary text-primary font-size-11">Active</span>'
+                  : '<span class="badge rounded-pill bg-subtle-danger text-danger font-size-11">Archiver</span>';
+  
+              $output .= '<tr style="background-color:#F5F5F5">
+                      <td><b>' . ucfirst($rs->numero) . '</b></td>
+                      <td><b>' . ucfirst($rs->libelle) . '</b></td>
+                      <td>' . ucfirst($rs->titre_type) . '</td>
+                      <td>' . ucfirst($rs->titre_cout) . '</td>
+                      <td>' . ucfirst($rs->personnel_prenom) . '</td>
                       <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
-                      <td align="center">
-                      <div class="btn-group me-2 mb-2 mb-sm-0">
-                          <a  data-bs-toggle="dropdown" aria-expanded="false">
-                              <i class="mdi mdi-dots-vertical ms-2"></i>
-                          </a>
-                          <div class="dropdown-menu">
-                              <a class="dropdown-item  mx-1 editsc" id="' . $sc->id . '"  data-bs-toggle="modal" data-bs-target="#EditModalSousCompte" title="Ajouter sous compte"><i class="far fa-edit"></i> Modifier la ligne</a>
-                              <a class="dropdown-item text-danger mx-1 deleteIcon"  id="'.$sc->id.'"  href="#" title="Supprimer le compte"><i class="far fa-trash-alt"></i> Supprimer la ligne</a>
+                      <td>' . $statusBadge . '</td> <!-- Ajout de la colonne status -->
+                      <td align="center" style="width:13%">
+                          <div class="btn-group me-2 mb-2 mb-sm-0">
+                              <a data-bs-toggle="dropdown" aria-expanded="false">
+                                  <i class="mdi mdi-dots-vertical ms-2"></i>
+                              </a>
+                              <div class="dropdown-menu">
+                                  <a class="dropdown-item mx-1 savesc" id="' . $rs->id . '" data-bs-toggle="modal" data-bs-target="#addDealModalSousCompte">
+                                      <i class="fa fa-plus-circle"></i> Ajouter une sous ligne
+                                  </a>
+                                  <a class="dropdown-item mx-1 editGrand" id="' . $rs->id . '" data-bs-toggle="modal" data-bs-target="#modifierLigneModal">
+                                      <i class="far fa-edit"></i> Modifier la ligne
+                                  </a>
+                                  <a class="dropdown-item text-danger mx-1 deleteIcon" id="' . $rs->id . '" href="#">
+                                      <i class="far fa-trash-alt"></i> Supprimer la ligne
+                                  </a>
+                              </div>
                           </div>
-                      </div>
                       </td>
                   </tr>';
-
-          $sous_sous_comptes = Compte::where('souscompteid', $sc->id)
-            ->where('projetid', $ID)
-            ->get();
-
-          $nd = 1;
-          foreach ($sous_sous_comptes as $ssc) {
-            $output .= '<tr>
-                          <td class="align-middle ps-3 name">' . $nombre . '.' . $ndale . '.' . $nd . '</td>
-                          <td>' . ucfirst($ssc->numero) . '</td>
-                          <td>' . ucfirst($ssc->libelle) . '</td>
-                          <td><b>' . ucfirst($ssc->personnel_prenom) . '</b></td>
-                          <td>' . date('d-m-Y', strtotime($ssc->created_at)) . '</td>
-                          <td>
-                              <center>
-                                  <a href="#" id="' . $ssc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal"><i class="fa fa-plus-circle"></i></a>
-                                  <a href="#" id="' . $ssc->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal"><i class="fa fa-edit"></i></a>
-                                  <a href="#" id="' . $ssc->id . '" class="text-danger mx-1 deleteIcon"><i class="fa fa-trash"></i></a>
-                              </center>
+  
+              // Récupérer les sous-comptes
+              $sous_comptes = Compte::where('compteid', $rs->id)
+                  ->where('souscompteid', 0)
+                  ->where('projetid', $ID)
+                  ->join('users', 'comptes.userid', '=', 'users.id')
+                  ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+                  ->leftJoin('coutbudgets', 'comptes.cle_cout', '=', 'coutbudgets.id')
+                  ->leftJoin('typeprojets', 'comptes.cle_type_projet', '=', 'typeprojets.id')
+                  ->select('comptes.*', 'personnels.prenom as personnel_prenom', 'coutbudgets.titre as titre_cout', 'typeprojets.titre as titre_type')
+                  ->get();
+  
+              $ndale = 1;
+              foreach ($sous_comptes as $sc) {
+                  $output .= '<tr>
+                          <td>' . ucfirst($sc->numero) . '</td>
+                          <td>' . ucfirst($sc->libelle) . '</td>
+                          <td>' . ucfirst($sc->titre_type) . '</td>
+                          <td>' . ucfirst($sc->titre_cout) . '</td>
+                          <td>' . ucfirst($sc->personnel_prenom) . '</td>
+                          <td>' . date('d-m-Y', strtotime($sc->created_at)) . '</td>
+                          <td>' . $statusBadge . '</td>
+                          <td align="center">
+                              <div class="btn-group me-2 mb-2 mb-sm-0">
+                                  <a data-bs-toggle="dropdown" aria-expanded="false">
+                                      <i class="mdi mdi-dots-vertical ms-2"></i>
+                                  </a>
+                                  <div class="dropdown-menu">
+                                      <a class="dropdown-item mx-1 editsc" id="' . $sc->id . '" data-bs-toggle="modal" data-bs-target="#EditModalSousCompte">
+                                          <i class="far fa-edit"></i> Modifier la ligne
+                                      </a>
+                                      <a class="dropdown-item text-danger mx-1 deleteIcon" id="' . $sc->id . '" href="#">
+                                          <i class="far fa-trash-alt"></i> Supprimer la ligne
+                                      </a>
+                                  </div>
+                              </div>
                           </td>
                       </tr>';
-            $nd++;
+  
+                  // Récupérer les sous-sous-comptes
+                  $sous_sous_comptes = Compte::where('souscompteid', $sc->id)
+                      ->where('projetid', $ID)
+                      ->get();
+  
+                  $nd = 1;
+                  foreach ($sous_sous_comptes as $ssc) {
+                      $output .= '<tr>
+                              <td class="align-middle ps-3 name">' . $nombre . '.' . $ndale . '.' . $nd . '</td>
+                              <td>' . ucfirst($ssc->numero) . '</td>
+                              <td>' . ucfirst($ssc->libelle) . '</td>
+                              <td><b>' . ucfirst($ssc->personnel_prenom) . '</b></td>
+                              <td>' . date('d-m-Y', strtotime($ssc->created_at)) . '</td>
+                              <td>' . $statusBadge . '</td>
+                              <td>
+                                  <center>
+                                      <a href="#" id="' . $ssc->id . '" class="text-success mx-1 ssavesc" data-bs-toggle="modal" data-bs-target="#addssousDealModal">
+                                          <i class="fa fa-plus-circle"></i>
+                                      </a>
+                                      <a href="#" id="' . $ssc->id . '" class="text-info mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#editcompteModal">
+                                          <i class="fa fa-edit"></i>
+                                      </a>
+                                      <a href="#" id="' . $ssc->id . '" class="text-danger mx-1 deleteIcon">
+                                          <i class="fa fa-trash"></i>
+                                      </a>
+                                  </center>
+                              </td>
+                          </tr>';
+                      $nd++;
+                  }
+                  $ndale++;
+              }
+              $nombre++;
           }
-          $ndale++;
-        }
-        $nombre++;
-      }
-    } else {
-      $output .= '<tr>
-              <td colspan="7">
-                  <center>
-                      <h6 style="margin-top:1%; color:#c0c0c0"> 
-                          <center><font size="50px"><i class="far fa-trash-alt"></i></font><br><br>
-                          Ceci est vide !
+      } else {
+          $output .= '<tr>
+                  <td colspan="8">
+                      <center>
+                          <h6 style="margin-top:1%; color:#c0c0c0"> 
+                              <font size="50px"><i class="far fa-trash-alt"></i></font><br><br>
+                              Ceci est vide !
+                          </h6>
                       </center>
-                  </h6>
-              </center>
-              </td>
-          </tr>';
-    }
-
-    echo $output;
+                  </td>
+              </tr>';
+      }
+  
+      echo $output;
   }
+  
+
+ 
 
   // Insert a new ligne budgetaire ajax request
   public function store(Compte $gc, Request $request)
   {
     try {
+
       $ID = session()->get('id');
+
       $title = $request->libelle;
       $code = $request->code;
+
       $check = Compte::where('libelle', $title)
         ->where('numero', $code)
         ->where('projetid', $ID)
         ->first();
+        
       if ($check) {
         return response()->json([
           'status' => 201,

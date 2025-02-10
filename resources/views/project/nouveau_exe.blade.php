@@ -10,6 +10,19 @@
                     <div class="row">
                         <div class="col-xl-9" style="margin:auto">
 
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            
+
+
                             <div class="card">
 
                                 <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between"
@@ -43,64 +56,42 @@
                                                     <div class="row gx-0 gx-sm-12 gy-12 mb-12">
                                                         <label><b><i class="fa fa-info-circle"></i> Dénomination du projet:
                                                             </b></label>
-                                                        <input name="pid" type="hidden"
-                                                            value="{{ Session::get('id') }}" />
-                                                        <input name="ptitre" class="form-control form-control-sm"
-                                                            value="{{ $dataProject->title }}" />
+                                                        <input name="pid" type="hidden" value="{{ Session::get('id') }}" />
+                                                        <input name="ptitre" class="form-control form-control-sm" value="{{ $dataProject->title }}"  readonly style="background-color:aliceblue" />
+                                                    
+                                                    </div>
+
+                                                    <div class="row gx-0 gx-sm-12 gy-12 mb-12">
+                                                       
+                                                        <label><b><i class="fa fa-info-circle"></i> Titre: </b></label>
+                                                        <input type="text" name="pexercice" class="form-control form-control-sm"  maxlength="50"   />
                                                     </div>
 
                                                     <div class="row">
 
 
                                                         <div class="row gx-4 gy-4 mb-4">
+                                                            
                                                             <!-- Colonne 1 -->
-                                                            <div class="col-12 col-md-4">
-                                                             
-
-                                                                <div class="mb-3">
-                                                                    <label for="budget" class="form-label">Budget
-                                                                        :</label>
-                                                                    <input type="text" name="montant" id="budget"
-                                                                        class="form-control form-control-sm" 
-                                                                      >
-                                                                </div>
-
-
-                                                                <div class="mb-3">
-                                                                    <label for="datedebut" class="form-label">Début du
-                                                                        projet :</label>
-                                                                    <input type="date" name="datedebut" id="datedebut"
-                                                                       
-                                                                        class="form-control form-control-sm">
-                                                                </div>
-
-                                                                <div class="mb-3">
-                                                                    <label for="datefin" class="form-label">Fin du projet
-                                                                        :</label>
-                                                                    <input type="date" name="datefin" id="datefin"
-                                                                      
-                                                                        class="form-control form-control-sm">
-                                                                </div>
-
-                                                               
+                                                            <div class="col-12 col-md-3">
+                                                                <label for="budget" class="form-label">Budget  :</label>
+                                                                <input type="text" name="montant" id="budget"  class="form-control form-control-sm">
                                                             </div>
 
+
+                                                            <div class="col-12 col-md-3">
+                                                                <label for="datedebut" class="form-label">Début du projet :</label>
+                                                                <input type="date" name="datedebut" id="datedebut" class="form-control form-control-sm">
+                                                            </div>
+
+                                                            <div class="col-12 col-md-3">
+                                                                <label for="datefin" class="form-label">Fin du projet  :</label>
+                                                                <input type="date" name="datefin" id="datefin"  class="form-control form-control-sm">
+                                                            </div>
                                                             <!-- Colonne 2 -->
-                                                            <div class="col-12 col-md-4">
-                                                                <div class="mb-3">
-                                                                    <label for="numero" class="form-label">Periode
-                                                                        :</label>
-                                                                    <input name="periode" id="periode"
-                                                                      
-                                                                        class="form-control form-control-sm">
-                                                                </div>
-
-                                                              
-                                                              
-                                                            </div>
-
-                                                         
-                                                           
+                                                            <div class="col-12 col-md-3">
+                                                                <label for="numero" class="form-label">Période  :</label>
+                                                                <input type="number" name="periode" id="periode" class="form-control form-control-sm">
                                                             </div>
                                                          
                                                         </div>

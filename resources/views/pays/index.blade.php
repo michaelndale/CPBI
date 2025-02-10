@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-xl-7" style="margin:auto">
                     <div class="card">
-                        <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+                        <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">
                                 <h4 class="mb-sm-0"><i class="fa fa-folder"></i> Pays</h4>
                                 <div class="page-title-right">
                                     <a href="javascript:voide();"

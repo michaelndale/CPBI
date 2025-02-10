@@ -22,43 +22,18 @@ class AppCOntroller extends Controller
   public function index()
   {
       $title = "Tableau de bord";
-      $active = "Dashboard";
-
-      try {
-          $project = Project::all();
-      } catch (\Exception $e) {
-          Log::error('Erreur lors de la récupération des projets: ' . $e->getMessage());
-          $project = []; // Default to an empty array to avoid breaking the view
-      }
-
-      try {
-          $user = User::all();
-      } catch (\Exception $e) {
-          Log::error('Erreur lors de la récupération des utilisateurs: ' . $e->getMessage());
-          $user = [];
-      }
-
-      try {
-          $activite = Activity::all();
-      } catch (\Exception $e) {
-          Log::error('Erreur lors de la récupération des activités: ' . $e->getMessage());
-          $activite = [];
-      }
-
-      try {
-          $encours = Project::where('statut', 'Activé')->count();
-      } catch (\Exception $e) {
-          Log::error('Erreur lors de la récupération des projets en cours: ' . $e->getMessage());
-          $encours = 0;
-      }
-
-      try {
-          $folder = Folder::orderBy('title', 'ASC')->get();
-      } catch (\Exception $e) {
-          Log::error('Erreur lors de la récupération des dossiers: ' . $e->getMessage());
-          $folder = [];
-      }
-
+     
+      $project = Project::all();
+      
+      $user = User::all();
+     
+      $activite = Activity::all();
+    
+      $encours = Project::where('statut', 'Activé')->count();
+      
+    
+      $folder = Folder::orderBy('title', 'ASC')->get();
+     
       $jour = date('Y-m-d');
 
       try {
@@ -222,7 +197,6 @@ class AppCOntroller extends Controller
 
       return view('dashboard.dashboard', [
           'title' => $title,
-          'active' => $active,
           'project' => $project,
           'user' => $user,
           'activite' => $activite,
@@ -247,7 +221,6 @@ class AppCOntroller extends Controller
   public function rh()
   {
     $title = "Tableau de bord";
-    $active = "Dashboard";
     $user = User::all();
     session(['service' => 2]); // Définit la session 'service' à 1
     return view(
@@ -255,7 +228,6 @@ class AppCOntroller extends Controller
       [
 
         'title' => $title,
-        'active' => $active,
         'user' => $user,
       ]
     );
@@ -265,7 +237,6 @@ class AppCOntroller extends Controller
   public function archivage()
   {
     $title = "Tableau de bord";
-    $active = "Dashboard";
     $user = User::all();
     session(['service' => 3]); // Définit la session 'service' à 1
     return view(
@@ -273,7 +244,7 @@ class AppCOntroller extends Controller
       [
 
         'title' => $title,
-        'active' => $active,
+    
         'user' => $user,
       ]
     );
@@ -282,7 +253,6 @@ class AppCOntroller extends Controller
   public function parcAuto()
   {
     $title = "Tableau de bord";
-    $active = "Dashboard";
     $user = User::all();
     session(['service' => 4]); // Définit la session 'service' à 1
     return view(
@@ -290,7 +260,6 @@ class AppCOntroller extends Controller
       [
 
         'title' => $title,
-        'active' => $active,
         'user' => $user,
       ]
     );

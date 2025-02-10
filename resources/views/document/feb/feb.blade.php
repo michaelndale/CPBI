@@ -305,9 +305,13 @@
             <tbody>
                 @php
                 $n=1;
+                $toto = 0;
                 @endphp
 
                 @foreach ($datElement as $datelementfebs)
+                @php
+                    $toto += $datelementfebs->montant;
+                @endphp
                 <tr>
                     <td style="width:5%">{{$n }} </td>
                     <td style="width:40%;">
@@ -350,7 +354,7 @@
                 </td>
                 <td style="text-align: right";> 
                    
-                     <b> {{ number_format($sommefeb,0, ',', ' ') }} </b>
+                     <b> {{ number_format($toto,0, ',', ' ') }} </b>
                     
                     </h5>
                 </td>

@@ -18,10 +18,13 @@
                     </div>
                     <div class="col col-md-auto">
 
-                        <a href="#" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> Actualiser</a>
+                        <a href="#" id="fetchDataLink" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"> <i class="fas fa-sync-alt"></i> Actualiser</a>
 
 
-                        <a href="javascript::;" data-bs-toggle="modal" data-bs-target="#addbpcModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle"></span> Nouvel Bon de petite caisse</a>
+                        <a href="javascript::;" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" data-bs-toggle="modal" data-bs-target="#addbpcModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fa fa-plus-circle"></span> Nouvel Bon de petite caisse</a>
+
+                        
+
 
                     </div>
                 </div>

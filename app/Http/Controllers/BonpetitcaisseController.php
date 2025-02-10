@@ -21,6 +21,7 @@ class BonpetitcaisseController extends Controller
     {
         $title = 'Bon de petite caisse';
         $ID = session()->get('id');
+        $exerciceId = session()->get('exercice_id');
         // Vérifier si l'ID de la session n'est pas défini
         if (!$ID) {
             // Rediriger vers la route nommée 'dashboard'
@@ -28,6 +29,7 @@ class BonpetitcaisseController extends Controller
         }
       
         $compte_bpc =  Comptepetitecaisse::where('projetid', $ID)
+             ->where('exercice_id', $exerciceId)
             ->join('users', 'comptepetitecaisses.userid', '=', 'users.id')
             ->join('personnels', 'users.personnelid', '=', 'personnels.id')
             ->select('comptepetitecaisses.*', 'personnels.prenom as personnel_prenom')
@@ -62,6 +64,7 @@ class BonpetitcaisseController extends Controller
     
         try {
             $IDP = session()->get('id');
+            $exerciceId = session()->get('exercice_id');
             $numerobpc = $request->numero;
             $IdCompte  = $request->compteid;
             $montant   = $request->total_global;
@@ -100,6 +103,7 @@ class BonpetitcaisseController extends Controller
                     $bpc->numero_piece = $request->numero_piece;
                     $bpc->adresse = $request->adresse;
                     $bpc->telephone_email = $request->telephone_email;
+                    $bpc->exercice_id = $exerciceId;
 
                     if($acce==0){
                         $bpc->beneficiaire = $request->beneficiaire;
@@ -160,12 +164,14 @@ class BonpetitcaisseController extends Controller
     public function list()
     {
         $ID = session()->get('id');
+        $exerciceId = session()->get('exercice_id');
         $bpc = Bonpetitcaisse::orderBy('numero', 'ASC')
         ->join('users', 'bonpetitcaisses.userid', '=', 'users.id')
         ->join('personnels', 'users.personnelid', '=', 'personnels.id')
         ->join('elementboncaisses', 'bonpetitcaisses.id', 'elementboncaisses.boncaisse_id')
         ->select('bonpetitcaisses.*', 'bonpetitcaisses.id as idb', 'elementboncaisses.*', 'personnels.prenom as user_prenom')
         ->where('bonpetitcaisses.projetid', $ID)
+        ->where('bonpetitcaisses.exercice_id', $exerciceId)
         ->get();
         $output = '';
         if ($bpc->count() > 0) {
@@ -227,6 +233,7 @@ class BonpetitcaisseController extends Controller
         $title = 'Bon petite caisse';
         
       
+        $exerciceId = session()->get('exercice_id');
 
         $keys= Crypt::decrypt($key);
 
@@ -238,6 +245,7 @@ class BonpetitcaisseController extends Controller
         ->join('personnels', 'users.personnelid', '=', 'personnels.id') // Joint la table 'personnels' en utilisant 'personnelid' de 'users'
         ->select('bonpetitcaisses.*', 'comptepetitecaisses.code as code','personnels.prenom as user_prenom') // Sélectionne toutes les colonnes de 'bonpetitcaisses' et le prénom de 'personnels'
         ->where('bonpetitcaisses.id', $keys) // Filtre les résultats pour obtenir l'enregistrement correspondant à l'ID donné
+        ->where('bonpetitcaisses.exercice_id', $exerciceId)
         ->first(); // Récupère le premier (et seul) enregistrement correspondant
 
         $etablienom = DB::table('users')

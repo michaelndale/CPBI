@@ -1,12 +1,20 @@
 @php
-    $avatar = Auth::user()->avatar;
-
+$avatar = Auth::user()->avatar;
 $personnelData = DB::table('personnels')
     ->where('id', Auth::user()->personnelid)
     ->first();
 @endphp
 
 <body data-sidebar="colored" id="contenu">
+    <!--
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner">
+                <i class="ri-loader-line spin-icon"></i>
+            </div>
+        </div>
+    </div>  -->
+
 
     <div id="layout-wrapper">
 
@@ -142,7 +150,6 @@ $personnelData = DB::table('personnels')
                     </div>
 
 
-
                     @php
                         $avatar = Auth::user()->avatar;
                     @endphp
@@ -172,8 +179,6 @@ $personnelData = DB::table('personnels')
                                     <br>
                                     <small>{{ ucfirst($personnelData->prenom) }}</small>
                                 @endif
-
-
 
                             </a>
 
@@ -212,12 +217,7 @@ $personnelData = DB::table('personnels')
                                     data-feather="user">
                                     <i class="ri-contrast-fill"></i> Preference menu
                             </a>
-                            <!--<a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}" data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900" data-feather="user">
-                      <i class="fa fa-edit"></i> Donne FeedBack
-                  </a> <a href="javascript:void(0);" class="dropdown-item notify-item">
-                    <i class="fa fa-edit"></i> Fermer la session
-                  </a>
-              -->
+                           
                             <a href="javascript:void(0);" class="dropdown-item notify-item" data-bs-toggle="modal"
                                 data-bs-target="#deconnecterModalLabel" role="button" aria-expanded="false"> <span
                                     class="me-2" data-feather="log-out"
@@ -285,11 +285,7 @@ $personnelData = DB::table('personnels')
                                     <li><a href="{{ route('affectation') }}">Intervenants</a></li>
                                     <li><a href="{{ route('rapportcumule') }}">Rapport commulatif</a></li>
                                     <li><a href="{{ route('planoperationnel') }}">Plan d'action</a></li>
-                                    <!--
-                <li><a href="{{ route('listsqr') }}">SQR</a></li>
-                <li><a href="{{ route('listftd') }}">FTD</a></li> -
-               
-                -->
+                                   
                                 </ul>
                             </li>
                         @endif
@@ -309,12 +305,8 @@ $personnelData = DB::table('personnels')
                                 <li><a href="{{ route('termes') }}">Termes de refference</a></li>
                                 <li><a href="{{ route('list_project') }}">Tout les projets</a></li>
 
-
-
                             </ul>
                         </li>
-
-
 
                         <li class="menu-title">RH</li>
 
@@ -324,14 +316,11 @@ $personnelData = DB::table('personnels')
                                 <span>RH</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <!--<li><a href="email-inbox.html">Tableau de bord</a></li>-->
-
+                              
                                 <li><a href="javascript: void(0);" class="has-arrow">Emploi du temps</a>
                                     <ul class="sub-menu" aria-expanded="true">
                                         <li><a href="{{ route('feuilletemps') }}">FTD</a></li>
                                         <li><a href=" route('rft') ">FTM</a></li>
-
-                                        <!--<li><a href="javascript: void(0);">Level 2.2</a></li>  -->
                                     </ul>
                                 </li>
 
@@ -347,14 +336,11 @@ $personnelData = DB::table('personnels')
 
                                 <li><a href="{{ route('department') }}">Departements</a></li>
 
-
-
                             </ul>
                         </li>
 
 
                         <li class="menu-title">Archivage</li>
-
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
                                 <i class="fa fa-archive"></i>
@@ -366,7 +352,6 @@ $personnelData = DB::table('personnels')
                                 <li><a href="{{ route('etiquette') }}">Etiquette</a></li>
                             </ul>
                         </li>
-
 
                         <li class="menu-title">Parc Automobile</li>
 
@@ -382,7 +367,6 @@ $personnelData = DB::table('personnels')
                                 <li><a href="{{ route('carburents') }}">Carburants</a></li>
                                 <li><a href="{{ route('entretient') }}">Entretiens & Réparations</a></li>
                                 <li><a href="{{ route('carnet_bord') }}">Carnet de bord</a></li>
-                                <!-- <li><a href="#">Editions</a></li> -->
                                 <li><a href="{{ route('outilspa') }}">Outils gestions</a></li>
                             </ul>
                         </li>
@@ -401,8 +385,6 @@ $personnelData = DB::table('personnels')
                                 <li><a href="{{ route('active-users') }}">Qui est connecter ?</a></li>
                             </ul>
                         </li>
-
-
 
                         <li>
                             <a href="javascript:void(0);" class="dropdown-item notify-item" data-bs-toggle="modal"

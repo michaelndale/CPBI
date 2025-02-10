@@ -22,21 +22,30 @@ class DapbpcController extends Controller
 {
   public function index()
   {
-    $title = 'DAP Petit Caisse'; // Récupérer l'ID de la session
-    $ID = session()->get('id');  // Vérifier si l'ID de la session n'est pas défini
+    $title = 'DAC Petit Caisse'; // Récupérer l'ID de la session
+   
+    $projectId = session()->get('id');
 
-    // Rediriger vers la route nommée 'dashboard'
-    if (!$ID) {
-      return redirect()->route('dashboard');
-    }
+    $exerciceId = session()->get('exercice_id');
+    // Vérifie si l'ID de projet existe dans la session
+    if (!$projectId && !$exerciceId) {
+      // Gérer le cas où l'ID du projet et exercice est invalide
+      return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
+  }
 
     $feb = DB::table('febpetitcaisses')
       ->orderBy('numero', 'ASC')
-      ->where('projet_id', $ID)
+      ->where('projet_id', $projectId)
+      ->where('exercice_id', $exerciceId)
       ->where('statut', 0)
       ->get();
 
-    $febpc =  Febpetitcaisse::all();
+    $febpc =  DB::table('febpetitcaisses')
+    ->orderBy('numero', 'ASC')
+    ->where('projet_id', $projectId)
+    ->where('exercice_id', $exerciceId)
+    ->get();
+
     $service = Service::all();
     $banque = Banque::all();
 
@@ -72,12 +81,14 @@ class DapbpcController extends Controller
       $ov = $request->has('ov') ? 1 : 0;
       $justifier = $request->has('justifier') ? 1 : 0;
       $nonjustifier = $request->has('nonjustifier') ? 1 : 0;
+      $exerciceId = session()->get('exercice_id');
 
       // Création d'une nouvelle instance de modèle Dap et attribution des valeurs
       $dap = new Dapbpc();
 
       $dap->serviceid       = $request->serviceid;
       $dap->projetid        = $request->projetid;
+      $dap->exercice_id     = $exerciceId;
       $dap->numerodap       = $request->numerodap;
       $dap->lieu            = $request->lieu;
       $dap->comptebanque    = $request->comptebanque;
@@ -94,6 +105,7 @@ class DapbpcController extends Controller
 
       $dap->etablie_aunom   = $request->paretablie;
       $dap->banque = $request->banque;
+      
 
       if ($justifier == 1) {
         $dap->beneficiaire = $request->filled('beneficiaire') ? $request->beneficiaire : NULL;
@@ -408,12 +420,14 @@ class DapbpcController extends Controller
 
   public function edit()
   {
-    $title = 'Voir DAP Petit Caisse'; // Récupérer l'ID de la session
-    $ID = session()->get('id');  // Vérifier si l'ID de la session n'est pas défini
+    $title = 'Voir DAC Petit Caisse'; // Récupérer l'ID de la session
 
-    // Rediriger vers la route nommée 'dashboard'
-    if (!$ID) {
-      return redirect()->route('dashboard');
+    $projectId = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
+    // Vérifie si l'ID de projet existe dans la session
+      if (!$projectId && !$exerciceId) {
+        // Gérer le cas où l'ID du projet et exercice est invalide
+        return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
     }
 
 
@@ -430,12 +444,14 @@ class DapbpcController extends Controller
   {
 
     $ID = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
 
     $data = DB::table('dapbpcs')
       ->join('users', 'dapbpcs.userid', '=', 'users.id')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('dapbpcs.*',   'personnels.prenom as user_prenom')
       ->where('dapbpcs.projetid', $ID)
+      ->where('dapbpcs.exercice_id', $exerciceId)
       ->orderBy('dapbpcs.numerodap',  'asc')
       ->get();
 
@@ -626,10 +642,18 @@ class DapbpcController extends Controller
 
   public function checkDap(Request $request)
   {
-    $ID = session()->get('id');
+    $projectId = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
+    // Vérifie si l'ID de projet existe dans la session
+    if (!$projectId && !$exerciceId) {
+      // Gérer le cas où l'ID du projet et exercice est invalide
+      return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
+  }
+
     $numero = $request->numerodap;
     $dap = Dapbpc::where('numerodap', $numero)
-      ->where('projetiddap', $ID)
+      ->where('projetiddap', $exerciceId)
+      ->where('exercice_id', $exerciceId)
       ->exists();
     return response()->json(['exists' => $dap]);
   }

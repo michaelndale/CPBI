@@ -4,44 +4,26 @@
         <div class="page-content">
             <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card"
                 style=" margin:auto">
-                <div class="card-header p-4 border-bottom border-300 bg-soft">
-                    <div class="row g-3 justify-content-between align-items-end">
-                        <div class="col-12 col-md">
-                            <h4 class="card-title mb-0"> <i class="fa fa-list"></i> Répartition des Coûts administratifs -Exercices </h4>
-                        </div>
-                        <div class="col col-md-auto">
 
-                            <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal"
-                                aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i
-                                    class="fa fa-search"></i> Ajouter la recherche</a>
-                        </div>
+                <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">                 
+                    <h4 class="mb-sm-0"><i class="fa fa-list"></i> Répartition des Coûts administratifs -Exercices </h4>
+                        <div class="page-title-right">
+                          <a href="#" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" id="fetchDataLink"> <i class="fas fa-sync-alt"></i> </a>
+                          <a href="javascript::;"  class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal"
+                          aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter </a>
                     </div>
                 </div>
+
+
+              
+
+
                 <div class="card-body p-0">
 
                     <div id="tableExample2">
                         <div class="table-responsive" id="table-container" style="overflow-y: auto;">
-                            <table class="table table-bordered table-striped table-sm fs--1 mb-0">
-                                <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
-                                    <tr style="background-color:#82E0AA">
-                                    
-                                        <th><center>Numéro</center>  </th>
-                                        <th>LIBELLE/LIGNE BUDGETAIRE </th>
-                                        <th>EXECUTION 2023 </th>
-                                        <th>BUDGET 2024</th>
-                                        
-                                       
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="5">
-                                            
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br>
+                            
+                            <br> <br> <br> <br> 
                         </div>
                     </div>
                 </div>

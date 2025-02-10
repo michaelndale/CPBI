@@ -4,8 +4,7 @@
   <div class="page-content">
     <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card" style=" margin:auto">
 
-      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between"
-            style="psaveBailleurBtning: 0.20rem 1rem;">
+      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">
 
             <h4 class="mb-sm-0"><i class="fa fa-list"></i> Ligne budgétaire  </h4>
             </h4>
@@ -26,9 +25,6 @@
 
     
      
-
-
-
       <div class="card-body p-0">
 
         <div id="tableExample2">
@@ -40,14 +36,16 @@
                   <th style="width:45%">Postes Budgétaires</th>
                   <th>Type du budgét</th>
                   <th>Type Coût </th>
+               
                   <th>Créé par</th>
                   <th>Créé le</th>
+                  <th>Statut</th>
                   <th> <center>Actions</center></th>
                 </tr>
               </thead>
               <tbody id="show_all_compte">
                 <tr>
-                  <td colspan="7">
+                  <td colspan="8">
                     <h5 class="text-center text-secondery my-5">
                       @include('layout.partiels.load')
                   </td>

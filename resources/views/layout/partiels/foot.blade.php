@@ -23,7 +23,14 @@
               <center>
                 <font size="7" color="#c0c0c0"> <i class="fas fa-info-circle "></i></font>
                 <br>
-                <font size="4"> Vous voulez-vous vraiment quitter <br> le projet encours ? </font> <br> <br>
+                <font size="4"> Vous voulez-vous vraiment quitter <br> le projet encours : "
+                  @if (session()->has('id'))
+                    @php
+                    $titprojet = Session::get('title');
+                    @endphp
+                    <b>{{ $titprojet }}.  "</b>
+                  @endif 
+                </font> <br> <br>
                 <a href="{{ route('closeproject') }}" tabindex="-1"  aria-hidden="true" class="btn btn-primary" type="button"><i class="fas fa-check-circle"></i> Oui </a> &nbsp; <button class="btn btn-outline-danger" type="button" data-bs-dismiss="modal"><i class="fas fa-times-circle"></i> Non</button>
               </center>
             </p>
@@ -49,239 +56,15 @@
     </div>
 
 
-    <div class="modal fade" id="EditPersonnelModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog">
-        <form id="EditPersonnelForm" autocomplete="off">
-          @method('post')
-          @csrf
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-user-edit"></i> Modifier mon compte</h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
-            </div>
-            <div class="modal-body">
-              <div class="row">
+   @include('layout.partiels.profile_info')
+  
+   @include('layout.partiels.profile_theme')
+   
+   @include('layout.partiels.profile_pwd')
 
-                <input id="per_id" name="per_id" type="hidden" />
+   @include('layout.partiels.profile_image')
 
-                <div class="col-sm-6 col-md-6">
-                  <div class="form-floating mb-3">
-                    <input class="form-control" id="per_nom" name="per_nom" type="text" required="required" placeholder="Identifiant" />
-                    <label for="Identifiant">Nom</label>
-                    <span id="identifiant_error" name="nom_error" class="text text-danger"> </span>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-md-6">
-                  <div class="form-floating mb-3">
-                    <input class="form-control" id="per_prenom" type="text" name="per_prenom" required="required" placeholder="Password" />
-                    <label for="Password">Prénom </label>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-sm-6 col-md-6">
-                  <div class="form-floating mb-3">
-                    <select class="form-control" id="per_sexe" name="per_sexe" type="text" required="required" placeholder="Identifiant">
-                      <option value="">Séléctionner genre</option>
-                      <option value="Femme">Femme</option>
-                      <option value="Homme">Homme</option>
-                    </select>
-                    <label for="sexe">Sexe</label>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-md-6">
-                  <div class="form-floating mb-3">
-                    <input class="form-control" id="per_phone" type="text" name="per_phone" required="required" placeholder="Téléphone" />
-                    <label for="Password">Téléphone </label>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-sm-12 col-md-12">
-                  <div class="form-floating mb-3">
-                    <input class="form-control" id="per_email" name="per_email" type="text" required="required" placeholder="Email" />
-                    <label for="email">Email</label>
-                    <span id="email_error" name="email_error" class="text text-danger"> </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-
-              <button type="submit" name="EditPersonnelbtn" id="EditPersonnelbtn" class="btn btn-primary">Sauvegarder</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-
-
-    <div class="modal fade" id="editthemeModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog">
-        <form id="EditThemeForm" autocomplete="off">
-          @method('post')
-          @csrf
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">
-                <i class="fa fa-user-edit"></i> Preference Menu
-              </h5>
-              <button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close">
-                <span class="fas fa-times fs--1"></span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="form-check form-check-inline">
-                  <input id="useridtheme" name="useridtheme" type="hidden" value="{{ Auth::user()->id }}" />
-
-                  <input class="form-check-input" type="radio" name="menuoption" id="menuoption" value="0" @if(Auth::user()->menu === 0) checked @endif >
-                  <label class="form-check-label" for="verticalMenu">Menu vertical</label>
-                  <br>
-
-                  <input class="form-check-input" type="radio" name="menuoption" id="menuoption" value="1" @if(Auth::user()->menu === 1) checked @endif >
-                  <label class="form-check-label" for="horizontalMenu">Menu horizontal</label>
-
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="submit" name="addNDPbtn" id="addNDPbtn" class="btn btn-primary">Sauvegarder</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-
-
-    <div class="modal fade" id="editMotdepasseModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog">
-        <form id="EditNDPForm" autocomplete="off">
-          @method('post')
-          @csrf
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-user-edit"></i> Modifier mot de passe </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="col-sm-6 col-md-12">
-                  <div class="form-floating mb-3">
-                    <input id="userid" name="userid" type="hidden" value="{{ Auth::user()->id }}" />
-
-                    <input class="form-control" id="anpwd" name="anpwd" type="password" required="required" placeholder="Ancient mot de passe" />
-                    <label for="Identifiant">Anciant mot de paase</label>
-                    <span id="identifiant_error" name="ancienmotdepasse_error" class="text text-danger"> </span>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-md-12">
-                  <div class="form-floating mb-3">
-                    <input class="form-control" id="npwd" name="npwd" type="password" required="required" placeholder="Nouveau mot de passe" />
-                    <label for="Identifiant">Nouveau mot de paase</label>
-                    <span id="identifiant_error" name="nouveaumotdepasse_error" class="text text-danger"> </span>
-                  </div>
-                </div>
-                <div class="col-sm-6 col-md-12">
-                  <div class="form-floating mb-3">
-                    <input class="form-control" id="cpwd" name="cpwd" type="password" required="required" placeholder="Confirmation le nouveau mot de passe" />
-                    <label for="Password">Confirmer le nouveau mot de passe</label>
-                  </div>
-                </div>
-              </div>
-
-
-
-
-            </div>
-            <div class="modal-footer">
-              <button type="submit" name="addNDPbtn" id="addNDPbtn" class="btn btn-primary">Sauvegarder</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div class="modal fade" id="editprofileModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog">
-        <form method="POST" id="EditprofileForm" enctype='multipart/form-data'>
-          @method('post')
-          @csrf
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-user-edit"></i> Modifier image profile </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="custom-file">
-                  <input id="profileuserid" name="profileuserid" type="hidden" value="{{ Auth::user()->id }}" />
-                  <input type="file" class="form-control" id="file" name="file" accept="image/jpeg, image/png" onchange="preview_image(event)">
-
-                </div>
-                <br><br>
-                <div id="wrapper">
-                  @php
-                  $avatar = Auth::user()->avatar;
-                  $defaultAvatar = '../../element/profile/default.png'; // Chemin vers votre image par défaut
-                  $imagePath = public_path($avatar);
-                  @endphp
-
-                  @if(file_exists($imagePath))
-                  <img id="output_image" src="../../{{ $avatar }}" alt="{{ ucfirst(Auth::user()->identifiant) }}" style="width:50%; border-radius:10px ; margin-left:25% ">
-                  @else
-                  <img id="output_image" src="{{ $defaultAvatar }}" alt="{{ ucfirst(Auth::user()->identifiant) }}" style="width:50%; border-radius:10px ; margin-left:25% ">
-                  @endif
-
-
-
-
-                </div>
-
-              </div>
-
-
-
-
-            </div>
-            <div class="modal-footer">
-              <button type="submit" name="addprofilebtn" id="addprofilebtn" class="btn btn-primary">Sauvegarder</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div class="modal fade" id="editsignatureModal" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog">
-        <form id="EditsignatureForm" autocomplete="off" enctype='multipart/form-data'>
-          @method('post')
-          @csrf
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel"> <i class="fa fa-user-edit"></i> Modifier le signature </h5><button class="btn p-1" type="button" data-bs-dismiss="modal" aria-label="Close"><span class="fas fa-times fs--1"></span></button>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="custom-file">
-                  <input id="personneidp" name="personneidp" type="hidden" value="{{ Auth::user()->id }}" />
-                  <input type="file" class="form-control" id="customFile" name="signature" accept="image/*" onchange="preview_image(event)">
-                </div>
-                <br><br>
-                <div id="wrapper">
-                  @php
-                  $signature = Auth::user()->signature;
-                  @endphp
-                  <img src="{{  asset($signature) }}" id="output_image" class="" style="width:50%; border-radius:10px ; margin-left:25% ">
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="submit" name="addsignaturebtn" id="addsignaturebtn" class="btn btn-primary">Sauvegarder</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+   @include('layout.partiels.profile_signature')
 
 
     <div class="progress">
@@ -289,21 +72,30 @@
     </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        var audio = document.getElementById('notificationAudio');
-        // Try to play the audio
+    document.addEventListener('DOMContentLoaded', function () {
+    // Vérifier si l'élément audio existe dans le DOM
+    var audio = document.getElementById('notificationAudio');
+    
+    if (!audio) {
+        return; // Arrêter l'exécution si l'élément n'est pas trouvé
+    }
+
+    // Tentative de lecture de l'audio
+    try {
         var playPromise = audio.play();
+
+        // Gérer les promesses si elles sont prises en charge
         if (playPromise !== undefined) {
-          playPromise.then(_ => {
-            // Automatic playback started!
-            console.log('Audio is playing automatically.');
-          }).catch(error => {
-            // Auto-play was prevented
-            console.log('Playback prevented. User interaction required.');
-          });
+            playPromise.catch(function () {
+                // Ignorer silencieusement les erreurs de lecture
+            });
         }
-      });
+    } catch (error) {
+        // Ignorer silencieusement les erreurs inattendues
+    }
+});
     </script>
+
 
     <script>
       $(document).ready(function() {
@@ -337,7 +129,7 @@
 
   // VERIFICATION DE LA CONNECTION INTERNET
 
-  /*
+  
   window.addEventListener('load', function() {
     var messageDiv = document.getElementById('message');
 
@@ -356,7 +148,7 @@
     // Vérifie la connexion Internet à chaque changement de statut de la connexion
     window.addEventListener('online', checkInternetConnection);
     window.addEventListener('offline', checkInternetConnection);
-  }); */
+  }); 
 
 
 // VISUALISER L'IMAGE
@@ -572,7 +364,7 @@
     });
   });  */
 
-
+/*
 
   fetchnotification();
   function fetchnotification() {
@@ -663,7 +455,7 @@
       }
     });
   }
-  
+  */
   
 </script>
 <!-- Right bar overlay-->

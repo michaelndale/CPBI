@@ -12,12 +12,10 @@ class CatactivityController extends Controller
     public function cat()
     {
       $title = 'Category';
-      $active = 'Activity';
       return view(
         'activite.cat',
         [
-          'title' => $title,
-          'active' => $active
+          'title' => $title
         ]
       );
     }

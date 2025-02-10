@@ -1,20 +1,27 @@
 <body data-sidebar="colored" id="contenu">
+  <div id="preloader">
+        <div id="status">
+            <div class="spinner">
+                <i class="ri-loader-line spin-icon"></i>
+            </div>
+        </div>
+    </div>   
+
 @php
-$personnelData = DB::table('personnels')
-    ->where('id', Auth::user()->personnelid)
-    ->select('nom','prenom')
-    ->first();
+$personnelData = DB::table('personnels')->where('id', Auth::user()->personnelid)->select('nom','prenom')->first();
 
 $avatar = Auth::user()->avatar ;
 $defaultAvatar = '../../element/profile/default.png'; // Chemin vers votre image par défaut
 $imagePath = public_path($avatar);
 
-
 $IDPJ = Session::get('id');
-                                $exercice_id = Session::get('exercice_id');
-                                $cryptedProjectId = Crypt::encrypt($IDPJ);
-                                $cryptedExerciceId = Crypt::encrypt($exercice_id)
+$exercice_id = Session::get('exercice_id');
+$cryptedProjectId = Crypt::encrypt($IDPJ);
+$cryptedExerciceId = Crypt::encrypt($exercice_id);
 
+  // Définir l'avatar par défaut
+$defaultAvatar = asset('element/profile/default.png'); // Chemin vers votre image par défaut
+$imagePath = public_path($avatar); // Chemin absolu pour vérifier l'existence de l'image
 
 @endphp
 <sty
@@ -29,7 +36,6 @@ $IDPJ = Session::get('id');
                     </button>
 
                     <!-- Projet session et recherche-->
-
                     @if (session()->has('id'))
                         <div class="callout callout-info" style="margin-top:25px">
                             
@@ -84,15 +90,11 @@ $IDPJ = Session::get('id');
                         
                         <button type="button" class="btn header-item ">
 
-                       
-
-                       
-
                             @if (session()->has('id'))
 
                             <a href="{{ route('new.exercice',  $cryptedProjectId) }}"
                             class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button"><i
-                                class="fa fa-plus-circle"></i> Nouvelle exercice</a>
+                                class="fa fa-plus-circle"></i> Nouvel exercice</a>
 
 
                                 <a href="{{ route('closeproject') }}"
@@ -123,37 +125,24 @@ $IDPJ = Session::get('id');
                             aria-haspopup="false" aria-expanded="false">
 
                             <a href="#" class="btn header-item" aria-haspopup="true" aria-expanded="false">
-
-                              
-                @php
-                // Définir l'avatar par défaut
-                $defaultAvatar = asset('element/profile/default.png'); // Chemin vers votre image par défaut
-                $imagePath = public_path($avatar); // Chemin absolu pour vérifier l'existence de l'image
-            @endphp
-            
-            @if(file_exists($imagePath))
-                <img class="rounded-circle header-profile-user" 
-                     src="{{ asset($avatar) }}" 
-                     alt="{{ ucfirst(Auth::user()->identifiant) }}"  
-                     style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
-                <br>
-                <small>{{ ucfirst($personnelData->prenom) }}</small>
-            @else
-                <img class="rounded-circle header-profile-user" 
-                     src="{{ $defaultAvatar }}" 
-                     alt="{{ ucfirst(Auth::user()->identifiant) }}"  
-                     style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
-                <br>
-                <small>{{ ucfirst($personnelData->prenom) }}</small>
-            @endif
-            
-
-
-
+                                @if(file_exists($imagePath))
+                                    <img class="rounded-circle header-profile-user" 
+                                        src="{{ asset($avatar) }}" 
+                                        alt="{{ ucfirst(Auth::user()->identifiant) }}"  
+                                        style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
+                                    <br>
+                                    <small>{{ ucfirst($personnelData->prenom) }}</small>
+                                @else
+                                    <img class="rounded-circle header-profile-user" 
+                                        src="{{ $defaultAvatar }}" 
+                                        alt="{{ ucfirst(Auth::user()->identifiant) }}"  
+                                        style="width: 30px; height: 30px; border: 1px solid green; border-radius: 50%;">
+                                    <br>
+                                    <small>{{ ucfirst($personnelData->prenom) }}</small>
+                                @endif
                             </a>
-
-
                         </button>
+
                         <div class="dropdown-menu dropdown-menu-end "
                             style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 72px); "
                             data-popper-placement="bottom-end">
@@ -173,13 +162,13 @@ $IDPJ = Session::get('id');
                                 data-bs-toggle="modal" data-bs-target="#editprofileModal" aria-haspopup="true"
                                 aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900"
                                     data-feather="user">
-                                    <i class="ri-user-received-2-line "></i> Modifier profile
+                                    <i class="ri-user-received-2-line "></i> Modifier le profil
                             </a>
                             <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}"
                                 data-bs-toggle="modal" data-bs-target="#editsignatureModal" aria-haspopup="true"
                                 aria-expanded="false" data-bs-reference="parent"> <span class="me-2 text-900"
                                     data-feather="user">
-                                    <i class="ri-pen-nib-fill "></i> Modifier signature
+                                    <i class="ri-pen-nib-fill "></i> Modifier le signature 
                             </a>
                             <a href="javascript:void(0);" class="dropdown-item notify-item" id="{{ Auth::id() }}"
                                 data-bs-toggle="modal" data-bs-target="#editthemeModal" aria-haspopup="true"
@@ -231,7 +220,9 @@ $IDPJ = Session::get('id');
 
                       <!-- NOTIFICATION ALERTE -->
 
-                      @include('layout.partiels.notification_projet')
+                        @include('layout.partiels.notification_projet')
+
+                    
 
                         <li>
                             <a href="{{ route('dashboard') }}" class="waves-effect">
@@ -367,6 +358,20 @@ $IDPJ = Session::get('id');
                             </li>
                         @endif
 
+                       
+                    @if (Auth::user()->role === 'SG' || Auth::user()->role ==='Administrateur système.')
+
+                    <li style="background-color:#DC143C;">
+                        <a href="{{ route('securite.index') }}" style="color:white">
+                          <i class="mdi mdi-lock-open-check"></i>
+                          <span class="noti-dot"></span>
+                            <span>Sécurité</span>
+                        </a>
+                    </li>
+
+                        
+                    @endif
+                        
                         <li>
                             <a href="{{ route('communique') }}">
                               <i class="ri-notification-3-line"></i>

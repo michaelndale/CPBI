@@ -233,11 +233,17 @@
                                             <tr>
                                                 <td colspan="2">Fonds reçus par :
                                                     <select class="form-control form-control-sm" name="beneficiaire" id="beneficiaire" onchange="checkFunds()">
-                                                        <option value="{{  $fond_reussi->userid  }}">{{  ucfirst($fond_reussi->nom)  }} {{   ucfirst($fond_reussi->prenom)  }}</option>
+                                                        @if ($fond_reussi)
+                                                            <option value="{{ $fond_reussi->userid }}">{{ ucfirst($fond_reussi->nom) }} {{ ucfirst($fond_reussi->prenom) }}</option>
+                                                        @else
+                                                            <option value="">Sélectionnez un bénéficiaire</option>
+                                                        @endif
+                                                    
                                                         @foreach ($personnel as $personnels)
                                                             <option value="{{ $personnels->userid }}">{{ $personnels->nom }} {{ $personnels->prenom }}</option>
                                                         @endforeach
                                                     </select>
+                                                    
                                                 </td>
                                                 <td style="width:30%">
                                                     Flash info : <br>

@@ -1,7 +1,7 @@
 <body data-sidebar="colored" id="contenu">
-@php
+ @php
 
-// Récupérer les données du profil de l'utilisateur
+/*
 $personnelData = DB::table('personnels')
                   ->where('id',Auth::user()->personnelid)
                   ->first();
@@ -204,6 +204,8 @@ if(session()->has('id')){
 
 
 $total_signalisation = $feb_signale+$dap_signale;
+
+*/
 
 @endphp
   <div id="layout-wrapper">

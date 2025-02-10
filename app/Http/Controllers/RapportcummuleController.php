@@ -32,6 +32,7 @@ class RapportcummuleController extends Controller
         $budget = session()->get('budget');
         $devise = session()->get('devise');
         $periode =session()->get('periode');
+        $exerciceId = session()->get('exercice_id');
 
         $output = '';
         if (!empty($request->compte)) {
@@ -48,6 +49,7 @@ class RapportcummuleController extends Controller
                 $sommerepartie= DB::table('rallongebudgets')
                 ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
                 ->Where('rallongebudgets.projetid', $IDP)
+                ->Where('rallongebudgets.execiceid', $exerciceId)
                 ->SUM('budgetactuel');
              
            
@@ -56,6 +58,7 @@ class RapportcummuleController extends Controller
                 $somme_budget= DB::table('rallongebudgets')
                           ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
                           ->Where('rallongebudgets.projetid', $IDP)
+                          ->Where('rallongebudgets.execiceid', $exerciceId)
                           ->SUM('budgetactuel');
                 // Fin Budget 
           
@@ -73,38 +76,7 @@ class RapportcummuleController extends Controller
                     $message='<center><span class="badge rounded-pill bg-success font-size-11">Encours</span></center>';
                   }
           
-                  $output .='
-          
-                  <table class="table table-bordered  table-sm fs--1 mb-0">
-                  <tr scope="col" >
-                    <td scope="col" style="padding:5px"><b>Rubrique du projet</b></td>
-                    <td scope="col" style="padding:5px"><b>Pays / region</b></td>
-                    <td scope="col" style="padding:5px"><b>N<sup>o</sup> Projet</b></td>
-                    <td scope="col" style="padding:5px"><b><center>Budget</center></b></td>
-                    <td scope="col" style="padding:5px"><b><center>%</center></b></td>
-                    <td scope="col" style="padding:5px"><b><center>Statut</center></b></td>
-                  </tr>
-                  <tr>
-                    <td style="padding:5px; width:50%">'.$showData->title.'</td>
-                    <td style="padding:5px">'.$showData->region.' </td>
-                    <td style="padding:5px">'.$showData->numeroprojet.' </td>
-                    <td style="padding:5px" align="right">'.number_format($showData->budget ,0, ',', ' ').' '.$showData->devise.'   </td>
-                    <td><center>'.$pglobale.' %</center></td>
-                    <td> '.$message.'</td>
-                  </tr>
-          
-                  <tr>
-                    <td colspan="3" >Montant total repartie </td>
-                    <td style="padding:5px" align="right">'.number_format($somme_budget,0, ',', ' ').' '.$showData->devise.'  </td>
-                   
-                    <td colspan="2" style="background-color:#c0c0c0"></td>
-                  </tr>
-                </table>
-                <br>
-          
-               
-                  ';
-          
+                
                   $output .= '
                   <table class="table table-bordered mb-0"
                   width="100%">
@@ -128,6 +100,7 @@ class RapportcummuleController extends Controller
                     ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
                     ->Where('rallongebudgets.projetid', $IDP)
                     ->where('rallongebudgets.compteid', $request->compte)
+                    ->Where('rallongebudgets.execiceid', $exerciceId)
                     ->SUM('rallongebudgets.budgetactuel');
           
           
@@ -148,6 +121,7 @@ class RapportcummuleController extends Controller
                     ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
                     ->Where('rallongebudgets.projetid', $IDP)
                     ->where('rallongebudgets.compteid', $request->compte)
+                    ->Where('rallongebudgets.execiceid', $exerciceId)
                     
                     ->get();
           
@@ -159,6 +133,7 @@ class RapportcummuleController extends Controller
                       $act = DB::table('activities')
                       ->orderby('id','ASC')
                       ->Where('projectid', $IDP)
+                      ->Where('activities.execiceid', $exerciceId)
                       ->Where('compteidr', $sc->souscompte)
                       ->get();
         

@@ -22,35 +22,26 @@ class ActivityController extends Controller
   public function index()
   {
       $title = 'Activités';
-  
-      // Récupérer l'ID du projet de la session
+
+      // Récupérer l'ID du projet de la session et Exercice 
       $projectId = session()->get('id');
-  
-      // Récupérer tous les projets
-    //  $projects = Project::all();
-  
+      $exerciceId = session()->get('exercice_id');
+
       // Vérifier si l'ID du projet est valide
-      if (!$projectId) {
-          // Gérer le cas où l'ID du projet est invalide
-          return redirect()->back()->with('error', "ID de projet invalide.");
+      if (!$projectId && !$exerciceId) {
+          // Gérer le cas où l'ID du projet et exercice est invalide
+          return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
       }
   
       // Récupérer les comptes spécifiques au projet en utilisant le modèle Eloquent
       $comptes = Compte::where('projetid', $projectId)
-                      ->where('compteid', 0)
-                      ->distinct()
-                      ->get();
-  
-      // Vérifier si des comptes ont été trouvés
-      if ($comptes->isEmpty()) {
-          // Gérer le cas où aucun compte n'a été trouvé
-          return redirect()->back()->with('error', "Aucun compte trouvé pour ce projet.");
-      }
+                        ->where('compteid', 0)
+                        ->distinct()
+                        ->get();
   
       // Retourner la vue avec les données nécessaires
       return view('activite.index', [
           'title' => $title,
-        //  'projects' => $projects,
           'compte' => $comptes,
       ]);
   }
@@ -66,17 +57,16 @@ class ActivityController extends Controller
         $devise = session()->get('devise');
         $exerciceId = session()->get('exercice_id');
 
-        $service = DB::table('comptes')
-            ->where('comptes.projetid', $ID)
-
-            ->where('comptes.compteid', '=', 0)
+        $comptes = DB::table('comptes')
+            ->where('projetid', $ID)
+            ->where('compteid', '=', 0)
             ->distinct()
             ->get();
 
-        $SommeAllActivite = DB::table('activities')
+      /*  $SommeAllActivite = DB::table('activities')
             ->where('projectid', $ID)
             ->where('activities.execiceid', $exerciceId)
-            ->sum('montantbudget');
+            ->sum('montantbudget'); */
 
         $output = '';
 
@@ -93,23 +83,23 @@ class ActivityController extends Controller
 
            // <b>' . number_format($SommeAllActivite, 0, ',', ' ') .$ID. '
 
-        if ($service->count() > 0) {
+        if ($comptes->count() > 0) {
             $nombre = 1;
-            foreach ($service as $rs) {
+            foreach ($comptes as $rs) {
                 $id = $rs->id;
 
                 $somme_budget_ligne = DB::table('rallongebudgets')
-                    ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
-                    ->where('rallongebudgets.projetid', $ID)
-                    ->where('rallongebudgets.compteid', $id)
-                    ->where('rallongebudgets.execiceid', $exerciceId)
-                    ->sum('rallongebudgets.budgetactuel');
+                                    ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+                                    ->where('rallongebudgets.projetid', $ID)
+                                    ->where('rallongebudgets.compteid', $id)
+                                    ->where('rallongebudgets.execiceid', $exerciceId)
+                                    ->sum('rallongebudgets.budgetactuel');
 
                 $output .= '
                     <tr style="background-color:#F5F5F5">
                         <td><b>' . ucfirst($rs->numero) . '</b></td>
                         <td><b>' . ucfirst($rs->libelle) . ' </b></td>
-                        <td align="right">Budget de la ligne:  <b>' .  number_format($somme_budget_ligne, 0, ',', ' ')  . ' </b></td>
+                        <td align="right">Total general previsiom :  <b>' .  number_format($somme_budget_ligne, 0, ',', ' ')  . ' </b></td>
                     </tr>
                 ';
 
@@ -242,9 +232,10 @@ class ActivityController extends Controller
   public function store(Request $request)
   {
     $IDP = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
+
     $comp = $request->compteid;
     $compp = explode("-", $comp);
-    $exerciceId = session()->get('exercice_id');
 
     $grandcompte = $compp[0];
     $souscompte  = $compp[1];
@@ -271,16 +262,17 @@ class ActivityController extends Controller
       $montant_somme = $request->montant + $somme_activite_ligne;
 
       if ($somme_budget_ligne >= $montant_somme) {
+
         $activity = new Activity();
 
-        $activity->projectid = $request->projetid;
-        $activity->compteidr = $souscompte;
-        $activity->grandcompte = $grandcompte;
-        $activity->titre = $request->titre;
+        $activity->projectid     = $request->projetid;
+        $activity->compteidr     = $souscompte;
+        $activity->grandcompte   = $grandcompte;
+        $activity->titre         = $request->titre;
         $activity->montantbudget = $request->montant;
         $activity->etat_activite = $request->etat;
-        $activity->execiceid = $exerciceId ;
-        $activity->userid = Auth::id();
+        $activity->execiceid     = $exerciceId ;
+        $activity->userid        = Auth::id();
 
         $activity->save();
 

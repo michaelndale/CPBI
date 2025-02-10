@@ -37,6 +37,7 @@ class PlanoperationnelController extends Controller
       $plan->categorie = $request->categorie;
       $plan->periode = $request->periode;
       $plan->projetid = $IDP;
+      
       $plan->save();
 
       $IP = $plan->id;

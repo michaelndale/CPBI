@@ -20,30 +20,43 @@ class FebpetitcaisseController extends Controller
   public function index()
   {
     // Récupérer l'ID de la session
-    $ID = session()->get('id');
-
-    // Vérifier si l'ID de la session n'est pas défini
-    if (!$ID) {
-      // Rediriger vers la route nommée 'dashboard'
-      return redirect()->route('dashboard');
+    $projectId = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
+    // Vérifie si l'ID de projet existe dans la session
+    if (!$projectId && !$exerciceId) {
+      // Gérer le cas où l'ID du projet et exercice est invalide
+      return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
     }
 
-    $title = 'FEB Petit Caisse';
-    $compte   =Comptepetitecaisse::where('projetid', $ID)->get();
+    $title  = 'FEB Petit Caisse';
+    $compte = Comptepetitecaisse::where('projetid', $projectId)
+              ->where('exercice_id', $exerciceId)
+              ->get();
 
 
     $personnel = DB::table('users')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
-      ->orderBy('nom', 'ASC')
-      ->get();
+                ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+                ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
+                ->orderBy('nom', 'ASC')
+                ->get();
+
+     // Trouver le dernier numéro existant
+    $lastFeb = Febpetitcaisse::where('projet_id', $projectId)
+     ->where('exercice_id', $exerciceId)
+     ->orderBy('numero', 'desc') 
+     ->first();
+
+      // Générer un nouveau numéro en ajoutant 1 au dernier trouvé
+      $newNumero = $lastFeb ? $lastFeb->numero + 1 : 1;
+
 
     return view(
       'bonpetitecaisse.feb.index',
       [
         'title' => $title,
         'compte' => $compte,
-        'personnel' => $personnel
+        'personnel' => $personnel,
+        'newNumero' => $newNumero
       ]
     );
   }
@@ -51,6 +64,7 @@ class FebpetitcaisseController extends Controller
   public function fetchAll()
   {
     $ID = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
 
     $data = DB::table('febpetitcaisses')
       ->orderBy('numero', 'asc')
@@ -59,6 +73,7 @@ class FebpetitcaisseController extends Controller
       ->join('comptepetitecaisses', 'febpetitcaisses.compte_id', 'comptepetitecaisses.id')
       ->select('febpetitcaisses.*', 'personnels.prenom as user_prenom', 'comptepetitecaisses.code as code')
       ->where('febpetitcaisses.projet_id', $ID)
+      ->where('febpetitcaisses.exercice_id', $exerciceId)
       ->get();
 
     $output = '';
@@ -99,12 +114,6 @@ class FebpetitcaisseController extends Controller
                 <td align="left">' . ucfirst($datas->user_prenom) . '</td>
             </tr>';
 
-            // <a href="'. route('generate-pdf', ['id' => $cryptedId]) .'" class="dropdown-item mx-1">
-           // <i class="fa fa-print"></i> Générer PDF
-           // </a>
-           // <a class="dropdown-item text-white mx-1 deleteIcon" id="' . $datas->id . '" data-numero="' . $datas->numero . '" href="#" style="background-color:red">
-           //     <i class="far fa-trash-alt"></i> Supprimer
-           // </a>
       }
     } else {
       $output .= '
@@ -134,6 +143,8 @@ class FebpetitcaisseController extends Controller
    
     // Décrypter l'ID
     $ids = Crypt::decrypt($id);
+    $exerciceId = session()->get('exercice_id');
+    
 
     // Récupérer les données correspondantes
     $febData = DB::table('febpetitcaisses')
@@ -143,6 +154,7 @@ class FebpetitcaisseController extends Controller
       ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('febpetitcaisses.*', 'comptepetitecaisses.code as codes', 'comptepetitecaisses.libelle as libelle_compte',  'projects.id as IDP','projects.title as titles_projet', 'personnels.prenom', 'personnels.nom')
       ->where('febpetitcaisses.id', $ids)
+      ->where('febpetitcaisses.exercice_id', $exerciceId)
       ->first();
 
     $etablie_par = DB::table('users')
@@ -173,11 +185,13 @@ class FebpetitcaisseController extends Controller
     // RECUPERATION DU MONTANT DEJA UTILISER DANS LE BUDJET
     $sommeallfeb = DB::table('elementfebs')
     ->where('projetids', $IDB)
+    ->where('exerciceids', $exerciceId)
     ->sum('montant');
 
     $SOMME_PETITE_CAISSE= DB::table('elementboncaisses')
     ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
     ->where('elementboncaisses.projetid', $IDB)
+    ->where('exerciceid', $exerciceId)
     ->where('bonpetitcaisses.approuve_par_signature', 1)
     ->sum('elementboncaisses.montant');
 
@@ -228,6 +242,7 @@ class FebpetitcaisseController extends Controller
     $title = 'FEB Petit Caisse';
     // Récupérer l'ID de la session
     $IDP = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
 
     if (!$IDP) {
       return redirect()->route('dashboard');
@@ -271,7 +286,9 @@ class FebpetitcaisseController extends Controller
       ->orderBy('nom', 'ASC')
       ->get();
 
-      $compte   =Comptepetitecaisse::where('projetid', $febData->IDP)->get();
+      $compte   =Comptepetitecaisse::where('projetid', $febData->IDP)
+      ->where('exercice_id', $exerciceId)
+      ->get();
 
 
     return view('bonpetitecaisse.feb.edit', [
@@ -364,9 +381,11 @@ class FebpetitcaisseController extends Controller
   {
     $ID = session()->get('id');
     $numero = $request->numerofeb;
+    $exerciceId = session()->get('exercice_id');
 
       $feb = Febpetitcaisse::where('numero', $numero)
               ->where('projet_id', $ID)
+              ->where('exercice_id', $exerciceId)
               ->exists();
 
     return response()->json(['exists' => $feb]);
@@ -379,10 +398,12 @@ class FebpetitcaisseController extends Controller
     try {
 
       $IDP = session()->get('id');
+      $exerciceId = session()->get('exercice_id');
 
       $numerofeb = $request->numerofeb;
       $check = Febpetitcaisse::where('numero', $numerofeb)
         ->where('projet_id', $IDP)
+        ->where('exercice_id', $exerciceId)
         ->first();
 
       if ($check) {
@@ -393,6 +414,7 @@ class FebpetitcaisseController extends Controller
 
         $feb = new Febpetitcaisse();
 
+        $feb->exercice_id = $exerciceId;
         $feb->projet_id = $request->projetid;
         $feb->compte_id = $request->compteid;
         $feb->description = $request->description;
@@ -408,10 +430,14 @@ class FebpetitcaisseController extends Controller
 
         $feb->save();
 
+
+        $cryptedId = Crypt::encrypt($feb->id);
+
         DB::commit();
 
         return response()->json([
           'status' => 200,
+          'redirect' => route('viewfebpc', ['id' => $cryptedId]),
         ]);
       }
     } catch (Exception $e) {
@@ -467,6 +493,7 @@ class FebpetitcaisseController extends Controller
     // Vérifie si la variable de session 'id' existe
     $title = 'FEB';
     $check = Febpetitcaisse::findOrFail($id);
+ 
 
     $idfeb = $check->id;
     $numero_classe_feb =  $check->numero;

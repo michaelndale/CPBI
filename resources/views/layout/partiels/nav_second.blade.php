@@ -11,6 +11,14 @@
 </style>
 
 <body data-topbar="colored" data-layout="horizontal">
+  <!-- <div id="preloader">
+    <div id="status">
+        <div class="spinner">
+            <i class="ri-loader-line spin-icon"></i>
+        </div>
+    </div>
+</div>  -->
+
 
   <!-- Begin page -->
   <div id="layout-wrapper">
@@ -84,7 +92,7 @@
               @if (session()->has('id'))
               <a href="{{ route('closeproject') }}" class="btn btn-outline-warning rounded-pill me-1 mb-1" type="button" data-bs-toggle="modal" data-bs-target="#verticallyCentered"><i class="fas fa-sign-out-alt"></i> Quitter le projet</a>
               @else
-              <a href="{{ route('new_project') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1" type="button"><i class="fa fa-plus-circle"></i> Nouveau projet</a>
+              <a href="{{ route('new_project') }}" class="btn btn-outline-primary rounded-pill me-1 mb-1" type="button"><i class="fa fa-plus-circle"></i> Nouvel exercice</a>
               @endif
             </button>
 

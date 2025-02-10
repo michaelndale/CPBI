@@ -15,6 +15,7 @@ use App\Http\Controllers\BonpetitcaisseController;
 use App\Http\Controllers\BpcController;
 use App\Http\Controllers\CarburantController;
 use App\Http\Controllers\CarnetbordController;
+use App\Http\Controllers\CasutilisationController;
 use App\Http\Controllers\CatactivityController;
 use App\Http\Controllers\CategoriebeneficiaireController;
 use App\Http\Controllers\ClasseurController;
@@ -31,6 +32,7 @@ use App\Http\Controllers\ElementsfeuilletempsController;
 use App\Http\Controllers\EntretienProgrammerController;
 use App\Http\Controllers\EntretientController;
 use App\Http\Controllers\EtiquetteController;
+use App\Http\Controllers\ExerciceController;
 use App\Http\Controllers\FdtController;
 use App\Http\Controllers\FebController;
 use App\Http\Controllers\FebpetitcaisseController;
@@ -55,6 +57,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RallongebudgetController;
 use App\Http\Controllers\RapportController;
 use App\Http\Controllers\RapportcummuleController;
+use App\Http\Controllers\SecuriteController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SignalefebController;
 use App\Http\Controllers\SqrController;
@@ -66,6 +69,7 @@ use App\Models\Dapbpc;
 use App\Models\Febpetitcaisse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+
 
 Route::get('/', function () { return view('go'); })->name('go');
 
@@ -224,7 +228,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('parc', [AppCOntroller::class, 'parc'])->name('parc');
 
-    Route::prefix('projet/lignebudgetaire')->group(function () {
+    Route::prefix('projet/lignebudgetaire')->group(function () 
+    {
         Route::get('/', [CompteController::class, 'index'])->name('gestioncompte');
         Route::get('/fetchAllGc', [CompteController::class, 'fetchAll'])->name('fetchAllGc');
         Route::get('/Selectcompte', [CompteController::class, 'selectcompte'])->name('Selectcompte');
@@ -240,8 +245,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/updateGc', [CompteController::class, 'update'])->name('updateGc');
         Route::post('/updatecompte', [CompteController::class, 'updatecompte'])->name('updatecompte');
         Route::post('/updateGrandcompte', [CompteController::class, 'updateGrandcompte'])->name('updateGrandcompte');
-
-        
+          
     });
 
     Route::prefix('projet/budgetisation')->group(function () {
@@ -331,10 +335,27 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/exercice/{id}', [ProjectController::class, 'showexercice'])->name('exercice.show');
         Route::get('/{key}/newexercice/', [ProjectController::class, 'newexercice'])->name('new.exercice');  
-          Route::post('/store.exe', [ProjectController::class, 'storeexe'])->name('store.exe');
+        Route::post('/store.exe', [ProjectController::class, 'storeexe'])->name('store.exe');
         
 
     });
+
+    Route::prefix('project/exercices')->group(function() {
+        Route::get('/', [ExerciceController::class, 'index'])->name('exercices.index');
+
+        Route::get('/{exerciceId}', [ExerciceController::class, 'show'])->name('exercices.show');
+     
+        Route::put('/update', [ExerciceController::class, 'Updateexe'])->name('exercice.update');
+    
+    });
+
+    Route::prefix('project/securite')->group(function() {
+        Route::get('/', [SecuriteController::class, 'index'])->name('securite.index');
+        Route::put('/update', [SecuriteController::class, 'Update'])->name('securite.update'); 
+        Route::post('/savesecure', [SecuriteController::class, 'store'])->name('secure.store');
+       
+    });
+    
 
     Route::prefix('projet/intervenant')->group(function () {
         Route::get('/', [AffectationController::class, 'index'])->name('affectation');
@@ -352,7 +373,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [FebController::class, 'list'])->name('listfeb');
         Route::get('nouvel', [FebController::class, 'create'])->name('nouveau.feb');
         Route::post('/storefeb', [FebController::class, 'store'])->name('storefeb');
-
+   
         Route::get('/fetchAllfeb', [FebController::class, 'fetchAll'])->name('fetchAllfeb');
         Route::get('/Sommefeb', [FebController::class, 'Sommefeb'])->name('Sommefeb');
         Route::get('/search-feb', [FebController::class, 'searchFeb'])->name('searchFeb');
@@ -429,6 +450,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/getFuelTypes', [DapController::class, 'getFuelType'])->name('getFuelTypes');
         Route::post('/get-feb-details', [DapController::class, 'getFebDetails'])->name('get-feb-details');
 
+
         Route::get('/dap/fetchAllsignaledap/{dapid?}', [DapController::class, 'fetchAllsignaledap'])->name('fetchAllsignaledap');
         Route::post('/storesignaledap', [DapController::class, 'storeSignaleDap'])->name('storesignaledap');
         Route::delete('/desactiverlesignaledap', [DapController::class, 'desacctiveSignale'])->name('desactiverlesignaledap');
@@ -455,6 +477,11 @@ Route::middleware('auth')->group(function () {
         Route::get('{id}/edit/', [DjaController::class, 'edit'])->name('showdja');
         Route::put('/updatalldja/{id}', [DjaController::class, 'Updatestore'])->name('updatdja');
         Route::get('{id}/generate-pdf-dja', [DjaController::class, 'generatePDFdja'])->name('generate-pdf-dja');
+
+
+        // CAS DE RAPPORT D'UTILISATION
+
+        Route::post('/storeutilisateur', [CasutilisationController::class, 'store'])->name('store.utilisation');
        
     });
     Route::get('/check-unverified-funds', [DjaController::class, 'checkUnverifiedFunds']);
@@ -493,7 +520,7 @@ Route::middleware('auth')->group(function () {
    
     Route::post('/generate-printable-rapport', [RapportController::class, 'generatePrintableFile'])->name('generate.print.raport');
 
-    Route::prefix('comptepetitcaisse')->group(function () {
+    Route::prefix('compte/petitcaisse')->group(function () {
         Route::get('/', [ComptepetitecaisseController::class, 'index'])->name('cpc');
         Route::get('/liste_cpc', [ComptepetitecaisseController::class, 'fetchAll'])->name('liste_cpc');
         Route::post('/storecpc', [ComptepetitecaisseController::class, 'store'])->name('storecpc');
@@ -504,7 +531,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/updateCompte', [ComptepetitecaisseController::class, 'update'])->name('updateCompte');   
     });
 
-    Route::prefix('febpetitcaisse')->group(function () {
+    Route::prefix('feb/petitcaisse')->group(function () {
         Route::get('/', [FebpetitcaisseController::class, 'index'])->name('febpc');
         Route::get('/liste_febpc', [FebpetitcaisseController::class, 'fetchAll'])->name('liste_febpc');
         Route::get('/{id}/viewfebpc', [FebpetitcaisseController::class, 'show'])->name('viewfebpc');
@@ -537,6 +564,7 @@ Route::middleware('auth')->group(function () {
        
         Route::get('/getFuelTypes', [DapController::class, 'getFuelType'])->name('getFuelTypes');
         Route::post('/get-feb-details', [DapController::class, 'getFebDetails'])->name('get-feb-details');
+        Route::post('/dja-get-feb-details', [DapController::class, 'DjagetFebDetails'])->name('dja-get-feb-details');
 
         Route::get('/dap/fetchAllsignaledap/{dapid?}', [DapController::class, 'fetchAllsignaledap'])->name('fetchAllsignaledap');
         Route::post('/storesignaledap', [DapController::class, 'storeSignaleDap'])->name('storesignaledap');
@@ -544,6 +572,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/supprimerlesignaledap', [DapController::class, 'deleteSignale'])->name('supprimerlesignaledap');
         Route::delete('/deleteelementsdap', [DapController::class, 'deleteElement'])->name('deleteelementsdap');
         Route::get('/dap-list/liste-dap/{date}', [DapController::class, 'printDapList'])->name('dap.list.print');
+       
 
     });
 
@@ -738,4 +767,8 @@ Route::middleware('auth')->group(function () {
        
     });
     /// ROUTE DE AUTRE APPLICATION
+
+    Route::get('/get-csrf-token', function () {
+        return response()->json(['csrf_token' => csrf_token()]);
+    })->name('get.csrf.token');
 });

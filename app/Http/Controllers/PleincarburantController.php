@@ -19,6 +19,7 @@ class PleincarburantController extends Controller
         $carburent = Carburant::all();
         $carburant = Vehicule::all();
         $fournisseur = Fournisseur::all();
+        
         return view(
             'carburent.index',
             [

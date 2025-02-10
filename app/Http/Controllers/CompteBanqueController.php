@@ -18,6 +18,7 @@ class CompteBanqueController extends Controller
                   ->join('banques', 'comptebanques.banque_id', 'banques.id')
                   ->select('comptebanques.*', 'banques.libelle as banque_name')
                   ->get();
+
         $title="Compte";
         $banques = Banque::all();
         $devises  = Devise::all();
@@ -29,9 +30,11 @@ class CompteBanqueController extends Controller
     {
     
          $comptes = new  Comptebanques();
+
          $comptes->banque_id = $request->banque_id;
          $comptes->devise= $request->devise;
          $comptes->numero_compte = $request->numero_compte;
+         
          $comptes->save();
 
         return redirect()->back()->with('success', 'Compte bancaire créé avec succès.');

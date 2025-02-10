@@ -43,13 +43,13 @@ class FebController extends Controller
   public function create()
   {
     // Récupérer l'ID de la session
-    $ID = session()->get('id');
-   
 
-    // Vérifier si l'ID de la session n'est pas défini
-    if (!$ID) {
-      // Rediriger vers la route nommée 'dashboard'
-      return redirect()->route('dashboard');
+    $projectId = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
+    // Vérifie si l'ID de projet existe dans la session
+    if (!$projectId && !$exerciceId) {
+      // Gérer le cas où l'ID du projet et exercice est invalide
+      return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
     }
 
     $exerciceId = session()->get('exercice_id');
@@ -63,18 +63,28 @@ class FebController extends Controller
 
     $activite = DB::table('activities')
       ->orderBy('id', 'DESC')
-      ->where('projectid', $ID)
+      ->where('projectid', $projectId)
       ->where('activities.execiceid', $exerciceId)
       ->get();
 
     $attache = Apreviation::all();
 
     $compte =  DB::table('comptes')
-      ->where('comptes.projetid', $ID)
+      ->where('comptes.projetid', $projectId)
       ->where('compteid', '=', 0)
       ->get();
 
     $beneficaire = Beneficaire::orderBy('libelle')->get();
+
+     // Trouver le dernier numéro existant
+     $lastFeb = Feb::where('projetid', $projectId)
+     ->where('execiceid', $exerciceId)
+     ->orderBy('numerofeb', 'desc') 
+     ->first();
+
+      // Générer un nouveau numéro en ajoutant 1 au dernier trouvé
+      $newNumero = $lastFeb ? $lastFeb->numerofeb + 1 : 1;
+
 
     return view(
       'document.feb.new',
@@ -84,7 +94,8 @@ class FebController extends Controller
         'personnel' => $personnel,
         'compte' => $compte,
         'beneficaire' => $beneficaire,
-        'attache' => $attache
+        'attache' => $attache,
+        'newNumero' => $newNumero
       ]
     );
   }
@@ -95,6 +106,7 @@ class FebController extends Controller
     $budget = session()->get('budget');
     $projectId = session()->get('id');
     $exerciceId = session()->get('exercice_id');
+
 
 
     $searchTerm = request()->get('search_numerofeb', null);
@@ -127,6 +139,7 @@ class FebController extends Controller
       foreach ($data as $datas) {
         $sommefeb = DB::table('elementfebs')
           ->where('febid', $datas->id)
+          ->where('elementfebs.projetids', $projectId)
           ->where('elementfebs.exerciceids', $exerciceId)
           ->sum('montant');
 
@@ -142,7 +155,7 @@ class FebController extends Controller
           ? implode(', ', $getDocument->map(fn($doc) => '<i class="fa fa-check-circle" style="color: green;" title="' . $doc->libelle . '"></i> ' . $doc->abreviation)->toArray())
           : '<i class="fa fa-times-circle" style="color: red;" title="Aucun fichier attaché disponible"></i>';
 
-        $description = Str::limit($datas->descriptionf, 50, '...');
+        $description = ucfirst( Str::limit($datas->descriptionf, 50, '...'));
 
         $statut = $datas->statut !== 1
           ? "<span class='badge rounded-pill bg-subtle-primary text-primary font-size-11'> <i class='fa fa-check'></i> Disponible </span>"
@@ -160,10 +173,6 @@ class FebController extends Controller
                 <td align='center'>{$message}</td>
                 <td align='center'>
                     <center>
-
-                  
-
-
                         <div class='btn-group me-2 mb-2 mb-sm-0'>
                             <a data-bs-toggle='dropdown' aria-expanded='false'>
                                 <i class='mdi mdi-dots-vertical ms-2'></i> Options
@@ -232,587 +241,16 @@ class FebController extends Controller
     return response()->json(['table' => $output, 'pagination' => $pagination]);
   }
 
-  public function notificationFeb()
-  {
-    $feb_notification = DB::table('febs')
-      ->join('projects', 'febs.projetid', '=', 'projects.id')
-      ->join('comptes', 'febs.sous_ligne_bugdetaire', '=', 'comptes.id')
-      ->join('users', 'febs.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select(
-        'febs.*',
-        'febs.id as idfeb',
-        'personnels.prenom as user_prenom',
-        'comptes.numero as code',
-        'projects.id AS projet_id',
-        'projects.title AS projet_title',
-        'projects.numeroprojet AS projet_numero',
-        'personnels.nom AS user_nom',
-        'personnels.prenom AS user_prenom',
-        'projects.annee AS projet_annee'
-      )
-      
-      ->where(function ($query) {
-        $query->where('febs.acce', Auth::id())->where('febs.acce_signe', 0)
-          ->orWhere('febs.comptable', Auth::id())->where('febs.comptable_signe', 0)
-          ->orWhere('febs.chefcomposante', Auth::id())->where('febs.chef_signe', 0);
-      })
-      ->orderBy('projects.title') // Ordonner par titre de projet
-      ->orderBy('febs.numerofeb')
-      ->get();
-
-    $output = '';
-    $lastProjectTitle = null;
-    $numooOrder = 1;
-
-    // Si des notifications sont trouvées
-    if ($feb_notification->isNotEmpty()) {
-      // Regrouper les éléments par projet
-      $groupedByProject = $feb_notification->groupBy('projet_title');
-
-      foreach ($groupedByProject as $projectTitle => $febs) {
-        // Afficher le titre du projet
-        $output .= '<tr style="background-color:#addfad">
-                            <td colspan="8"><b>' . ucfirst($projectTitle) . '</b></td>
-                        </tr>';
-
-        // Afficher les notifications pour chaque projet
-        foreach ($febs as $feb) {
-          // Calculer le montant total des DAP pour chaque ligne
-          $sumMontant = DB::table('elementfebs')
-
-            ->join('febs', 'elementfebs.febid', 'febs.id')
-
-            //->where('febs.acce_signe', 1)
-            //->where('febs.comptable_signe', 1)
-            //->where('febs.chef_signe', 1)
-
-            ->where('febid', $feb->idfeb)
-            ->sum('montant');
-
-          $cryptedIDoc = Crypt::encrypt($feb->idfeb);
-
-          // Détails de chaque notification
-          $output .= '
-                                <tr>
-                                    <td>' . $numooOrder . '</td>
-                                    <td align="right"><a href="' . route('key.viewFeb', $cryptedIDoc) . '"><b>' . $feb->numerofeb . '/' . $feb->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
-                                    <td align="right"><b>' . number_format($sumMontant, 0, ',', ' ') . '</b> </td>
-                                    <td>' . date('d-m-Y', strtotime($feb->datefeb)) . '</td>
-                                    <td>' . date('d-m-Y', strtotime($feb->datelimite)) . '</td>
-                                    <td>' . date('d-m-Y', strtotime($feb->created_at)) . '</td>
-                                    <td>' . ucfirst($feb->user_nom) . ' ' . ucfirst($feb->user_prenom) . '</td>
-                                </tr>';
-          $numooOrder++;
-        }
-      }
-    } else {
-      $output = '<tr>
-                       <td colspan="9" style="background-color: rgba(255, 0, 0, 0.1);">
-                              <center>
-                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
-                              </center>
-                          </td>
-                    </tr>';
-    }
-
-    return $output;
-  }
-
-  public function notificationdap()
-  {
-    $dap_notifications = DB::table('daps')
-      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
-      ->join('users', 'daps.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select(
-        'daps.*',
-        'projects.id AS projet_id',
-        'projects.title AS projet_title',
-        'projects.numeroprojet AS projet_numero',
-        'personnels.nom AS user_nom',
-        'personnels.prenom AS user_prenom',
-        'projects.annee AS projet_annee',
-        'daps.id as iddaps'
-      )
-      ->where(function ($query) {
-        $query->where('daps.demandeetablie', Auth::id())->where('daps.demandeetablie_signe', 0)
-          ->orWhere('daps.verifierpar', Auth::id())->where('daps.verifierpar_signe', 0)
-          ->orWhere('daps.approuverpar', Auth::id())->where('daps.approuverpar_signe', 0)
-          ->orWhere('daps.responsable', Auth::id())->where('daps.responsable_signe', 0)
-          ->orWhere('daps.secretaire', Auth::id())->where('daps.secretaure_general_signe', 0)
-          ->orWhere('daps.chefprogramme', Auth::id())->where('daps.chefprogramme_signe', 0);
-      })
-      ->orderBy('projects.title') // Ordonner par titre de projet
-      ->orderBy('daps.numerodp')
-      ->get();
-
-    $output = '';
-    $lastProjectTitle = null;
-    $numooOrder = 1;
-
-    // Si des notifications sont trouvées
-    if ($dap_notifications->isNotEmpty()) {
-      // Regrouper les éléments par projet
-      $groupedByProject = $dap_notifications->groupBy('projet_title');
-
-      foreach ($groupedByProject as $projectTitle => $daps) {
-        // Afficher le titre du projet
-        $output .= '<tr style="background-color:#addfad">
-                              <td colspan="8"><b>' . ucfirst($projectTitle) . '</b></td>
-                          </tr>';
-
-        // Afficher les notifications pour chaque projet
-        foreach ($daps as $dap) {
-          // Calculer le montant total des DAP pour chaque ligne
-          $totalDapAmount = $this->getTotalDap($dap->iddaps);
-          $cryptedIDoc = Crypt::encrypt($dap->iddaps);
-
-          // Détails de chaque notification
-          $output .= '
-                                  <tr>
-                                      <td>' . $numooOrder . '</td>
-                                      <td align="right"><a href="' . route('viewdap', $cryptedIDoc) . '"><b>' . $dap->numerodp . '/' . $dap->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
-                                      <td align="right"><b>' . number_format($totalDapAmount, 0, ',', ' ') . '</b> </td>
-                                      <td>' . date('d-m-Y', strtotime($dap->dateautorisation)) . '</td>
-                                      <td>' . date('d-m-Y', strtotime($dap->created_at)) . '</td>
-                                      <td>' . date('d-m-Y', strtotime($dap->updated_at)) . '</td>
-                                      <td>' . ucfirst($dap->user_nom) . ' ' . ucfirst($dap->user_prenom) . '</td>
-                                  </tr>';
-          $numooOrder++;
-        }
-      }
-    } else {
-      $output = '<tr>
-                          <td colspan="9" style="background-color: rgba(255, 0, 0, 0.1);">
-                              <center>
-                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
-                              </center>
-                          </td>
-                      </tr>';
-    }
-
-    return $output;
-  }
-
-  public function notificationDja()
-  {
-    $dja_notify = DB::table('djas')
-      ->join('projects', 'djas.projetiddja', '=', 'projects.id')
-      ->join('users', 'djas.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->join('daps', 'djas.dapid', '=', 'daps.id')
-      ->select(
-        'djas.*',
-        'djas.id as iddjas',
-        'djas.numerodjas as numero',
-        'projects.id AS projet_id',
-        'projects.title AS projet_title',
-        'projects.numeroprojet AS projet_numero',
-        'personnels.nom AS user_nom',
-        'personnels.prenom AS user_prenom',
-        'projects.annee AS projet_annee'
-      )
-      ->where(function ($query) {
-        $query->where('djas.fonds_demande_par', Auth::id())->where('djas.signe_fonds_demande_par', 0)
-          ->orWhere('djas.avance_approuver_par', Auth::id())->where('djas.signe_avance_approuver_par', 0)
-          ->orWhere('djas.avance_approuver_par_deux', Auth::id())->where('djas.signe_avance_approuver_par_deux', 0)
-          ->orWhere('djas.avance_approuver_par_trois', Auth::id())->where('djas.signe_avance_approuver_par_trois', 0)
-          ->orWhere('djas.fond_debourser_par', Auth::id())->where('djas.signe_fond_debourser_par', 0)
-          ->orWhere('djas.fond_recu_par', Auth::id())->where('djas.signe_fond_recu_par', 0)
-          ->orWhere('djas.pfond_paye', Auth::id())->where('djas.signature_pfond_paye', 0)
-          ->orWhere('djas.fonds_retournes_caisse_par', Auth::id())->where('djas.signe_reception_pieces_justificatives', 0);
-      })
-      ->orderBy('projects.title')  // Trier par le titre du projet
-      ->orderBy('djas.numerodjas', 'asc')  // Puis trier par le numéro Dja
-      ->get();
-
-    $output = '';
-    $lastProjectTitle = null;
-    $numooOrder = 1;
-
-    if ($dja_notify->isNotEmpty()) {
-      foreach ($dja_notify as $djas) {
-        // Afficher le titre du projet uniquement s'il est différent du précédent
-        if ($lastProjectTitle !== $djas->projet_title) {
-          $output .= '<tr style="background-color:#addfad">
-                      <td colspan="8"><b>' . ucfirst($djas->projet_title) . '</b></td>
-                  </tr>';
-          $lastProjectTitle = $djas->projet_title;
-        }
-
-        // Calculer le montant total des Djas pour chaque ligne
-        $totalDjaAmount = $djas->montant_avance_un;
-        $cryptedIDoc = Crypt::encrypt($djas->iddjas);
-
-        // Vérifier si la justification est présente
-        $justifieStatus = $djas->justifie == 1 ? '<input type="checkbox" class="form-check-input"  checked disabled>' : '<input type="checkbox" disabled>';
-
-        // Détails de chaque notification
-        $output .= '
-                  <tr>
-                      <td>' . $numooOrder . '</td>
-                      <td align="right"><a href="' . route('voirDja', $djas->iddjas) . '"><b>' . $djas->numero . '/' . $djas->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
-                      <td align="right"><b>' . number_format($totalDjaAmount, 0, ',', ' ') . '</b> </td>
-                      <td align="center"> ' . $justifieStatus . '</td>  <!-- Affichage de la case à cocher pour "justifie" -->
-                      <td>' . $djas->duree_avance . ' Jours</td>
-                      <td>' . date('d-m-Y', strtotime($djas->created_at)) . '</td>
-                      <td>' . date('d-m-Y', strtotime($djas->updated_at)) . '</td>
-                      <td>' . ucfirst($djas->user_nom) . ' ' . ucfirst($djas->user_prenom) . '</td>
-                  </tr>';
-        $numooOrder++;
-      }
-    } else {
-      $output = '<tr>
-              <td colspan="8" style="background-color: rgba(255, 0, 0, 0.1);">
-                              <center>
-                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
-                              </center>
-                          </td>
-          </tr>';
-    }
-
-    return $output;
-  }
-
-  public function notificationBpc()
-  {
-    $bpc_notification = DB::table('bonpetitcaisses')
-      ->join('projects', 'bonpetitcaisses.projetid', '=', 'projects.id')
-      ->join('users', 'bonpetitcaisses.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select(
-        'bonpetitcaisses.*',
-        'bonpetitcaisses.id as idbpc',
-        'personnels.prenom as user_prenom',
-        'projects.id AS projet_id',
-        'projects.title AS projet_title',
-        'projects.numeroprojet AS projet_numero',
-        'personnels.nom AS user_nom',
-        'personnels.prenom AS user_prenom',
-        'projects.annee AS projet_annee'
-      )
-      ->where(function ($query) {
-        $query->where('bonpetitcaisses.etabli_par', Auth::id())->where('bonpetitcaisses.etabli_par_signature', 0)
-          ->orWhere('bonpetitcaisses.verifie_par', Auth::id())->where('bonpetitcaisses.verifie_par_signature', 0)
-          ->orWhere('bonpetitcaisses.approuve_par', Auth::id())->where('bonpetitcaisses.approuve_par_signature', 0);
-      })
-      ->orderBy('projects.title') // Trier par projet pour regrouper les éléments similaires
-      ->orderBy('numero') // Trier les notifications dans un projet par numéro
-      ->get();
-
-    $output = '';
-    $lastProjectTitle = null;
-
-    if ($bpc_notification->isNotEmpty()) {
-      foreach ($bpc_notification as $feb) {
-        // Afficher le titre du projet uniquement si différent du précédent
-        if ($lastProjectTitle !== $feb->projet_title) {
-          $output .= '<tr style="background-color:#addfad">
-                                  <td colspan="8"><b>' . ucfirst($feb->projet_title) . '</b></td>
-                              </tr>';
-          $lastProjectTitle = $feb->projet_title;
-        }
-
-        // Détails de chaque notification
-
-        $cryptedIDoc = Crypt::encrypt($feb->idbpc);
-        $num = 1;
-        $output .= '
-                          <tr>
-                              <td>' . $num . '</td>
-                           
-                              <td align="right"><a href="' . route('viewbpc', $cryptedIDoc) . '"><b>' . $feb->numero . '/' . $feb->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
-                              <td align="right"><b>' . number_format($feb->total_montant, 0, ',', ' ') . '</b></td>
-                              <td>' . date('d-m-Y', strtotime($feb->date)) . '</td>
-                              <td>' . ucfirst($feb->titre) . '</td>
-                                <td>' . date('d-m-Y', strtotime($feb->updated_at)) . '</td>
-                              <td>' . ucfirst($feb->user_nom) . ' ' . ucfirst($feb->user_prenom) . '</td>
-                          </tr>';
-        $num++;
-      }
-    } else {
-      $output = '<tr>
-                          <td colspan="8" style="background-color: rgba(255, 0, 0, 0.1);">
-                              <center>
-                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
-                              </center>
-                          </td>
-                      </tr>';
-    }
-
-    return $output;
-  }
-
-  public function notificationfac()
-  {
-    $feb_notification = DB::table('febpetitcaisses')
-      ->join('projects', 'febpetitcaisses.projet_id', '=', 'projects.id')
-      ->join('comptes', 'febpetitcaisses.compte_id', '=', 'comptes.id')
-      ->join('users', 'febpetitcaisses.user_id', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select(
-        'febpetitcaisses.*',
-        'febpetitcaisses.id as idfac',
-        'personnels.prenom as user_prenom',
-        'comptes.numero as code',
-        'projects.id AS projet_id',
-        'projects.title AS projet_title',
-        'projects.numeroprojet AS projet_numero',
-        'personnels.nom AS user_nom',
-        'personnels.prenom AS user_prenom',
-        'projects.annee AS projet_annee'
-      )
-      ->where(function ($query) {
-        $query->where('febpetitcaisses.verifie_par', Auth::id())->where('febpetitcaisses.etabli_par_signature', 0)
-          ->orWhere('febpetitcaisses.etabli_par', Auth::id())->where('febpetitcaisses.verifie_par_signature', 0)
-          ->orWhere('febpetitcaisses.approuve_par', Auth::id())->where('febpetitcaisses.approuve_par_signature', 0);
-      })
-      ->orderBy('projects.title') // Ordonner par titre de projet
-      ->orderBy('febpetitcaisses.numero')
-      ->get();
-
-    $output = '';
-    $lastProjectTitle = null;
-    $numooOrder = 1;
-
-    // Si des notifications sont trouvées
-    if ($feb_notification->isNotEmpty()) {
-      // Regrouper les éléments par projet
-      $groupedByProject = $feb_notification->groupBy('projet_title');
-
-      foreach ($groupedByProject as $projectTitle => $febs) {
-        // Afficher le titre du projet
-        $output .= '<tr style="background-color:#addfad">
-                            <td colspan="8"><b>' . ucfirst($projectTitle) . '</b></td>
-                        </tr>';
-
-        // Afficher les notifications pour chaque projet
-        foreach ($febs as $feb) {
-          // Calculer le montant total des DAP pour chaque ligne
-
-
-          $cryptedIDoc = Crypt::encrypt($feb->idfac);
-
-          // Détails de chaque notification
-          $output .= '
-                                <tr>
-                                    <td>' . $numooOrder . '</td>
-                                    <td align="right"><a href="' . route('viewfebpc', $cryptedIDoc) . '"><b>' . $feb->numero . '/' . $feb->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
-                                    <td align="right"><b>' . number_format($feb->montant, 0, ',', ' ') . '</b> </td>
-                                    <td>' . date('d-m-Y', strtotime($feb->date_dossier)) . '</td>
-                                    <td>' . date('d-m-Y', strtotime($feb->date_limite)) . '</td>
-                                    <td>' . date('d-m-Y', strtotime($feb->created_at)) . '</td>
-                                    <td>' . ucfirst($feb->user_nom) . ' ' . ucfirst($feb->user_prenom) . '</td>
-                                </tr>';
-          $numooOrder++;
-        }
-      }
-    } else {
-      $output = '<tr>
-                       <td colspan="9" style="background-color: rgba(255, 0, 0, 0.1);">
-                              <center>
-                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
-                              </center>
-                          </td>
-                    </tr>';
-    }
-
-    return $output;
-  }
-
-  public function notificationdac()
-  {
-    $dap_notifications = DB::table('dapbpcs')
-      ->join('projects', 'dapbpcs.projetid', '=', 'projects.id')
-      ->join('users', 'dapbpcs.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select(
-        'dapbpcs.*',
-        'projects.id AS projet_id',
-        'projects.title AS projet_title',
-        'projects.numeroprojet AS projet_numero',
-        'personnels.nom AS user_nom',
-        'personnels.prenom AS user_prenom',
-        'projects.annee AS projet_annee',
-        'dapbpcs.id as idddaps'
-      )
-      ->where(function ($query) {
-        $query->where('dapbpcs.demande_etablie', Auth::id())->where('dapbpcs.demande_etablie_signe', 0)
-          ->orWhere('dapbpcs.verifier', Auth::id())->where('dapbpcs.verifier_signe', 0)
-          ->orWhere('dapbpcs.approuver', Auth::id())->where('dapbpcs.approuver_signe', 0)
-          ->orWhere('dapbpcs.autoriser', Auth::id())->where('dapbpcs.autoriser_signe', 0)
-          ->orWhere('dapbpcs.secretaire', Auth::id())->where('dapbpcs.chefprogramme_signe', 0)
-          ->orWhere('dapbpcs.chefprogramme', Auth::id())->where('dapbpcs.secretaire_signe', 0);
-      })
-      ->orderBy('projects.title') // Ordonner par titre de projet
-      ->orderBy('dapbpcs.numerodap')
-      ->get();
-
-    $output = '';
-    $lastProjectTitle = null;
-    $numooOrder = 1;
-
-    // Si des notifications sont trouvées
-    if ($dap_notifications->isNotEmpty()) {
-      // Regrouper les éléments par projet
-      $groupedByProject = $dap_notifications->groupBy('projet_title');
-
-      foreach ($groupedByProject as $projectTitle => $daps) {
-        // Afficher le titre du projet
-        $output .= '<tr style="background-color:#addfad">
-                              <td colspan="8"><b>' . ucfirst($projectTitle) . '</b></td>
-                          </tr>';
-
-        // Afficher les notifications pour chaque projet
-        foreach ($daps as $dap) {
-          // Calculer le montant total des DAP pour chaque ligne
-
-          $cryptedIDoc = Crypt::encrypt($dap->idddaps);
-
-          // Détails de chaque notification
-          $output .= '
-                                  <tr>
-                                      <td>' . $numooOrder . '</td>
-                                      <td align="right"><a href="' . route('viewdappc', $cryptedIDoc) . '"><b>' . $dap->numerodap . '/' . $dap->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
-                                    
-                                      <td>' . date('d-m-Y', strtotime($dap->demande_etablie)) . '</td>
-                                      <td>' . date('d-m-Y', strtotime($dap->created_at)) . '</td>
-                                      <td>' . date('d-m-Y', strtotime($dap->updated_at)) . '</td>
-                                      <td>' . ucfirst($dap->user_nom) . ' ' . ucfirst($dap->user_prenom) . '</td>
-                                  </tr>';
-          $numooOrder++;
-        }
-      }
-    } else {
-      $output = '<tr>
-                          <td colspan="9" style="background-color: rgba(255, 0, 0, 0.1);">
-                              <center>
-                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
-                              </center>
-                          </td>
-                      </tr>';
-    }
-
-    return $output;
-  }
-
-  public function notificationrac()
-  {
-    $rac_notifications = DB::table('rappotages')
-      ->join('projects', 'rappotages.projetid', '=', 'projects.id')
-      ->join('users', 'rappotages.userid', '=', 'users.id')
-      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
-      ->select(
-        'rappotages.*',
-        'projects.id AS projet_id',
-        'projects.title AS projet_title',
-        'projects.numeroprojet AS projet_numero',
-        'personnels.nom AS user_nom',
-        'personnels.prenom AS user_prenom',
-        'projects.annee AS projet_annee',
-        'rappotages.id as idrac'
-      )
-      ->where(function ($query) {
-        $query->where('rappotages.verifier_par', Auth::id())->where('rappotages.verifier_signature', 0)
-          ->orWhere('rappotages.approver_par', Auth::id())->where('rappotages.approver_signature', 0);
-      })
-      ->orderBy('projects.title') // Ordonner par titre de projet
-      ->orderBy('rappotages.numero_groupe')
-      ->get();
-
-    $output = '';
-    $lastProjectTitle = null;
-    $numooOrder = 1;
-
-    // Si des notifications sont trouvées
-    if ($rac_notifications->isNotEmpty()) {
-      // Regrouper les éléments par projet
-      $groupedByProject = $rac_notifications->groupBy('projet_title');
-
-      foreach ($groupedByProject as $projectTitle => $racs) {
-        // Afficher le titre du projet
-        $output .= '<tr style="background-color:#addfad">
-                              <td colspan="8"><b>' . ucfirst($projectTitle) . '</b></td>
-                          </tr>';
-
-        // Afficher les notifications pour chaque projet
-        foreach ($racs as $rac) {
-          // Calculer le montant total des DAP pour chaque ligne
-
-          $cryptedIDoc = Crypt::encrypt($rac->idrac);
-
-          // Détails de chaque notification
-          $output .= '
-          <tr>
-              <td>'.$numooOrder.'</td>
-              <td align="right"><a href="'.route('Rapport.cloture.caisse').'"><b>'.$rac->numero_groupe.' <i class="fas fa-external-link-alt"></i></b></a></td>
-              <td align="right">' . $rac->dernier_solde. '</td>
-              <td>' . (isset($rac->created_at) ? date('d-m-Y', strtotime($rac->created_at)) : '') . '</td>
-              <td>' . (isset($rac->updated_at) ? date('d-m-Y', strtotime($rac->updated_at)) : '') . '</td>
-              <td>' . ucfirst($rac->user_nom) . ' ' . ucfirst($rac->user_prenom) . '</td>
-          </tr>';
-          
-          $numooOrder++;
-        }
-      }
-    } else {
-      $output = '<tr>
-                          <td colspan="9" style="background-color: rgba(255, 0, 0, 0.1);">
-                              <center>
-                                  <h6 style="color:red"> <i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
-                              </center>
-                          </td>
-                      </tr>';
-    }
-
-    return $output;
-  }
-
-  private function getTotalDap($dapId)
-  {
-    $febIds = DB::table('elementdaps')
-      ->where('dapid', $dapId)
-      ->pluck('referencefeb');
-
-    return DB::table('elementfebs')
-      ->whereIn('febid', $febIds)
-      ->sum('montant');
-  }
-
-  public function Sommefeb()
-  {
-    $devise = session()->get('devise');
-    $budget = session()->get('budget');
-    $ID = session()->get('id');
-
-    $data = DB::table('elementfebs')
-
-      ->join('febs', 'elementfebs.febid', 'febs.id')
-      ->where('febs.acce_signe', 1)
-      ->where('febs.comptable_signe', 1)
-      ->where('febs.chef_signe', 1)
-
-      ->Where('projetids', $ID)
-      ->SUM('montant');
-
-    $output = '';
-
-    $pourcentage = round(($data * 100) / $budget, 2);
-    $sommefeb = number_format($data, 0, ',', ' ');
-
-    $output .= '
-          <td> &nbsp; Montant global de l\'expression des besoins</td>
-          <td class="align-right" > ' . $sommefeb . ' ' . $devise . ' </td>
-          <td > ' . $pourcentage . '%</td> 
-          <td> &nbsp;</td>
-      ';
-    echo $output;
-  }
-
   public function store(Request $request)
   {
+   
+  
+    $IDP = session()->get('id');
+
     $exerciceId = session()->get('exercice_id');
+
+   // dd($exerciceId);
+
     DB::beginTransaction();
 
     try {
@@ -835,6 +273,7 @@ class FebController extends Controller
       $somme_budget_ligne = DB::table('rallongebudgets')
         ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
         ->where('rallongebudgets.projetid', $IDP)
+        ->where('rallongebudgets.execiceid', $exerciceId)
         ->where('rallongebudgets.souscompte', $souscompte)
         ->sum('rallongebudgets.budgetactuel');
 
@@ -909,7 +348,7 @@ class FebController extends Controller
         $activity->acce = $request->acce;
         $activity->comptable = $request->comptable;
         $activity->chefcomposante = $request->chefcomposante;
-        $activity->exerciceids = $exerciceId;
+        $activity->execiceid = $exerciceId;
 
         if ($request->beneficiaire !== 'autres') {
           $activity->beneficiaire = $request->beneficiaire;
@@ -922,6 +361,8 @@ class FebController extends Controller
         $activity->save();
 
         $IDf = $activity->id;
+
+        $cryptedId = Crypt::encrypt($IDf);
 
         foreach ($request->numerodetail as $key => $items) {
           $somme_total = $request->pu[$key] * $request->qty[$key] * $request->frenquency[$key];
@@ -939,6 +380,7 @@ class FebController extends Controller
           $elementfeb->tperiode = $request->periode;
           $elementfeb->grandligne = $grandcompte;
           $elementfeb->eligne = $souscompte;
+          $elementfeb->exerciceids = $exerciceId;
           $elementfeb->userid = Auth()->user()->id;
           $elementfeb->save();
         }
@@ -958,6 +400,7 @@ class FebController extends Controller
 
         return response()->json([
           'status' => 200,
+          'redirect' => route('key.viewFeb', $cryptedId),
         ]);
       }
     } catch (\Exception $e) {
@@ -969,6 +412,775 @@ class FebController extends Controller
       ]);
     }
   }
+
+
+  public function storeUtilisation(Request $request)
+  {
+   
+  
+    $IDP = session()->get('id');
+
+    $exerciceId = session()->get('exercice_id');
+
+   // dd($exerciceId);
+
+    DB::beginTransaction();
+
+    try {
+
+
+      $IDP = session()->get('id');
+
+      $numerofeb = $request->numerofeb;
+      $check = Feb::where('numerofeb', $numerofeb)
+        ->where('projetid', $IDP)
+        ->where('febs.execiceid', $exerciceId)
+        ->first();
+
+      $comp = $request->referenceid;
+      $compp = explode("-", $comp);
+
+      $grandcompte = $compp[0];
+      $souscompte  = $compp[1];
+
+      $somme_budget_ligne = DB::table('rallongebudgets')
+        ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+        ->where('rallongebudgets.projetid', $IDP)
+        ->where('rallongebudgets.execiceid', $exerciceId)
+        ->where('rallongebudgets.souscompte', $souscompte)
+        ->sum('rallongebudgets.budgetactuel');
+
+
+      $somme_budget_grand_ligne = DB::table('rallongebudgets')
+        ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+        ->where('rallongebudgets.projetid', $IDP)
+        ->where('rallongebudgets.execiceid', $exerciceId)
+        ->where('rallongebudgets.compteid', $grandcompte)
+        ->sum('rallongebudgets.budgetactuel');
+
+      $somme_activite_ligne = DB::table('elementfebs')
+
+        ->join('febs', 'elementfebs.febid', 'febs.id')
+
+        ->where('febs.acce_signe', 1)
+        ->where('febs.comptable_signe', 1)
+        ->where('febs.chef_signe', 1)
+
+        ->where('projetids', $IDP)
+        ->where('elementfebs.exerciceids', $exerciceId)
+        ->where('eligne', $souscompte)
+        ->sum('montant');
+
+      $sum = 0;
+
+      foreach ($request->numerodetail as $key => $items) {
+        $element1 = $request->pu[$key];
+        $element2 = $request->qty[$key];
+        $element3 = $request->frenquency[$key];
+        $somme = $element1 * $element2 * $element3;
+        $sum += $somme;
+      }
+
+      $montant_somme = $sum + $somme_activite_ligne;
+
+      // Première vérification
+      if ($somme_budget_ligne < $montant_somme && !$request->has('confirm_ligne')) {
+        return response()->json([
+          'status' => 203,
+          'message' => "Le montant dépasse à la fois le budget de l'activité et celui du sous-ligne budgétaire disponible.",
+          'need_confirmation' => 'ligne'
+        ]);
+      }
+
+      // Deuxième vérification
+      if ($somme_budget_grand_ligne < $montant_somme) {
+        return response()->json([
+          'status' => 204,
+          'message' => 'Le montant dépasse le budget de la grande ligne budgétaire disponible (' . $somme_budget_grand_ligne . '€).',
+        ]);
+      }
+
+
+
+      if ($check) {
+        return response()->json([
+          'status' => 201
+        ]);
+      } else {
+
+
+        $activity = new Feb();
+        $activity->numerofeb = $request->numerofeb;
+        $activity->projetid = $request->projetid;
+        $activity->periode = $request->periode;
+        $activity->datefeb = $request->datefeb;
+        $activity->datelimite = $request->datelimite;
+        $activity->ligne_bugdetaire = $grandcompte;
+        $activity->sous_ligne_bugdetaire = $souscompte;
+        $activity->descriptionf = $request->descriptionf;
+        $activity->acce = $request->acce;
+        $activity->comptable = $request->comptable;
+        $activity->chefcomposante = $request->chefcomposante;
+        $activity->execiceid = $exerciceId;
+
+        if ($request->beneficiaire !== 'autres') {
+          $activity->beneficiaire = $request->beneficiaire;
+        } else {
+          $activity->autresBeneficiaire = $request->autresBeneficiaire;
+        }
+
+        $activity->total = $sum;
+        $activity->userid = Auth()->user()->id;
+        $activity->save();
+
+        $IDf = $activity->id;
+
+        $cryptedId = Crypt::encrypt($IDf);
+
+        foreach ($request->numerodetail as $key => $items) {
+          $somme_total = $request->pu[$key] * $request->qty[$key] * $request->frenquency[$key];
+          $elementfeb = new Elementfeb();
+          $elementfeb->febid = $IDf;
+          $elementfeb->numero = $request->numerofeb;
+          $elementfeb->libellee = $request->description[$key];
+          $elementfeb->libelle_description = $request->libelle_description[$key];
+          $elementfeb->unite = $request->unit_cost[$key];
+          $elementfeb->quantite = $request->qty[$key];
+          $elementfeb->frequence = $request->frenquency[$key];
+          $elementfeb->pu = $request->pu[$key];
+          $elementfeb->montant = $somme_total;
+          $elementfeb->projetids = $request->projetid;
+          $elementfeb->tperiode = $request->periode;
+          $elementfeb->grandligne = $grandcompte;
+          $elementfeb->eligne = $souscompte;
+          $elementfeb->exerciceids = $exerciceId;
+          $elementfeb->userid = Auth()->user()->id;
+          $elementfeb->save();
+        }
+
+        if ($request->has('annex')) {
+          foreach ($request->annex as $key => $annexid) {
+            $newAnnex = new attache_feb();
+            $newAnnex->febid = $IDf;
+            $newAnnex->annexid = $annexid;
+            $newAnnex->save(); // Enregistre chaque nouvelle instance
+          }
+        }
+
+
+
+        DB::commit();
+
+        return response()->json([
+          'status' => 200,
+          'redirect' => route('key.viewFeb', $cryptedId),
+        ]);
+      }
+    } catch (\Exception $e) {
+      DB::rollBack();
+
+      return response()->json([
+        'status' => 202,
+        'error' => $e->getMessage()
+      ]);
+    }
+  }
+
+  public function notificationFeb()
+  {
+    $feb_notification = DB::table('febs')
+      ->join('projects', 'febs.projetid', '=', 'projects.id')
+      ->join('exercice_projets','febs.execiceid', 'exercice_projets.id')
+      ->join('comptes', 'febs.sous_ligne_bugdetaire', '=', 'comptes.id')
+      ->join('users', 'febs.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select(
+        'febs.*',
+        'febs.id as idfeb',
+        'personnels.prenom as user_prenom',
+        'comptes.numero as code',
+        'projects.id AS projet_id',
+        'projects.title AS projet_title',
+        'projects.numeroprojet AS projet_numero',
+        'personnels.nom AS user_nom',
+        'personnels.prenom AS user_prenom',
+        'projects.annee AS projet_annee'
+      )
+      
+      ->where(function ($query) {
+        $query->where('febs.acce', Auth::id())->where('febs.acce_signe', 0)
+          ->orWhere('febs.comptable', Auth::id())->where('febs.comptable_signe', 0)
+          ->orWhere('febs.chefcomposante', Auth::id())->where('febs.chef_signe', 0);
+      })
+      ->where('exercice_projets.status', '=', 'Actif')
+      ->orderBy('projects.title') // Ordonner par titre de projet
+      ->orderBy('febs.numerofeb')
+      ->get();
+
+    $output = '';
+    $lastProjectTitle = null;
+    $numooOrder = 1;
+
+    // Si des notifications sont trouvées
+    if ($feb_notification->isNotEmpty()) {
+      // Regrouper les éléments par projet
+      $groupedByProject = $feb_notification->groupBy('projet_title');
+
+      foreach ($groupedByProject as $projectTitle => $febs) {
+        // Afficher le titre du projet
+        $output .= '<tr style="background-color:#addfad">
+                            <td colspan="8"><b>' . ucfirst($projectTitle) . '</b></td>
+                        </tr>';
+
+        // Afficher les notifications pour chaque projet
+        foreach ($febs as $feb) {
+          // Calculer le montant total des DAP pour chaque ligne
+          $sumMontant = DB::table('elementfebs')
+
+            ->join('febs', 'elementfebs.febid', 'febs.id')
+
+            //->where('febs.acce_signe', 1)
+            //->where('febs.comptable_signe', 1)
+            //->where('febs.chef_signe', 1)
+
+            ->where('febid', $feb->idfeb)
+            ->sum('montant');
+
+          $cryptedIDoc = Crypt::encrypt($feb->idfeb);
+
+          // Détails de chaque notification
+          $output .= '
+                                <tr>
+                                    <td>' . $numooOrder . '</td>
+                                    <td align="right"><a href="' . route('key.viewFeb', $cryptedIDoc) . '"><b>' . $feb->numerofeb . '/' . $feb->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
+                                    <td align="right"><b>' . number_format($sumMontant, 0, ',', ' ') . '</b> </td>
+                                    <td>' . date('d-m-Y', strtotime($feb->datefeb)) . '</td>
+                                    <td>' . date('d-m-Y', strtotime($feb->datelimite)) . '</td>
+                                    <td>' . date('d-m-Y', strtotime($feb->created_at)) . '</td>
+                                    <td>' . ucfirst($feb->user_nom) . ' ' . ucfirst($feb->user_prenom) . '</td>
+                                </tr>';
+          $numooOrder++;
+        }
+      }
+    } else {
+      $output = '<tr>
+                       <td colspan="9" style="background-color: rgba(255, 0, 0, 0.1);">
+                              <center>
+                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
+                              </center>
+                          </td>
+                    </tr>';
+    }
+
+    return $output;
+  }
+
+  public function notificationdap()
+  {
+    $dap_notifications = DB::table('daps')
+      ->join('projects', 'daps.projetiddap', '=', 'projects.id')
+      ->join('exercice_projets','daps.exerciceids', 'exercice_projets.id')
+      ->join('users', 'daps.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select(
+        'daps.*',
+        'projects.id AS projet_id',
+        'projects.title AS projet_title',
+        'projects.numeroprojet AS projet_numero',
+        'personnels.nom AS user_nom',
+        'personnels.prenom AS user_prenom',
+        'projects.annee AS projet_annee',
+        'daps.id as iddaps'
+      )
+      ->where(function ($query) {
+        $query->where('daps.demandeetablie', Auth::id())->where('daps.demandeetablie_signe', 0)
+          ->orWhere('daps.verifierpar', Auth::id())->where('daps.verifierpar_signe', 0)
+          ->orWhere('daps.approuverpar', Auth::id())->where('daps.approuverpar_signe', 0)
+          ->orWhere('daps.responsable', Auth::id())->where('daps.responsable_signe', 0)
+          ->orWhere('daps.secretaire', Auth::id())->where('daps.secretaure_general_signe', 0)
+          ->orWhere('daps.chefprogramme', Auth::id())->where('daps.chefprogramme_signe', 0);
+      })
+      ->where('exercice_projets.status', '=', 'Actif')
+      ->orderBy('projects.title') // Ordonner par titre de projet
+      ->orderBy('daps.numerodp')
+      ->get();
+
+    $output = '';
+    $lastProjectTitle = null;
+    $numooOrder = 1;
+
+    // Si des notifications sont trouvées
+    if ($dap_notifications->isNotEmpty()) {
+      // Regrouper les éléments par projet
+      $groupedByProject = $dap_notifications->groupBy('projet_title');
+
+      foreach ($groupedByProject as $projectTitle => $daps) {
+        // Afficher le titre du projet
+        $output .= '<tr style="background-color:#addfad">
+                              <td colspan="8"><b>' . ucfirst($projectTitle) . '</b></td>
+                          </tr>';
+
+        // Afficher les notifications pour chaque projet
+        foreach ($daps as $dap) {
+          // Calculer le montant total des DAP pour chaque ligne
+          $totalDapAmount = $this->getTotalDap($dap->iddaps);
+          $cryptedIDoc = Crypt::encrypt($dap->iddaps);
+
+          // Détails de chaque notification
+          $output .= '
+          <tr>
+              <td>' . $numooOrder . '</td>
+              <td align="right"><a href="' . route('viewdap', $cryptedIDoc) . '"><b>' . $dap->numerodp . '/' . $dap->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
+              <td align="right"><b>' . number_format($totalDapAmount, 0, ',', ' ') . '</b> </td>
+              <td>' . (strtotime($dap->dateautorisation) !== false && $dap->dateautorisation != '' ? date('d-m-Y', strtotime($dap->dateautorisation)) : '-') . '</td>
+              <td>' . (strtotime($dap->created_at) !== false && $dap->created_at != '' ? date('d-m-Y', strtotime($dap->created_at)) : '-') . '</td>
+              <td>' . (strtotime($dap->updated_at) !== false && $dap->updated_at != '' ? date('d-m-Y', strtotime($dap->updated_at)) : '-') . '</td>
+              <td>' . ucfirst($dap->user_nom) . ' ' . ucfirst($dap->user_prenom) . '</td>
+          </tr>';
+          $numooOrder++;
+        }
+      }
+    } else {
+      $output = '<tr>
+                          <td colspan="9" style="background-color: rgba(255, 0, 0, 0.1);">
+                              <center>
+                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
+                              </center>
+                          </td>
+                      </tr>';
+    }
+
+    return $output;
+  }
+
+  public function notificationDja()
+  {
+    $dja_notify = DB::table('djas')
+      ->join('projects', 'djas.projetiddja', '=', 'projects.id')
+      ->join('exercice_projets','djas.exerciceids', 'exercice_projets.id')
+      ->join('users', 'djas.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->join('daps', 'djas.dapid', '=', 'daps.id')
+      ->select(
+        'djas.*',
+        'djas.id as iddjas',
+        'djas.numerodjas as numero',
+        'projects.id AS projet_id',
+        'projects.title AS projet_title',
+        'projects.numeroprojet AS projet_numero',
+        'personnels.nom AS user_nom',
+        'personnels.prenom AS user_prenom',
+        'projects.annee AS projet_annee'
+      )
+      ->where(function ($query) {
+        $query->where('djas.fonds_demande_par', Auth::id())->where('djas.signe_fonds_demande_par', 0)
+          ->orWhere('djas.avance_approuver_par', Auth::id())->where('djas.signe_avance_approuver_par', 0)
+          ->orWhere('djas.avance_approuver_par_deux', Auth::id())->where('djas.signe_avance_approuver_par_deux', 0)
+          ->orWhere('djas.avance_approuver_par_trois', Auth::id())->where('djas.signe_avance_approuver_par_trois', 0)
+          ->orWhere('djas.fond_debourser_par', Auth::id())->where('djas.signe_fond_debourser_par', 0)
+          ->orWhere('djas.fond_recu_par', Auth::id())->where('djas.signe_fond_recu_par', 0)
+          ->orWhere('djas.pfond_paye', Auth::id())->where('djas.signature_pfond_paye', 0)
+          ->orWhere('djas.fonds_retournes_caisse_par', Auth::id())->where('djas.signe_reception_pieces_justificatives', 0);
+      })
+      ->where('exercice_projets.status', '=', 'Actif')
+      ->orderBy('projects.title')  // Trier par le titre du projet
+      ->orderBy('djas.numerodjas', 'asc')  // Puis trier par le numéro Dja
+      ->get();
+
+    $output = '';
+    $lastProjectTitle = null;
+    $numooOrder = 1;
+
+    if ($dja_notify->isNotEmpty()) {
+      foreach ($dja_notify as $djas) {
+        // Afficher le titre du projet uniquement s'il est différent du précédent
+        if ($lastProjectTitle !== $djas->projet_title) {
+          $output .= '<tr style="background-color:#addfad">
+                      <td colspan="8"><b>' . ucfirst($djas->projet_title) . '</b></td>
+                  </tr>';
+          $lastProjectTitle = $djas->projet_title;
+        }
+
+        // Calculer le montant total des Djas pour chaque ligne
+        $totalDjaAmount = $djas->montant_avance_un;
+        $cryptedIDoc = Crypt::encrypt($djas->iddjas);
+
+        // Vérifier si la justification est présente
+        $justifieStatus = $djas->justifie == 1 ? '<input type="checkbox" class="form-check-input"  checked disabled>' : '<input type="checkbox" disabled>';
+
+        // Détails de chaque notification
+        $output .= '
+                  <tr>
+                      <td>' . $numooOrder . '</td>
+                      <td align="right"><a href="' . route('voirDja', $djas->iddjas) . '"><b>' . $djas->numero . '/' . $djas->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
+                      <td align="right"><b>' . number_format($totalDjaAmount, 0, ',', ' ') . '</b> </td>
+                      <td align="center"> ' . $justifieStatus . '</td>  <!-- Affichage de la case à cocher pour "justifie" -->
+                      <td>' . $djas->duree_avance . ' Jours</td>
+                      <td>' . date('d-m-Y', strtotime($djas->created_at)) . '</td>
+                      <td>' . date('d-m-Y', strtotime($djas->updated_at)) . '</td>
+                      <td>' . ucfirst($djas->user_nom) . ' ' . ucfirst($djas->user_prenom) . '</td>
+                  </tr>';
+        $numooOrder++;
+      }
+    } else {
+      $output = '<tr>
+              <td colspan="8" style="background-color: rgba(255, 0, 0, 0.1);">
+                              <center>
+                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
+                              </center>
+                          </td>
+          </tr>';
+    }
+
+    return $output;
+  }
+
+  public function notificationBpc()
+  {
+    $bpc_notification = DB::table('bonpetitcaisses')
+      ->join('projects', 'bonpetitcaisses.projetid', '=', 'projects.id')
+      ->join('exercice_projets','bonpetitcaisses.exercice_id', 'exercice_projets.id')
+      ->join('users', 'bonpetitcaisses.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select(
+        'bonpetitcaisses.*',
+        'bonpetitcaisses.id as idbpc',
+        'personnels.prenom as user_prenom',
+        'projects.id AS projet_id',
+        'projects.title AS projet_title',
+        'projects.numeroprojet AS projet_numero',
+        'personnels.nom AS user_nom',
+        'personnels.prenom AS user_prenom',
+        'projects.annee AS projet_annee'
+      )
+      ->where(function ($query) {
+        $query->where('bonpetitcaisses.etabli_par', Auth::id())->where('bonpetitcaisses.etabli_par_signature', 0)
+          ->orWhere('bonpetitcaisses.verifie_par', Auth::id())->where('bonpetitcaisses.verifie_par_signature', 0)
+          ->orWhere('bonpetitcaisses.approuve_par', Auth::id())->where('bonpetitcaisses.approuve_par_signature', 0);
+      })
+      ->where('exercice_projets.status', '=', 'Actif')
+      ->orderBy('projects.title') // Trier par projet pour regrouper les éléments similaires
+      ->orderBy('numero') // Trier les notifications dans un projet par numéro
+      ->get();
+
+    $output = '';
+    $lastProjectTitle = null;
+
+    if ($bpc_notification->isNotEmpty()) {
+      foreach ($bpc_notification as $feb) {
+        // Afficher le titre du projet uniquement si différent du précédent
+        if ($lastProjectTitle !== $feb->projet_title) {
+          $output .= '<tr style="background-color:#addfad">
+                                  <td colspan="8"><b>' . ucfirst($feb->projet_title) . '</b></td>
+                              </tr>';
+          $lastProjectTitle = $feb->projet_title;
+        }
+
+        // Détails de chaque notification
+
+        $cryptedIDoc = Crypt::encrypt($feb->idbpc);
+        $num = 1;
+        $output .= '
+                          <tr>
+                              <td>' . $num . '</td>
+                           
+                              <td align="right"><a href="' . route('viewbpc', $cryptedIDoc) . '"><b>' . $feb->numero . '/' . $feb->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
+                              <td align="right"><b>' . number_format($feb->total_montant, 0, ',', ' ') . '</b></td>
+                              <td>' . date('d-m-Y', strtotime($feb->date)) . '</td>
+                              <td>' . ucfirst($feb->titre) . '</td>
+                                <td>' . date('d-m-Y', strtotime($feb->updated_at)) . '</td>
+                              <td>' . ucfirst($feb->user_nom) . ' ' . ucfirst($feb->user_prenom) . '</td>
+                          </tr>';
+        $num++;
+      }
+    } else {
+      $output = '<tr>
+                          <td colspan="8" style="background-color: rgba(255, 0, 0, 0.1);">
+                              <center>
+                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
+                              </center>
+                          </td>
+                      </tr>';
+    }
+
+    return $output;
+  }
+
+  public function notificationfac()
+  {
+    $feb_notification = DB::table('febpetitcaisses')
+      ->join('projects', 'febpetitcaisses.projet_id', '=', 'projects.id')
+      ->join('exercice_projets','febpetitcaisses.exercice_id', 'exercice_projets.id')
+      ->join('comptes', 'febpetitcaisses.compte_id', '=', 'comptes.id')
+      ->join('users', 'febpetitcaisses.user_id', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select(
+        'febpetitcaisses.*',
+        'febpetitcaisses.id as idfac',
+        'personnels.prenom as user_prenom',
+        'comptes.numero as code',
+        'projects.id AS projet_id',
+        'projects.title AS projet_title',
+        'projects.numeroprojet AS projet_numero',
+        'personnels.nom AS user_nom',
+        'personnels.prenom AS user_prenom',
+        'projects.annee AS projet_annee'
+      )
+      ->where(function ($query) {
+        $query->where('febpetitcaisses.verifie_par', Auth::id())->where('febpetitcaisses.etabli_par_signature', 0)
+          ->orWhere('febpetitcaisses.etabli_par', Auth::id())->where('febpetitcaisses.verifie_par_signature', 0)
+          ->orWhere('febpetitcaisses.approuve_par', Auth::id())->where('febpetitcaisses.approuve_par_signature', 0);
+      })
+      ->where('exercice_projets.status', '=', 'Actif')
+      ->orderBy('projects.title') // Ordonner par titre de projet
+      ->orderBy('febpetitcaisses.numero')
+      ->get();
+
+    $output = '';
+    $lastProjectTitle = null;
+    $numooOrder = 1;
+
+    // Si des notifications sont trouvées
+    if ($feb_notification->isNotEmpty()) {
+      // Regrouper les éléments par projet
+      $groupedByProject = $feb_notification->groupBy('projet_title');
+
+      foreach ($groupedByProject as $projectTitle => $febs) {
+        // Afficher le titre du projet
+        $output .= '<tr style="background-color:#addfad">
+                            <td colspan="8"><b>' . ucfirst($projectTitle) . '</b></td>
+                        </tr>';
+
+        // Afficher les notifications pour chaque projet
+        foreach ($febs as $feb) {
+          // Calculer le montant total des DAP pour chaque ligne
+
+
+          $cryptedIDoc = Crypt::encrypt($feb->idfac);
+
+          // Détails de chaque notification
+          $output .= '
+                                <tr>
+                                    <td>' . $numooOrder . '</td>
+                                    <td align="right"><a href="' . route('viewfebpc', $cryptedIDoc) . '"><b>' . $feb->numero . '/' . $feb->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
+                                    <td align="right"><b>' . number_format($feb->montant, 0, ',', ' ') . '</b> </td>
+                                    <td>' . date('d-m-Y', strtotime($feb->date_dossier)) . '</td>
+                                    <td>' . date('d-m-Y', strtotime($feb->date_limite)) . '</td>
+                                    <td>' . date('d-m-Y', strtotime($feb->created_at)) . '</td>
+                                    <td>' . ucfirst($feb->user_nom) . ' ' . ucfirst($feb->user_prenom) . '</td>
+                                </tr>';
+          $numooOrder++;
+        }
+      }
+    } else {
+      $output = '<tr>
+                       <td colspan="9" style="background-color: rgba(255, 0, 0, 0.1);">
+                              <center>
+                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
+                              </center>
+                          </td>
+                    </tr>';
+    }
+
+    return $output;
+  }
+
+  public function notificationdac()
+  {
+    $dap_notifications = DB::table('dapbpcs')
+      ->join('projects', 'dapbpcs.projetid', '=', 'projects.id')
+      ->join('exercice_projets','dapbpcs.exercice_id', 'exercice_projets.id')
+      ->join('users', 'dapbpcs.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select(
+        'dapbpcs.*',
+        'projects.id AS projet_id',
+        'projects.title AS projet_title',
+        'projects.numeroprojet AS projet_numero',
+        'personnels.nom AS user_nom',
+        'personnels.prenom AS user_prenom',
+        'projects.annee AS projet_annee',
+        'dapbpcs.id as idddaps'
+      )
+      ->where(function ($query) {
+        $query->where('dapbpcs.demande_etablie', Auth::id())->where('dapbpcs.demande_etablie_signe', 0)
+          ->orWhere('dapbpcs.verifier', Auth::id())->where('dapbpcs.verifier_signe', 0)
+          ->orWhere('dapbpcs.approuver', Auth::id())->where('dapbpcs.approuver_signe', 0)
+          ->orWhere('dapbpcs.autoriser', Auth::id())->where('dapbpcs.autoriser_signe', 0)
+          ->orWhere('dapbpcs.secretaire', Auth::id())->where('dapbpcs.chefprogramme_signe', 0)
+          ->orWhere('dapbpcs.chefprogramme', Auth::id())->where('dapbpcs.secretaire_signe', 0);
+      })
+      ->where('exercice_projets.status', '=', 'Actif')
+      ->orderBy('projects.title') // Ordonner par titre de projet
+      ->orderBy('dapbpcs.numerodap')
+      ->get();
+
+    $output = '';
+    $lastProjectTitle = null;
+    $numooOrder = 1;
+
+    // Si des notifications sont trouvées
+    if ($dap_notifications->isNotEmpty()) {
+      // Regrouper les éléments par projet
+      $groupedByProject = $dap_notifications->groupBy('projet_title');
+
+      foreach ($groupedByProject as $projectTitle => $daps) {
+        // Afficher le titre du projet
+        $output .= '<tr style="background-color:#addfad">
+                              <td colspan="8"><b>' . ucfirst($projectTitle) . '</b></td>
+                          </tr>';
+
+        // Afficher les notifications pour chaque projet
+        foreach ($daps as $dap) {
+          // Calculer le montant total des DAP pour chaque ligne
+
+          $cryptedIDoc = Crypt::encrypt($dap->idddaps);
+
+          // Détails de chaque notification
+          $output .= '
+                                  <tr>
+                                      <td>' . $numooOrder . '</td>
+                                      <td align="right"><a href="' . route('viewdappc', $cryptedIDoc) . '"><b>' . $dap->numerodap . '/' . $dap->projet_annee . ' <i class="fas fa-external-link-alt"></i></b></a></td>
+                                    
+                                      <td>' . date('d-m-Y', strtotime($dap->demande_etablie)) . '</td>
+                                      <td>' . date('d-m-Y', strtotime($dap->created_at)) . '</td>
+                                      <td>' . date('d-m-Y', strtotime($dap->updated_at)) . '</td>
+                                      <td>' . ucfirst($dap->user_nom) . ' ' . ucfirst($dap->user_prenom) . '</td>
+                                  </tr>';
+          $numooOrder++;
+        }
+      }
+    } else {
+      $output = '<tr>
+                          <td colspan="9" style="background-color: rgba(255, 0, 0, 0.1);">
+                              <center>
+                                  <h6 style="color:red"><i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
+                              </center>
+                          </td>
+                      </tr>';
+    }
+
+    return $output;
+  }
+
+  public function notificationrac()
+  {
+    $rac_notifications = DB::table('rappotages')
+      ->join('projects', 'rappotages.projetid', '=', 'projects.id')
+      ->join('exercice_projets','rappotages.exercice_id', 'exercice_projets.id')
+      ->join('users', 'rappotages.userid', '=', 'users.id')
+      ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+      ->select(
+        'rappotages.*',
+        'projects.id AS projet_id',
+        'projects.title AS projet_title',
+        'projects.numeroprojet AS projet_numero',
+        'personnels.nom AS user_nom',
+        'personnels.prenom AS user_prenom',
+        'projects.annee AS projet_annee',
+        'rappotages.id as idrac'
+      )
+      ->where(function ($query) {
+        $query->where('rappotages.verifier_par', Auth::id())->where('rappotages.verifier_signature', 0)
+          ->orWhere('rappotages.approver_par', Auth::id())->where('rappotages.approver_signature', 0);
+      })
+      ->where('exercice_projets.status', '=', 'Actif')
+      ->orderBy('projects.title') // Ordonner par titre de projet
+      ->orderBy('rappotages.numero_groupe')
+      ->get();
+
+    $output = '';
+    $lastProjectTitle = null;
+    $numooOrder = 1;
+
+    // Si des notifications sont trouvées
+    if ($rac_notifications->isNotEmpty()) {
+      // Regrouper les éléments par projet
+      $groupedByProject = $rac_notifications->groupBy('projet_title');
+
+      foreach ($groupedByProject as $projectTitle => $racs) {
+        // Afficher le titre du projet
+        $output .= '<tr style="background-color:#addfad">
+                              <td colspan="8"><b>' . ucfirst($projectTitle) . '</b></td>
+                          </tr>';
+
+        // Afficher les notifications pour chaque projet
+        foreach ($racs as $rac) {
+          // Calculer le montant total des DAP pour chaque ligne
+
+          $cryptedIDoc = Crypt::encrypt($rac->idrac);
+
+          // Détails de chaque notification
+          $output .= '
+          <tr>
+              <td>'.$numooOrder.'</td>
+              <td align="right"><a href="'.route('Rapport.cloture.caisse').'"><b>'.$rac->numero_groupe.' <i class="fas fa-external-link-alt"></i></b></a></td>
+              <td align="right">' . $rac->dernier_solde. '</td>
+              <td>' . (isset($rac->created_at) ? date('d-m-Y', strtotime($rac->created_at)) : '') . '</td>
+              <td>' . (isset($rac->updated_at) ? date('d-m-Y', strtotime($rac->updated_at)) : '') . '</td>
+              <td>' . ucfirst($rac->user_nom) . ' ' . ucfirst($rac->user_prenom) . '</td>
+          </tr>';
+          
+          $numooOrder++;
+        }
+      }
+    } else {
+      $output = '<tr>
+                          <td colspan="9" style="background-color: rgba(255, 0, 0, 0.1);">
+                              <center>
+                                  <h6 style="color:red"> <i class="fa fa-info-circle"></i> Aucun document trouvé</h6>
+                              </center>
+                          </td>
+                      </tr>';
+    }
+
+    return $output;
+  }
+
+  private function getTotalDap($dapId)
+  {
+    $febIds = DB::table('elementdaps')
+      ->where('dapid', $dapId)
+      ->pluck('referencefeb');
+
+    return DB::table('elementfebs')
+      ->whereIn('febid', $febIds)
+      ->sum('montant');
+  }
+
+  public function Sommefeb()
+  {
+    $devise = session()->get('devise');
+    $budget = session()->get('budget');
+    $ID = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
+
+
+    $data = DB::table('elementfebs')
+
+      ->join('febs', 'elementfebs.febid', 'febs.id')
+      ->where('febs.acce_signe', 1)
+      ->where('febs.comptable_signe', 1)
+      ->where('febs.chef_signe', 1)
+      ->Where('projetids', $ID)
+      ->where('elementfebs.exerciceids', $exerciceId)
+      ->SUM('montant');
+
+    $output = '';
+
+    $pourcentage = round(($data * 100) / $budget, 2);
+    $sommefeb = number_format($data, 0, ',', ' ');
+
+    $output .= '
+          <td> &nbsp; Montant global de l\'expression des besoins</td>
+          <td class="align-right" > ' . $sommefeb . ' ' . $devise . ' </td>
+          <td > ' . $pourcentage . '%</td> 
+          <td> &nbsp;</td>
+      ';
+    echo $output;
+  }
+
+ 
 
   public function Updatestore(Request $request)
   {
@@ -1224,7 +1436,7 @@ class FebController extends Controller
       }
       $output .= '</select>';
     } else {
-      $output .= 'Aucune element trouver ';
+      $output .= '<font color="red"><i class="fa fa-times-circle"></i> Aucune  activités trouver sur cette ligne budgétaire  </font> ';
     }
 
     echo $output;
@@ -1236,6 +1448,8 @@ class FebController extends Controller
     $devise = session()->get('devise');
     $budget = session()->get('budget');
     $IDP = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
+    
 
     // Initialisez une variable pour stocker les sorties de tableau
 
@@ -1275,6 +1489,7 @@ class FebController extends Controller
           $sommefeb = DB::table('elementfebs')
             ->Where('febid', $datas->id)
             ->Where('projetids', $IDP)
+            ->where('exerciceids', $exerciceId)
             ->SUM('montant');
 
           $pourcentage = round(($sommefeb * 100) / $budget, 2);
@@ -1408,12 +1623,12 @@ class FebController extends Controller
   public function list()
   {
     // Récupérer l'ID de la session
-    $ID = session()->get('id');
-
-    // Vérifier si l'ID de la session n'est pas défini
-    if (!$ID) {
-      // Rediriger vers la route nommée 'dashboard'
-      return redirect()->route('dashboard');
+    $projectId = session()->get('id');
+    $exerciceId = session()->get('exercice_id');
+    // Vérifie si l'ID de projet existe dans la session
+    if (!$projectId && !$exerciceId) {
+      // Gérer le cas où l'ID du projet et exercice est invalide
+      return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
     }
 
     // Si l'ID de la session est défini, continuer avec le reste de la fonction
@@ -1434,6 +1649,8 @@ class FebController extends Controller
     $key = Crypt::decrypt($key);
     $check = Feb::findOrFail($key);
 
+    
+
     $idl = $check->sous_ligne_bugdetaire;
     $id_gl = $check->ligne_bugdetaire;
     $idfeb = $check->id;
@@ -1442,11 +1659,23 @@ class FebController extends Controller
     $datElement = Elementfeb::where('febid', $idfeb)->get();
 
     $IDB = $check->projetid;
-    $chec = Project::findOrFail($IDB);
-    $budget = $chec->budget;
+    $exerciceId = $check->execiceid;
+
+    $chec = DB::table('projects')
+    ->join('exercice_projets', 'projects.id', '=', 'exercice_projets.project_id')
+    ->where('projects.id', $IDB)
+    ->where('exercice_projets.id', $exerciceId)
+    ->select(
+        'projects.*',
+        'exercice_projets.budget as budgets',
+    )
+    ->first();
+    $budget = $chec->budgets;
 
     $somme_ligne_principale = DB::table('rallongebudgets')
       ->where('compteid', $id_gl)
+      ->where('projetid', $IDB)
+      ->where('execiceid', $exerciceId)
       ->sum('budgetactuel');
 
     $onebeneficaire = Beneficaire::find($check->beneficiaire);
@@ -1461,12 +1690,14 @@ class FebController extends Controller
       ->where('febs.chef_signe', 1)
 
       ->where('projetids', $IDB)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->sum('montant');
 
     // recuperation la somme de
     $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
       ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
       ->where('elementboncaisses.projetid', $IDB)
+      ->where('elementboncaisses.exerciceid', $exerciceId)
       ->where('bonpetitcaisses.approuve_par_signature', 1)
       ->sum('elementboncaisses.montant');
 
@@ -1483,6 +1714,7 @@ class FebController extends Controller
       ->where('grandligne', $id_gl)
       ->where('numero', '<=', $numero_classe_feb)
       ->where('projetids', $IDB)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->sum('montant');
 
     $sommelignpourcentage = $somme_ligne_principale ? round(($sommelign * 100) / $somme_ligne_principale, 2) : 0;
@@ -1490,6 +1722,7 @@ class FebController extends Controller
     $sommefeb = DB::table('elementfebs')
       ->where('febid', $idfeb)
       ->where('projetids', $IDB)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->sum('montant');
 
     $SOMMES_DEJA_UTILISE = $sommeallfeb + $SOMME_PETITE_CAISSE;
@@ -1577,12 +1810,9 @@ class FebController extends Controller
   {
     $title = 'FEB';
 
-    if (!session()->has('id')) {
-      return redirect()->route('dashboard');
-    }
-
+  
     $budget = session()->get('budget');
-    $IDB = session()->get('id');
+ 
     $idf = Crypt::decrypt($idf);
 
     $dataJosonfeb = DB::table('febs')
@@ -1591,16 +1821,19 @@ class FebController extends Controller
       ->where('febs.id', $idf)
       ->first();
 
+      $IDB = $dataJosonfeb->projetid;
+      $exerciceId = $dataJosonfeb->execiceid;
+
     if (!$dataJosonfeb) {
       return redirect()->route('dashboard')->with('error', 'Pas de FEB disponible');
     }
 
     $idl = $dataJosonfeb->sous_ligne_bugdetaire;
     $idfeb = $dataJosonfeb->id;
-    $ID = session()->get('id');
+
 
     $compte = DB::table('comptes')
-      ->where('comptes.projetid', $ID)
+      ->where('comptes.projetid', $IDB)
       ->where('compteid', '=', 0)
       ->get();
 
@@ -1616,22 +1849,28 @@ class FebController extends Controller
     // Calcul des sommes et pourcentages
     $sommelign = DB::table('elementfebs')
       ->where('eligne', $idl)
+      ->where('projetids', $IDB)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->sum('montant');
     $sommelignpourcentage = $budget ? round(($sommelign * 100) / $budget) : 0;
 
     $sommefeb = DB::table('elementfebs')
       ->where('febid', $idfeb)
+      ->where('projetids', $IDB)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->sum('montant');
 
     $datafebs = DB::table('elementfebs')
       ->orderBy('id', 'DESC')
-      ->where('projetids', $ID)
+      ->where('projetids', $IDB)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->sum('montant');
 
 
     $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
       ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
       ->where('elementboncaisses.projetid', $IDB)
+      ->where('elementboncaisses.exerciceid', $exerciceId)
       ->where('bonpetitcaisses.approuve_par_signature', 1)
       ->sum('elementboncaisses.montant');
 
@@ -1751,23 +1990,38 @@ class FebController extends Controller
     $numero_classe_feb =  $check->numerofeb;
 
     $datElement = Elementfeb::where('febid', $idfeb)->get();
+   
     $IDB = $check->projetid;
-    $chec = Project::findOrFail($IDB);
-    $budget = $chec->budget;
+    $exerciceId = $check->execiceid;
+
+    $chec = DB::table('projects')
+    ->join('exercice_projets', 'projects.id', '=', 'exercice_projets.project_id')
+    ->where('projects.id', $IDB)
+    ->where('exercice_projets.id', $exerciceId)
+    ->select(
+        'projects.*',
+        'exercice_projets.budget as budgets',
+    )
+    ->first();
+    $budget = $chec->budgets;
 
     $somme_ligne_principale = DB::table('rallongebudgets')
       ->where('compteid', $id_gl)
+      ->where('rallongebudgets.projetid', $IDB)
+      ->where('rallongebudgets.execiceid', $exerciceId)
       ->sum('budgetactuel');
 
 
     $sommeallfeb = DB::table('elementfebs')
       ->where('numero', '<=', $numero_classe_feb)
       ->where('projetids', $IDB)
+      ->where('exerciceids', $exerciceId)
       ->sum('montant');
 
     $SOMME_PETITE_CAISSE = DB::table('elementboncaisses')
       ->join('bonpetitcaisses', 'elementboncaisses.boncaisse_id', 'bonpetitcaisses.id')
       ->where('elementboncaisses.projetid', $IDB)
+      ->where('elementboncaisses.exerciceid', $exerciceId)
       ->where('bonpetitcaisses.approuve_par_signature', 1)
       ->sum('elementboncaisses.montant');
 
@@ -1780,6 +2034,7 @@ class FebController extends Controller
       ->where('grandligne', $id_gl)
       ->where('numero', '<=', $numero_classe_feb)
       ->where('projetids', $IDB)
+      ->where('elementfebs.exerciceids', $exerciceId)
       ->sum('montant');
 
     $sommelignpourcentage = $somme_ligne_principale ? round(($sommelign * 100) / $somme_ligne_principale, 2) : 0;
@@ -1826,6 +2081,7 @@ class FebController extends Controller
     $sommerepartie = DB::table('rallongebudgets')
       ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
       ->where('rallongebudgets.projetid', $IDB)
+      ->where('rallongebudgets.execiceid', $exerciceId)
       ->sum('budgetactuel');
 
     // Etablie par
@@ -2134,6 +2390,8 @@ class FebController extends Controller
 
     return response()->json(['exists' => $feb]);
   }
+
+   
 
   public function updatannex(Request $request)
   {

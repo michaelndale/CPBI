@@ -16,11 +16,16 @@ class ComptepetitecaisseController extends Controller
     public function index()
     {
         // Vérifie si l'ID de projet existe dans la session
-        if (!session()->has('id')) {
-            // Redirige vers le tableau de bord si l'ID de projet n'existe pas dans la session
-            return redirect()->route('dashboard')->with('error', 'ID de projet non trouvé dans la session.');
+        $projectId = session()->get('id');
+        $exerciceId = session()->get('exercice_id');
+        // Vérifie si l'ID de projet existe dans la session
+        if (!$projectId && !$exerciceId) {
+        // Gérer le cas où l'ID du projet et exercice est invalide
+            return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
         }
+
         $title = 'Compte ';
+        
         $projet = Project::all();
         // Retourne la vue avec les données nécessaires
         return view('bonpetitecaisse.compte.compte', [
@@ -32,7 +37,10 @@ class ComptepetitecaisseController extends Controller
     public function fetchAll()
     {
         $ID = session()->get('id');
+        $exerciceId = session()->get('exercice_id');
+
         $services = Comptepetitecaisse::where('projetid', $ID)
+            ->where('exercice_id', $exerciceId)
             ->join('users', 'comptepetitecaisses.userid', '=', 'users.id')
             ->join('personnels', 'users.personnelid', '=', 'personnels.id')
             ->select('comptepetitecaisses.*', 'personnels.prenom as personnel_prenom')
@@ -58,11 +66,11 @@ class ComptepetitecaisseController extends Controller
                   </td>
                
                   <td> ' . ucfirst($rs->code) . '</td>
-                  <td>' . ucfirst($rs->libelle) . '</td>
+                  <td> ' . ucfirst($rs->libelle) . '</td>
                   <td align="right">  ' . number_format($rs->solde, 0, ',', ' ') . ' </td>
-                  <td>' . ucfirst($rs->personnel_prenom) . '</td>
-                  <td>' . date('d-m-Y, H:i', strtotime($rs->created_at)) . '</td>
-                  <td>' . date('d-m-Y, H:i ', strtotime($rs->updated_at)) . '</td>
+                  <td> ' . ucfirst($rs->personnel_prenom) . '</td>
+                  <td> ' . date('d-m-Y, H:i', strtotime($rs->created_at)) . '</td>
+                  <td> ' . date('d-m-Y, H:i ', strtotime($rs->updated_at)) . '</td>
                  
               </tr>';
 
@@ -96,10 +104,12 @@ class ComptepetitecaisseController extends Controller
         $id = $request->input('id');
         $dateDebut = $request->input('dateDebut');
         $dateFin = $request->input('dateFin');
+        $exerciceId = session()->get('exercice_id');
 
         // Récupération de l'historique du compte de petite caisse
         $historique = Comptepetitecaisse::where('projetid', $projetID)
             ->where('comptepetitecaisses.id', $id)
+            ->where('exercice_id', $exerciceId)
             ->join('users', 'comptepetitecaisses.userid', '=', 'users.id')
             ->join('personnels', 'users.personnelid', '=', 'personnels.id')
             ->select('comptepetitecaisses.*', 'comptepetitecaisses.id as compid' ,'personnels.prenom as personnel_prenom')
@@ -108,6 +118,7 @@ class ComptepetitecaisseController extends Controller
         // Initialisation de la requête pour les transactions de caisse
         $historiqueCompteQuery = Caisse::where('projetid', $projetID)
             ->where('caisses.compteid', $id)
+            ->where('exercice_id', $exerciceId)
             ->where('caisses.statut', 0)
             ->join('users', 'caisses.userid', '=', 'users.id')
             ->join('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -139,6 +150,7 @@ class ComptepetitecaisseController extends Controller
     public function printHistoriqueCaisse($id)
     {
         $projetID = session()->get('id');
+        $exerciceId = session()->get('exercice_id');
 
         // Vérifiez que les valeurs de $projetID et $id sont bien définies
         if (!$projetID || !$id) {
@@ -148,6 +160,7 @@ class ComptepetitecaisseController extends Controller
         // Récupérer les informations du rapport de caisse
         $historique = Comptepetitecaisse::where('projetid', $projetID)
             ->where('comptepetitecaisses.id', $id)
+            ->where('exercice_id', $exerciceId)
             ->join('users', 'comptepetitecaisses.userid', '=', 'users.id')
             ->join('personnels', 'users.personnelid', '=', 'personnels.id')
             ->select('comptepetitecaisses.*', 'personnels.prenom as personnel_prenom')
@@ -159,6 +172,7 @@ class ComptepetitecaisseController extends Controller
 
         // Récupérer les transactions liées au rapport de caisse
         $historiqueCompte = Caisse::where('projetid', $projetID)
+             ->where('exercice_id', $exerciceId)
             ->where('caisses.compteid', $id)
             ->join('users', 'caisses.userid', '=', 'users.id')
             ->join('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -173,12 +187,16 @@ class ComptepetitecaisseController extends Controller
     public function store(Request $request)
     {
         try {
+
             $ID = session()->get('id');
+            $exerciceId = session()->get('exercice_id');
+
             $title = $request->libelle;
             $code = $request->code;
             $check = Comptepetitecaisse::where('libelle', $title)
                 ->where('code', $code)
                 ->where('projetid', $ID)
+                ->where('exercice_id', $exerciceId)
                 ->first();
                 
             if ($check) {
@@ -188,6 +206,7 @@ class ComptepetitecaisseController extends Controller
             } else {
                 $gc = new Comptepetitecaisse();
 
+                $gc->exercice_id = $exerciceId;
                 $gc->projetid = $request->projetid;
                 $gc->code = $request->code;
                 $gc->libelle = $request->libelle;
@@ -285,4 +304,5 @@ class ComptepetitecaisseController extends Controller
             ]);
         }
     }
+    
 }

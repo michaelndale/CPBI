@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-xl-10" style="margin:auto">
                     <div class="card">
-                      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between">
+                      <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">
                                 <h4 class="mb-sm-0"><i class="fa fa-folder"></i> Annex terme de reference</h4>
                                 <div class="page-title-right">
                                         <a href="javascript::;" type="button"  class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" data-bs-toggle="modal" data-bs-target="#addModal"  aria-haspopup="true" aria-expanded="false">

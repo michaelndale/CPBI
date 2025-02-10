@@ -22,7 +22,12 @@
                                         <span class="sr-only">Loading...</span>
                                     </div> &nbsp; &nbsp;
                                 @endif
-                                <button type="button" class="btn btn-danger waves-effect waves-light"
+
+                                <a href="{{ route('nouveau.feb') }}" class="btn btn-outline-primary rounded-pill ">
+                                    <span class="fa fa-plus-circle"></span> Créer
+                                </a>
+
+                                <button type="button" class="btn btn-outline-danger rounded-pill "
                                     data-bs-toggle="modal" data-bs-target="#composemodal"
                                     data-febid="{{ $dataFeb->id ? $dataFeb->id : '' }}"
                                     title="Signaler un FEB en cas de probleme">
@@ -205,9 +210,13 @@
                                             <tbody>
                                                 @php
                                                     $n = 1;
+                                                    $toto = 0;
                                                 @endphp
 
                                                 @foreach ($datElement as $datElements)
+                                                @php
+                                                $toto += $datElements->montant;
+                                                @endphp
                                                     <tr>
                                                         <td style="width:3%">{{ $n }} </td>
                                                         <td style="width:25%">
@@ -251,7 +260,7 @@
                                                             Total général</font>
                                                         </b></td>
                                                     <td align="right"><b>
-                                                            {{ number_format($sommefeb, 0, ',', ' ') }} </font>
+                                                        {{ number_format($toto,0, ',', ' ') }}  </font>
                                                         </b></h5>
                                                     </td>
 

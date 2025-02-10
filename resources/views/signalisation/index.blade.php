@@ -9,17 +9,21 @@
     $feb_liste = DB::table('febs')
     ->orderBy('id', 'DESC')
     ->join('projects', 'febs.projetid', '=', 'projects.id')
+    ->join('exercice_projets','febs.execiceid', 'exercice_projets.id')
     ->join('affectations', 'febs.projetid', '=', 'affectations.projectid')
     ->join('users', 'febs.userid', '=', 'users.id')
     ->join('personnels', 'users.personnelid', '=', 'personnels.id')
     ->select('febs.*',  'personnels.prenom as user_prenom',  'personnels.nom as user_nom', 'users.avatar as user_avatar' , 'users.is_connected' , 'projects.title as project_title')
     ->where('febs.signale', '=', 1)
+    ->where('exercice_projets.status', '=', 'Actif')
     ->distinct() // Ajoute distinct pour éviter la duplication
     ->get('febs.id'); // Compter uniquement les enregistrements uniques de 'febs'
 
     $dap_liste = DB::table('daps')
     ->join('projects', 'daps.projetiddap', '=', 'projects.id')
     ->join('affectations', 'daps.projetiddap', '=', 'affectations.projectid')
+    ->join('exercice_projets','daps.exerciceids', 'exercice_projets.id')
+    ->where('exercice_projets.status', '=', 'Actif')
     ->where('daps.signaledap', '=', 1)
     ->distinct() // Ajoute distinct pour éviter la duplication
     ->count('daps.id'); // Compter uniquement les enregistrements uniques de 'DAPs'

@@ -4,19 +4,18 @@
         <div class="page-content">
             <div class="card shadow-none border border-300 mb-3" data-component-card="data-component-card"
                 style=" margin:auto">
-                <div class="card-header p-4 border-bottom border-300 bg-soft">
-                    <div class="row g-3 justify-content-between align-items-end">
-                        <div class="col-12 col-md">
-                            <h4 class="card-title mb-0"> <i class="fa fa-list"></i> Rapport des rapprochements</h4>
-                        </div>
-                        <div class="col col-md-auto">
+               
 
-                            <a href="javascript::;" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal"
-                                aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i
-                                    class="fa fa-search"></i> Ajouter la recherche</a>
-                        </div>
+                <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between" style="padding: 0.40rem 1rem;">                 
+                    <h4 class="mb-sm-0"><i class="fa fa-list"></i> Rapport des rapprochements</h4>
+                        <div class="page-title-right">
+                          <a href="#" id="fetchDataLink" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm"> <i class="fas fa-sync-alt"></i> </a>
+                          <a href="javascript::;" class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"chauffeur="button" data-bs-toggle="modal" data-bs-target="#addDealModal"
+                          aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"> <i class="fa fa-plus-circle"></i> Ajouter </a>
                     </div>
                 </div>
+
+
                 <div class="card-body p-0">
 
                     <div id="tableExample2">

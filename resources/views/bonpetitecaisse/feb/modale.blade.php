@@ -11,7 +11,7 @@
 </div>
 
 <div class="modal fade" id="addfebModal" tabindex="-1" aria-labelledby="addfebModal" aria-hidden="true">
-    <div class="modal-dialog modal-xl  modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl modal-dialog-centered  modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title"><i class="far fa-file-alt "></i> BON PETITE CAISSE > FICHE D’EXPRESSION DES BESOINS "FEB" </h5>
@@ -27,14 +27,18 @@
                                 <tbody class="list">
                                     <tr>
                                         <td class="align-middle ps-3 name" style="width:20%">Composante/ Projet/Section</td>
-                                        <td class="align-middle email" colspan="3">
+                                        <td class="align-middle email" colspan="4">
                                             <input value="{{ Session::get('id') }} " type="hidden" name="projetid" id="projetid">
                                             <input value="{{ Session::get('title') }} " class="form-control form-control-sm" disabled>
                                         </td>
                                     </tr>
+                                   
+
                                     <tr>
-                                        <td class="align-middle ps-3 name">Compte petite caisse: <span class="text-danger">*</span></td>
+
+                                      
                                         <td class="align-middle email">
+                                            Compte petite caisse:  <span class="text-danger">*</span>  <br>
                                             <select class="form-control  form-control-sm" id="compteid" name="compteid" required>
                                                 <option disabled="true" selected="true" value="">--Sélectionner Compte--</option>
                                                 @forelse ($compte as $comptes)
@@ -50,21 +54,13 @@
                                                
 
                                             </select>
+                                            <br>
 
                                         </td>
-
-                                        <td class="align-middle ps-3 name">Description de la demande<span class="text-danger">*</span></td>
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm" name="description" id="description" required>
-                                        </td>
-                                    </tr>
-
-
-                                    <tr>
 
                                         <td class="align-middle ps-3 name">
                                             Numéro du fiche FEB<span class="text-danger">*</span> <br>
-                                            <input type="number" name="numerofeb" id="numerofeb" class="form-control form-control-sm" style="width: 100% ;">
+                                            <input type="number" name="numerofeb" id="numerofeb" value="{{ $newNumero }}" class="form-control form-control-sm" style="width: 100% ;">
                                             <smal id="numerofeb_error" name="numerofeb_error" class="text text-danger"> </smal>
                                             <smal id="numerofeb_info" class="text text-primary"> </smal>
                                         </td>
@@ -72,17 +68,29 @@
                                         <td class="align-middle ps-3 name">
                                             Montant demande FEB<span class="text-danger">*</span> <br>
                                             <input type="number" name="montantfeb" id="montantfeb" class="form-control form-control-sm" style="width: 100% ;">
-
+                                            <br>
                                         </td>
 
                                         <td class="align-middle ps-3 name"> Date du dossier FEB:<span class="text-danger">*</span><br>
                                             <input type="date" class="form-control form-control-sm" name="datefeb" id="datefeb" style="width: 100%" required>
+                                            <br>
                                         </td>
                                         <td class="align-middle ps-3 name"> Date limite:<span class="text-danger">*</span><br>
                                             <input type="date" class="form-control form-control-sm" name="datelimite" id="datelimite" style="width: 100%">
+                                            <br>
                                         </td>
 
                                     </tr>
+
+                                    <tr>
+                                       
+
+                                        <td class="align-middle ps-3 name" >Description de la demande<span class="text-danger">*</span></td>
+                                        <td colspan="4">
+                                            <input type="text" class="form-control form-control-sm" name="description" id="description" required>
+                                        </td>
+                                    </tr>
+
 
                                 </tbody>
                             </table>

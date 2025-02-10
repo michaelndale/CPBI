@@ -11,13 +11,11 @@ class ClasseurController extends Controller
     public function index()
     {
         $title = 'Classeur';
-        $active = 'Archivage';
         $classeur = Classeur::all();
         return view(
             'classeur.index',
             [
                 'title' => $title,
-                'active' => $active,
                 'classeur' => $classeur
             ]
         );

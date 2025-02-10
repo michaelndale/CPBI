@@ -11,9 +11,12 @@
         <div class="col-xl-8" style="margin:auto">
           <div class="card">
 
+           
             @php
-            $IDPJ= Session::get('id');
-            $cryptedId = Crypt::encrypt($IDPJ);
+            $IDPJ = Session::get('id');
+            $exercice_id = Session::get('exercice_id');
+            $cryptedProjectId = Crypt::encrypt($IDPJ);
+            $cryptedExerciceId = Crypt::encrypt($exercice_id)
             @endphp
            
           
@@ -32,7 +35,7 @@
                     <i class="fas fa-sync-alt"></i>
                 </a>
                 <!-- Bouton Créer -->
-                <a href="{{ route('key.viewProject', $cryptedId ) }}" class="btn btn-outline-primary rounded-pill btn-sm">
+                <a href="{{ route('key.viewProject',  ['project' => $cryptedProjectId, 'exercice' => $cryptedExerciceId]) }}" class="btn btn-outline-primary rounded-pill btn-sm">
                     <span class="fa fa-arrow-left"></span> Retour
                 </a>
             </div>

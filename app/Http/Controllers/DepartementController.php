@@ -13,12 +13,12 @@ class DepartementController extends Controller
     public function index()
     {
       $title = 'Depatment';
-      $active = 'Parameter';
+     
       return view(
         'departement.index',
         [
           'title' => $title,
-          'active' => $active
+         
         ]
       );
     }

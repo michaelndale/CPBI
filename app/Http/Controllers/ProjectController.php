@@ -52,10 +52,10 @@ class ProjectController extends Controller
     return view(
       'project.new',
       [
-        'title' => $title,
-        'dataMember' => $members,
-        'dataFolder' => $Folder,
-        'devise' => $devise
+        'title'       => $title,
+        'dataMember'  => $members,
+        'dataFolder'  => $Folder,
+        'devise'      => $devise
       ]
     );
   }
@@ -70,8 +70,8 @@ class ProjectController extends Controller
     session()->forget('lead');
     session()->forget('exercice_id');
 
-
     return redirect()->route('dashboard')->with('success', 'Très bien! le projet  est bien fermer');
+ 
   }
 
   // insert a new employee ajax request
@@ -84,9 +84,7 @@ class ProjectController extends Controller
       $numero = $request->numeroProjet;
       $check = Project::where('numeroprojet', $numero)->first();
       if ($check) {
-        return response()->json([
-          'status' => 201,
-        ]);
+        return redirect()->back()->with('error', 'Une erreur est survenue,le numero du proget existe e veuillez réessayer.');
       }
 
       $budget = str_replace(' ', '', $request->budget);
@@ -95,11 +93,11 @@ class ProjectController extends Controller
       // Création du projet
       $project = new Project();
 
-      $project->title = $request->title;
-      $project->lead = $request->leader; // Utilisation de $request->leader comme lead du projet
+      $project->title      = $request->title;
+      $project->lead       = $request->leader; // Utilisation de $request->leader comme lead du projet
       $project->start_date = $request->startdate;
-      $project->deadline = $request->deadline;
-      $project->region = $request->region;
+      $project->deadline   = $request->deadline;
+      $project->region     = $request->region;
       $project->numerodossier = $request->numeroDossier;
       $project->numeroprojet = $request->numeroProjet;
       $project->lieuprojet = $request->lieuProjet;
@@ -108,7 +106,7 @@ class ProjectController extends Controller
       $project->budget = $budget;
       $project->annee = $annee;
       $project->periode = $request->periode;
-      $project->userid = Auth()->user()->id;
+      $project->userid = Auth::id();
 
       $project->save();
 
@@ -117,96 +115,125 @@ class ProjectController extends Controller
         throw new Exception("Erreur lors de la création du projet.");
       }
 
+      $lastInsertedId = $project->id;
+      $cryptedId = Crypt::encrypt($lastInsertedId);
+
       // Ajout de l'utilisateur actuel comme intervenant du projet
       $intervenant = new Affectation();
-      $intervenant->projectid = $project->id;
+      $intervenant->projectid = $lastInsertedId;
       $intervenant->memberid = Auth::id(); // Utilisateur actuel
       $intervenant->save();
 
       if ($request->leader != Auth::id()) {
         // Ajout du leader comme intervenant principal du projet
         $leaderIntervenant = new Affectation();
-        $leaderIntervenant->projectid = $project->id;
+        $leaderIntervenant->projectid = $lastInsertedId;
         $leaderIntervenant->memberid = $request->leader; // Leader du projet
         $leaderIntervenant->save();
       }
-
-
-      // Insertion dans l'historique
-      $historique = new Historique();
-      $historique->fonction = "Projet";
-      $historique->operation = "Nouveau projet " . $request->title;
-      $historique->link = 'projet';
-      $historique->userid = Auth()->user()->id;
-      $historique->save();
-
-      // Clé cryptée pour l'ID du projet
-      $lastInsertedId = $project->id;
-      $cryptedId = Crypt::encrypt($lastInsertedId);
-
-
+     
        // Formatage automatique du numéro (0001, 0002, etc.)
-       $lastProject = ExerciceProjet::where('project_id', $project->id)->orderBy('id', 'desc')->first();
+       $lastProject = ExerciceProjet::where('project_id', $lastInsertedId)->orderBy('id', 'desc')->first();
        $newNumero = $lastProject ? str_pad((int)$lastProject->numero_e + 1, 4, '0', STR_PAD_LEFT) : '0001';
    
        // Mettre tous les autres projets ayant le même project_id en statut "Inactif"
-       ExerciceProjet::where('project_id', $project->id)
-           ->update(['status' => 'Inactif']);
+       ExerciceProjet::where('project_id',  $lastInsertedId)->update(['status' => 'Inactif']);
    
        // Création du projet
-       $project = new ExerciceProjet();
-       $project->project_id  = $project->id;
-       $project->numero_e = $newNumero;
-       $project->budget = $budget;
-       $project->status = 'Actif';
-       $project->estart_date =  $request->startdate;
-       $project->edeadline = $request->deadline;
-       $project->eperiode = $request->periode;
-       $project->save();
+       $exercice = new ExerciceProjet();
+       $exercice->project_id  =  $lastInsertedId;
+       $exercice->numero_e = $newNumero;
+       $exercice->budget = $budget;
+       $exercice->status = 'Actif';
+       $exercice->estart_date =  $request->startdate;
+       $exercice->edeadline = $request->deadline;
+       $exercice->eperiode = $request->periode;
+       
+       $exercice->save();
+
+       $lastInsertedIdExercice = $exercice->id;
+       $cryptedIdExercice = Crypt::encrypt($lastInsertedIdExercice);
 
       // Engagement des changements dans la base de données
       DB::commit();
 
-      return response()->json([
-        'status' => 200,
-        'lastid' =>  $cryptedId
-      ]);
+      return redirect()->route('key.viewProject', ['project' =>$cryptedId, 'exercice' =>  $cryptedIdExercice])
+      ->with('success', 'Exercice créé avec succès.');
+
     } catch (Exception $e) {
       // En cas d'erreur, annulation des changements et réponse d'erreur
-      DB::rollback();
-      return response()->json([
-        'status' => 202,
-        'message' => $e->getMessage(),
-      ]);
+      return redirect()->back()->with('error', 'Une erreur est survenue, veuillez réessayer.');
     }
   }
 
   public function storeexe(Request $request)
   {
+      // Validation des données avec des messages personnalisés
+      $request->validate([
+          'pid' => 'required|integer',
+          'montant' => 'required|string', // Accepter le montant comme une chaîne pour permettre les espaces
+          'datedebut' => 'required|date',
+          'datefin' => 'required|date|after_or_equal:datedebut',
+          'periode' => 'required|string',
+          'pexercice' => 'nullable|string',
+      ], [
+          // Messages pour chaque champ
+          'pid.required' => 'Le champ Projet est obligatoire.',
+          'pid.integer' => 'Le champ Projet doit être un entier valide.',
+          
+          'montant.required' => 'Le champ Montant est obligatoire.',
+          'montant.string' => 'Le champ Montant doit être une chaîne de caractères.',
+          
+          'datedebut.required' => 'La date de début est obligatoire.',
+          'datedebut.date' => 'La date de début doit être une date valide.',
+          
+          'datefin.required' => 'La date de fin est obligatoire.',
+          'datefin.date' => 'La date de fin doit être une date valide.',
+          'datefin.after_or_equal' => 'La date de fin doit être postérieure ou égale à la date de début.',
+          
+          'periode.required' => 'Le champ Période est obligatoire.',
+          'periode.string' => 'Le champ Période doit être une chaîne de caractères.',
+          
+          'pexercice.string' => 'Le champ Exercice doit être une chaîne de caractères.',
+      ]);
+
+      // Supprimer les espaces dans le champ montant avant de l'utiliser
+      $montant = str_replace(' ', '', $request->montant);
+
+      // Vérifier si le montant est un nombre valide après suppression des espaces
+      if (!is_numeric($montant)) {
+          return back()->withErrors(['montant' => 'Le champ Montant doit être un nombre valide.']);
+      }
+
       // Formatage automatique du numéro (0001, 0002, etc.)
       $lastProject = ExerciceProjet::where('project_id', $request->pid)->orderBy('id', 'desc')->first();
       $newNumero = $lastProject ? str_pad((int)$lastProject->numero_e + 1, 4, '0', STR_PAD_LEFT) : '0001';
-  
+
       // Mettre tous les autres projets ayant le même project_id en statut "Inactif"
       ExerciceProjet::where('project_id', $request->pid)
           ->update(['status' => 'Inactif']);
-  
+
       // Création du projet
       $project = new ExerciceProjet();
-      $project->project_id  = $request->pid;
+      $project->project_id = $request->pid;
       $project->numero_e = $newNumero;
-      $project->budget = $request->montant;
+      $project->budget = $montant; // Enregistrer le montant sans espaces
       $project->status = 'Actif';
       $project->estart_date = $request->datedebut;
       $project->edeadline = $request->datefin;
       $project->eperiode = $request->periode;
+      $project->pexercice = $request->pexercice; // Peut être null
       $project->save();
-  
+
+      $lastId = Crypt::encrypt($project->id);
+
+      // Crypter project_id
+      $cryptedProjectId = Crypt::encrypt($project->project_id);
+
       // Rediriger vers la liste des projets avec un message de succès
-      return redirect()->route('list_project')
+      return redirect()->route('key.viewProject', ['project' => $cryptedProjectId, 'exercice' => $lastId])
           ->with('success', 'Exercice créé avec succès.');
   }
-  
 
   public function store_revision(Request $request)
   {
@@ -294,21 +321,29 @@ class ProjectController extends Controller
     $projectId = Crypt::decrypt($cryptedProjectId);
     $exerciceId = Crypt::decrypt($cryptedExerciceId);
 
+    // Vérifie si l'ID de projet existe dans la session
+    if (!$projectId && !$exerciceId) {
+      // Gérer le cas où l'ID du projet et exercice est invalide
+      return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
+    }
+
     // Recherche du projet correspondant
     $check = Project::join('exercice_projets', 'projects.id', '=', 'exercice_projets.project_id')
       ->join('users', 'projects.userid', '=', 'users.id')
       ->join('personnels', 'users.personnelid', '=', 'personnels.id')
       ->select('projects.*', 'projects.id as idpr', 'personnels.nom', 
               'personnels.prenom', 'personnels.fonction', 
-              'exercice_projets.id as exercice_id',   'exercice_projets.status', 'exercice_projets.numero_e' ,'exercice_projets.budget as budgets', 'exercice_projets.estart_date', 'exercice_projets.edeadline','exercice_projets.eperiode')
+              'exercice_projets.id as exercice_id',   'exercice_projets.status', 'exercice_projets.numero_e' ,'exercice_projets.budget as budgets', 'exercice_projets.estart_date', 'exercice_projets.edeadline','exercice_projets.eperiode','exercice_projets.pexercice')
       ->where('projects.id', $projectId)
       ->where('exercice_projets.id', $exerciceId)
       ->first();
 
+    
+
     // Si le projet n'existe pas, redirection avec un message d'erreur
     if (!$check) {
 
-      return redirect()->back()->with('modal_message', "Projet non trouvé.");
+      return redirect()->back()->with('error', "La session du projet et de l'exercice est terminée. Vous allez être redirigé...");
     }
 
     // Vérifier si l'utilisateur est affecté à ce projet
@@ -331,7 +366,7 @@ class ProjectController extends Controller
       'numeroprojet' => $check->numeroprojet,
       'ligneid' => $check->ligneid,
       'devise' => $check->devise,
-      'budget' => $check->budget,
+      'budget' => $check->budgets,
       'periode' => $check->periode,
       'lead' => $check->lead,
       'exercice_id' => $check->exercice_id
@@ -373,19 +408,23 @@ class ProjectController extends Controller
       'bailleurs_de_fonds.contact_telephone'
     )
       ->join('projet_acces_bailleurs', 'bailleurs_de_fonds.id', '=', 'projet_acces_bailleurs.bailleurs_id')
-      ->where('projet_acces_bailleurs.projet_id',$projectId)
+      ->where('projet_acces_bailleurs.projet_id',)
       ->get();
+
+        // Récupérer les exercices associés à un projet spécifique
+    $exercices = ExerciceProjet::where('project_id', $projectId)->orderBy('id', 'Desc')->get();
 
 
     // Retourne la vue avec les données du projet
     return view('project.voir', [
-      'title' => $title,
-      'active' => 'Project',
-      'dataProject' => $check,
-      'responsable' => $user,
+      'title'         => $title,
+      'active'        => 'Project',
+      'dataProject'   => $check,
+      'responsable'   => $user,
       'sommerepartie' => $sommerepartie,
-      'intervennant' => $intervennant,
-      'bailleurs'    => $bailleurs
+      'intervennant'  => $intervennant,
+      'bailleurs'     => $bailleurs,
+      'exercices'     => $exercices
     ]);
   }
 
@@ -451,8 +490,6 @@ class ProjectController extends Controller
       ->SUM('budgetactuel');
 
 
-
-
     return view(
       'project.modifier',
       [
@@ -503,22 +540,14 @@ class ProjectController extends Controller
   {
     $project = Project::find($request->pid);
 
-    $date_debut = date("Y-m-d", strtotime($request->datedebut));
-    $date_fin =  date("Y-m-d", strtotime($request->datefin));
-
-
     $project->title = $request->ptitre;
     $project->lead = $request->resid;
-    $project->budget = $request->montant;
     $project->numeroprojet = $request->numero;
-
-    $project->start_date = $date_debut;
-    $project->deadline = $date_fin;
     $project->region = $request->region;
     $project->lieuprojet = $request->lieu;
     $project->description = $request->description;
     $project->devise = $request->devise;
-    $project->periode = $request->periode;
+    
     $project->autorisation = $request->autorisation;
     $project->statut = $request->statut;
 
@@ -531,8 +560,7 @@ class ProjectController extends Controller
       session()->put('numeroprojet', $project->numeroprojet);
       session()->put('ligneid', $project->ligneid);
       session()->put('devise', $project->devise);
-      session()->put('budget', $project->budget);
-      session()->put('periode', $project->periode);
+
       session()->put('lead', $project->lead);
 
       return back()->with('success', 'Très bien! le projet  est bien modifier');
@@ -619,7 +647,7 @@ class ProjectController extends Controller
     }
   }
 
-
+  // VOIR LES DONNEES L'EXERCICE DES PROJETS
   public function showexercice($id)
   {
       // Récupérer les exercices associés à un projet spécifique
@@ -630,22 +658,25 @@ class ProjectController extends Controller
           ->select(
               'projects.title as projet_title',
               'exercice_projets.numero_e',
-
               'exercice_projets.project_id',
               'exercice_projets.id as exercice_id',
               'exercice_projets.budget',
               'exercice_projets.status',
-              'exercice_projets.created_at'
+              'exercice_projets.created_at',
+              'exercice_projets.estart_date',
+              'exercice_projets.edeadline',
+              'exercice_projets.pexercice',
+              'exercice_projets.pexercice'
           )
           ->get();
   
       // Vérifier si des exercices existent pour récupérer le titre du projet
-      $projectTitle = $exercices->first()->projet_title ?? 'Projet inconnu';
+      $projectTitle = $exercices->first()->projet_title ?? 'Aucun projet en exercice disponible';
   
       // Construire les lignes HTML en commençant par le titre du projet
       $rows = "
           <tr>
-              <td colspan='5' class='text-bold bg-light'>
+              <td colspan='8' class='text-bold bg-light'>
                   <b>{$projectTitle}</b>
               </td>
           </tr>
@@ -658,7 +689,11 @@ class ProjectController extends Controller
               ? '<span class="badge rounded-pill bg-subtle-primary text-primary font-size-11">Active</span>'
               : '<span class="badge rounded-pill bg-subtle-danger text-danger font-size-11">Archiver</span>';
           $formattedBudget = number_format($exercice->budget, 0, ',', ' ');
-          $formattedDate = date('d/m/Y', strtotime($exercice->created_at));
+          $formattedDate = date('d-m-Y', strtotime($exercice->created_at));
+          $formattedYear = date('Y', strtotime($exercice->created_at));
+          $formattedStard = date('d-m-Y', strtotime($exercice->estart_date));
+          $formattedEnd = date('d-m-Y', strtotime($exercice->edeadline));
+          $titre_ = ucfirst($exercice->pexercice);
   
           // Crypter project_id et exercice_id
           $cryptedProjectId = Crypt::encrypt($exercice->project_id);
@@ -669,9 +704,13 @@ class ProjectController extends Controller
   
           $rows .= "
               <tr>
-                  <th scope='row'><a href='{$exerciceUrl}' style='text-decoration: none; color: inherit;'>" . ($index + 1) . "</a></th>
-                  <td><a href='{$exerciceUrl}' style='text-decoration: none; color: inherit;'>{$exercice->numero_e}</a></td>
-                  <td align='right'><a href='{$exerciceUrl}' style='text-decoration: none; color: inherit;'><b>{$formattedBudget}</b></a></td>
+                 
+                  <th scope='row'><a href='{$exerciceUrl}'>" . ($index + 1) . "</a></th>
+                  <th scope='row'><a href='{$exerciceUrl}'>{$titre_}</a></th>
+                  <td><a href='{$exerciceUrl}' style='text-decoration: none; color: inherit;'>{$exercice->numero_e}/{$formattedYear} <i class='fas fa-external-link-alt'></i></a></td>
+                  <td align='right'><b>{$formattedBudget}</b></td>
+                  <td align='right'>{$formattedStard}</td>
+                  <td align='right'>{$formattedEnd}</td>
                   <td class='{$statutClass}'><a href='{$exerciceUrl}' style='text-decoration: none; color: inherit;'>{$statutIcon}</a></td>
                   <td><a href='{$exerciceUrl}' style='text-decoration: none; color: inherit;'>{$formattedDate}</a></td>
               </tr>

@@ -6,7 +6,7 @@
       <div class="row">
         <div class="col-xl-10" style="margin:auto">
           <h4 class="mb-4"><i class="fa fa-folder-open "></i> Declaration projet </h4>
-          <form class="row g-3 mb-6" method="POST" id="addProjectForm">
+          <form class="row g-3 mb-6" method="POST" action="{{ route('storeProject') }}">
             @method('post')
             @csrf
 
@@ -56,8 +56,8 @@
 
             <div class="col-sm-2 col-md-2">
               <div class="form-floating">
-              <input class="form-control" name="periode" id="priode" type="number" min="2" placeholder="Periode" required />
-                <label for="floatingInputGrid">Periode</label>
+              <input class="form-control" name="periode" id="periode" type="number" min="2" placeholder="Periode (Moi)" required />
+                <label for="floatingInputGrid">Periode (Moi)</label>
               </div>
             </div>
 
@@ -106,47 +106,6 @@
     </div>
   </div>
 </div>
-
-<script>
-   save_btn = document.querySelector('.savebtn');
-   
-   save_btn.onclick = function() {
-    // Add PROJECT ajax 
-    $("#addProjectForm").submit(function(e) {
-      e.preventDefault();
-      const fd = new FormData(this);
-
-      this.innerHTML = "<div class='loader'></div>";
-
-      $.ajax({
-        url: "{{ route('storeProject') }}",
-        method: 'post',
-        data: fd,
-        cache: false,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-
-
-          if (response.status == 200) {
-            toastr.success("Creation projet avec succès !", "Enregistrement");
-            var key = response.lastid;
-            var url = key + '/view';
-            window.location.href = url;
-          }
-          if (response.status == 201) {
-            toastr.info("Vous ne pouvez pas enregitrer le project deux fois !", "Attention");
-          }
-          document.getElementById("connectBtn").disabled = false;
-        }
-   
-      });
-    });
-
-
-  };
-</script>
 
 
 @endsection
