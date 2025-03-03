@@ -17,7 +17,11 @@ class TypeprojetController extends Controller
   
     public function fetchAll()
     {
-      $typeprojet = typeprojet::orderBy('titre', 'ASC')->get();
+      $typeprojet = typeprojet::orderBy('titre', 'ASC')
+                    ->join('users', 'typeprojets.userid', '=', 'users.id')
+                    ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+                    ->select('typeprojets.*', 'personnels.prenom as user_prenom')
+                    ->get();
       $output = '';
       if ($typeprojet->count() > 0) {
   
@@ -26,6 +30,7 @@ class TypeprojetController extends Controller
           $output .= '<tr>
                 <td class="align-middle ps-3 name">' . $nombre . '</td>
                 <td>' . ucfirst($rs->titre) . '</td>
+                 <td>' . ucfirst($rs->user_prenom) . '</td>
                 <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
                 <td>
                 <center>
@@ -35,7 +40,7 @@ class TypeprojetController extends Controller
                     </a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#edittypeModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
-                        <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
+                        <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '" data-titre="'.$rs->titre.'" href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
                     </div>
                  </div>
                   </center>
@@ -47,7 +52,7 @@ class TypeprojetController extends Controller
         echo $output;
       } else {
         echo ' <tr>
-          <td colspan="3">
+          <td colspan="5">
           <center>
             <h6 style="margin-top:1% ;color:#c0c0c0"> 
             <center><font size="50px"><i class="fa fa-info-circle"  ></i> </font><br><br>

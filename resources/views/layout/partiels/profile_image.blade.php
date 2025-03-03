@@ -10,6 +10,11 @@
           <div class="modal-body">
             <div class="row">
               <div class="custom-file">
+
+                <div class="progress">
+                  <div id="progress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <br>
                 <input id="profileuserid" name="profileuserid" type="hidden" value="{{ Auth::user()->id }}" />
                 <input type="file" class="form-control" id="file" name="file" accept="image/jpeg, image/png" onchange="preview_image(event)">
                 <br> 

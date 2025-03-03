@@ -13,9 +13,17 @@ return new class extends Migration
     {
         Schema::create('elementboncaisses', function (Blueprint $table) {
             $table->id();
+            $table->integer('projetid')->nullable();
+            $table->integer('exerciceid')->nullable();
             $table->date('boncaisse_id')->nullable();  // Assuming date is a date field
+            
             $table->text('ligneid')->nullable();
+            $table->text('ligne_principale')->nullable();
             $table->text('montant')->nullable();
+
+            $table->text('motifs')->nullable();
+            $table->text('input')->nullable();
+            
             $table->timestamps();
         });
     }

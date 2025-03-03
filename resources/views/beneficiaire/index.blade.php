@@ -30,7 +30,7 @@
                                     <thead>
                                         <tr>
                                             <th style="width:4%">#</th>
-                                            <th> <b>Catégorie </b></th>
+                                            
                                             <th> <b>Institution ou Nom & prenom</b> </th>
                                             <th> <b>Adresse</b> </th>
                                             <th> <b>Téléphone(1)</b></th>
@@ -214,17 +214,22 @@
                   @method('post')
                   @csrf
                   <div class="modal-header">
-                      <h5 class="modal-title" id="addDealModalTitle"><i class="fa fa-list"></i> Catégorie des bénéficiaires </h5>
+                      <h5 class="modal-title" id="addDealModalTitle"><i class="fa fa-list"></i> Catégorie des bénéficiaires 
+
+                        <a href="javascript:voide();"  class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" data-bs-toggle="modal" data-bs-target="#addcategorieModal"
+                        aria-haspopup="true" aria-expanded="false" data-bs-reference="parent">
+                        <i class="fa fa-plus-circle"></i> Créer </a>
+                    
+                    </h5>
+
+
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
                     <div id="tableExample2">
                       <div class="table-responsive">
 
-                          <a href="javascript:voide();"  class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" data-bs-toggle="modal" data-bs-target="#addcategorieModal"
-                              aria-haspopup="true" aria-expanded="false" data-bs-reference="parent">
-                              <i class="fa fa-plus-circle"></i> Créer </a>
-                          <br> <br>
+                    
 
                           <table class="table table-striped table-sm fs--1 mb-0">
                               <thead>

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->double('kilometragedebut', 25)->nullable();
             $table->double('kilometragefin', 25)->nullable();
             $table->longText('note')->nullable();
+            $table->date('dateoperation')->nullable();
             $table->integer('userid')->nullable();
             $table->timestamps();
         });

@@ -23,8 +23,8 @@ tr a:hover {
                 <div class="table-responsive">
                     <table class="table table-bordered table-striped table-sm mb-0">
                         <thead>
-                            <tr>
-                                <th colspan="4" id="project-title">Titre du projet</th>
+                            <tr >
+                                <th colspan="8" id="project-title">Titre du projet</th>
                             </tr>
                             <tr>
                                 <th>#</th>
@@ -39,7 +39,7 @@ tr a:hover {
                             </tr>
                         </thead>
                         <tbody id="exercice-table-body">
-                            <!-- Les données dynamiques seront insérées ici -->
+                           
                         </tbody>
                     </table>
                 </div>
@@ -47,6 +47,11 @@ tr a:hover {
         </div>
     </div>
 </div>
+
+<div id="loader" style="display: none; text-align: center; padding: 10px;">
+    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+</div>
+
 
 <script>
     var modalElement = new bootstrap.Modal(document.getElementById('ProjetModalScrollable'), {
@@ -59,47 +64,46 @@ modalElement.show(); // Pour afficher le modal
 </script>
 
 <script>
-
-// Assurez-vous que la variable Laravel est définie dans le Blade (dans le HTML)
-const exerciceShowUrl = "{{ route('exercice.show', ['id' => ':id']) }}";
-
-// Gestionnaire pour chaque lien "show-exercice"
-document.querySelectorAll('.show-exercice').forEach(link => {
-    link.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        // Récupérer l'ID du projet à partir de l'attribut HTML
-        const projectId = this.getAttribute('id');
-
-        // Remplacer ":id" dans l'URL par l'ID du projet
-        const url = exerciceShowUrl.replace(':id', projectId);
-
-        // Effectuer une requête fetch pour récupérer les données des exercices
-        fetch(url)
-            .then(response => {
-                // Vérifier si la réponse est correcte
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP : ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Insérer les données des exercices dans la table
-                const tableBody = document.getElementById("exercice-table-body");
-                tableBody.innerHTML = data.rows; // Mettre à jour le contenu de la table
-                document.getElementById('project-title').textContent = data.project_title; // Titre du projet
-            })
-            .catch(error => {
-                // Gérer les erreurs
-                console.error("Erreur lors du chargement des exercices :", error);
-                const tableBody = document.getElementById("exercice-table-body");
-                tableBody.innerHTML = "<tr><td colspan='5' class='text-danger'>Impossible de charger les données.</td></tr>";
-            });
+    const exerciceShowUrl = "{{ route('exercice.show', ['id' => ':id']) }}";
+    
+    document.querySelectorAll('.show-exercice').forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+    
+            const projectId = this.getAttribute('id');
+            const url = exerciceShowUrl.replace(':id', projectId);
+    
+            const tableBody = document.getElementById("exercice-table-body");
+            const projectTitle = document.getElementById('project-title');
+            const loader = document.getElementById("loader"); // Spinner de chargement
+    
+            // Afficher le spinner et vider la table
+            loader.style.display = "block";
+            tableBody.innerHTML = "";
+            projectTitle.textContent = "Chargement encours...";
+    
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Erreur HTTP : ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    tableBody.innerHTML = data.rows; // Mettre à jour la table
+                    projectTitle.textContent = data.project_title; // Mettre à jour le titre du projet
+                })
+                .catch(error => {
+                    console.error("Erreur lors du chargement des exercices :", error);
+                    tableBody.innerHTML = "<tr><td colspan='8' class='text-danger'><center>Impossible de charger les données.</center></td></tr>";
+                    projectTitle.textContent = "Erreur de chargement";
+                })
+                .finally(() => {
+                    loader.style.display = "none"; // Cacher le spinner après chargement
+                });
+        });
     });
-});
-
-
-</script>
-
+    </script>
+    
 
 

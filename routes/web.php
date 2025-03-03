@@ -42,6 +42,7 @@ use App\Http\Controllers\FonctionController;
 use App\Http\Controllers\FournisseurController;
 use App\Http\Controllers\HistoriqueController;
 use App\Http\Controllers\IdentificationController;
+use App\Http\Controllers\IovController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ObservationactiviteController;
 use App\Http\Controllers\OptiondescriptionController;
@@ -57,12 +58,15 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RallongebudgetController;
 use App\Http\Controllers\RapportController;
 use App\Http\Controllers\RapportcummuleController;
+use App\Http\Controllers\ResponsabiliteController;
 use App\Http\Controllers\SecuriteController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SignalefebController;
 use App\Http\Controllers\SqrController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\StatutvehiculeController;
+use App\Http\Controllers\TachesController;
+use App\Http\Controllers\TauxRealisationController;
 use App\Http\Controllers\TypeprojetController;
 use App\Http\Controllers\VehiculeController;
 use App\Models\Dapbpc;
@@ -127,32 +131,7 @@ Route::middleware('auth')->group(function () {
         Route::post('EditIdentification', [IdentificationController::class, 'edit'])->name('EditIdentification');
     });
 
-    Route::prefix('service')->group(function () {
-        Route::get('/', [ServiceController::class, 'index'])->name('service');
-        Route::get('/fetchAllSer', [ServiceController::class, 'fetchAll'])->name('fetchAllSer');
-        Route::post('/storeSer', [ServiceController::class, 'store'])->name('storeSer');
-        Route::delete('/deleteSer', [ServiceController::class, 'deleteall'])->name('deleteSer');
-        Route::get('/editSer', [ServiceController::class, 'edit'])->name('editSer');
-        Route::post('/updateSer', [ServiceController::class, 'update'])->name('updateSer');
-    });
-
-    Route::prefix('fonction')->group(function () {
-        Route::get('/', [FonctionController::class, 'index'])->name('fonction');
-        Route::get('/fetchall', [FonctionController::class, 'fetchAll'])->name('fetchAll');
-        Route::post('/store', [FonctionController::class, 'store'])->name('store');
-        Route::delete('/deleteFon', [FonctionController::class, 'deleteall'])->name('deleteFon');
-        Route::get('/editF', [FonctionController::class, 'edit'])->name('editF');
-        Route::post('/updateFon', [FonctionController::class, 'update'])->name('updateFon');
-    });
-
-    Route::prefix('profile')->group(function () {
-        Route::get('/', [ProfileController::class, 'index'])->name('profile');
-        Route::get('/fetchallP', [ProfileController::class, 'fetchAll'])->name('fetchAllP');
-        Route::post('/storeP', [ProfileController::class, 'store'])->name('storeP');
-        Route::delete('/deleteP', [ProfileController::class, 'deleteall'])->name('deleteP');
-        Route::get('/editP', [ProfileController::class, 'edit'])->name('editP');
-        Route::post('/updateP', [ProfileController::class, 'update'])->name('updateP');
-    });
+   
 
     Route::prefix('classeur')->group(function () {
         Route::get('/', [ClasseurController::class, 'index'])->name('classeur');
@@ -172,6 +151,24 @@ Route::middleware('auth')->group(function () {
         Route::post('/updatebanque', [BanqueController::class, 'update'])->name('updatebanque');
     });
 
+    Route::prefix('iov')->group(function () {
+        Route::get('/', [IovController::class, 'index'])->name('iov.index');
+        Route::get('/liste', [IovController::class, 'liste'])->name('iov.liste');
+        Route::post('/store', [IovController::class, 'store'])->name('iov.store');
+        Route::delete('/delete', [IovController::class, 'delete'])->name('iov.delete');
+        Route::get('/edit', [IovController::class, 'edit'])->name('iov.edit');
+        Route::post('/update', [IovController::class, 'update'])->name('iov.update');
+    });
+
+    Route::prefix('tr')->group(function () {
+        Route::get('/', [TauxRealisationController::class, 'index'])->name('tr.index');
+        Route::get('/liste', [TauxRealisationController::class, 'liste'])->name('tr.liste');
+        Route::post('/store', [TauxRealisationController::class, 'store'])->name('tr.store');
+        Route::delete('/delete', [TauxRealisationController::class, 'delete'])->name('tr.delete');
+        Route::get('/edit', [TauxRealisationController::class, 'edit'])->name('tr.edit');
+        Route::post('/update', [TauxRealisationController::class, 'update'])->name('tr.update');
+    });
+
     Route::prefix('termes')->group(function () {
         Route::get('/', [ApreviationController::class, 'index'])->name('termes');
         Route::get('/fetchAllabre', [ApreviationController::class, 'fetchAll'])->name('fetchAllabre');
@@ -181,31 +178,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/updateabr', [ApreviationController::class, 'update'])->name('updateabr');
     });
 
-    Route::prefix('department')->group(function () {
-        Route::get('/', [DepartementController::class, 'index'])->name('department');
-        Route::get('/fetchAllDep', [DepartementController::class, 'fetchAll'])->name('fetchAllDep');
-        Route::post('/storeDp', [DepartementController::class, 'store'])->name('storeDp');
-        Route::delete('/deleteDp', [DepartementController::class, 'deleteall'])->name('deleteDp');
-        Route::get('/editDp', [DepartementController::class, 'edit'])->name('editDp');
-        Route::post('/updateDp', [DepartementController::class, 'update'])->name('updateDp');
-    });
-
-    Route::prefix('user')->group(function () {
-        Route::get('/', [AuthController::class, 'index'])->name('user');
-        Route::get('/fetchAllUs', [AuthController::class, 'fetchAll'])->name('fetchAllUs');
-        Route::post('/storeus', [AuthController::class, 'store'])->name('storeus');
-        Route::delete('/deleteUs', [AuthController::class, 'deleteall'])->name('deleteUs');
-        Route::get('/editUs', [AuthController::class, 'edit'])->name('editUs');
-        Route::post('/updateUs', [AuthController::class, 'update'])->name('updateUs');
-        Route::get('changepassword/{id}', [AuthController::class, 'restauration'])->name('changepassword');
-        Route::put('updatePasswordone/{id}', [AuthController::class, 'updatePasswordone'])->name('updatePasswordone');
-        Route::get('shomesignature/{id}', [AuthController::class, 'shomesignature'])->name('shomesignature');
-        Route::post('/updatsignatureuser', [AuthController::class, 'updatsignatureuser'])->name('updatsignatureuser');
-        Route::post('/verifier-identifiant', [AuthController::class, 'verifierIdentifiant'])->name('verifier.identifiant');
-        Route::post('/update-theme', [AuthController::class, 'updateThme'])->name('update-theme');
-
-        //  Route::put('signature/{id}', [AuthController::class, 'updateSignature'])->name('signatureUs');
-    });
+  
 
     // Parc automobile
 
@@ -467,6 +440,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/{id}/misesajour/', [DjaController::class, 'misesajour'])->name('misesajour');
         Route::post('/storejustification', [DjaController::class, 'saveDjas'])->name('storejustification');
+        Route::post('/storeannex', [DjaController::class, 'saveDjasannex'])->name('storeannexjustification');
         Route::post('/updatejustification/{id}', [DjaController::class, 'UpDjas'])->name('updatejustification');
         Route::post('/declareJustificatif/{id}', [DjaController::class, 'UpdJustificatif'])->name('declareJustificatif');
         Route::post('/updateSignatureDja/{id}', [DjaController::class, 'UpdateSignatureDja'])->name('updateSignatureDja');
@@ -482,6 +456,8 @@ Route::middleware('auth')->group(function () {
         // CAS DE RAPPORT D'UTILISATION
 
         Route::post('/storeutilisateur', [CasutilisationController::class, 'store'])->name('store.utilisation');
+        Route::get('/{id}/showannex/', [DjaController::class, 'showannex'])->name('annex.show.dja');
+        Route::put('/updat_annex_djas/{cle}', [DjaController::class, 'updat_annex'])->name('updat_annex_dja');
        
     });
     Route::get('/check-unverified-funds', [DjaController::class, 'checkUnverifiedFunds']);
@@ -496,6 +472,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [BonpetitcaisseController::class, 'index'])->name('bpc');
         Route::get('/liste_bpc', [BonpetitcaisseController::class, 'list'])->name('liste_bpc');
         Route::post('/storebpc', [BonpetitcaisseController::class, 'store'])->name('storebpc');
+        Route::post('/updatebonpet', [BonpetitcaisseController::class, 'update'])->name('updatebonpet');
+        
         Route::get('/{key}/viewbpc/', [BonpetitcaisseController::class, 'show'])->name('viewbpc');
         Route::get('/{key}/voir/', [BonpetitcaisseController::class, 'voir'])->name('voir.bpc');
         Route::post('/update_signature_bpc', [BonpetitcaisseController::class, 'updateSignature'])->name('update_signature_bpc');
@@ -719,8 +697,82 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('notis');
         Route::get('/fetchAllnotis', [NotificationController::class, 'fetchAll'])->name('fetchAllnotis');
     });
+
+
     //DEBUT RH
 
+    Route::prefix('department')->group(function () {
+        Route::get('/', [DepartementController::class, 'index'])->name('department');
+        Route::get('/fetchAllDep', [DepartementController::class, 'fetchAll'])->name('fetchAllDep');
+        Route::post('/storeDp', [DepartementController::class, 'store'])->name('storeDp');
+        Route::delete('/deleteDp', [DepartementController::class, 'deleteall'])->name('deleteDp');
+        Route::get('/editDp', [DepartementController::class, 'edit'])->name('editDp');
+        Route::post('/updateDp', [DepartementController::class, 'update'])->name('updateDp');
+    });
+
+    Route::prefix('user')->group(function () {
+        Route::get('/', [AuthController::class, 'index'])->name('user');
+        Route::get('/fetchAllUs', [AuthController::class, 'fetchAll'])->name('fetchAllUs');
+        Route::post('/storeus', [AuthController::class, 'store'])->name('storeus');
+        Route::delete('/deleteUs', [AuthController::class, 'deleteall'])->name('deleteUs');
+        Route::get('/editUs', [AuthController::class, 'edit'])->name('editUs');
+        Route::post('/updateUs', [AuthController::class, 'update'])->name('updateUs');
+        Route::get('changepassword/{id}', [AuthController::class, 'restauration'])->name('changepassword');
+        Route::put('updatePasswordone/{id}', [AuthController::class, 'updatePasswordone'])->name('updatePasswordone');
+        Route::get('shomesignature/{id}', [AuthController::class, 'shomesignature'])->name('shomesignature');
+        Route::post('/updatsignatureuser', [AuthController::class, 'updatsignatureuser'])->name('updatsignatureuser');
+        Route::post('/verifier-identifiant', [AuthController::class, 'verifierIdentifiant'])->name('verifier.identifiant');
+        Route::post('/update-theme', [AuthController::class, 'updateThme'])->name('update-theme');
+
+        //  Route::put('signature/{id}', [AuthController::class, 'updateSignature'])->name('signatureUs');
+    });
+
+    Route::prefix('service')->group(function () {
+        Route::get('/', [ServiceController::class, 'index'])->name('service');
+        Route::get('/fetchAllSer', [ServiceController::class, 'fetchAll'])->name('fetchAllSer');
+        Route::post('/storeSer', [ServiceController::class, 'store'])->name('storeSer');
+        Route::delete('/deleteSer', [ServiceController::class, 'deleteall'])->name('deleteSer');
+        Route::get('/editSer', [ServiceController::class, 'edit'])->name('editSer');
+        Route::post('/updateSer', [ServiceController::class, 'update'])->name('updateSer');
+    });
+
+    Route::prefix('fonction')->group(function () {
+        Route::get('/', [FonctionController::class, 'index'])->name('fonction');
+        Route::get('/fetchall', [FonctionController::class, 'fetchAll'])->name('fetchAll');
+        Route::post('/store', [FonctionController::class, 'store'])->name('store');
+        Route::delete('/deleteFon', [FonctionController::class, 'deleteall'])->name('deleteFon');
+        Route::get('/editF', [FonctionController::class, 'edit'])->name('editF');
+        Route::post('/updateFon', [FonctionController::class, 'update'])->name('updateFon');
+    });
+
+    Route::prefix('responsabilite')->group(function () {
+        // Afficher les responsabilités associées à une fonction spécifique via son ID
+        Route::get('/{id}/show/', [ResponsabiliteController::class, 'index'])->name('responsabilite.index');
+        Route::get('/liste/{id}', [ResponsabiliteController::class, 'liste'])->name('responsabilite.liste');
+        Route::post('/store', [ResponsabiliteController::class, 'store'])->name('store.responsabilite');
+        Route::delete('/delete', [ResponsabiliteController::class, 'destroy'])->name('responsabilite.delete');
+        
+    });
+
+    Route::prefix('taches')->group(function () {
+        // Afficher les responsabilités associées à une fonction spécifique via son ID
+        Route::get('/{id}/show/', [TachesController::class, 'index'])->name('tache.index');
+        Route::get('/liste/{id}', [TachesController::class, 'liste'])->name('tache.liste');
+        Route::post('/store', [TachesController::class, 'store'])->name('tache.store');
+        Route::delete('/delete', [TachesController::class, 'destroy'])->name('tache.delete');
+        
+    });
+
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'index'])->name('profile');
+        Route::get('/fetchallP', [ProfileController::class, 'fetchAll'])->name('fetchAllP');
+        Route::post('/storeP', [ProfileController::class, 'store'])->name('storeP');
+        Route::delete('/deleteP', [ProfileController::class, 'deleteall'])->name('deleteP');
+        Route::get('/editP', [ProfileController::class, 'edit'])->name('editP');
+        Route::post('/updateP', [ProfileController::class, 'update'])->name('updateP');
+    });
+
+    
     Route::prefix('personnel')->group(function () {
         Route::get('/', [PersonnelController::class, 'index'])->name('personnel');
         Route::get('/fetchpersonnel', [PersonnelController::class, 'fetchAll'])->name('fetchpersonnel');

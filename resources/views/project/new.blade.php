@@ -1,111 +1,189 @@
 @extends('layout/app')
 @section('page-content')
-<div class="main-content">
-  <div class="page-content">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-xl-10" style="margin:auto">
-          <h4 class="mb-4"><i class="fa fa-folder-open "></i> Declaration projet </h4>
-          <form class="row g-3 mb-6" method="POST" action="{{ route('storeProject') }}">
-            @method('post')
-            @csrf
+   
+        <div class="main-content">
+            <div class="page-content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xl-11" style="margin:auto">
 
-            <div class="col-sm-2 col-md-12">
-              <div class="form-floating"><input class="form-control" name="title" id="title" type="text" placeholder="Titre du Projet" required /><label for="floatingInputGrid">Titre du Projet</label></div>
+                            <form  method="POST" action="{{ route('storeProject') }}">
+                                @method('post')
+                                @csrf
+
+                            <div class="card">
+
+                                
+                                <div class="card-header page-title-box d-sm-flex align-items-center justify-content-between"
+                                    style="padding: 0.3rem 1rem;">
+
+                                    <h4 class="mb-sm-0"><i class="mdi mdi-plus-circle"></i> Creaction du projet </h4>
+                                  
+                                </div>
+
+                               
+
+                                <div class="card-body">
+                                    <div class="col-12 col-xl-12 col-xxl-12 pe-xl-0">
+                                        <div class="mb-12 mb-xl-12">
+                                            <div class="row gx-0 gx-sm-12">
+                                                <div class="col-12">
+
+                                                    <div class="row">
+
+                                                        <div class="col-12 col-md-9">
+                                                        <label><b><i class="fa fa-info-circle"></i> Dénomination du projet:
+                                                            </b></label>
+
+                                                        <input class="form-control" name="title" id="title"
+                                                            type="text" placeholder="Titre du Projet" required />
+                                                    </div>
+
+                                                    <div class="col-12 col-md-3">
+                                                        <label><b><i class="fa fa-info-circle"></i> Budget:
+                                                            </b></label>
+
+                                                        <input class="form-control" id="budget" name="budget" type="number" placeholder="Budget" required />
+                                                    </div>
+
+                                                    </div>
+                                                </br>
+
+                                                    <div class="row">
+
+
+
+                                             
+
+                                                  
+
+                                                        
+                                                        <div class="col-12 col-md-3">
+                                                            <div class="mb-3">
+                                                                <label for="numero" class="form-label">Numéro </label>
+                                                                    <input value="{{ $newNumero }}" class="form-control form-control-sm" name="numeroProjet" id="numeroProjet" type="text" placeholder="Numero " required  readonly style='background-color:#c0c0c0'/>
+
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="col-12 col-md-3">
+                                                            <div class="mb-3">
+                                                                <label for="numero" class="form-label">Reponsable  </label>
+                                                                <select class="form-control form-control-sm" id="leader" name="leader" required>
+                                                                    <option disabled="true" selected="true" value="">Options </option>
+                                                                      @foreach ($dataMember as $dataMembers)
+                                                                      <option value="{{ $dataMembers->id }}">{{ ucfirst($dataMembers->nom) }} {{ ucfirst($dataMembers->prenom) }}</option>
+                                                                      @endforeach
+                                                                    </select>
+                                                            </div>
+                                                        </div>
+
+
+
+                                                        <div class="col-12 col-md-3">
+                                                            <div class="mb-3">
+                                                                <label for="numero" class="form-label">Pays </label>
+                                                                <select class="form-control form-control-sm" id="region" name="region" required>
+                                                                    <option disabled="true" selected="true" value="">Options</option>
+                                                                      @foreach ($pays as $pay)
+                                                                      <option value="{{ $pay->id }}">{{ $pay->name }} </option>
+                                                                      @endforeach
+                                                                    </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-md-3">
+                                                            <div class="mb-3">
+                                                                <label for="numero" class="form-label">Devise</label>
+                                                                <select class="form-control form-control-sm" id="devise" name="devise" required>
+                                                                    <option disabled="true" selected="true" value="">Options</option>
+                                                                      @foreach ($devise as $devises)
+                                                                      <option value="{{ $devises->libelle }}">{{ $devises->libelle }} </option>
+                                                                      @endforeach
+                                                    
+                                                                    </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-md-3">
+                                                            <div class="mb-3">
+                                                                <label for="numero" class="form-label">Dossier</label>
+                                                                <select class="form-control form-control-sm" id="numeroDossier" name="numeroDossier" required>
+                                                                    <option disabled="true" selected="true" value="">Options</option>
+                                                                      @foreach ($dataFolder as $dataFolders)
+                                                                      <option value="{{ $dataFolders->id }}">{{ $dataFolders->title }} </option>
+                                                                      @endforeach
+                                                                    </select>
+                                                            </div>
+                                                        </div>
+
+
+
+                                                        <div class="col-12 col-md-3">
+                                                            <div class="mb-3">
+                                                                <label for="numero" class="form-label">Période</label>
+                                                                <input class="form-control form-control-sm" name="periode" id="periode" type="number" max="12" min="1" placeholder="Periode (Moi)" required />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-md-3">
+                                                            <div class="mb-3">
+                                                                <label for="numero" class="form-label">Date début</label>
+                                                                <input class="form-control form-control-sm" name="startdate" id="startdate" type="date"   required />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-md-3">
+                                                            <div class="mb-3">
+                                                                <label for="numero" class="form-label">Date fin</label>
+                                                                <input class="form-control form-control-sm" name="deadline" id="deadline" type="date"   required />
+                                                            </div>
+                                                        </div>
+
+                                                        
+
+                                                       
+
+                                                    
+                                                    </div>
+
+                                                    <div class="row gx-0 gx-sm-12 gy-12 mb-12">
+                                                        <label><b><i class="fa fa-info-circle"></i> Description:
+                                                            </b></label>
+                                                        <textarea name="description" class="form-control form-control-sm" rows="5"></textarea>
+
+                                                    </div>
+
+                                                  
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-header p-4 border-bottom border-300 bg-soft">
+                                    <div class="row g-3 justify-content-between align-items-end">
+                                        <div class="col-12 col-md" style="padding: 0.3rem 3rem;">
+
+                                        </div>
+                                        <div class="col col-md-auto">
+                                            <button type="submit" class="btn btn-primary" id="addfebbtn" name="save"> <i
+                                                    class="fa fa-cloud-upload-alt"></i>
+                                                Sauvegarder</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                               
+
+                            </div>
+
+                        </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="col-sm-2 col-md-4">
-              <div class="form-floating"><input class="form-control" name="numeroProjet" id="numeroProjet" type="text" placeholder="Numero du projet" required /><label for="floatingInputGrid">Numéro du projet</label></div>
-            </div>
-
-
-            <div class="col-sm-2 col-md-4">
-              <div class="form-floating"><input class="form-control" name="region" id="region" type="text" placeholder="Pays / Region" required /><label for="floatingInputGrid">Pays / Region </label></div>
-            </div>
-
-            <div class="col-sm-2 col-md-4">
-              <div class="form-floating">
-                <select class="form-select" id="leader" name="leader" required>
-                <option disabled="true" selected="true" value="">Reponsable du projet </option>
-                  @foreach ($dataMember as $dataMembers)
-                  <option value="{{ $dataMembers->id }}">{{ ucfirst($dataMembers->nom) }} {{ ucfirst($dataMembers->prenom) }}</option>
-                  @endforeach
-
-                </select><label for="floatingSelectAdmin">Reponsable du projet</label>
-              </div>
-            </div>
-
-            <div class="col-sm-2 col-md-4">
-              <div class="form-floating"><input class="form-control" name="lieuProjet" id="lieuProjet" type="text" placeholder="Lieu et date projet " required /><label for="floatingInputGrid">Lieu (province)</label></div>
-            </div>
-
-            <div class="col-sm-2 col-md-2">
-              <div class="form-floating">
-
-                <select class="form-select" id="devise" name="devise" required>
-                <option disabled="true" selected="true" value="">Devise</option>
-                  @foreach ($devise as $devises)
-                  <option value="{{ $devises->libelle }}">{{ $devises->libelle }} </option>
-                  @endforeach
-
-                </select>
-
-                <label for="floatingInputGrid">Devise </label>
-              </div>
-            </div>
-
-            <div class="col-sm-2 col-md-2">
-              <div class="form-floating">
-              <input class="form-control" name="periode" id="periode" type="number" min="2" placeholder="Periode (Moi)" required />
-                <label for="floatingInputGrid">Periode (Moi)</label>
-              </div>
-            </div>
-
-
-
-            <div class="col-sm-2 col-md-4">
-              <div class="form-floating">
-                <select class="form-select" id="numeroDossier" name="numeroDossier" required>
-                <option disabled="true" selected="true" value="">Sélectionner fichier </option>
-                  @foreach ($dataFolder as $dataFolders)
-                  <option value="{{ $dataFolders->id }}">{{ $dataFolders->title }} </option>
-                  @endforeach
-                </select><label for="floatingSelectAdmin">Dossier </label>
-              </div>
-            </div>
-
-            <div class="col-sm-6 col-md-4">
-              <div class="form-floating"><input class="form-control" id="budget" name="budget" type="number" placeholder="Budget" required /><label for="floatingInputBudget">Budget</label></div>
-            </div>
-
-            <div class="col-sm-6 col-md-4">
-              <div class="flatpickr-input-container">
-                <div class="form-floating"><input class="form-control datetimepicker" id="startdate" name="startdate" type="date" placeholder="end date" data-options='{"disableMobile":true}' required /><label class="ps-6" for="floatingInputStartDate">Date du commencement</label><span class="uil uil-calendar-alt flatpickr-icon text-700"></span></div>
-              </div>
-            </div>
-            <div class="col-sm-6 col-md-4">
-              <div class="flatpickr-input-container">
-                <div class="form-floating"><input class="form-control datetimepicker" id="deadline" name="deadline" type="date" placeholder="deadline" data-options='{"disableMobile":true}' required /><label class="ps-6" for="floatingInputDeadline">Date de la fin</label><span class="uil uil-calendar-alt flatpickr-icon text-700"></span></div>
-              </div>
-            </div>
-
-            <div class="col-12 gy-2">
-              <div class="form-floating"><textarea class="form-control" id="description" name="description" placeholder="Description du projet" style="height: 100px" required></textarea><label for="floatingProjectOverview">Résumé Exécutif du projet</label></div>
-            </div>
-            <div class="col-12 gy-4">
-              <div class="row g-3 justify-content-end">
-                <div class="col-auto"><button name="addProjectbtn" id="addProjectbtn" class="savebtn btn btn-primary px-5 px-sm-15">  Sauvegarder </button></div>
-              </div>
-            </div>
-          </form>
         </div>
-
-
-      </div>
-      <br>
-    </div>
-  </div>
-</div>
-
-
+ 
 @endsection

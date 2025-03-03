@@ -155,7 +155,7 @@ class FebController extends Controller
           ? implode(', ', $getDocument->map(fn($doc) => '<i class="fa fa-check-circle" style="color: green;" title="' . $doc->libelle . '"></i> ' . $doc->abreviation)->toArray())
           : '<i class="fa fa-times-circle" style="color: red;" title="Aucun fichier attaché disponible"></i>';
 
-        $description = ucfirst( Str::limit($datas->descriptionf, 50, '...'));
+        $description = ucfirst( Str::limit($datas->descriptionf, 20, '...'));
 
         $statut = $datas->statut !== 1
           ? "<span class='badge rounded-pill bg-subtle-primary text-primary font-size-11'> <i class='fa fa-check'></i> Disponible </span>"
@@ -184,7 +184,7 @@ class FebController extends Controller
         if ($getDocument->isNotEmpty()) {
           $output .= "
                                 <a href='feb/{$cryptedId}/showannex' class='dropdown-item mx-1' id='{$datas->id}'>
-                                    <i class='fas fa-paperclip'></i> Attachez les annex
+                                    <i class='fas fa-paperclip'></i> Attachez Annex
                                 </a>";
         }
         $output .= "
@@ -213,7 +213,7 @@ class FebController extends Controller
                     <td align='center'>{$datas->periode}</td>
                     <td align='center'>{$datas->code}</td>
                     <td>{$description}</td>
-                    <td align='center'>{$checkedString}</td>
+                    <td>{$checkedString}</td>
                     <td align='center'>{$statut}</td>
                     <td align='center'>" . date('d-m-Y', strtotime($datas->datefeb)) . "</td>
                     <td align='center'>" . date('d-m-Y', strtotime($datas->created_at)) . "</td>
@@ -413,6 +413,7 @@ class FebController extends Controller
     }
   }
 
+  
 
   public function storeUtilisation(Request $request)
   {
@@ -1180,8 +1181,6 @@ class FebController extends Controller
     echo $output;
   }
 
- 
-
   public function Updatestore(Request $request)
   {
     DB::beginTransaction();
@@ -1387,7 +1386,6 @@ class FebController extends Controller
       return redirect()->back()->with('failed', 'FEB erreur des mises à jour: ' . $e->getMessage());
     }
   }
-
 
   public function findligne(Request $request)
   {
@@ -2390,8 +2388,6 @@ class FebController extends Controller
 
     return response()->json(['exists' => $feb]);
   }
-
-   
 
   public function updatannex(Request $request)
   {

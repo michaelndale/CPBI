@@ -1,69 +1,7 @@
 @extends('layout/app')
 @section('page-content')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    @php
-        $documentacce = DB::table('febs')->Where('acce', Auth::id())->Where('acce_signe', 0)->get()->count();
-
-        $documentcompte = DB::table('febs')
-            ->Where('comptable', Auth::id())
-            ->Where('comptable_signe', 0)
-            ->get()
-            ->count();
-
-        $documentchefcomposent = DB::table('febs')
-            ->Where('chefcomposante', Auth::id())
-            ->Where('chef_signe', 0)
-            ->get()
-            ->count();
-
-        $dap_demandeetablie = DB::table('daps')
-            ->Where('demandeetablie', Auth::id())
-            ->Where('demandeetablie_signe', 0)
-            ->get()
-            ->count();
-
-        $dap_verifier = DB::table('daps')
-            ->Where('verifierpar', Auth::id())
-            ->Where('verifierpar_signe', 0)
-            ->get()
-            ->count();
-
-        $dap_approuverpar = DB::table('daps')
-            ->Where('approuverpar', Auth::id())
-            ->Where('approuverpar_signe', 0)
-            ->get()
-            ->count();
-
-        $dap_responsable = DB::table('daps')
-            ->Where('responsable', Auth::id())
-            ->Where('responsable_signe', 0)
-            ->get()
-            ->count();
-
-        $dap_secretaire = DB::table('daps')
-            ->Where('secretaire', Auth::id())
-            ->Where('secretaure_general_signe', 0)
-            ->get()
-            ->count();
-
-        $dap_chefprogramme = DB::table('daps')
-            ->Where('chefprogramme', Auth::id())
-            ->Where('chefprogramme_signe', 0)
-            ->get()
-            ->count();
-
-        $dap_nombre =
-            $dap_demandeetablie +
-            $dap_verifier +
-            $dap_approuverpar +
-            $dap_responsable +
-            $dap_secretaire +
-            $dap_chefprogramme;
-        $fab_nombre = $documentacce + $documentcompte + $documentchefcomposent;
-
-        $documentNombre = $dap_nombre + $fab_nombre;
-
-    @endphp
+   
 
     <div class="main-content">
         <div class="page-content">
@@ -75,7 +13,7 @@
                             <h4 class="mb-sm-0">Tableau de bord des projets <BR>
                                 <!-- COMMUNAUTÉ DES EGLISES DE PENTECÔTE AU
                                 BURUNDI “CEPBU” --> </h4>
-                            <div class="page-title-right">
+                            <div class="page-title-right ">
                                 <e class="form-control ps-6 "> @include('dashboard.time')</e>
                             </div>
 
@@ -592,93 +530,7 @@
                         </div><!-- end row -->
 
 
-                        <!-- end row -->
-
-                        @if (!session()->has('id'))
-<!--
-                            <div class="row">
-                                <div class="col-xl-3">
-                                    <div class="card">
-                                        <div class="card-body">
-
-
-                                            <h4 class="card-title"><i class="fa fa-search"></i> Recherche du projet</h4>
-                                            <div class="mt-4">
-
-
-                                                <div class="mt-4 text-center">
-                                                    <select class="form-select classcategory" id="classcategory">
-                                                        <option disabled="true" selected="true"> -- Dossier -- </option>
-                                                        @foreach ($folder as $folders)
-                                                            <option value="{{ $folders->id }}">
-                                                                {{ ucfirst($folders->title) }} </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-
-                                                <div class="mt-4 text-center">
-
-                                                    <select class="form-select annee" id="annee">
-                                                        <option value="0" disabled="true" selected="true"> -- Année
-                                                            -- </option>
-                                                    </select>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-9">
-                                    <div class="card">
-                                        <div class="card-body">
-
-                                            <h4 class="card-title mb-3"><i class="fa fa-info-circle"></i> Bref résumé de
-                                                tous les projets de la recherche</h4>
-
-
-                                            <div class="table-responsive">
-                                                <table class="table table-centered align-middle table-nowrap mb-0">
-                                                    <thead>
-                                                        <tr>
-                                                            <th> Numéro </th>
-                                                            <th>Titre du projet</th>
-                                                            <th>Date début</th>
-                                                            <th>Date fin</th>
-                                                            <th>Statut</th>
-                                                            <th>Année</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody class="show_all_projet tableviewsclass" id="show_all_projet">
-                                                        <tr>
-                                                            <td colspan="6">
-                                                                <h6 style="margin-top:1% ;color:#c0c0c0">
-                                                                    <center>
-                                                                        <font size="5px"><i class="fa fa-search"></i>
-                                                                        </font><br><br>
-                                                                        Sélectionner le dossier et l'année
-                                                                    </center>
-                                                                </h6>
-                                                            </td>
-
-                                                        </tr>
-
-
-
-                                                    </tbody>
-                                                </table>
-                                                <br>
-                                                <a href="{{ route('new_project') }}"
-                                                class="btn btn-outline-primary rounded-pill me-1 mb-1 btn-sm" type="button"><i
-                                                    class=" mdi mdi-plus-circle-multiple"></i> Créer un projet </a>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
-                        @endif
-                        <!-- end row -->
+                      
 
                     </div>
 
@@ -690,70 +542,7 @@
 
             </div> <!-- container-fluid -->
         </div>
-        <!-- End Page-content -->
-        @if ($documentNombre != 0)
-            <div tabindex="-1" role="dialog"
-                aria-labelledby="monNotificationLabel" aria-hidden="true">
-               
-            <input type="hidden" name="recherche" id="recherche" class="form-control"
-                placeholder="Recherche par numéro(F.E.B, D.A.P), date , Initiateur">
-                <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <!--<div class="modal-header">
-                            <h5 class="modal-title" id="myLargeModalLabel"><i class="fa fa-list"></i> Tâches à faire en
-                                attente</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button> !-->
-                        </div>
-                       <!--  <div class="modal-body">
-
-                            <div id="tableExample2">
-                                <div class="table-responsive">
-                                    <div class="input-group mb-3">
-                                        <span class="input-group-text" id="basic-addon1"><i
-                                                class="fas fa-search"></i></span>
-                                        <input type="text" name="recherche" id="recherche" class="form-control"
-                                            placeholder="Recherche par numéro(F.E.B, D.A.P), date , Initiateur">
-                                    </div>
-
-                                    <table class="table table-bordered table-striped table-sm fs--1 mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th class="sort border-top "><b> # </b></center>
-                                                </th>
-                                                <th class="sort border-top" data-sort="Document"><b>Document</b></th>
-                                                <th class="sort border-top" data-sort="febnum"><b>
-                                                        <center>N<sup>o</sup> DOC</center>
-                                                    </b></th>
-                                                <th class="sort border-top" data-sort="montant"><b>
-                                                        <center>Montant</center>
-                                                    </b></th>
-                                                <th class="sort border-top" data-sort="Date Doc"><b>Date Doc</b></th>
-                                                <th class="sort border-top" data-sort="Créé le"><b>Créé le</b></th>
-                                                <th class="sort border-top" data-sort="Date limite"><b>Date Limite</b>
-                                                </th>
-                                                <th class="sort border-top" data-sort="Créé par"><b>Créé par</b></th>
-                                            </tr>
-                                        </thead>
-
-
-                                        <tbody id="footernotification">
-                                            <tr>
-                                                <td colspan="8">
-                                                    <h5 class="text-center text-secondery my-5">
-                                                        @include('layout.partiels.load')
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div> /.modal-dialog -->
-            </div>
-        @endif
+       
     </div>
     @if (session('modal_message'))
         <script>

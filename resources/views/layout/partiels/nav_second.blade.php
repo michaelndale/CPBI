@@ -1,3 +1,6 @@
+@php
+  $personnelData = DB::table('personnels')->where('id', Auth::user()->personnelid)->select('nom','prenom')->first();
+@endphp
 <style>
   /* Réduire l'espacement entre les éléments de la liste */
   .navbar-nav  {

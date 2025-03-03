@@ -33,7 +33,9 @@ class CompteBanqueController extends Controller
 
          $comptes->banque_id = $request->banque_id;
          $comptes->devise= $request->devise;
-         $comptes->numero_compte = $request->numero_compte;
+         $comptes->numero_compte = $request->numero_compte; 
+         $comptes->solde = $request->montant; 
+         
          
          $comptes->save();
 

@@ -30,16 +30,23 @@ class FonctionController extends Controller
         $nombre = 1;
         foreach ($function as $rs) {
           $output .= '<tr>
-              <td class="align-middle ps-3 name">' . $nombre . '</td>
-              <td>' . ucfirst($rs->title). '</td>
-              <td>
-                <center>
-                  <a href="#" id="' . $rs->id . '" class="text-success mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier" ><i class="far fa-edit"></i> </a>
-                  <a href="#" id="' . $rs->id . '" class="text-danger mx-1 deleteIcon" title="Supprimer"><i class="far fa-trash-alt"></i></a>
-                </center>
+              <td class="align-middle ps-3 name">' . htmlspecialchars($nombre) . '</td>
+              <td><a href="' . route('responsabilite.index', $rs->id) . '">' . ucfirst($rs->title) . '</a></td>
+              <td align="center">
+               <div class="btn-group me-2 mb-2 mb-sm-0">
+                            <a data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="mdi mdi-dots-vertical ms-2"></i> Options
+                            </a>
+
+                      <div class="dropdown-menu">
+                      <a  href="'. route('responsabilite.index', $rs->id) . '" id="' . htmlspecialchars($rs->id) . '" href="#" class="dropdown-item mx-1 "  title="Voir les responsabilite"><i class="fa fa-list"></i> Voir les responsabilités</a>
+                        <a  href="#" id="' . htmlspecialchars($rs->id) . '" href="#" class="dropdown-item mx-1 editIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier"><i class="far fa-edit"></i> Modifier </a>
+                        <a  href="#" id="' . htmlspecialchars($rs->id) . '" href="#" class="dropdown-item mx-1 eleteIcon" data-bs-toggle="modal" data-bs-target="#edit_functionModal" title="Modifier"><i class="far fa-trash-alt"></i> Supprimer</a>
+                      </div>
+                </div>
               </td>
             </tr>';
-          $nombre++;
+         $nombre++;
         }
       
         echo $output;

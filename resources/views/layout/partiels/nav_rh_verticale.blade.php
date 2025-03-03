@@ -16,8 +16,6 @@
 
     $avatar = Auth::user()->avatar;
 
-
-
     @endphp
     <div id="layout-wrapper">
 
@@ -143,7 +141,7 @@
                 <div id="sidebar-menu">
                     <!-- Left Menu Start -->
                     <ul class="metismenu list-unstyled" id="side-menu">
-                        <li class="menu-title">Menu</li>
+                        <li class="menu-title">SERVICE RH</li>
 
 
                         <li>
@@ -155,8 +153,9 @@
 
 
 
+                        
 
-                        <li class="menu-title">RH</li>
+                      
 
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -167,7 +166,7 @@
                                     <ul class="sub-menu" aria-expanded="true">
                                         <li><a href="{{ route('personnel') }}">Tous les employés</a></li>
                                         <li><a href="{{ route('user') }}">Utilisateurs</a></li>
-                                        <li><a href="{{ route('fonction')}}">Fonctions</a></li>
+                                      
                                     </ul>
                                 
                         </li>
@@ -183,33 +182,31 @@
                                     <ul class="sub-menu" aria-expanded="true">
                                         <li><a href="{{ route('feuilletemps') }}">FTD</a></li>
                                         <li><a href=" route('rft') ">FTM</a></li>
-
-                                   
-
-                              
-
                             </ul>
                         </li>
 
-
-
-
                         <li>
-                            <a href="{{ route('service')}}">
-                            <i class="fa fa-network-wired"></i>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="fas fa-cog"></i>
 
-
-                                <span>Service</span>
+                                <span>Parametre</span>
                             </a>
+                           
+                                    <ul class="sub-menu" aria-expanded="true">
+                                       
+                                        <li><a href="{{ route('fonction')}}">Fonctions</a></li>
+                                        <li><a href="{{ route('service')}}">Service</a></li>
+                                        <li><a href="{{ route('department')}}">Departements</a></li>
+                                    </ul>
+                                
                         </li>
 
-                        <li>
-                            <a href="{{ route('department')}}">
-                            <i class="fa fa-building"></i>
 
-                                <span>Departements</span>
-                            </a>
-                        </li>
+
+
+                        
+
+                  
 
 
                         <li>

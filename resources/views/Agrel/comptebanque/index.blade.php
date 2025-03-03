@@ -74,13 +74,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-            
-                                    <div class="col-sm-12 col-md-12">
-                                        <label class="text-1000 fw-bold mb-2">Numéro de compte</label>
-                                        <input class="form-control" name="numero_compte" id="numero_compte" type="text"
-                                               placeholder="Entrer le numéro de compte" required />
-                                    </div>
-            
+
                                     <div class="col-sm-12 col-md-12">
                                         <label class="text-1000 fw-bold mb-2">Devise</label>
                                         <select class="form-control" name="devise" id="devise" required>
@@ -90,6 +84,20 @@
                                             @endforeach
                                         </select>
                                     </div>
+            
+                                    <div class="col-sm-12 col-md-12">
+                                        <label class="text-1000 fw-bold mb-2">Numéro de compte</label>
+                                        <input class="form-control" name="numero_compte" id="numero_compte" type="text"
+                                               placeholder="Entrer le numéro de compte" required />
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-12">
+                                        <label class="text-1000 fw-bold mb-2">Innitialiser  le compte</label>
+                                        <input class="form-control" name="montant" id="montant" type="text"
+                                               placeholder="Entrer le numéro de compte" required  value='0'/>
+                                    </div>
+            
+                                  
                                 </div>
                             </div>
                             <div class="modal-footer">

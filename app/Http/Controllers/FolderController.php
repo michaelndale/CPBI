@@ -18,7 +18,12 @@ class FolderController extends Controller
 
   public function fetchAll()
   {
-    $folder = Folder::orderBy('title', 'ASC')->get();
+    $folder = Folder::orderBy('title', 'ASC')
+        ->join('users', 'folders.userid', '=', 'users.id')
+        ->join('personnels', 'users.personnelid', '=', 'personnels.id')
+        ->select('folders.*', 'personnels.prenom as user_prenom')
+        ->get();
+
     $output = '';
     if ($folder->count() > 0) {
 
@@ -27,7 +32,7 @@ class FolderController extends Controller
         $output .= '<tr>
               <td class="align-middle ps-3 name">' . $nombre . '</td>
               <td>' . ucfirst($rs->title) . '</td>
-             
+              <td>' . ucfirst($rs->user_prenom) . '</td>
               <td>' . date('d-m-Y', strtotime($rs->created_at)) . '</td>
               <td>
               <center>
@@ -37,12 +42,10 @@ class FolderController extends Controller
                        <i class="mdi mdi-dots-vertical ms-2"></i>
                   </a>
                   <div class="dropdown-menu">
-                      <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#editFolderModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
-                      <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
+                      <a class="dropdown-item mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#editFolderModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
+                      <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '" data-titre='. $rs->title .'  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
                   </div>
                </div>
-              
-              
                 </center>
               </td>
             </tr>';
@@ -52,10 +55,10 @@ class FolderController extends Controller
       echo $output;
     } else {
       echo ' <tr>
-        <td colspan="3">
+        <td colspan="5">
         <center>
           <h6 style="margin-top:1% ;color:#c0c0c0"> 
-          <center><font size="50px"><i class="far fa-trash-alt"  ></i> </font><br><br>
+          <center><font size="50px"><i class="fa fa-info-circle"></i> </font><br><br>
          Ceci est vide  !</center> </h6>
         </center>
         </td>

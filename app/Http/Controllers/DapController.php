@@ -193,7 +193,6 @@ class DapController extends Controller
           $output .= '<td>' . (strlen($datadaps->cho) > 8 ? substr($datadaps->cho, 0, 8) . '...' : $datadaps->cho) . '</td>';
           $output .= '<td>' . $datadaps->comptabiliteb . '</td>';
           $output .= '<td>' . $datadaps->banque . '</td>';
-          
           $output .= '<td>' .$datadaps->paretablie. '</td>';
           $output .= '<td align="right"><b>' . number_format($datadaps->avance ?? 0, 0, ',', ' ') . '</b></td>';
           $output .= '<td align="center">' . ($datadaps->justifier == 1 ? 

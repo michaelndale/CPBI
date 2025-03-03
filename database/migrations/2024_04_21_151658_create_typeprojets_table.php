@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('typeprojets', function (Blueprint $table) {
             $table->id();
             $table->string('titre', 1000)->nullable();
+            $table->string('userid', 1000)->nullable();
             $table->timestamps();
         });
     }

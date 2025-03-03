@@ -21,6 +21,10 @@ return new class extends Migration
             $table->string('signature', 1000)->default('element/signature/signature.jpg');
             $table->string('role', 50)->default(0);
             $table->string('userid', 50)->default(0);
+            $table->timestamp('last_activity')->nullable();
+            $table->boolean('is_connected')->default(false); // False par défaut pour les utilisateurs non connectés
+            $table->string('email')->nullable();
+            $table->string('verification_code', 6)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

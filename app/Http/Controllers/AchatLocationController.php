@@ -111,4 +111,6 @@ class AchatLocationController extends Controller
             ]);
         }
     }
+
+    
 }

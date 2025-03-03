@@ -6,7 +6,7 @@
     <title>Bienvenu | GoProject</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="GoProject" name="Application des Projets , RH , ARCHIVAGE , PARC AUTOMOBILE" />
-    <meta content="GoProjects" name="MICHAEL NDALE" />
+    <meta content="GoProjects" name="IMPACT-JOB , application des projets , Dev MICAHEL NDALE" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ asset('element/assets/images/logo.png') }}">
     <!-- Layout Js -->
@@ -22,6 +22,7 @@
 // Récupérer les données du profil de l'utilisateur
 $personnelData = DB::table('personnels')
 ->where('id',Auth::user()->personnelid)
+->select('prenom')
 ->first();
 @endphp
 
@@ -228,11 +229,8 @@ $personnelData = DB::table('personnels')
 
     <script src="{{ asset('element/assets/libs/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('element/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('element/assets/libs/metismenu/metisMenu.min.js') }}"></script>
-    <script src="{{ asset('element/assets/libs/simplebar/simplebar.min.js') }}"></script>
-    <script src="{{ asset('element/assets/libs/node-waves/waves.min.js') }}"></script>
-    <script src="{{ asset('element/assets/libs/jquery-countdown/jquery.countdown.min.js') }}"></script>
-    <script src="{{ asset('element/assets/js/pages/coming-soon.init.js') }}"></script>
+   <!-- <script src="{{ asset('element/assets/libs/jquery-countdown/jquery.countdown.min.js') }}"></script>
+    <script src="{{ asset('element/assets/js/pages/coming-soon.init.js') }}"></script> -->
     <script src="{{ asset('element/assets/js/app.js') }}"></script>
 </body>
 

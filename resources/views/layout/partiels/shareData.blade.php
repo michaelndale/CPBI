@@ -580,13 +580,14 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                             
                                                                                 // Chiffrer l'ID de la notification
                                                                                 $cryptedIDoc = Crypt::encrypt($febsActif->idfeb);
+                                                                                $Anneecreate = substr($febsActif->created_at, 0, 4);
                                                             
                                                                                 // Générer la ligne du tableau
                                                                                 echo '<tr>
                                                                                           <td>' . $numooOrder . '</td>
                                                                                           <td align="right">
                                                                                               <a href="' . route('key.viewFeb', $cryptedIDoc) . '">
-                                                                                                  <b>' . $febsActif->numerofeb . '/' . $febsActif->projet_annee . ' <i class="fas fa-external-link-alt"></i></b>
+                                                                                                  <b>' . $febsActif->numerofeb . '/' . $Anneecreate . ' <i class="fas fa-external-link-alt"></i></b>
                                                                                               </a>
                                                                                           </td>
                                                                                           <td align="right"><b>' . number_format($sumMontant, 0, ',', ' ') . '</b></td>
@@ -680,6 +681,8 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                                             ->whereIn('febid', $febIds)
                                                                                             ->sum('montant');
 
+                                                                                            $Anneecreatedap = substr($dap->created_at, 0, 4);
+
 
 
                                                                                     $cryptedIDoc = Crypt::encrypt($dap->iddaps);
@@ -689,7 +692,7 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                                             <td>' . $numooOrder . '</td>
                                                                                             <td align="right">
                                                                                                 <a href="' . route('viewdap', $cryptedIDoc) . '">
-                                                                                                    <b>' . $dap->numerodp . '/' . $dap->projet_annee . ' <i class="fas fa-external-link-alt"></i></b>
+                                                                                                    <b>' . $dap->numerodp . '/' . $Anneecreatedap . ' <i class="fas fa-external-link-alt"></i></b>
                                                                                                 </a>
                                                                                             </td>
                                                                                             <td align="right"><b>' . number_format($totalDapAmount, 0, ',', ' ') . '</b></td>
@@ -792,6 +795,8 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                                             $cryptedIDoc = Crypt::encrypt($dja->iddja);
                                                                         
                                                                                             // Gestion de l'état "justifie"
+
+                                                                                            $Anneecreatedja = substr($dja->created_at, 0, 4);
                                                                                            
                                                                                         @endphp
                                                                         
@@ -799,7 +804,7 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                                             <td>{{ $numooOrder }}</td>
                                                                                             <td align="right">
                                                                                                 <a href="{{ route('voirDja', $dja->iddja) }}">
-                                                                                                    <b>{{ $dja->numerodjas }}/{{ $dja->projet_annee }} <i class="fas fa-external-link-alt"></i></b>
+                                                                                                    <b>{{ $dja->numerodjas }}/{{ $Anneecreatedja }} <i class="fas fa-external-link-alt"></i></b>
                                                                                                 </a>
                                                                                             </td>
                                                                                             <td align="right"><b>{{ number_format($totalDjaAmount, 0, ',', ' ') }}</b></td>
@@ -908,17 +913,19 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                             @php
                                                                                 // Chiffrement de l'ID du document
                                                                                 $cryptedIDocAcDja = Crypt::encrypt($bpcsActifs->idbpc);
+
+                                                                                $Anneecreatebpc = substr($bpcsActifs->created_at, 0, 4);
                                                                             @endphp
                                                                     
                                                                             <tr>
                                                                                 <td>{{ $numooOrder }}</td>
                                                                                 <td>
                                                                                     <a href="{{ route('viewbpc', $cryptedIDocAcDja) }}">
-                                                                                        <b>{{ $bpcsActifs->numero }}/{{ $bpcsActifs->projet_annee }} <i class="fas fa-external-link-alt"></i></b>
+                                                                                        <b>{{ $bpcsActifs->numero }}/{{ $Anneecreatebpc }} <i class="fas fa-external-link-alt"></i></b>
                                                                                     </a>
                                                                                 </td>
-                                                                                <td align="right"><b>{{ number_format($$bpcsActifs->total_montant ?? 0, 0, ',', ' ') }}</b></td>
-                                                                                <td>{{  date('d-m-Y', strtotime($bpcsActif->date)) }} </td>
+                                                                                <td align="right"><b>{{ number_format($bpcsActifs->total_montant ?? 0, 0, ',', ' ') }}</b></td>
+                                                                                <td>{{  date('d-m-Y', strtotime($bpcsActifs->date)) }} </td>
                                                                                 <td>{{ $bpcsActifs->titre }} </td>
                                                                                 <td>{{ date('d-m-Y', strtotime($bpcsActifs->created_at)) }}</td>
                                                                                 <td>{{ date('d-m-Y', strtotime($bpcsActifs->updated_at)) }}</td>
@@ -1010,13 +1017,16 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                                     @php
                                                                                         // Chiffrement de l'ID du document
                                                                                         $cryptedIDocFac = Crypt::encrypt($facsActif->idfac);
+
+                                                                                        $Anneecreatefac = substr($facsActif->created_at, 0, 4);
+
                                                                                     @endphp
 
                                                                                     <tr>
                                                                                         <td>{{ $numooOrder }}</td>
                                                                                         <td align="right">
                                                                                             <a href="{{ route('viewfebpc', $cryptedIDocFac) }}">
-                                                                                                <b>{{ $facsActif->numero }}/{{ $facsActif->projet_annee }} <i class="fas fa-external-link-alt"></i></b>
+                                                                                                <b>{{ $facsActif->numero }}/{{ $Anneecreatefac }} <i class="fas fa-external-link-alt"></i></b>
                                                                                             </a>
                                                                                         </td>
                                                                                         <td align="right"><b>{{ number_format($facsActif->montant, 0, ',', ' ') }}</b></td>
@@ -1100,13 +1110,16 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                                     @php
                                                                                         // Chiffrement de l'ID du document
                                                                                         $cryptedIDocDac = Crypt::encrypt($dacActif->idddaps);
+
+                                                                                        $Anneecreatedac = substr($dacActif->created_at, 0, 4);
+
                                                                                     @endphp
                                                                     
                                                                                     <tr>
                                                                                         <td>{{ $numooOrder }}</td>
                                                                                         <td align="right">
                                                                                             <a href="{{ route('viewdappc', $cryptedIDocDac) }}">
-                                                                                                <b>{{ $dacActif->numerodap }}/{{ $dacActif->projet_annee }} <i class="fas fa-external-link-alt"></i></b>
+                                                                                                <b>{{ $dacActif->numerodap }}/{{ $Anneecreatedac }} <i class="fas fa-external-link-alt"></i></b>
                                                                                             </a>
                                                                                         </td>
                                                                                         <td align="right">{{ number_format($dacActif->montant ?? 0, 0, ',', ' ') }}</td>
@@ -1197,6 +1210,9 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                                     @php
                                                                                         // Chiffrement de l'ID du document
                                                                                         $cryptedIDoc = Crypt::encrypt($rac->idrac);
+
+                                                                                        $Anneecreaterac = substr($rac->created_at, 0, 4);
+
                                                                                     @endphp
                                                                     
                                                                                     <tr>
@@ -1313,13 +1329,14 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                     
                                                                         // Chiffrer l'ID de la notification
                                                                         $cryptedIDocInactif = Crypt::encrypt($febsInactif->idfeb);
+                                                                        $AnneecreatefebInc = substr($febsInactif->created_at, 0, 4);
                                                     
                                                                         // Générer la ligne du tableau
                                                                         echo '<tr>
                                                                                   <td>' . $numooOrder . '</td>
                                                                                   <td align="right">
                                                                                       <a href="' . route('key.viewFeb', $cryptedIDocInactif) . '">
-                                                                                          <b>' . $febsInactif->numerofeb . '/' . $febsInactif->projet_annee . ' <i class="fas fa-external-link-alt"></i></b>
+                                                                                          <b>' . $febsInactif->numerofeb . '/' . $AnneecreatefebInc . ' <i class="fas fa-external-link-alt"></i></b>
                                                                                       </a>
                                                                                   </td>
                                                                                   <td align="right"><b>' . number_format($sumMontantInactif, 0, ',', ' ') . '</b></td>
@@ -1414,6 +1431,10 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                 
                                                                                 // Chiffrer l'ID du document
                                                                                 $cryptedIDocInactifDac = Crypt::encrypt($dapsInactif->iddaps);
+
+                                                                                $AnneecreatedacbInc = substr($dapsInactif->created_at, 0, 4);
+
+
                                                                                 @endphp
                                                                 
                                                                                 <!-- Générer la ligne du tableau -->
@@ -1421,7 +1442,7 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                                     <td>{{ $numooOrder }}</td>
                                                                                     <td align="right">
                                                                                         <a href="{{ route('viewdap', $cryptedIDocInactifDac) }}">
-                                                                                            <b>{{ $dapsInactif->numerodp }}/{{ $dapsInactif->projet_annee }} <i class="fas fa-external-link-alt"></i></b>
+                                                                                            <b>{{ $dapsInactif->numerodp }}/{{ $AnneecreatedacbInc }} <i class="fas fa-external-link-alt"></i></b>
                                                                                         </a>
                                                                                     </td>
                                                                                     <td align="right"><b>{{ number_format($totalDapAmountInactif, 0, ',', ' ') }}</b></td>
@@ -1521,6 +1542,8 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                                 $cryptedIDocInDja = Crypt::encrypt($djasInactif->iddja);
                                                                 
                                                                                 // Gestion de l'état "justifie"
+
+                                                                                $AnneecreatedjabInc = substr($djasInactif->created_at, 0, 4);
                                                                                
                                                                             @endphp
                                                                 
@@ -1528,7 +1551,7 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                                 <td>{{ $numooOrder }}</td>
                                                                                 <td align="right">
                                                                                     <a href="{{ route('voirDja', $djasInactif->iddja) }}">
-                                                                                        <b>{{ $djasInactif->numerodjas }}/{{ $djasInactif->projet_annee }} <i class="fas fa-external-link-alt"></i></b>
+                                                                                        <b>{{ $djasInactif->numerodjas }}/{{ $AnneecreatedjabInc }} <i class="fas fa-external-link-alt"></i></b>
                                                                                     </a>
                                                                                 </td>
                                                                                 <td align="right"><b>{{ number_format($totalDjaAmountIn, 0, ',', ' ') }}</b></td>
@@ -1638,13 +1661,15 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                     @php
                                                                         // Chiffrement de l'ID du document
                                                                         $cryptedIDocInDja = Crypt::encrypt($bpcsInactifs->idbpc);
+
+                                                                        $AnneecreatebpcInc = substr($bpcsInactifs->created_at, 0, 4);
                                                                     @endphp
                                                             
                                                                     <tr>
                                                                         <td>{{ $numooOrder }}</td>
                                                                         <td>
                                                                             <a href="{{ route('viewbpc', $cryptedIDocInDja) }}">
-                                                                                <b>{{ $bpcsInactifs->numero }}/{{ $bpcsInactifs->projet_annee }} <i class="fas fa-external-link-alt"></i></b>
+                                                                                <b>{{ $bpcsInactifs->numero }}/{{ $AnneecreatebpcInc }} <i class="fas fa-external-link-alt"></i></b>
                                                                             </a>
                                                                         </td>
                                                                         <td align="right"><b>{{ number_format($bpcsInactifs->total_montant ?? 0, 0, ',', ' ') }}</b></td>
@@ -1740,13 +1765,15 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                             @php
                                                                                 // Chiffrement de l'ID du document
                                                                                 $cryptedIDocFac = Crypt::encrypt($facsInactif->idfac);
+
+                                                                                $AnneecreatefacInc = substr($facsInactif->created_at, 0, 4);
                                                                             @endphp
 
                                                                             <tr>
                                                                                 <td>{{ $numooOrder }}</td>
                                                                                 <td align="right">
                                                                                     <a href="{{ route('viewfebpc', $cryptedIDocFac) }}">
-                                                                                        <b>{{ $facsInactif->numero }}/{{ $facsInactif->projet_annee }} <i class="fas fa-external-link-alt"></i></b>
+                                                                                        <b>{{ $facsInactif->numero }}/{{ $AnneecreatefacInc }} <i class="fas fa-external-link-alt"></i></b>
                                                                                     </a>
                                                                                 </td>
                                                                                 <td align="right"><b>{{ number_format($facsInactif->montant, 0, ',', ' ') }}</b></td>
@@ -1830,13 +1857,14 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                             @php
                                                                                 // Chiffrement de l'ID du document
                                                                                 $cryptedIDocDac = Crypt::encrypt($dacInact->idddaps);
+                                                                                $AnneecreatedacInc = substr($dacInact->created_at, 0, 4);
                                                                             @endphp
                                                             
                                                                             <tr>
                                                                                 <td>{{ $numooOrder }}</td>
                                                                                 <td align="right">
                                                                                     <a href="{{ route('viewdappc', $cryptedIDocDac) }}">
-                                                                                        <b>{{ $dacInact->numerodap }}/{{ $dacInact->projet_annee }} <i class="fas fa-external-link-alt"></i></b>
+                                                                                        <b>{{ $dacInact->numerodap }}/{{ $AnneecreatedacInc }} <i class="fas fa-external-link-alt"></i></b>
                                                                                     </a>
                                                                                 </td>
                                                                                 <td align="right">{{ number_format($dacInact->montant ?? 0, 0, ',', ' ') }}</td>
@@ -1927,6 +1955,9 @@ $caissesInactives = $rappotageNombreNostis->filter(function ($item) use ($Inacti
                                                                             @php
                                                                                 // Chiffrement de l'ID du document
                                                                                 $cryptedIDoc = Crypt::encrypt($caissesInact->idrac);
+
+                                                                                $AnneecreatecaisseInc = substr($caissesInact->created_at, 0, 4);
+
                                                                             @endphp
                                                             
                                                                             <tr>

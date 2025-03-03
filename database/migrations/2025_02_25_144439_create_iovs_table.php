@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('elementsfeuilletemps', function (Blueprint $table) {
+        Schema::create('iovs', function (Blueprint $table) {
             $table->id();
-            $table->integer('userid')->nullable();
-            $table->integer('tempstotal')->nullable();
-            $table->integer('tempsmoyennne')->nullable();
+            $table->string('titre', 255); // Correction de la longueur (255 au lieu de 225)
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Nouvelle clé étrangère vers la table "users"
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('elementsfeuilletemps');
+        Schema::dropIfExists('iovs');
     }
 };

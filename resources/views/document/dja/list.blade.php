@@ -82,7 +82,7 @@
         </div>
     </div>
 
-
+   
     <script>
         $(document).on('input', 'input[name="montant_utiliser[]"]', function() {
             var montantAvance = $(this).closest('tr').find('input[name="montantavance[]"]').val();

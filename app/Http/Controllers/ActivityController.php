@@ -22,11 +22,9 @@ class ActivityController extends Controller
   public function index()
   {
       $title = 'Activités';
-
       // Récupérer l'ID du projet de la session et Exercice 
       $projectId = session()->get('id');
       $exerciceId = session()->get('exercice_id');
-
       // Vérifier si l'ID du projet est valide
       if (!$projectId && !$exerciceId) {
           // Gérer le cas où l'ID du projet et exercice est invalide
@@ -46,187 +44,173 @@ class ActivityController extends Controller
       ]);
   }
   
-
   public function fetchAll()
-{
-    // Début de la transaction
-    DB::beginTransaction();
+  {
+      // Début de la transaction
+      DB::beginTransaction();
 
-    try {
-        $ID = session()->get('id');
-        $devise = session()->get('devise');
-        $exerciceId = session()->get('exercice_id');
+      try {
+          $ID = session()->get('id');
+          $devise = session()->get('devise');
+          $exerciceId = session()->get('exercice_id');
 
-        $comptes = DB::table('comptes')
-            ->where('projetid', $ID)
-            ->where('compteid', '=', 0)
-            ->distinct()
-            ->get();
+          $comptes = DB::table('comptes')
+              ->where('projetid', $ID)
+              ->where('compteid', '=', 0)
+              ->distinct()
+              ->get();
 
-      /*  $SommeAllActivite = DB::table('activities')
-            ->where('projectid', $ID)
-            ->where('activities.execiceid', $exerciceId)
-            ->sum('montantbudget'); */
+        /*  $SommeAllActivite = DB::table('activities')
+              ->where('projectid', $ID)
+              ->where('activities.execiceid', $exerciceId)
+              ->sum('montantbudget'); */
 
-        $output = '';
+          $output = '';
 
-        $output .= '
-            <thead>
-                <tr style="background-color:#82E0AA">
-                  
-                    <th><center>Code</center></th>
-                    <th>Ligne et sous ligne budgétaire</th>
-                    <th> Activités  <!-- <span style="margin-left: 40%;">Montant total des activités: </b></span> --> </th>
-                </tr>
-            </thead>
-            <tbody>';
+          $output .= '
+              <thead>
+                  <tr style="background-color:#82E0AA">
+                    
+                      <th><center>Code</center></th>
+                      <th colspan="2">Ligne et sous ligne budgétaire & Activités  </th>
+                      <th colspan="2"> Montant <!-- <span style="margin-left: 40%;">Montant total des activités: </b></span> --> </th>
+                  </tr>
+              </thead>
+              <tbody>';
 
-           // <b>' . number_format($SommeAllActivite, 0, ',', ' ') .$ID. '
+            // <b>' . number_format($SommeAllActivite, 0, ',', ' ') .$ID. '
 
-        if ($comptes->count() > 0) {
-            $nombre = 1;
-            foreach ($comptes as $rs) {
-                $id = $rs->id;
+          if ($comptes->count() > 0) {
+              $nombre = 1;
+              foreach ($comptes as $rs) {
+                  $id = $rs->id;
 
-                $somme_budget_ligne = DB::table('rallongebudgets')
-                                    ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
-                                    ->where('rallongebudgets.projetid', $ID)
-                                    ->where('rallongebudgets.compteid', $id)
-                                    ->where('rallongebudgets.execiceid', $exerciceId)
-                                    ->sum('rallongebudgets.budgetactuel');
+                  $somme_budget_ligne = DB::table('rallongebudgets')
+                                      ->join('comptes', 'rallongebudgets.compteid', '=', 'comptes.id')
+                                      ->where('rallongebudgets.projetid', $ID)
+                                      ->where('rallongebudgets.compteid', $id)
+                                      ->where('rallongebudgets.execiceid', $exerciceId)
+                                      ->sum('rallongebudgets.budgetactuel');
 
-                $output .= '
-                    <tr style="background-color:#F5F5F5">
-                        <td><b>' . ucfirst($rs->numero) . '</b></td>
-                        <td><b>' . ucfirst($rs->libelle) . ' </b></td>
-                        <td align="right">Total general previsiom :  <b>' .  number_format($somme_budget_ligne, 0, ',', ' ')  . ' </b></td>
-                    </tr>
-                ';
+                  $output .= '
+                      <tr style="background-color:#F5F5F5">
+                          <td><b>' . ucfirst($rs->numero) . '</b></td>
+                          <td colspan="2"><b>' . ucfirst($rs->libelle) . ' </b></td>
+                          <td  align="right">Montant total prevision :  <b>' .  number_format($somme_budget_ligne, 0, ',', ' ')  . ' </b></td>
+                      </tr>
+                  ';
 
-                // Traitement pour chaque service
-                $sous_compte = Compte::where('compteid', $id)
-                    ->where('souscompteid', '=', 0)
-                    ->where('projetid', $ID)
-                    ->get();
-                if ($sous_compte->count() > 0) {
-                    $ndale = 1;
-                    foreach ($sous_compte as $sc) {
-                        $ids = $sc->id;
+                  // Traitement pour chaque service
+                  $sous_compte = Compte::where('compteid', $id)
+                      ->where('souscompteid', '=', 0)
+                      ->where('projetid', $ID)
+                      ->get();
+                  if ($sous_compte->count() > 0) {
+                      $ndale = 1;
+                      foreach ($sous_compte as $sc) {
+                          $ids = $sc->id;
 
-                        $output .= '
-                            <tr>
-                               
-                                <td style="width:15px">' . ucfirst($sc->numero) . '</td>
-                                <td style="width:250px">' . ucfirst($sc->libelle) . ' </td>
-                                <td>';
+                          $output .= '
+                              <tr>
+                                
+                                  <td style="width:15px">' . ucfirst($sc->numero) . '</td>
+                                  <td style="width:250px" colspan="3">' . ucfirst($sc->libelle) . ' </td>
+                                  <tr>';
 
-                        // Traitement pour chaque sous-compte
-                        $act = DB::table('activities')
-                            ->where('projectid', $ID)
-                            ->where('compteidr', $ids)
-                            ->where('activities.execiceid', $exerciceId)
-                            ->get();
+                          // Traitement pour chaque sous-compte
+                          $act = DB::table('activities')
+                              ->where('projectid', $ID)
+                              ->where('compteidr', $ids)
+                              ->where('activities.execiceid', $exerciceId)
+                              ->get();
 
-                        $actsome = DB::table('activities')
-                            ->where('projectid', $ID)
-                            ->where('compteidr', $ids)
-                            ->where('activities.execiceid', $exerciceId)
-                            ->sum('montantbudget');
+                          $actsome = DB::table('activities')
+                              ->where('projectid', $ID)
+                              ->where('compteidr', $ids)
+                              ->where('activities.execiceid', $exerciceId)
+                              ->sum('montantbudget');
 
-                        $nombre = 1;
-                        $output .= ' <table class="table  mb-0 table-sm" style="100%">';
-                        foreach ($act as $rss) {
-                            // Traitement pour chaque activité
-                            $compteobserve = DB::table('observationactivites')
-                                ->where('activiteid', $rss->id)
-                                ->count();
+                          $nombre = 1;
+                       
+                          foreach ($act as $rss) {
+                              // Traitement pour chaque activité
+                              $compteobserve = DB::table('observationactivites')
+                                  ->where('activiteid', $rss->id)
+                                  ->count();
 
-                            if ($rss->etat_activite == "Annuler") {
-                                $color = '#F08080';
-                                $class = 'danger';
-                            } elseif ($rss->etat_activite == "Terminée") {
-                                $color = '';
-                                $class = 'primary';
-                            } elseif ($rss->etat_activite == "Contrainte") {
-                                $color = '';
-                                $class = 'warning';
-                            } elseif ($rss->etat_activite == "Encours") {
-                                $color = '';
-                                $class = 'info';
-                            } else {
-                                $color = '';
-                                $class = 'success';
-                            }
+                           
 
-                            $output .= '
-                                <tr style="background-color:' . $color . '">
-                                    <td style="width:60px">' . $nombre . '
-                                        <div class="btn-group me-2 mb-2 mb-sm-0">
-                                            <a  data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="mdi mdi-dots-vertical ms-2"></i>
-                                            </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item text-success mx-1 ajouteroberveget" id="' . $rss->id . '"  data-bs-toggle="modal" data-bs-target="#AddObserve" title="Modifier"><i class="ri-wechat-line"></i> Ajouter un onbservation</a>
-                                                <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rss->id . '"  data-bs-toggle="modal" data-bs-target="#EditModale" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
-                                                <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rss->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td style="width:60%">
-                                        ' . ucfirst($rss->titre) . '
-                                        <span class="badge rounded-pill bg-' . $class . ' font-size-11">' . ucfirst($rss->etat_activite) . '</span>
-                                        <a href="#" id="' . $rss->id . '" class="text-success mx-1 observationshow" data-bs-toggle="modal" data-bs-target="#TableCommenteModale" title="Observation" ><i class="ri-wechat-line">' . $compteobserve . '</i> </a>
-                                    </td>
-                                    <td align="right">' . number_format($rss->montantbudget, 0, ',', ' ') . ' </td>
-                                </tr>
-                            ';
-                            $nombre++;
-                        }
+                              $output .= '
+                                  <tr>
+                                  <td>
+                                     <div class="btn-group me-2 mb-2 mb-sm-0">
+                                              <a  data-bs-toggle="dropdown" aria-expanded="false">
+                                                  <i class="mdi mdi-dots-vertical ms-2"></i>
+                                              </a>
+                                              <div class="dropdown-menu">
+                                                  <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rss->id . '"  data-bs-toggle="modal" data-bs-target="#EditModale" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
+                                                  <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rss->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
+                                              </div>
+                                          </div>
+                                  </td>
+                                      <td style="width:100px">' . ucfirst($sc->numero) . '.' . $nombre . '
+                                         
+                                      </td>
+                                      <td style="width:60%">
+                                          ' . ucfirst($rss->titre) . '
+                                       
+                                        
+                                      </td>
+                                      <td align="right">' . number_format($rss->montantbudget, 0, ',', ' ') . ' </td>
+                                  </tr>
+                              ';
+                              $nombre++;
+                          }
 
-                        $output .= '
-                            <tr>
-                                <td colspan="2"><b>Sous total des activités </b></td>
-                                <td align="right"> <b>' . number_format($actsome, 0, ',', ' ') . ' </b></td>
-                            </tr>
-                        </table>';
+                          $output .= '
+                              <tr>
+                                 
+                                  <td colspan="3" align="right"><b>Sous total des activités </b></td>
+                                  <td align="right" > <b>' . number_format($actsome, 0, ',', ' ') . ' </b></td>
+                              </tr>
+                          ';
 
-                        $output .= '</td>
-                            </tr>';
-                        $ndale++;
-                    }
-                }
+                          $output .= '</tr>
+                              </tr>';
+                          $ndale++;
+                      }
+                  }
 
-                $nombre++;
-            }
-            $output .= '</tbody>';
-            echo $output;
-        } else {
-            echo '<tr>
-                    <td colspan="4">
-                        <center>
-                            <h6 style="margin-top:1% ;color:#c0c0c0">
-                                <center><font size="50px"><i class="fa fa-info-circle"></i></font><br><br>
-                                    Ceci est vide !
-                                </center>
-                            </h6>
-                        </center>
-                    </td>
-                </tr>';
-        }
+                  $nombre++;
+              }
+              $output .= '</tbody>';
+              echo $output;
+          } else {
+              echo '<tr>
+                      <td colspan="4">
+                          <center>
+                              <h6 style="margin-top:1% ;color:#c0c0c0">
+                                  <center><font size="50px"><i class="fa fa-info-circle"></i></font><br><br>
+                                      Ceci est vide !
+                                  </center>
+                              </h6>
+                          </center>
+                      </td>
+                  </tr>';
+          }
 
-        // Valider et terminer la transaction
-        DB::commit();
-    } catch (\Exception $e) {
-        // Annuler la transaction en cas d'erreur
-        DB::rollBack();
+          // Valider et terminer la transaction
+          DB::commit();
+      } catch (\Exception $e) {
+          // Annuler la transaction en cas d'erreur
+          DB::rollBack();
 
-        return response()->json([
-            'status' => 500,
-            'message' => 'Une erreur est survenue lors de la récupération des données.'
-        ]);
-    }
-}
-
+          return response()->json([
+              'status' => 500,
+              'message' => 'Une erreur est survenue lors de la récupération des données.'
+          ]);
+      }
+  }
 
   // insert a new ajax request
   public function store(Request $request)
@@ -343,8 +327,6 @@ class ActivityController extends Controller
     }
   }
 
-
-
   // Update a new ajax request
   public function update(Request $request)
   {
@@ -376,10 +358,6 @@ class ActivityController extends Controller
       ]);
     }
   }
-
-
-
-
 
   // edit an folder ajax request
   public function show(Request $request)
@@ -415,7 +393,6 @@ class ActivityController extends Controller
     }
   }
 
-
   public function showactivityobserve(Request $request)
   {
     try {
@@ -450,9 +427,6 @@ class ActivityController extends Controller
       ]);
     }
   }
-
-
-
 
   public function deleteall(Request $request)
   {
@@ -499,4 +473,6 @@ class ActivityController extends Controller
       ]);
     }
   }
+
+  
 }

@@ -25,9 +25,7 @@
             <div class="page-title-right d-flex align-items-center justify-content-between gap-2" style="margin: 0;">
                
                 <!-- Bouton Créer -->
-                <a href="{{ route('key.viewProject', $cryptedId ) }}" class="btn btn-outline-primary rounded-pill btn-sm">
-                    <span class="fa fa-arrow-left"></span> Retour
-                </a>
+               
                 <a href="javascript:void(0)" id="fetchDataLink" class="btn btn-outline-primary rounded-pill btn-sm"
                     title="Actualiser">
                     <i class="fas fa-sync-alt"></i>
@@ -267,24 +265,71 @@
             dataType: 'json',
             success: function(response) {
                 if (response.status == 200) {
-                    toastr.success("Bailleur enregistré avec succès!", "Enregistrement");
+                  
+
+                    toastr.success(
+                          "Bailleur enregistré avec succès!", // Message
+                          "Succès !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
 
                     loadBailleurs();
                     $("#createBailleurForm")[0].reset();
                     $("#createBailleurModal").modal('hide');
 
                 } else if (response.status == 201) {
-                    toastr.error("Attention: Le Bailleur existe déjà!", "Info");
+                  
+
+                    toastr.info(
+                          "Attention: Le Bailleur existe déjà!", // Message
+                          "Info !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
+
                 } else if (response.status == 202) {
-                    toastr.error("Le Bailleur existe déjà!", "Erreur");
+                    toastr.info(
+                          "Attention: Le Bailleur existe déjà!", // Message
+                          "Info !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
                 }
 
                 document.getElementById("saveBailleurBtn").disabled = false;
                 $("#saveBailleurBtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             },
             error: function(xhr, status, error) {
-                console.error("Erreur lors de la requête :", error);
-                toastr.error("Une erreur s'est produite. Veuillez réessayer plus tard.", "Erreur");
+          
+             
+                toastr.error(
+                          "Une erreur s'est produite. Veuillez réessayer plus tard.", // Message
+                          "Erreur !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
+
                 document.getElementById("saveBailleurBtn").disabled = false;
                 $("#saveBailleurBtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             }
@@ -308,14 +353,39 @@
             dataType: 'json',
             success: function(response) {
                 if (response.status == 200) {
-                    toastr.success("Compte d\'accès créé avec succès!", "Enregistrement");
+                   
+
+                    toastr.success(
+                          "Compte d\'accès créé avec succès!", // Message
+                          "Succès !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
 
                     loadBailleurs();
                     $("#creeAccessForm")[0].reset();
                     $("#creeAccessModal").modal('hide');
 
                 } else if (response.status == 201) {
-                    toastr.error("Ce bailleur possède déjà un compte vérifié.", "Info");
+                    
+
+                    toastr.error(
+                          "Ce bailleur possède déjà un compte vérifié.", // Message
+                          "Info !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
+
                 } else if (response.status == 202) {
                     toastr.error("Le Bailleur existe déjà!", "Erreur");
                 }

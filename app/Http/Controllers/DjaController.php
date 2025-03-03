@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\annexe_utilisation;
+use App\Models\Apreviation;
 use App\Models\Beneficaire;
 use App\Models\Compte;
 use App\Models\Dja;
@@ -20,6 +22,7 @@ use Barryvdh\DomPDF\Facade as PDF;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Exception;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 
 class DjaController extends Controller
@@ -64,12 +67,19 @@ class DjaController extends Controller
           ->get();
 
         $cryptedId = Crypt::encrypt($datas->iddjas);
+
+        $getDocument = annexe_utilisation::join('apreviations', 'annexe_utilisations.annexid', 'apreviations.id')
+        ->select('apreviations.id', 'apreviations.abreviation', 'apreviations.libelle', 'annexe_utilisations.urldoc')
+        ->where('annexe_utilisations.djasid', $datas->iddjas)
+        ->get();
       
         if ($datas->justifie == 1) {
           $jus = "checked";
         } else {
           $jus = "";
         }
+
+        $cryptedId = Crypt::encrypt($datas->iddjas);
 
         $output .= '
         <tr>
@@ -79,13 +89,26 @@ class DjaController extends Controller
             <a   data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="mdi mdi-dots-vertical ms-2"></i> Options
             </a>
-            <div class="dropdown-menu">
-              
-               <a href="dja/' . $datas->iddjas . '/nouveau" class="dropdown-item mx-1"><i class="fa fa-plus-circle"></i> Demande  </a>
+              <div class="dropdown-menu">
+                <a href="dja/' . $datas->iddjas . '/nouveau" class="dropdown-item mx-1"><i class="fa fa-plus-circle"></i> Demande  </a>
                 <a href="dja/' . $datas->iddjas . '/nouveauutilisation" class="dropdown-item mx-1"><i class="fa fa-plus-circle"></i> Rapport d\'utilisation de l\'avance  </a>
-               <a href="dja/' . $datas->iddjas . '/voir" class="dropdown-item mx-1"><i class="fa fa-eye"></i> Voir  DJA  </a>
-               <a href="dja/' . $datas->iddjas . '/generate-pdf-dja" class="dropdown-item mx-1"><i class="fa fa-print"></i> Imprimer DJA  </a> 
-                </div>
+                <a href="dja/' . $datas->iddjas . '/voir" class="dropdown-item mx-1"><i class="fa fa-eye"></i> Voir  DJA  </a>
+            
+                ';
+              if ($getDocument->isNotEmpty()) {
+                $output .= "
+                                      <a href='dja/{$cryptedId}/showannex' class='dropdown-item mx-1' id='{$datas->id}'>
+                                          <i class='fas fa-paperclip'></i> Attachez Annex
+                                      </a>";
+
+                                      
+              }
+              $output .= '
+
+
+
+                <a href="dja/' . $datas->iddjas . '/generate-pdf-dja" class="dropdown-item mx-1"><i class="fa fa-print"></i> Imprimer DJA  </a> 
+              </div>
           </div>
           </center>
           </td>
@@ -130,6 +153,146 @@ class DjaController extends Controller
         ';
     }
   }
+
+  
+  public function saveDjasannex(Request $request)
+  {
+     
+      DB::beginTransaction();
+  
+      try {
+          // Récupère l'ID du DJA actuel
+          $djasid = $request->djasid;
+  
+          // Récupère toutes les annexes actuellement liées au DJA
+          $existingAnnexes = annexe_utilisation::where('djasid', $djasid)->pluck('annexid')->toArray();
+  
+          // Récupère les annexes sélectionnées dans la requête
+          $selectedAnnexes = $request->input('annex', []);
+  
+          // 1. Supprimer les annexes non sélectionnées
+          $annexesToDelete = array_diff($existingAnnexes, $selectedAnnexes);
+  
+          if (!empty($annexesToDelete)) {
+              // Récupère les détails des annexes à supprimer
+              $annexDetails = annexe_utilisation::whereIn('annexid', $annexesToDelete)
+                  ->where('djasid', $djasid)
+                  ->get();
+  
+              // Supprime les fichiers associés s'ils existent
+              foreach ($annexDetails as $annexe) {
+                  if (!empty($annexe->urldoc) && Storage::disk('public')->exists($annexe->urldoc)) {
+                      Storage::disk('public')->delete($annexe->urldoc); // Supprime le fichier physique
+                  }
+              }
+  
+              // Supprime les enregistrements des annexes utilisations
+              annexe_utilisation::whereIn('annexid', $annexesToDelete)
+                  ->where('djasid', $djasid)
+                  ->delete();
+          }
+  
+          // 2. Ajouter ou mettre à jour les annexes sélectionnées
+          foreach ($selectedAnnexes as $annexid) {
+              // Vérifie si l'annexe existe déjà pour ce DJA
+              $existingRecord = annexe_utilisation::where('djasid', $djasid)
+                  ->where('annexid', $annexid)
+                  ->first();
+  
+              if (!$existingRecord) {
+                  // Crée une nouvelle entrée si elle n'existe pas
+                  $newAnnex = new annexe_utilisation();
+                  $newAnnex->djasid = $djasid;
+                  $newAnnex->annexid = $annexid;
+                  $newAnnex->userid = Auth::id(); // Utilisateur connecté
+                  $newAnnex->save();
+              }
+          }
+  
+          // Valider la transaction
+          DB::commit();
+  
+          // Générer l'ID crypté pour la redirection
+          $cryptedId = Crypt::encrypt($djasid);
+  
+          return response()->json([
+              'status' => 200,
+              'message' => 'Références des documents mises à jour avec succès.',
+              'redirect' => route('annex.show.dja', $cryptedId),
+          ]);
+      } catch (\Exception $e) {
+          // Annuler la transaction en cas d'erreur
+          DB::rollBack();
+  
+          return response()->json([
+              'status' => 500, // Code d'erreur interne
+              'error' => 'Une erreur inattendue est survenue : ' . $e->getMessage(),
+          ]);
+      }
+  }
+
+  
+
+  public function showannex($key)
+  {
+
+    $title = 'DJAS';
+    $key = Crypt::decrypt($key);
+    $check = Dja::findOrFail($key);
+
+    $getDocument = annexe_utilisation::join('apreviations', 'annexe_utilisations.annexid', 'apreviations.id')
+    ->select('apreviations.id', 'apreviations.abreviation', 'apreviations.libelle', 'annexe_utilisations.urldoc', 'annexe_utilisations.id as iddoc')
+    ->where('annexe_utilisations.djasid', $key)
+      ->get();
+
+    return view('document.dja.addanex', [
+      'title' => $title,
+      'getDocument' => $getDocument,
+      'datacheck' => $check
+
+    ]);
+  }
+
+  public function updat_annex(Request $request)
+  {
+    DB::beginTransaction(); // Start the transaction
+    try {
+      // Loop through each document input
+      foreach ($request->annexid as $index => $id) {
+        // Retrieve the annex record by ID
+        $UpAnnex = annexe_utilisation::find($id);
+
+        // Ensure the record exists before proceeding
+        if (!$UpAnnex) {
+          return redirect()->back()->with('danger', "Annexe ID {$id} non trouvée.");
+        }
+
+        // Check if a new file was uploaded for this document
+        if (isset($request->doc[$index]) && $request->doc[$index]->isValid()) {
+          $originalName = $request->doc[$index]->getClientOriginalName();
+          $timestamp = time();
+          $extension = $request->doc[$index]->getClientOriginalExtension(); // Correct extension
+          $imageName = pathinfo($originalName, PATHINFO_FILENAME) . '_goproject_dja' . $timestamp . '.' . $extension;
+          $request->doc[$index]->move(public_path('projet/doc/'), $imageName);
+          $docPath = 'projet/doc/' . $imageName;
+        } else {
+          // Use the old document path if no new file is uploaded
+          $docPath = $request->ancientdoc[$index];
+        }
+
+        // Update the document path in the database
+        $UpAnnex->urldoc = $docPath;
+        $UpAnnex->update();
+      }
+
+      DB::commit(); // Commit the transaction if successful
+      return redirect()->back()->with('success', 'Mises à jour réussies.');
+    } catch (Exception $e) {
+      DB::rollBack(); // Rollback the transaction if there's an error
+      return redirect()->back()->with('danger', 'Erreur de mise à jour.');
+    }
+  }
+
 
   public function getTotalDap($dapId)
   {
@@ -1093,6 +1256,15 @@ class DjaController extends Controller
 
     $vehicules = Vehicule::all();
 
+    $attache = Apreviation::all();
+
+    $getDocument = annexe_utilisation::join('apreviations', 'annexe_utilisations.annexid', 'apreviations.id')
+    ->select('apreviations.id', 'apreviations.abreviation', 'apreviations.libelle', 'annexe_utilisations.urldoc')
+    ->where('annexe_utilisations.djasid', $id)
+    ->get();
+
+    $attachedDocIds = $getDocument->pluck('id')->toArray(); // Récupérer les IDs des documents attachés 
+    
 
 
     return view(
@@ -1104,12 +1276,18 @@ class DjaController extends Controller
         'numerofeb' => $numerofeb,
         'devise'    => $devise,
         'personnel' => $personnel,
-        'vehicule'  => $vehicules
+        'vehicule'  => $vehicules,
+        'attache'  => $attache,
+        'getDocument' => $getDocument,
+        'attachedDocIds' => $attachedDocIds
+        
 
 
       ]
     );
   }
+
+
 
   public function UpDjas(Request $request, $id)
   {
@@ -1565,60 +1743,54 @@ class DjaController extends Controller
   }
 
   public function checkUnverifiedFunds(Request $request)
-{
-    try {
-        $userId = $request->input('user_id');
-        $projectId = session()->get('id'); // Get the project ID from the session
-        $exerciceId = session()->get('exercice_id');
+  {
+      try {
+          $userId = $request->input('user_id');
+          $projectId = session()->get('id'); // Get the project ID from the session
+          $exerciceId = session()->get('exercice_id');
 
-        // Vérifier que l'ID utilisateur et l'ID projet sont valides
-        if (!$userId || !$projectId) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Utilisateur ou projet non valide.'
-            ], 400); // Bad request
-        }
+          // Vérifier que l'ID utilisateur et l'ID projet sont valides
+          if (!$userId || !$projectId) {
+              return response()->json([
+                  'status' => 'error',
+                  'message' => 'Utilisateur ou projet non valide.'
+              ], 400); // Bad request
+          }
 
-        // Query the `djas` table for records that match the criteria
-        $unverifiedFunds = DB::table('djas')
-          ->where('fonds_demande_par', $userId)
-          ->where('projetiddja', $projectId)
-          ->where('exerciceids', $exerciceId)
-          ->where(function ($query) {
-              $query->where('montant_utiliser', 0)  // montant_utiliser doit être égal à 0
-                    ->orWhereNull('montant_utiliser');  // ou NULL
-          })
-          ->where('justifie', 1)
-          ->count();
+          // Query the `djas` table for records that match the criteria
+          $unverifiedFunds = DB::table('djas')
+            ->where('fonds_demande_par', $userId)
+            ->where('projetiddja', $projectId)
+            ->where('exerciceids', $exerciceId)
+            ->where(function ($query) {
+                $query->where('montant_utiliser', 0)  // montant_utiliser doit être égal à 0
+                      ->orWhereNull('montant_utiliser');  // ou NULL
+            })
+            ->where('justifie', 1)
+            ->count();
 
-        if ($unverifiedFunds > 0) {
-            return response()->json([
-                'status' => 'error',
-                'message' => "Attention : $unverifiedFunds fonds ne sont pas encore justifiés pour cet utilisateur."
-            ]);
-        } else {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Le personnel est en règle avec toutes les justifications des avances.'
-            ]);
-        }
+          if ($unverifiedFunds > 0) {
+              return response()->json([
+                  'status' => 'error',
+                  'message' => "Attention : $unverifiedFunds fonds ne sont pas encore justifiés pour cet utilisateur."
+              ]);
+          } else {
+              return response()->json([
+                  'status' => 'success',
+                  'message' => 'Le personnel est en règle avec toutes les justifications des avances.'
+              ]);
+          }
 
-    } catch (\Exception $e) {
-        // En cas d'erreur, retourner un message d'erreur générique
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Une erreur est survenue, veuillez réessayer plus tard.'
-        ], 500);
-    }
+      } catch (\Exception $e) {
+          // En cas d'erreur, retourner un message d'erreur générique
+          return response()->json([
+              'status' => 'error',
+              'message' => 'Une erreur est survenue, veuillez réessayer plus tard.'
+          ], 500);
+      }
+  }
+
 }
-
-
-  
-}
-
-
-
-
 
 
 

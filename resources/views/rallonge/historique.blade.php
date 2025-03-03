@@ -1,6 +1,5 @@
-
-
-<div class="modal fade" id="HistoriqueModalScrollable" tabindex="-1" role="dialog" aria-labelledby="HistoriqueModalScrollableTitle" aria-hidden="true">
+<div class="modal fade" id="HistoriqueModalScrollable" tabindex="-1" role="dialog"
+    aria-labelledby="HistoriqueModalScrollableTitle" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
@@ -23,29 +22,35 @@
 
 
 <script>
-$(document).ready(function() {
-    $('.showeHistorique').on('click', function(event) {
-        event.preventDefault();
-        var hid = $(this).data('id'); // Récupère l'ID à envoyer
 
-        // Afficher un message de chargement
-        $('#showHistoriqueContent').html('<h5 class="text-center text-secondary my-5">Chargement en cours...</h5>');
+$(document).on('click', '.showeHistorique', function(e) {
+        e.preventDefault();
+        let id = $(this).attr('id');
 
-        // Envoyer une requête GET avec AJAX
         $.ajax({
-            url: '{{ route("historiqueliste") }}', // URL de la route
-            method: 'GET', // Méthode GET
-            data: { id: hid }, // Envoyer l'ID comme paramètre
+            url: "{{ route('historiqueliste') }}",
+            method: 'get',
+            data: {
+                id: id,
+                _token: '{{ csrf_token() }}'
+            },
             success: function(response) {
-                // Injecte le contenu reçu dans le modal
-                $('#showHistoriqueContent').html(response);
+                toastr.success('Chargement des donnees encours...');
+
             },
             error: function(xhr) {
-                console.error(xhr.responseText);
-                $('#showHistoriqueContent').html('<p>Erreur lors de la récupération des données.</p>');
+                toastr.error('Erreur lors de la récupération des données.');
+                console.error('Erreur:', xhr);
+            },
+            statusCode: {
+                404: function() {
+                    toastr.error('Ressource non trouvée (404).');
+                },
+                500: function() {
+                    toastr.error('Erreur interne du serveur (500).');
+                }
             }
         });
-    });
-});
-
+    });  
+    
 </script>

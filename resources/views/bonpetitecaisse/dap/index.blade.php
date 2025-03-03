@@ -53,7 +53,7 @@
             <table class="table table-bordered table-striped table-sm fs--1 mb-0">
               <thead style="position: sticky; top: 0; background-color: white; z-index: 1;">
                 <tr>
-                    <th>#</th>
+                   
                   <th class="sort border-top ">
                     <center><b>Actions</b></center>
                   </th>
@@ -198,40 +198,74 @@ $(document).on('change', '.febid', function() {
     });
 });
 
-// Soumission du formulaire d'ajout de DAP
 $("#adddapForm").submit(function(e) {
-    e.preventDefault();
-    const fd = new FormData(this);
-    $("#adddapbtn").html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
-   // $("#loadingModal").modal('show');
+                e.preventDefault();
+                const fd = new FormData(this);
+                $("#adddapbtn").html('<i class="fas fa-spinner fa-spin"></i>');
+                document.getElementById("adddapbtn").disabled = true;
 
-    $.ajax({
-        url: "{{ route('storedappc') }}", 
-        method: 'post',
-        data: fd,
-        cache: false,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-            $("#loadingModal").modal('hide');
+                $.ajax({
+                    url: "{{ route('storedappc') }}", // URL de l'enregistrement
+                    method: 'POST',
+                    data: fd,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function(response) {
+                        try {
+                            if (response.status === 200) {
+                                toastr.success(
+                                            "DAC ajouté avec succès", // Message
+                                            "Succès !", // Titre
+                                            {
+                                                closeButton: true, // Ajoute un bouton de fermeture
+                                                progressBar: true, // Affiche une barre de progression
+                                                //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                                timeOut: 3000, // Durée d'affichage (en millisecondes)
+                                                extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                            }
+                                        );
+                                       
 
-            if (response.status == 200) {
-                $("#adddapForm")[0].reset();
-                $("#dapModale").modal('hide');
-                toastr.success("DAP ajouté avec succès !", "Succès");
-                window.location.href = "{{ route('dappc') }}";
-            } else {
-                handleFormResponse(response);
-            }
+                                $("#adddapForm")[0].reset(); // Réinitialiser le formulaire
+                                $("#dapModale").modal('hide'); // Fermer le modal
+                                 fetchAlldap() ;
+                                 
+                                 window.location.href = response.redirect;
 
-            $("#adddapbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder').prop('disabled', false);
-        },
-        error: function(xhr, status, error) {
-            handleAjaxError(xhr, status, error);
-        }
-    });
-});
+                            } else if (response.status === 201) {
+                                toastr.error("La ligne de compte dans ce projet existe déjà !",
+                                    "Attention");
+                            } else if (response.status === 202) {
+                                toastr.error("Erreur lors de l'exécution : " + response.error,
+                                    "Erreur");
+                            } else {
+                                toastr.error("Réponse inattendue du serveur." + response.error, "Erreur");
+                            }
+                        } catch (error) {
+                            toastr.error("Erreur inattendue : " + error.message, "Erreur");
+                        } finally {
+                            $("#adddapbtn").html(
+                                '<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                            document.getElementById("adddapbtn").disabled = false;
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        let errorMessage = jqXHR.responseJSON && jqXHR.responseJSON.error ?
+                            jqXHR.responseJSON.error :
+                            errorThrown || textStatus || "Erreur inconnue";
+
+                        toastr.error("Erreur lors de la requête : " + errorMessage, "Erreur");
+                        $("#adddapbtn").html(
+                            '<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                        document.getElementById("adddapbtn").disabled = false;
+                    }
+                });
+            });
+
+
+
 
 // Suppression d'un DAP avec confirmation
 $(document).on('click', '.deleteIcon', function(e) {
@@ -304,50 +338,6 @@ function fetchAlldap() {
             $("#show_all").html(reponse);
         }
     });
-}
-
-// Fonction pour gérer la réponse lors de l'ajout/suppression
-function handleFormResponse(response) {
-    if (response.status == 201) {
-        toastr.error("Attention: DAP fonction existe déjà !", "Info");
-    } else if (response.status == 202) {
-        toastr.error("Erreur d'exécution, vérifiez votre connexion Internet", "Erreur");
-    } else if (response.status == 203) {
-        toastr.error("Erreur d'exécution: " + response.error, "Erreur");
-    } else {
-        // Si la réponse contient des erreurs spécifiques, affichez-les
-        var errorMessage = "Erreur inconnue";
-        if (response.errors) {
-            errorMessage = "Erreurs : " + response.errors.join(", ");
-        } else if (response.message) {
-            errorMessage = "Erreur : " + response.message;
-        }
-        toastr.error(errorMessage, "Erreur");
-    }
-    $("#dapModale").modal('show');
-}
-
-
-// Fonction pour gérer les erreurs AJAX
-function handleAjaxError(xhr, status, error) {
-    $("#loadingModal").modal('hide');
-
-    if (xhr.status === 0) {
-        toastr.error("Aucune connexion. Vérifiez le réseau.", "Erreur Réseau");
-    } else if (xhr.status == 404) {
-        toastr.error("Erreur 404: Ressource non trouvée.", "Erreur 404");
-    } else if (xhr.status == 500) {
-        toastr.error("Erreur 500: Erreur interne du serveur.", "Erreur Serveur");
-    } else if (status === "timeout") {
-        toastr.error("Erreur: Temps de réponse écoulé.", "Timeout");
-    } else if (status === "abort") {
-        toastr.error("Requête AJAX annulée.", "Annulé");
-    } else {
-        toastr.error("Erreur d'exécution: " + error, "Erreur");
-    }
-
-    $("#dapModale").modal('show');
-    $("#adddapbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder').prop('disabled', false);
 }
 
 // Fonction pour supprimer un DAP

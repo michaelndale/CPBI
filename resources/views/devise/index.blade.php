@@ -22,9 +22,9 @@
                                   <thead>
                                     <tr>
                                       <th style="width:5%"><b>#</b></th>
+                                 
+                                      <th><b>Devise</b></th>
                                       <th><b>Libellé</b></th>
-                                      <th><b>Pays</b></th>
-                                      <th><b>Code</b></th>
                                       <th><b><center>Action</center></b></th>
                                     </tr>
                                   </thead>
@@ -63,19 +63,23 @@
                       <div class="row">
                         <div class="col-sm-12 col-md-12">
                           <label class="text-1000 fw-bold mb-2">Pays</label>
-                          <input class="form-control" name="pays" id="pays" type="text" placeholder="Entrer le Pays" required />
+                          
+
+                          <select class="form-select" id="pays" name="pays">
+                            <option value="" selected="selected">Séléctionner pays</option>
+                            @foreach ($pays as $pay)
+                                <option value="{{ $pay->name }}">{{ ucfirst($pay->name ) }}</option>
+                            @endforeach
+                        </select>
+
                         </div>
             
-                        <div class="col-sm-6 col-md-6">
-                          <br>
+                     
+            
+                        <div class="col-sm-12 col-md-12">
+                        </br>
                           <label class="text-1000 fw-bold mb-2">Devise</label>
                           <input class="form-control" name="devise" id="devise" type="text" placeholder="Entrer le devise" required />
-                        </div>
-            
-                        <div class="col-sm-6 col-md-6">
-                          <br>
-                          <label class="text-1000 fw-bold mb-2">Code</label>
-                          <input class="form-control" name="code" id="code" type="text" placeholder="Entrer le code" required />
                         </div>
                       </div>
                     </div>
@@ -91,7 +95,7 @@
     <div class="modal fade" id="editdeviseModal" tabindex="-1" role="dialog" aria-labelledby="editdeviseTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <form id="edit_folder_form" autocomplete="off">
+                <form id="edit_devise_form" autocomplete="off">
                     @method('post')
                     @csrf
                     <div class="modal-header">
@@ -104,20 +108,22 @@
                       <div class="row">
                         <div class="col-sm-12 col-md-12">
                           <label class="text-1000 fw-bold mb-2">Pays</label>
-                          <input class="form-control" name="dpays" id="dpays" type="text" placeholder="Entrer le Pays" required />
+                      
+                          <select class="form-select" name="dpays" id="dpays" type="text">
+                            <option value="" selected="selected">Séléctionner pays</option>
+                            @foreach ($pays as $pay)
+                                <option value="{{ $pay->name }}">{{ ucfirst($pay->name ) }}</option>
+                            @endforeach
+                        </select>
                         </div>
             
-                        <div class="col-sm-6 col-md-6">
+                        <div class="col-sm-12 col-md-12">
                           <br>
                           <label class="text-1000 fw-bold mb-2">Devise</label>
                           <input class="form-control" name="ddevise" id="ddevise" type="text" placeholder="Entrer le devise" required />
                         </div>
             
-                        <div class="col-sm-6 col-md-6">
-                          <br>
-                          <label class="text-1000 fw-bold mb-2">Code</label>
-                          <input class="form-control" name="dcode" id="dcode" type="text" placeholder="Entrer le code" required />
-                        </div>
+                    
                       </div>
                     </div>
                     <div class="modal-footer">
@@ -151,20 +157,46 @@
             dataType: 'json',
             success: function(response) {
               if (response.status == 200) {
-                toastr.success("Devise enregistrer avec succès !", "Enregistrement");
+             
+                toastr.success(
+                                "Devise enregistrer avec succès ", // Message
+                                "Succès !", // Titre
+                                {
+                                    closeButton: true, // Ajoute un bouton de fermeture
+                                    progressBar: true, // Affiche une barre de progression
+                                    //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                    timeOut: 3000, // Durée d'affichage (en millisecondes)
+                                    extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                }
+                            );
+
                 fetchAllddevise();
-    
-                  $("#add_devise").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-                  $("#add_devise_form")[0].reset();
-                  $("#addDealModal").modal('hide');
-                  document.getElementById("add_devise").disabled = false;
+               
+                $("#addDealModal").modal('hide');
+                $("#add_devise_form")[0].reset();
+                $("#add_devise").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                document.getElementById("add_devise").disabled = false;
               }
     
               if (response.status == 201) {
-                toastr.error("Le devise existe déjà !", "Erreur");
-                $("#add_devise").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              
+
+                toastr.error(
+                                "Le devise existe déjà!.", // Message
+                                "Attention !", // Titre
+                                {
+                                    closeButton: true, // Ajoute un bouton de fermeture
+                                    progressBar: true, // Affiche une barre de progression
+                                    positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                    timeOut: 8000, // Durée d'affichage (en millisecondes)
+                                    extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                }
+                            );
                 $("#addDealModal").modal('show');
                 document.getElementById("add_devise").disabled = false;
+                $("#add_devise").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+              
+                
               }
             }
     
@@ -184,7 +216,6 @@
             },
             success: function(response) {
               $("#dpays").val(response.pays);
-              $("#dcode").val(response.code);
               $("#ddevise").val(response.libelle);
               $("#iddevise").val(response.id);
               
@@ -211,24 +242,59 @@
             dataType: 'json',
             success: function(response) {
               if (response.status == 200) {
-                toastr.success("Devise modifier avec succès !", "Modification");
+               
+
+                toastr.success(
+                                "Devise modifier avec succès  !", // Message
+                                "Succès !", // Titre
+                                {
+                                    closeButton: true, // Ajoute un bouton de fermeture
+                                    progressBar: true, // Affiche une barre de progression
+                                    timeOut: 3000, // Durée d'affichage (en millisecondes)
+                                    extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                }
+                            );
+
                 fetchAllddevise();
     
-                $("#editdevisebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-                $("#edit_devise_form")[0].reset();
                 $("#editdeviseModal").modal('hide');
+                $("#edit_devise_form")[0].reset();
+                $("#editdevisebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
                 document.getElementById("editdevisebtn").disabled = false;
     
               }
     
               if (response.status == 201) {
-                toastr.error("Le devise existe déjà !", "Erreur");
+             
+                toastr.error(
+                                "Le devise existe déjà ", // Message
+                                "Attention !", // Titre
+                                {
+                                    closeButton: true, // Ajoute un bouton de fermeture
+                                    progressBar: true, // Affiche une barre de progression
+                                    positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                    timeOut: 8000, // Durée d'affichage (en millisecondes)
+                                    extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                }
+                            );
+
                 $("#editdevisebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
                 document.getElementById("editdevisebtn").disabled = false;
               }
     
               if (response.status == 205) {
-                toastr.error("Vous n'avez pas l'accreditation de Modifier ce devise !", "Erreur");
+            
+                toastr.error(
+                                "Vous n'avez pas l'accreditation de Modifier ce devise !", // Message
+                                "Attention !", // Titre
+                                {
+                                    closeButton: true, // Ajoute un bouton de fermeture
+                                    progressBar: true, // Affiche une barre de progression
+                                    positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                    timeOut: 8000, // Durée d'affichage (en millisecondes)
+                                    extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                }
+                            );
                 $("#editdevisebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
                 document.getElementById("editdevisebtn").disabled = false;
               }

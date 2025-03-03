@@ -20,6 +20,15 @@ return new class extends Migration
             $table->string('approver_signature', 2)->default(0);
             $table->string('numero_groupe')->nullable();
             $table->string('userid')->nullable();
+            $table->string('cloture', 2)->default(0);
+            $table->string('fait_a', 2)->default('Bujumbura');
+            $table->string('le_etablie')->nullable();
+            $table->string('le_verifier')->nullable();
+            $table->string('projetid')->nullable();
+            $table->string('compteid')->nullable();
+            $table->string('exercice_id', 11)->nullable();
+            $table->string('moianne')->nullable();
+        
             $table->timestamps();
         });
     }

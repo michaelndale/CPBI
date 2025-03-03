@@ -67,9 +67,7 @@
    @include('layout.partiels.profile_signature')
 
 
-    <div class="progress">
-      <div id="progress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-    </div>
+   
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -497,5 +495,15 @@
 
 
 </body>
+
+<style>
+  .toast-success {
+    background-color: #28a745 !important;
+    color: white !important;
+    border:#28a745 !important;
+}
+
+</style>
+
 
 </html>

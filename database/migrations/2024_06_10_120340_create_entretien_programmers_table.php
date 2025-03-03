@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('entretien_programmers', function (Blueprint $table) {
             $table->id();
-            $table->string('entretien_id');
+            $table->string('vehicule_id');
             $table->string('type_entretien');
             $table->string('date_prevue');
             $table->string('descruption_pe');
+            $table->integer('userid')->nullable();
             $table->timestamps();
         });
     }

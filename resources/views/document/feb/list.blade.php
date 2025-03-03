@@ -52,8 +52,7 @@
 
                     <div id="tableExample2">
                         <div class="table-responsive">
-                            <table class="table table-striped table-sm fs--1 mb-0"
-                                style="background-color:#3CB371;color:white">
+                            <table class="table table-striped table-sm fs--1 mb-0"  style="background-color:#3CB371;color:white">
 
                                 <tbody id="showSommefeb">
 

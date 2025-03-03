@@ -186,7 +186,19 @@
         success: function(response) {
 
           if (response.status == 200) {
-            toastr.success("Petite compte ajouté avec succès. !", "Enregistrement");
+           
+
+            toastr.success(
+                          "Petite compte ajouté avec succès. !", // Message
+                          "Succès !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
 
             fetchAlldcompte();
 
@@ -199,7 +211,21 @@
           }
 
           if (response.status == 201) {
-            toastr.error("Le compte avec le code et libellé dans ce projet existe déjà !", "Attention");
+          
+            toastr.error(
+                          "Le compte avec le code et libellé dans ce projet existe déjà. !", // Message
+                          "Info !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
+
+
+
             $("#sendCompte").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
             $("#addDealModal").modal('show');
             document.getElementById("sendCompte").disabled = false;

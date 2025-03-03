@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Devise;
 use App\Models\Historique;
+use App\Models\PaysModel;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,12 @@ class DeviseController extends Controller
     public function index()
     {
       $title = 'Devise';
-      return view('devise.index', ['title' => $title]);
+      $pays = PaysModel::all();
+      return view('devise.index',
+       [
+        'title' => $title,
+        'pays'  => $pays
+      ]);
     }
   
     public function fetchAll()
@@ -28,7 +34,6 @@ class DeviseController extends Controller
                 <td class="align-middle ps-3 name">' . $nombre . '</td>
                 <td>' . ucfirst($rs->libelle) . '</td>
                 <td>' . ucfirst($rs->pays) . '</td>
-                <td>' . ucfirst($rs->code) . '</td>
                 <td>
                     <center>
                         <div class="btn-group me-2 mb-2 mb-sm-0">
@@ -36,8 +41,8 @@ class DeviseController extends Controller
                                 <i class="mdi mdi-dots-vertical ms-2"></i>
                             </a>
                             <div class="dropdown-menu">
-                                <a class="dropdown-item text-primary mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#editdeviseModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
-                                <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
+                                <a class="dropdown-item  mx-1 editIcon " id="' . $rs->id . '"  data-bs-toggle="modal" data-bs-target="#editdeviseModal" title="Modifier"><i class="far fa-edit"></i> Modifier</a>
+                                <a class="dropdown-item text-danger mx-1 deleteIcon"  id="' . $rs->id . '"  data-titre="' . $rs->libelle . '"  href="#"><i class="far fa-trash-alt"></i> Supprimer</a>
                             </div>
                         </div>
                     </center>
@@ -75,7 +80,6 @@ class DeviseController extends Controller
           $devise = new Devise();
 
           $devise->libelle = $request->devise;
-          $devise->code = $request->code;
           $devise->pays = $request->pays;
           $devise->userid =  Auth::id();
           $devise->save();
@@ -118,7 +122,6 @@ class DeviseController extends Controller
           if ($emp->userid == Auth::id()) 
           {
             $emp->pays = $request->dpays;
-            $emp->code = $request->dcode;
             $emp->libelle = $request->ddevise;
             $emp->update();
             

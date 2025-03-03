@@ -30,7 +30,7 @@
                                         <th>
                                             <center>Numéro</center>
                                         </th>
-                                        <th>Période </th>
+                                        <th>Période du .... au</th>
                                         <th>Etablie </th>
                                         <th>Verifié </th>
                                         <th>Créé par</th>
@@ -141,7 +141,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-sm-4 col-lg-6 col-xl-4">
+                            <!-- <div class="col-sm-4 col-lg-6 col-xl-4">
                                 <label class="text-1000 fw-bold mb-2">Verifier par</label>
                                 <div class="row g-2">
                                     <div class="col">
@@ -156,7 +156,7 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>
+                            </div>  -->
 
                         </div>
                     </div>

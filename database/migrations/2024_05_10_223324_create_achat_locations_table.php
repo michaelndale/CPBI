@@ -14,15 +14,17 @@ return new class extends Migration
         Schema::create('achat_locations', function (Blueprint $table) {
 
             $table->id();
+            
             $table->string('location', 225)->nullable();
-            $table->string('achat', 225)->nullable();
             $table->string('date', 25)->nullable();
             $table->double('kilometrage', 11)->nullable();
             $table->double('prixvente', 11)->nullable();
             $table->string('note', 1000)->nullable();
             $table->double('vehicule', 11)->nullable();
             $table->string('fournisseur', 225)->nullable();
+            $table->string('expiration', 225)->nullable();
             $table->integer('userid')->nullable();
+
             $table->timestamps();
 
         });

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('abreviation')->nullable();
             $table->text('libelle')->nullable();
+            $table->integer('userid')->nullable();
             $table->timestamps();
         });
     }

@@ -698,24 +698,19 @@
                         success: function(response) {
                             if (response.status === 200 && response.redirect) {
 
-                               
-
-
-                                $("#addfebbtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-
-                                $("#numerofeb_error").text("");
-                                $('#numerofeb').removeClass('has-error has-success'); // Supprime les classes de validation
-                                $("#numerofeb_info").text(''); // Réinitialise le texte d'info
-
-                                document.getElementById("addfebbtn").disabled = false;
-                                toastr.success("Feb ajouté avec succès !", "Enregistrement");
-                               
-
-                                // Redirection vers la route listfeb
-                             ///   window.location.href = "{{ route('listfeb') }}";
-
-                             window.location.href = response.redirect;
-                             
+                                toastr.success(
+                                    "Feb ajouté avec succès !", // Message
+                                    "Succès !", // Titre
+                                    {
+                                        closeButton: true, // Ajoute un bouton de fermeture
+                                        progressBar: true, // Affiche une barre de progression
+                                        //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                        timeOut: 3000, // Durée d'affichage (en millisecondes)
+                                        extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                    }
+                                );
+                                      
+                                window.location.href = response.redirect;
 
                             } else if (response.status == 201) {
                                 toastr.error("Attention: FEB numéro existe déjà !", "Attention");

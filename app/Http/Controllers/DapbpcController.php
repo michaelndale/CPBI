@@ -40,12 +40,6 @@ class DapbpcController extends Controller
       ->where('statut', 0)
       ->get();
 
-    $febpc =  DB::table('febpetitcaisses')
-    ->orderBy('numero', 'ASC')
-    ->where('projet_id', $projectId)
-    ->where('exercice_id', $exerciceId)
-    ->get();
-
     $service = Service::all();
     $banque = Banque::all();
 
@@ -61,7 +55,7 @@ class DapbpcController extends Controller
       'bonpetitecaisse.dap.index',
       [
         'title'     => $title,
-        'feb'       => $febpc,
+       
         'personnel' => $personnel,
         'service'   => $service,
         'banque'    => $banque,
@@ -136,26 +130,6 @@ class DapbpcController extends Controller
             if ($element) {
               $element->statut = 1;
               $element->save();
-
-              /*     if ($justifier == 1 ||  $justifier == 0) {
-                    // Enregistrement des informations de justification
-                    $justification = new Djapc();
-                    $justification->numerodjas = $request->numerodap;
-                    $justification->projetiddja = $request->projetid;
-                    $justification->numerodap = $IDdap;  // numero dap est IDDAP
-                    $justification->numeroov = $ov;
-    
-                    if ($justifier == 1) {
-                      $justification->justifie = 1;
-                    } else {
-                      $justification->justifie = 0;
-                    }
-    
-                    $justification->userid = Auth::id();
-                    $justification->save();
-                  }
-  
-                  */
             }
           }
         }
@@ -168,6 +142,7 @@ class DapbpcController extends Controller
 
       return response()->json([
         'status' => 200,
+        'redirect' => route('dappc'),
       ]);
     } catch (Exception $e) {
       // En cas d'erreur, annuler la transaction
@@ -517,7 +492,7 @@ class DapbpcController extends Controller
                 <td>' . $datas->lieu . '</td> 	
                 <td>' . $datas->comptebanque . '</td>
                 <td>' . $datas->banque . '</td>
-                <td>' . $datas->etablie_aunom . '</td>
+               <td>' . substr($datas->etablie_aunom, 0, 100) . (strlen($datas->etablie_aunom) > 100 ? '...' : '') . '</td>
                 <td align="center">' . date('d-m-Y', strtotime($datas->created_at)) . '</td>
                 <td  align="left" >' . ucfirst($datas->user_prenom) . '</td>
             

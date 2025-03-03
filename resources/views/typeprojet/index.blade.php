@@ -23,6 +23,7 @@
                                         <tr>
                                             <th style="width:5%"><center>#</center></th>
                                             <th><b>Libellé</b></th>
+                                            <th><b>Créé par</b></th>
                                             <th><b>Créé le</b></th>
                                             <th style="width:25%">
                                                 <center><b>Actions</b></center>
@@ -113,10 +114,12 @@
             $("#add_type_form").submit(function(e) {
                 e.preventDefault();
                 const fd = new FormData(this);
-                $("#add_type").text('Adding...');
+              
 
                 $("#add_type").html('<i class="fas fa-spinner fa-spin"></i>');
                 document.getElementById("add_type").disabled = true;
+
+             
 
                 $.ajax({
                     url: "{{ route('storetypebudget') }}",
@@ -128,23 +131,44 @@
                     dataType: 'json',
                     success: function(response) {
                         if (response.status == 200) {
-                            toastr.success("Type budget enregistrer avec succès!",
-                                "Enregistrement");
+
+                                toastr.success(
+                                "Type budget enregistrer avec succès !", // Message
+                                "Succès !", // Titre
+                                {
+                                    closeButton: true, // Ajoute un bouton de fermeture
+                                    progressBar: true, // Affiche une barre de progression
+                                    //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                    timeOut: 3000, // Durée d'affichage (en millisecondes)
+                                    extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                }
+                            );
+
+
                             fetchAlldbudget();
 
-                            $("#add_type").html(
-                                '<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-                            $("#add_type_form")[0].reset();
                             $("#addDealModal").modal('hide');
+                            $("#add_type_form")[0].reset();
                             document.getElementById("add_type").disabled = false;
+                            $("#add_type").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                           
 
                         }
 
                         if (response.status == 201) {
 
-                            toastr.error("Le type budget  existe déjà !", "Erreur");
-                            $("#add_type").html(
-                                '<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                            toastr.error(
+                                "Le type  existe déjà, deux dossiers avec le même titre n'est possible.", // Message
+                                "Attention !", // Titre
+                                {
+                                    closeButton: true, // Ajoute un bouton de fermeture
+                                    progressBar: true, // Affiche une barre de progression
+                                    positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                    timeOut: 8000, // Durée d'affichage (en millisecondes)
+                                    extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                }
+                            );
+                            $("#add_type").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
                             $("#addDealModal").modal('show');
                             document.getElementById("add_type").disabled = false;
                         }
@@ -189,97 +213,187 @@
                     dataType: 'json',
                     success: function(response) {
                         if (response.status == 200) {
-                            toastr.success("Type budget modifier avec succès !",
-                            "Modification");
+                           
+
+                            toastr.success(
+                                "Type modifier avec succès !", // Message
+                                "Succès !", // Titre
+                                {
+                                    closeButton: true, // Ajoute un bouton de fermeture
+                                    progressBar: true, // Affiche une barre de progression
+                                    //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                    timeOut: 3000, // Durée d'affichage (en millisecondes)
+                                    extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                }
+                            );
+
                             fetchAlldbudget();
 
-                            $("#edittypebtn").html(
-                                '<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
-                            $("#edittypeModal").modal('show');
+                            $("#edittypeModal").modal('hide');
+                            $("#edittypebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
                             document.getElementById("edittypebtn").disabled = false;
 
                         }
 
                         if (response.status == 201) {
-                            toastr.error("Le type budget existe déjà !", "Erreur");
+                         
 
-                            $("#edittypebtn").html(
-                                '<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                            toastr.error(
+                                "Le type budget existe déjà, deux type de projet avec le même titre n'est possible.", // Message
+                                "Attention !", // Titre
+                                {
+                                    closeButton: true, // Ajoute un bouton de fermeture
+                                    progressBar: true, // Affiche une barre de progression
+                                    positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                    timeOut: 8000, // Durée d'affichage (en millisecondes)
+                                    extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                }
+                            );
+
+                            $("#edittypebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
                             $("#edittypeModal").modal('show');
                             document.getElementById("edittypebtn").disabled = false;
                         }
 
                         if (response.status == 205) {
-                            toastr.error(
-                                "Vous n'avez pas l'accreditation de Modifier ce type de projet !",
-                                "Erreur");
+                            
 
-                            $("#edittypebtn").text('Sauvegarder');
+                                toastr.error(
+                                "Vous n'avez pas l'accreditation de Modifier ce type de projet.", // Message
+                                "Attention !", // Titre
+                                {
+                                    closeButton: true, // Ajoute un bouton de fermeture
+                                    progressBar: true, // Affiche une barre de progression
+                                    positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                    timeOut: 8000, // Durée d'affichage (en millisecondes)
+                                    extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                }
+                            );
+
+                            $("#edittypebtn").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                            $("#edittypeModal").modal('show');
+                            document.getElementById("edittypebtn").disabled = false;
                         }
 
                     }
                 });
             });
 
-            // Delete service ajax request
             $(document).on('click', '.deleteIcon', function(e) {
                 e.preventDefault();
                 let id = $(this).attr('id');
+                let titre = $(this).data('titre');
                 let csrf = '{{ csrf_token() }}';
+
                 Swal.fire({
-                    title: 'Êtes vous sûr de vouloir supprimer?',
-                    text: "Si vous le faite vous ne pouvez plus revenir en arrière !",
-
+                    icon: 'warning',
+                    title: 'Supprimer ?',
+                    html: `<p class='swal-text'>Cette action entraînera la suppression du <b>${titre}</b>.</p><p class='swal-text'><i class='fa fa-info-circle' style='color: red;'></i> Attention, il n'y a pas de retour en arrière.</p>`,
                     showCancelButton: true,
-                    confirmButtonColor: 'Green',
+                    confirmButtonColor: 'green',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Oui, Supprimer!',
+                    confirmButtonText: 'Oui, Supprimer !',
                     cancelButtonText: 'Annuler',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: "{{ route('deletetypebudget') }}",
-                            method: 'delete',
-                            data: {
-                                id: id,
-                                _token: csrf
-                            },
-                            success: function(response) {
+                    allowOutsideClick: false,
+                    customClass: {
+                        content: 'swal-custom-content'
+                    },
+                    preConfirm: () => {
+                        return new Promise((resolve) => {
+                            $.ajax({
+                                url: "{{ route('deletetypebudget') }}",
+                                method: 'delete',
+                                data: { id: id, _token: csrf },
+                                success: function(response) {
+                                    if (response.status == 200) {
+                                        // Résoudre directement sans afficher "Suppression en cours..."
+                                        resolve(response);
+                                    } else if (response.status == 205) {
+                                      
+                                        toastr.error(
+                                            "Vous n'avez pas l'accréditation de supprimer ce dossier.", // Message
+                                            "Attention !", // Titre
+                                            {
+                                                closeButton: true, // Ajoute un bouton de fermeture
+                                                progressBar: true, // Affiche une barre de progression
+                                                positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                                timeOut: 9000, // Durée d'affichage (en millisecondes)
+                                                extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                            }
+                                        );
 
 
-                                if (response.status == 200) {
-                                    toastr.success(
-                                        "Type budget supprimer avec succès !",
-                                        "Suppression");
-                                    fetchAlldbudget();
+                                        resolve(response);
+                                    } else {
+                                        let errorMessage = response.message || "Erreur lors de la suppression du dossier.";
+                                        if (response.error) {
+                                            errorMessage += `\nErreur technique : ${response.error}`;
+                                        }
+                                        if (response.exception) {
+                                            errorMessage += `\nException : ${response.exception}`;
+                                        }
+                                        toastr.error(errorMessage, "Erreur");
+                                        resolve(response);
+                                    }
+                                },
+                                error: function(xhr, status, error) {
+                                    let errorMsg = xhr.responseJSON ? xhr.responseJSON.message : "Erreur de réseau. Veuillez réessayer.";
+                                    if (xhr.responseJSON && xhr.responseJSON.exception) {
+                                        errorMsg += `\nException : ${xhr.responseJSON.exception}`;
+                                    }
+                                    toastr.error(errorMsg, "Erreur");
+                                    resolve({ status: 500, message: errorMsg });
                                 }
-
-                                if (response.status == 205) {
-                                    toastr.error(
-                                        "Vous n'avez pas l'accreditation de supprimer ce dossier!",
-                                        "Erreur");
-                                }
-
-                                if (response.status == 202) {
-                                    toastr.error("Erreur d'execution !", "Erreur");
-                                }
-                            }
+                            });
                         });
                     }
-                })
+                }).then((result) => {
+                    if (result.isConfirmed && result.value && result.value.status == 200) {
+                        // Afficher uniquement le message de succès
+                        toastr.success("Type de budget supprimé avec succès !", "Succès", {
+                            closeButton: true,
+                            progressBar: true,
+                            timeOut: 3000,
+                            extendedTimeOut: 1000
+                        });
+                        fetchAlldbudget();
+                    }
+                });
             });
 
+            // Delete service ajax request
+           
             fetchAlldbudget();
 
             function fetchAlldbudget() {
-                $.ajax({
-                    url: "{{ route('fetchtypebudget') }}",
-                    method: 'get',
-                    success: function(reponse) {
-                        $("#show_all_type").html(reponse);
+            $.ajax({
+                url: "{{ route('fetchtypebudget') }}",
+                method: 'get',
+                success: function(response) {
+                    // Si la requête réussit, mettez à jour le contenu
+                    $("#show_all_type").html(response);
+                },
+                error: function(xhr, status, error) {
+                    // Gestion des erreurs
+                    let errorMessage = "Une erreur est survenue lors du chargement des dossiers.";
+                    
+                    // Ajoutez plus de détails si des informations sont disponibles
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage += "\nDétails : " + xhr.responseJSON.message;
+                    } else if (status === "timeout") {
+                        errorMessage = "Le serveur n'a pas répondu à temps. Veuillez réessayer plus tard.";
+                    } else if (status === "error") {
+                        errorMessage = "Erreur réseau. Veuillez vérifier votre connexion internet.";
                     }
-                });
-            }
+
+                    // Affichez l'erreur via toastr
+                    toastr.error(errorMessage, "Erreur de Chargement");
+                }
+            });
+        }
+
+
+
         });
     </script>
 @endsection

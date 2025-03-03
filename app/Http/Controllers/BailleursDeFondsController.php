@@ -26,8 +26,7 @@ class BailleursDeFondsController extends Controller
       ->select('personnels.nom', 'personnels.prenom','users.id as user_id')
       ->get();
 
-    $pays = PaysModel::where('status', '=', 1)->get();
-
+    $pays = PaysModel::all();
     return view(
       'Bailleurs.index',
       [

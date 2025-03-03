@@ -24,6 +24,8 @@ return new class extends Migration
             $table->text('kms_parcourus')->nullable();
             $table->text('carburant_littre')->nullable();
             $table->text('signature_mission')->nullable();
+            $table->string('datejour');
+            $table->text('userid')->nullable();
             $table->timestamps();
         });
     }

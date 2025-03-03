@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('fournisseur');
             $table->string('dateEntretien');
             $table->string('cout');
+            $table->integer('userid')->nullable();
             $table->timestamps();
         });
     }

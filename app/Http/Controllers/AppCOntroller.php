@@ -22,18 +22,9 @@ class AppCOntroller extends Controller
   public function index()
   {
       $title = "Tableau de bord";
-     
       $project = Project::all();
-      
-      $user = User::all();
-     
       $activite = Activity::all();
     
-      $encours = Project::where('statut', 'Activé')->count();
-      
-    
-      $folder = Folder::orderBy('title', 'ASC')->get();
-     
       $jour = date('Y-m-d');
 
       try {
@@ -50,40 +41,13 @@ class AppCOntroller extends Controller
       session(['service' => 1]); // Définit la session 'service' à 1
 
       // Fetching data from the database with error handling
-      try {
-          $TOTAL_FEB = DB::table('febs')->get();
-      } catch (\Exception $e) {
-          Log::error('Erreur lors de la récupération des FEBs: ' . $e->getMessage());
-          $TOTAL_FEB = [];
-      }
-
-      try {
-          $TOTAL_DAP = DB::table('daps')->get();
-      } catch (\Exception $e) {
-          Log::error('Erreur lors de la récupération des DAPs: ' . $e->getMessage());
-          $TOTAL_DAP = [];
-      }
-
-      try {
-          $TOTAL_DAPPS = DB::table('dapbpcs')->get();
-      } catch (\Exception $e) {
-          Log::error('Erreur lors de la récupération des DAPBPCS: ' . $e->getMessage());
-          $TOTAL_DAPPS = [];
-      }
-
-      try {
-          $TOTAL_LIGNE_BUDGET = DB::table('comptes')->get();
-      } catch (\Exception $e) {
-          Log::error('Erreur lors de la récupération des comptes: ' . $e->getMessage());
-          $TOTAL_LIGNE_BUDGET = [];
-      }
-
-      try {
-          $INTERVENANT = DB::table('affectations')->get();
-      } catch (\Exception $e) {
-          Log::error('Erreur lors de la récupération des intervenants: ' . $e->getMessage());
-          $INTERVENANT = [];
-      }
+   
+    $TOTAL_FEB = DB::table('febs')->get();
+    $TOTAL_DAP = DB::table('daps')->get();
+    $TOTAL_DAPPS = DB::table('dapbpcs')->get();
+    $TOTAL_LIGNE_BUDGET = DB::table('comptes')->get();
+    $INTERVENANT = DB::table('affectations')->get();
+    
 
       // GRAPHIC FEB
       $startOfYear = Carbon::now()->startOfYear();
@@ -198,10 +162,7 @@ class AppCOntroller extends Controller
       return view('dashboard.dashboard', [
           'title' => $title,
           'project' => $project,
-          'user' => $user,
           'activite' => $activite,
-          'encours' => $encours,
-          'folder' => $folder,
           'communique' => $communique,
           'TOTAL_FEB' => $TOTAL_FEB,
           'TOTAL_DAP' => $TOTAL_DAP,

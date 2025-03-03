@@ -30,14 +30,14 @@ class PaysController extends Controller
                 return response()->json([
                     'code' => 404,
                     'status' => 'error',
-                    'message' => 'No countries found.'
+                    'message' => 'Pays non disponible .'
                 ], 404);
             }
 
             return response()->json([
                 'code' => 200,
                 'status' => 'success',
-                'message' => 'Countries retrieved successfully.',
+                'message' => 'Pays enregistrer avec succès ',
                 'data' => $pays
             ], 200);
 
@@ -66,7 +66,6 @@ class PaysController extends Controller
             $validatedData = $request->validate([
               
                 'name' => 'required|string|max:225|unique:pays_models',
-                'currenty_code' => 'required|string',
                 'phone_code' => 'required|string|max:5',
         
             ]);
@@ -76,10 +75,7 @@ class PaysController extends Controller
 
             $pays->user_id = Auth::id();
             $pays->name = $validatedData['name'];
-            $pays->currenty_code = $validatedData['currenty_code'];
             $pays->phone_code = $validatedData['phone_code'];
-       
-    
             // Save the new country to the database
             $pays->save();
     
@@ -145,7 +141,6 @@ class PaysController extends Controller
 
         $validatedData = $request->validate([
             'name' => 'string|max:225',
-            'currenty_code' => 'string|size:3',
             'phone_code' => 'string|max:5',
         
         ]);

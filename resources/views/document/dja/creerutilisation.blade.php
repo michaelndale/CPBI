@@ -284,7 +284,7 @@
                                                                 </div>
 
                                                                 <div class="col-md-2">
-                                                                    <!-- Champ pour le nom complet, affiché seulement si "Autres" est sélectionné ou si pfond_paye est 0 -->
+                                                                    <label class="form-label">FEB Utiliser :</label>
                                                                    <br>
                                                                 @php
                                                                     $affiches = []; // Tableau pour stocker les IDs déjà affichés
@@ -312,8 +312,13 @@
                                                                 </div>
 
                                                                 <div class="col-md-2">
-                                                                    <!-- Champ pour le nom complet, affiché seulement si "Autres" est sélectionné ou si pfond_paye est 0 -->
-                                                                  <br><br> <a href=""><i class="fa fa-info-circle "></i> Details sur le Montant a utiliser ! </a>
+                                                                 <label class="form-label">Rapport et utilisation :</label>
+                                                                  <!-- <br> <a href=""><i class="fa fa-info-circle "></i> Details sur l'utilisation ! </a>   -->
+
+                                                                  <br> <a href="" data-bs-toggle="modal" data-bs-target="#annexModalScrollable"><i class="fa fa-plus-circle"></i> Ajouter l'annex  </a>
+                                                               
+                                                                  <br> <a href="" data-bs-toggle="modal" data-bs-target="#RapportannexModalScrollable"><i class="fa fa-list"></i> Voir l'annex  </a>
+                                                               
                                                                 </div>
 
                                                                
@@ -327,6 +332,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+
                                                                 
                                                                 <div class="col-md-4" >
                                                                     <div class="mb-2" id="acce">
@@ -471,7 +477,105 @@
     </div>
 </div>
 
+<div class="modal fade" id="annexModalScrollable" tabindex="-1" role="dialog" aria-labelledby="annexModalScrollableTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <form id="addAnnexForm" autocomplete="off">
+            @method('post')
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="annexModalScrollableTitle">Ajouter les références des documents à attacher</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="djasid" value="{{ $data->iddjas }}" />
+                    <select class="form-control form-control-sm" id="annex" name="annex[]" multiple style="height: 150px" required>
+                        <option disabled>-- Sélectionner les documents attachés --</option>
+                        @foreach ($attache as $attaches)
+                            <option value="{{ $attaches->id }}" 
+                                    class="{{ in_array($attaches->id, $attachedDocIds) ? 'attached-option' : '' }}" 
+                                    {{ in_array($attaches->id, $attachedDocIds) ? 'selected' : '' }}>
+                                     {{ $attaches->libelle }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger waves-effect" data-bs-dismiss="modal">Fermer</button>
+                    <button type="submit" id="add_annex" name="add_annex" class="btn btn-primary waves-effect waves-light">
+                        <i class="fa fa-cloud-upload-alt"></i> Sauvegarder
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div class="modal fade" id="RapportannexModalScrollable" tabindex="-1" role="dialog" aria-labelledby="RapportannexModalScrollableTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+       
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="RapportannexModalScrollableTitle">Les documents en annex  attacher</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if ($getDocument->isNotEmpty()) 
+                    @foreach ($getDocument as $doc) 
+                        <div class="col-md-12">
+                            <input type="hidden" name="annexid[]" value="{{ $doc->iddoc }}" />
+                            <input type="hidden" name="ancientdoc[]" value="{{ $doc->urldoc }}" />
+                            <label class="text-1000 fw-bold mb-2">
+                                {{ $doc->libelle }} ({{ $doc->abreviation }}) , 
+                                @if ($doc->urldoc === NULL)
+                                    <i class="fa fa-times-circle" style="color: red;" title="Aucun document disponible"></i>
+                                    <span style="color: red;">Pas de document disponible</span>
+                                @else
+                                    <a href="#" onclick="viewDocument('{{ asset($doc->urldoc) }}'); return false;" title="{{ $doc->urldoc }}">
+                                        <i class="fa fa-link"></i> Voir le document 
+                                    </a>
+                                @endif
+                            </label>
+                          
+                            <div class="error-message" style="color: red; display: none;"></div>
+                            <br>
+                        </div>
+                    @endforeach
+                @else 
+                    <div class="col-md-12">
+                        <span>Pas de document disponible</span>
+                    </div>
+                @endif
+                    
+                </div>
+               
+            </div><!-- /.modal-content -->
+        </form>
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="documentModal" tabindex="-1" aria-labelledby="documentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="documentModalLabel">Visualisation du Document</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe id="documentFrame" style="width: 100%; height: 500px;" frameborder="0"></iframe>
+                <div id="noDocumentMessage" style="color: red; display: none;">Il n'existe pas de document.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @include('document.dja.elementsfebs')
+
+
 
 <script>
     // JavaScript pour afficher/masquer le champ "Nom et Prénom" selon la sélection
@@ -587,6 +691,154 @@
         calculer();
     });
 </script>
+
+
+<script>
+    function validateFiles(fileInput) {
+        const maxSize = 2 * 1024 * 1024; // 2MB
+        const file = fileInput.files[0];
+        const errorMessageDiv = fileInput.nextElementSibling;
+
+        // Clear previous error messages
+        errorMessageDiv.textContent = '';
+        errorMessageDiv.style.display = 'none';
+
+        // Check if file size exceeds limit
+        if (file && file.size > maxSize) {
+            errorMessageDiv.textContent = 'La taille du fichier ne doit pas dépasser 2 Mo.';
+            errorMessageDiv.style.display = 'block';
+            document.getElementById('addfebbtn').disabled = true;
+        } else {
+            // Disable the button if any other files are invalid
+            const inputs = document.querySelectorAll('input[type="file"]');
+            let allValid = true;
+
+            inputs.forEach(input => {
+                if (input.files.length > 0 && input.files[0].size > maxSize) {
+                    allValid = false;
+                }
+            });
+
+            document.getElementById('addfebbtn').disabled = !allValid;
+        }
+    }
+
+    function viewDocument(url) {
+        const documentFrame = document.getElementById('documentFrame');
+        const noDocumentMessage = document.getElementById('noDocumentMessage');
+
+        // Clear previous message
+        noDocumentMessage.style.display = 'none';
+
+        // AJAX request to check if the document exists
+        fetch(url)
+            .then(response => {
+                if (response.ok) {
+                    documentFrame.src = url; // Load the PDF in the iframe
+                    $('#documentModal').modal('show'); // Show the modal
+                } else {
+                    noDocumentMessage.style.display = 'block'; // Show error message
+                }
+            })
+            .catch(error => {
+                console.error('Error checking document:', error);
+                noDocumentMessage.style.display = 'block'; // Show error message
+            });
+    }
+</script>
+
+<script>
+    $(function () {
+        $("#addAnnexForm").submit(function (e) {
+            e.preventDefault();
+    
+            // Récupère les données du formulaire
+            const fd = new FormData(this);
+            const submitButton = $("#add_annex");
+    
+            // Vérifie si des documents ont été sélectionnés
+            const selectedDocuments = $("#annex").val();
+            if (!selectedDocuments || selectedDocuments.length === 0) {
+                toastr.error("Veuillez sélectionner au moins un document.", "Erreur");
+                return;
+            }
+    
+            // Affiche les données envoyées dans la console (pour le débogage)
+            console.log("Données envoyées :", fd.getAll ? Object.fromEntries(fd.entries()) : Array.from(fd.entries()));
+    
+            // Désactive le bouton et affiche le spinner
+            submitButton.html('<i class="fas fa-spinner fa-spin"></i>');
+            submitButton.prop("disabled", true);
+    
+            // Envoi de la requête AJAX
+            $.ajax({
+                url: "{{ route('storeannexjustification') }}",
+                method: 'post',
+                data: fd,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function (response) {
+                    // Traite la réponse du serveur
+                    if (response.status === 200) {
+                       
+
+                        toastr.success(
+                                    "Enregistrement ajouté avec succès !", // Message
+                                    "Succès !", // Titre
+                                    {
+                                        closeButton: true, // Ajoute un bouton de fermeture
+                                        progressBar: true, // Affiche une barre de progression
+                                        //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                                        timeOut: 3000, // Durée d'affichage (en millisecondes)
+                                        extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                                    }
+                                );
+                                      
+
+
+                        $("#addAnnexForm")[0].reset();
+                        $("#annexModalScrollable").modal('hide');
+                        window.location.href = response.redirect;
+                    } else if (response.status === 201) {
+                        toastr.error("Référence des documents existe déjà !", "Erreur");
+                    } else {
+                        toastr.error("Une erreur s'est produite : " + (response.error || "Aucun détail"), "Erreur");
+                    }
+    
+                    // Réactive le bouton et réinitialise le texte
+                    submitButton.html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                    submitButton.prop("disabled", false);
+                },
+                error: function (xhr, status, error) {
+                    // Affiche les détails de l'erreur dans la console
+                    console.error("Réponse du serveur :", xhr.responseText);
+    
+                    // Essaye de parser la réponse JSON pour extraire le message d'erreur
+                    let errorMessage = "Une erreur s'est produite.";
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response && response.error) {
+                            errorMessage = response.error; // Utilisez le message d'erreur personnalisé depuis le contrôleur
+                        }
+                    } catch (e) {
+                        console.error("Impossible de parser la réponse JSON :", e);
+                    }
+    
+                    // Affiche l'erreur dans un toast
+                    toastr.error(errorMessage, "Erreur");
+    
+                    // Réactive le bouton et réinitialise le texte
+                    submitButton.html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
+                    submitButton.prop("disabled", false);
+                }
+            });
+        });
+    });
+    </script>
+
+
 
 <script>
    

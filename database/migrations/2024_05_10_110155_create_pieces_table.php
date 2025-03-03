@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('pieces', function (Blueprint $table) {
             $table->id();
-            $table->string('fournisseurid', 1000)->nullable();
-            $table->string('constructeur', 1000)->nullable();
-            $table->string('numero', 1000)->nullable();
-            $table->double('prix', 1000)->nullable();
-            $table->string('dateprix', 1000)->nullable();
+            $table->string('fournisseurid', 11)->nullable();
+            $table->string('nom', 225)->nullable();
+            $table->string('constructeur', 100)->nullable();
+            $table->string('numero', 25)->nullable();
+            $table->double('prix', 30)->nullable();
+            $table->string('dateprix', 15)->nullable();
             $table->integer('userid')->nullable();
             $table->timestamps();
         });

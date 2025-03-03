@@ -29,7 +29,6 @@ class RallongebudgetController extends Controller
      // Définition du titre de la page
      $title = 'Budgétisation';
 
-     
     // Récupération des valeurs de la session
     $IDP = session()->get('id');
    
@@ -170,11 +169,17 @@ class RallongebudgetController extends Controller
       // Type de budget
       $typeBudget = typeprojet::all();
 
+       // Variable pour vérifier s'il existe au moins un type de budget avec des données valides
+      $anyBudgetAvailable = false;
+
       foreach ($typeBudget as $typeBudgets) {
         $cle_id_type_projet = $typeBudgets->id;
 
         // Vérifier si le type de budget contient des éléments
+
         $containsElements = false;
+        $totalBudget = 0; // Initialisation du total du budget
+        
         foreach ($data as $datas) {
           $somme_budget_ligne = DB::table('rallongebudgets')
             ->join('comptes', 'rallongebudgets.souscompte', '=', 'comptes.id')
@@ -184,14 +189,21 @@ class RallongebudgetController extends Controller
             ->where('comptes.cle_type_projet', $cle_id_type_projet)
             ->sum('rallongebudgets.budgetactuel');
 
-          if ($somme_budget_ligne !== null) {
+
+
+          if ($somme_budget_ligne > 0) {
             $containsElements = true;
-            break;
-          }
+            $totalBudget += $somme_budget_ligne; // Ajouter au total du budget
+        }
+
+        
+
+
         }
 
         // Afficher le titre du type de budget seulement s'il contient des éléments
-        if ($containsElements) {
+        if ($containsElements && $totalBudget > 0) {
+          $anyBudgetAvailable = true;
           $output .= '<br><h5>&nbsp; &nbsp;&nbsp;<u>' . $cle_id_type_projet . '. '. $typeBudgets->titre . '</u></h5>';
 
           $output .= '
@@ -383,6 +395,19 @@ class RallongebudgetController extends Controller
           $output .= '</tbody></table>';
         }
       }
+
+
+      // Si aucun type de budget n'a de données valides, afficher un message global
+      if (!$anyBudgetAvailable) {
+        $output .= '<br>';
+        $output .= '<div class="alert alert-warning d-flex justify-content-between align-items-center col-xl-7" style="margin:auto; padding: 10px;" role="alert">';
+        // Texte aligné à gauche
+        $output .= '<span><i class="fas fa-exclamation-triangle"></i> Aucune budgétisation n\'est disponible pour l\'ensemble de l\'exercice du projet.</span>';
+        // Bouton aligné à droite
+        $output .= '<a href="#" data-bs-toggle="modal" data-bs-target="#addDealModal" class="btn btn-outline-primary rounded-pill btn-sm"><i class="fas fa-plus-circle"></i> Commencer la création</a>';
+        $output .= '</div> <br>';
+      }
+
     }
 
     return $output;
@@ -547,7 +572,7 @@ class RallongebudgetController extends Controller
   public function showHistorique(Request $request)
   {
     // Vérifiez que l'ID est fourni
-    $key = $request->query('id'); // Utiliser `query` pour GET
+    $key = $request->id; // Utiliser `query` pour GET
     $exerciceId = session()->get('exercice_id');
 
     if (!$key) {
@@ -790,7 +815,7 @@ class RallongebudgetController extends Controller
   public function personnaliserContenuHtml($html)
   {
     // Ajouter l'en-tête au début du HTML généré
-    $enteteHtml = '<h2><center>COMMUNAUTE DES EGLISES DE PENTECOTE AU BURUNDI "CEPBU"</center></h2>';
+    $enteteHtml = '<h3><center>COMMUNAUTE DES EGLISES DE PENTECOTE AU BURUNDI "CEPBU"</center></h3>';
 
     $pied = "<p><center><small>Adresse: Boulevard de l'UPRONA No 38 ; BP. 2915 Bujumbura-Burundi ; Tél. (+257) 22 223466 ; (+257) 22 214889 ; Email : info@cepbu.bi</small></center></p>";
 
@@ -801,10 +826,10 @@ class RallongebudgetController extends Controller
     $html .= $pied;
 
     // Réduire la taille du texte dans le tableau et enlever le gras
-    $html = preg_replace('/<table/', '<table style="width: 100%; font-size: 12px; margin: 0; padding: 0;"', $html); // Taille de police réduite à 12px et marges/paddings à 0
+    $html = preg_replace('/<table/', '<table  style="border-collapse: collapse; width: 100%; font-size: 11px; margin: 0; padding: 0;"', $html); // Taille de police réduite à 12px et marges/paddings à 0
 
-    $html = preg_replace('/<tr/', '<tr style="margin: 0; padding: 0;"', $html); // Marges/paddings des lignes à 0
-    $html = preg_replace('/<td/', '<td style="margin: 0; padding: 0;"', $html); // Marges/paddings des cellules à 0
+    $html = preg_replace('/<tr/', '<tr style="margin: 0;  border: thin solid #c0c0c0; padding: 2px;"', $html); // Marges/paddings des lignes à 0
+    $html = preg_replace('/<td/', '<td style="margin: 0;  border: thin solid #c0c0c0; padding: 2px;" ', $html); // Marges/paddings des cellules à 0
 
     $html = preg_replace('/<b>/', '', $html); // Suppression de toutes les balises <b>
     $html = preg_replace('/<\/b>/', '', $html); // Suppression de toutes les balises </b>

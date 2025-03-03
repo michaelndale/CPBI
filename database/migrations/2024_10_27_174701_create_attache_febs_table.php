@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreign('febid')->references('id')->on('febs')->onDelete('cascade');
             $table->unsignedBigInteger('annexid');
             $table->foreign('annexid')->references('id')->on('apreviations')->onDelete('cascade');
+            $table->string('urldoc')->nullable();
             $table->timestamps();
         });
     }

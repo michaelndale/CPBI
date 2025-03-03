@@ -76,7 +76,7 @@
 
             <div class="col-sm-12 col-lg-12 col-xl-2">
               <label class="text-1000 fw-bold mb-2">Numéro </label>
-              <input type="text" name="numero" id="numero" class="form-control form-control-sm" require />
+              <input type="text" value="{{ $newNumero }}" name="numero" id="numero" class="form-control form-control-sm" require />
             </div>
 
             <div class="col-sm-12 col-lg-12 col-xl-2">
@@ -404,7 +404,21 @@
         success: function(response) {
           try {
             if (response.status == 200) {
-              toastr.success("Petite compte ajouté avec succès. !", "Enregistrement");
+             
+
+              toastr.success(
+                          "Bon de petite caisse ajouté avec succès", // Message
+                          "Succès !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
+
+                      
               fetchallbpc();
               $("#sendCompte").html('<i class="fa fa-cloud-upload-alt"></i> Sauvegarder');
               $("#addcompteform")[0].reset();

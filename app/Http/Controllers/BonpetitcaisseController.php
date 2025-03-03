@@ -47,17 +47,28 @@ class BonpetitcaisseController extends Controller
             ->orderBy('nom', 'ASC')
             ->get();
 
+        $lastBon = Bonpetitcaisse::where('projetid', $ID)
+            ->where('exercice_id', $exerciceId)
+            ->select('numero')
+            ->first();
+       
+             // Générer un nouveau numéro en ajoutant 1 au dernier trouvé
+        $newNumero = $lastBon ? $lastBon->numero + 1 : 1;
+
         return view(
             'bonpetitecaisse.bonpc.index',
             [
-                'title'     => $title,
+                'title'         => $title,
                 'compte_bpc'    => $compte_bpc,
-                'compte'    => $comptes,
-                'personnel' => $personnel,
+                'compte'        => $comptes,
+                'personnel'     => $personnel,
+                'newNumero'    => $newNumero
                
             ]
         );
     }
+
+
     public function store(Request $request)
     {
         DB::beginTransaction();
@@ -65,20 +76,17 @@ class BonpetitcaisseController extends Controller
         try {
             $IDP = session()->get('id');
             $exerciceId = session()->get('exercice_id');
+
             $numerobpc = $request->numero;
+
             $IdCompte  = $request->compteid;
             $montant   = $request->total_global;
 
-           /* $checkSoldeCompte = Comptepetitecaisse::where('id', $IdCompte)
-                                ->where('solde', '>=', $montant)
-                                ->first();
-            if ($checkSoldeCompte) {    */    
-
-                  // Vérification de l'existence du numéro BPC
             $check = Bonpetitcaisse::where('numero', $numerobpc)
             ->where('projetid', $IDP)
+            ->where('exercice_id', $exerciceId)
             ->first();
-
+            
                 if ($check) {
                     return response()->json(['status' => 201]);
                 } else {
@@ -92,11 +100,9 @@ class BonpetitcaisseController extends Controller
                     $bpc->compteid = $request->compteid;
                     $bpc->total_montant = $request->total_global;
                     $bpc->date = $request->date;
-
                     $bpc->etabli_par = $acce;
                     $bpc->verifie_par = $request->comptable;
                     $bpc->approuve_par = $request->chefcomposante;
-
                     $bpc->nom_sousigne = $request->nom_sousigne;
                     $bpc->titre = $request->titre;
                     $bpc->type_identite = $request->type_identite;
@@ -107,7 +113,6 @@ class BonpetitcaisseController extends Controller
 
                     if($acce==0){
                         $bpc->beneficiaire = $request->beneficiaire;
-
                     }
 
                     $bpc->userid = Auth::id();
@@ -115,23 +120,17 @@ class BonpetitcaisseController extends Controller
                     $bpc->save();
 
                     $IDBPC = $bpc->id;
-
                     // Insertion des éléments de bon de caisse
                     foreach ($request->numerodetail as $key => $items) {
 
-                       
-
                         $comp = $request->referenceid[$key];
                         $compp = explode("-", $comp);
-
                       
                             $grandcompte = $compp[0];
                             $souscompte = $compp[1];
                             $input = $compp[2];
                         
-                      
                         $elementbpc = new Elementboncaisse();
-
                         $elementbpc->boncaisse_id = $IDBPC;
                         $elementbpc->ligneid = $souscompte;
                         $elementbpc->ligne_principale = $grandcompte;
@@ -139,24 +138,17 @@ class BonpetitcaisseController extends Controller
                         $elementbpc->motifs = $request->motif[$key];
                         $elementbpc->input= $input;
                         $elementbpc->projetid = $IDP;
-
+                        $elementbpc->exerciceid = $exerciceId;
                         // Sauvegarde de l'élément de bon de caisse
                         $elementbpc->save();
                     }
 
                     DB::commit();
-
                     return response()->json(['status' => 200]);
                 }
-          /*  } else {
-                return response()->json(['status' => 205]);
-            }  */
-    
-          
+         
         } catch (\Exception $e) {
             DB::rollBack();
-    
-            // Retourner une réponse avec l'erreur
             return response()->json(['status' => 202, 'error' => $e->getMessage()]);
         }
     }
@@ -165,6 +157,7 @@ class BonpetitcaisseController extends Controller
     {
         $ID = session()->get('id');
         $exerciceId = session()->get('exercice_id');
+
         $bpc = Bonpetitcaisse::orderBy('numero', 'ASC')
         ->join('users', 'bonpetitcaisses.userid', '=', 'users.id')
         ->join('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -243,6 +236,7 @@ class BonpetitcaisseController extends Controller
         ->join('comptepetitecaisses', 'bonpetitcaisses.compteid', '=', 'comptepetitecaisses.id')
         ->join('users', 'bonpetitcaisses.userid', '=', 'users.id') // Joint la table 'users' en utilisant 'userid' de 'bonpetitcaisses'
         ->join('personnels', 'users.personnelid', '=', 'personnels.id') // Joint la table 'personnels' en utilisant 'personnelid' de 'users'
+
         ->select('bonpetitcaisses.*', 'comptepetitecaisses.code as code','personnels.prenom as user_prenom') // Sélectionne toutes les colonnes de 'bonpetitcaisses' et le prénom de 'personnels'
         ->where('bonpetitcaisses.id', $keys) // Filtre les résultats pour obtenir l'enregistrement correspondant à l'ID donné
         ->where('bonpetitcaisses.exercice_id', $exerciceId)
@@ -304,10 +298,13 @@ class BonpetitcaisseController extends Controller
         $dataPetiteCaisse = Bonpetitcaisse::orderBy('numero', 'ASC') // Trie les résultats par numéro en ordre croissant
         ->join('comptepetitecaisses', 'bonpetitcaisses.compteid', '=', 'comptepetitecaisses.id')
         ->join('users', 'bonpetitcaisses.userid', '=', 'users.id') // Joint la table 'users' en utilisant 'userid' de 'bonpetitcaisses'
+        
         ->join('personnels', 'users.personnelid', '=', 'personnels.id') // Joint la table 'personnels' en utilisant 'personnelid' de 'users'
-        ->select('bonpetitcaisses.*', 'comptepetitecaisses.code as code','personnels.prenom as user_prenom') // Sélectionne toutes les colonnes de 'bonpetitcaisses' et le prénom de 'personnels'
+        ->select('bonpetitcaisses.*', 'comptepetitecaisses.code as code', 'comptepetitecaisses.id as idcaisse' ,'comptepetitecaisses.libelle as libel','personnels.prenom as user_prenom', 'bonpetitcaisses.id as bpid') // Sélectionne toutes les colonnes de 'bonpetitcaisses' et le prénom de 'personnels'
         ->where('bonpetitcaisses.id', $keys) // Filtre les résultats pour obtenir l'enregistrement correspondant à l'ID donné
         ->first(); // Récupère le premier (et seul) enregistrement correspondant
+
+       
 
         $etablienom = DB::table('users')
             ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
@@ -315,7 +312,7 @@ class BonpetitcaisseController extends Controller
             ->where('users.id', $dataPetiteCaisse->etabli_par)
             ->first();
             
-            $verifie_par = DB::table('users')
+        $verifie_par = DB::table('users')
             ->leftJoin('personnels', 'users.personnelid', '=', 'personnels.id')
             ->select('personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid', 'users.signature')
             ->where('users.id', $dataPetiteCaisse->verifie_par)
@@ -327,21 +324,24 @@ class BonpetitcaisseController extends Controller
             ->where('users.id',  $dataPetiteCaisse->approuve_par)
             ->first();
         
-            $element_petite_caisse = Elementboncaisse::where('boncaisse_id',$dataPetiteCaisse->id)->get();
+        $element_petite_caisse = Elementboncaisse::where('boncaisse_id',$dataPetiteCaisse->id)
+        ->leftJoin('comptes', 'elementboncaisses.ligneid', 'comptes.id')
+        ->select('elementboncaisses.*', 'comptes.id as idcp', 'comptes.compteid as comptei','comptes.numero as numer', 'comptes.libelle as libele')
+        ->get();
 
-            $compte_bpc =  Comptepetitecaisse::where('projetid', $ID)
+        $compte_bpc =  Comptepetitecaisse::where('projetid', $ID)
                 ->join('users', 'comptepetitecaisses.userid', '=', 'users.id')
                 ->join('personnels', 'users.personnelid', '=', 'personnels.id')
                 ->select('comptepetitecaisses.*', 'personnels.prenom as personnel_prenom')
                 ->get();
     
-            $comptes = Compte::where('projetid', $ID)
+        $comptes = Compte::where('projetid', $ID)
                 ->where('compteid', 0)
                 ->distinct()
                 ->get();
     
            
-            $personnel = DB::table('users')
+        $personnel = DB::table('users')
                 ->join('personnels', 'users.personnelid', '=', 'personnels.id')
                 ->select('users.*', 'personnels.nom', 'personnels.prenom', 'personnels.fonction', 'users.id as userid')
                 ->orderBy('nom', 'ASC')
@@ -462,6 +462,84 @@ class BonpetitcaisseController extends Controller
         $errorMessage = $e->getMessage();
         return back()->with('failed', 'Échec ! La signature n\'a pas été créée' . $errorMessage);
       }
+    }
+
+    public function update(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $IDP = session()->get('id');
+            $exerciceId = session()->get('exercice_id');
+
+            // Récupérer l'ID du bon de petite caisse à modifier
+            $bpcId = $request->idbp;
+
+            // Vérifier si le bon de petite caisse existe
+            $bpc = Bonpetitcaisse::find($bpcId);
+            if (!$bpc) {
+                return response()->json(['status' => 203, 'error' => 'Bon de petite caisse non trouvé !']);
+            }
+
+            // Mettre à jour les champs principaux
+            $bpc->numero = $request->numero;
+            $bpc->compteid = $request->compteid; 
+            $bpc->total_montant = $request->total_global;
+            $bpc->date = $request->date;
+            $bpc->etabli_par = empty($request->acce) ? 0 : $request->acce;
+            $bpc->verifie_par = $request->comptable;
+            $bpc->approuve_par = $request->chefcomposante;
+            $bpc->nom_sousigne = $request->nom_sousigne;
+            $bpc->titre = $request->titre;
+            $bpc->type_identite = $request->type_identite;
+            $bpc->numero_piece = $request->numero_piece;
+            $bpc->adresse = $request->adresse;
+            $bpc->telephone_email = $request->telephone_email;
+            $bpc->exercice_id = $exerciceId;
+            if ($bpc->etabli_par == 0) {
+                $bpc->beneficiaire = $request->beneficiaire;
+            }
+            $bpc->userid = Auth::id();
+
+            // Sauvegarder les modifications du bon de caisse
+            $bpc->save();
+
+            // Supprimer les éléments de bon de caisse associés avant de les réinsérer
+
+           Elementboncaisse::where('boncaisse_id', $bpcId)->delete();
+
+            
+
+            foreach ($request->numerodetail as $key => $items) {
+
+                $comp = $request->referenceid[$key];
+                $compp = explode("-", $comp);
+              
+                $grandcompte = $compp[0];
+                $souscompte = $compp[1];
+                $input = $compp[2];
+                
+                $elementbpc = new Elementboncaisse();
+                $elementbpc->boncaisse_id = $bpcId;
+                $elementbpc->ligne_principale = $grandcompte;
+                $elementbpc->ligneid = $souscompte;
+                $elementbpc->input= $input;
+               
+                 $elementbpc->montant = $request->montant[$key];
+                 $elementbpc->motifs = $request->motifs[$key];
+              // 
+                $elementbpc->projetid = $IDP;
+                $elementbpc->exerciceid = $exerciceId;
+                // Sauvegarde de l'élément de bon de caisse
+                $elementbpc->save();
+            }
+          
+
+            DB::commit();
+            return response()->json(['status' => 200]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 202, 'error' => $e->getMessage()]);
+        }
     }
   
 }

@@ -257,9 +257,37 @@
           $("#addfebForm")[0].reset();
           $("#addfebModal").modal('hide');
           document.getElementById("addfebbtn").disabled = false;
-          toastr.success("Feb ajouté avec succès !", "Enregistrement");
+         
+
+          toastr.success(
+                          "FAC ajouté avec succès", // Message
+                          "Succès !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
+
+
+
         } else if (response.status == 201) {
-          toastr.error("Attention: FEB numéro existe déjà !", "Attention");
+        
+          toastr.error(
+                          "Attention: FEB numéro existe déjà", // Message
+                          "Info !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
+
+
           $("#addfebModal").modal('show');
           $("#numerofeb_error").text("Numéro existe");
           $('#numerofeb').addClass('has-error');

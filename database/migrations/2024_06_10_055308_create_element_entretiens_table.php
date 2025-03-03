@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('unite');
             $table->string('quantite');
             $table->string('prixunite');
-            $table->string('prixtotal');
+            $table->string('prixtotal'); 
+            $table->integer('userid')->nullable();
             $table->timestamps();
         });
     }

@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('comptepetitecaisses', function (Blueprint $table) {
             $table->id();
             $table->integer('projetid')->nullable();
+            $table->integer('exercice_id')->nullable();
             $table->string('libelle', 225)->nullable();
             $table->string('code', 225)->nullable();
             $table->double('solde', 25)->nullable();
             $table->integer('userid')->nullable();
+            $table->string('close', 225)->nullable();
             $table->timestamps();
         });
     }

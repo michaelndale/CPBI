@@ -505,9 +505,20 @@
           $("#loadingModal").modal('hide'); // Cacher le popup de chargement
 
           if (response.status == 200) {
-            $("#adddapForm")[0].reset();
-            $("#dapModale").modal('hide');
-            toastr.success("DAP ajouté avec succès !", "Succès");
+          
+            toastr.success(
+                          "DAP ajouté avec succès", // Message
+                          "Succès !", // Titre
+                          {
+                              closeButton: true, // Ajoute un bouton de fermeture
+                              progressBar: true, // Affiche une barre de progression
+                              //positionClass: "toast-top-center", // Positionne le toast au centre du haut de la page
+                              timeOut: 3000, // Durée d'affichage (en millisecondes)
+                              extendedTimeOut: 1000, // Durée supplémentaire si l'utilisateur passe la souris sur le toast
+                          }
+                      );
+
+
            // window.location.href = "{{ route('listdap') }}";
              window.location.href = response.redirect;
           } else if (response.status == 201) {

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('banques', function (Blueprint $table) {
             $table->id();
             $table->text('libelle')->nullable();
+            $table->integer('userid')->nullable();
             $table->timestamps();
         });
     }

@@ -25,7 +25,6 @@
                                         <thead>
                                             <tr>
                                                 <th><b>Nom</b></th>
-                                                <th><b>Code</b></th>
                                                 <th><b>Code telephone</b></th>
                                                 <th><b>Statut</b></th>
                                                 <th><b>Actions</b></th>
@@ -58,21 +57,15 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-sm-12 col-md-12">
+                            <div class="col-sm-12 col-md-7">
                                 <label class="text-1000 fw-bold mb-2">Pays</label>
                                 <input class="form-control" name="name" id="name" type="text"
                                     placeholder="Entrer le nom du pays" required />
                             </div>
 
-                            <div class="col-sm-6 col-md-6">
-                                <br>
-                                <label class="text-1000 fw-bold mb-2">Code du pays</label>
-                                <input class="form-control" name="currenty_code" id="currenty_code" type="text"
-                                    placeholder="Entrer le devise" required />
-                            </div>
-
-                            <div class="col-sm-6 col-md-6">
-                                <br>
+                           
+                            <div class="col-sm-12 col-md-5">
+                              
                                 <label class="text-1000 fw-bold mb-2">Code du telephone</label>
                                 <input class="form-control" name="phone_code" id="phone_code" type="text"
                                     placeholder="Entrer le code" required />
@@ -102,21 +95,16 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-sm-12 col-md-12">
+                            <div class="col-sm-12 col-md-7">
                                 <label class="text-1000 fw-bold mb-2">Pays</label>
                                 <input class="form-control" name="b_name" id="name" type="text"
                                     placeholder="Entrer le nom du pays" required />
                             </div>
 
-                            <div class="col-sm-6 col-md-6">
-                                <br>
-                                <label class="text-1000 fw-bold mb-2">Code du pays</label>
-                                <input class="form-control" name="b_currenty_code" id="currenty_code" type="text"
-                                    placeholder="Entrer le devise" required />
-                            </div>
+                           
 
-                            <div class="col-sm-6 col-md-6">
-                                <br>
+                            <div class="col-sm-12 col-md-5">
+                                
                                 <label class="text-1000 fw-bold mb-2">Code du telephone</label>
                                 <input class="form-control" name="b_phone_code" id="phone_code" type="text"
                                     placeholder="Entrer le code" required />
@@ -161,7 +149,7 @@
                                 $('#countriesTableBody').append(`
                                   <tr>
                                       <td>${country.name}</td>
-                                      <td>${country.currenty_code}</td>
+                                   
                                       <td>${country.phone_code}</td>
                                       <td>${country.status ? 'Active' : 'Inactive'}</td>
                                       <td>
@@ -207,9 +195,7 @@
                 // Collect form data
                 let formData = {
                     name: $('#name').val(),
-                    currenty_code: $('#currenty_code').val(),
                     phone_code: $('#phone_code').val(),
-
                     _token: $('input[name="_token"]').val()
                 };
 
@@ -221,6 +207,7 @@
                     success: function(response) {
                         if (response.code === 201 && response.status === 'success') {
                             toastr.success(response.message);
+                            
                             $('#addModal').modal('hide'); // Hide the modal after saving
                             $('#addpaysform')[0].reset(); // Reset the form
                             fetchCountries(); // Refresh country list

@@ -42,7 +42,7 @@ class CategoriebeneficiaireController extends Controller
         echo $output;
       } else {
         echo ' <tr>
-          <td colspan="3">
+          <td colspan="4">
           <center>
             <h6 style="margin-top:1% ;color:#c0c0c0"> 
             <center><font size="50px"><i class="fa fa-info-circle"  ></i> </font><br><br>

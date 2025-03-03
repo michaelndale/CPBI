@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('elementdjas', function (Blueprint $table) {
             $table->id();
             $table->string('febid')->nullable();
+            $table->string('projetiddjas')->nullable();
             $table->string('iddjas')->nullable();
             $table->string('idddap')->nullable();
             $table->string('ligneid')->nullable();
@@ -21,7 +22,6 @@ return new class extends Migration
             $table->double('montant_utiliser')->nullable();
             $table->double('surplus')->nullable();
             $table->double('montant_retourne')->nullable();
-            $table->string('bordereau')->nullable();
             $table->string('description')->nullable();
             $table->string('plaque')->nullable(); // Peut-être nullable si ce champ n'est pas toujours rempli
             $table->string('receptionpar');
